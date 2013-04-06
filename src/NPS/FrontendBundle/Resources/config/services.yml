@@ -1,0 +1,7 @@
+parameters:
+#    nps_frontend.example.class: NPS\FrontendBundle\Example
+
+services:
+#    nps_frontend.example:
+#        class: %nps_frontend.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

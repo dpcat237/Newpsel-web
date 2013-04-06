@@ -1,0 +1,14 @@
+app/config/parameters_dev.yml
+web/bundles/
+web/css/
+web/js/
+app/bootstrap.php.cache
+app/cache/*
+app/logs/*
+build/
+vendor
+composer.phar
+.idea/
+.idea/*
+.travis.yml
+.tags*

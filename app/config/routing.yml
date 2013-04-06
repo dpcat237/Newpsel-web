@@ -1,0 +1,8 @@
+nps_api:
+    resource: "@NPSApiBundle/Resources/config/routing.yml"
+    prefix:   /api
+
+nps_frontend:
+    resource: "@NPSFrontendBundle/Resources/config/routing.yml"
+    prefix:   /
+
