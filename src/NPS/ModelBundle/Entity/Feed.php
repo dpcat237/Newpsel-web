@@ -4,7 +4,9 @@ namespace NPS\ModelBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use NPS\ModelBundle\Entity\Entry;
 
 /**
  * Feed
@@ -57,6 +59,19 @@ class Feed
      */
     private $dateUp;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Entry", mappedBy="feed")
+     */
+    protected $entries;
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->entries = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -182,5 +197,38 @@ class Feed
     public function getDateUp()
     {
         return $this->dateUp;
+    }
+
+    /**
+     * Add entries
+     * @param Entry $entry
+     *
+     * @return Feed
+     */
+    public function addEntry(Entry $entry)
+    {
+        $this->entries[] = $entry;
+
+        return $this;
+    }
+
+    /**
+     * Remove entries
+     *
+     * @param Entry $entry
+     */
+    public function removeEntry(Entry $entry)
+    {
+        $this->entries->removeElement($entry);
+    }
+
+    /**
+     * Get entries
+     *
+     * @return Collection
+     */
+    public function getEntries()
+    {
+        return $this->entries;
     }
 }
