@@ -1,0 +1,158 @@
+<!--  start nav-outer-repeat................................................................................................. START -->
+<div class="nav-outer-repeat">
+    <!--  start nav-outer -->
+    <div class="nav-outer">
+
+        <!-- start nav-right -->
+        <div id="nav-right">
+
+            <div class="nav-divider">&nbsp;</div>
+            <div class="showhide-account"><img src="{{ asset('bundles/npsfrontend/images/shared/nav/nav_myaccount.gif') }}" width="93" height="14" alt="" /></div>
+            <div class="nav-divider">&nbsp;</div>
+            {# <a href="{{ url("admin_logout") }}" id="logout">
+                <img src="{{ asset('bundles/npsfrontend/images/shared/nav/nav_logout.gif') }}" width="64" height="14" alt="" />
+            </a> #}
+            <div class="clear">&nbsp;</div>
+
+            <!--  start account-content -->
+            <div class="account-content">
+                <div class="account-drop-inner">
+                    <a href="" id="acc-settings">Settings</a>
+                    <div class="clear">&nbsp;</div>
+                    <div class="acc-line">&nbsp;</div>
+                    <a href="" id="acc-details">Personal details </a>
+                    <div class="clear">&nbsp;</div>
+                    <div class="acc-line">&nbsp;</div>
+                    <a href="" id="acc-project">Project details</a>
+                    <div class="clear">&nbsp;</div>
+                    <div class="acc-line">&nbsp;</div>
+                    <a href="" id="acc-inbox">Inbox</a>
+                    <div class="clear">&nbsp;</div>
+                    <div class="acc-line">&nbsp;</div>
+                    <a href="" id="acc-stats">Statistics</a>
+                </div>
+            </div>
+            <!--  end account-content -->
+
+        </div>
+        <!-- end nav-right -->
+
+        <!--  start nav -->
+        <div class="nav">
+            <div class="table">{#
+                {% if app.request.get('_route') == 'admin_countries' or  app.request.get('_route') == 'admin_zones'
+                    or app.request.get('_route') == 'admin_tax_rules' or app.request.get('_route') == 'admin_shipping_rules'
+                    or app.request.get('_route') == 'admin_coupons' or app.request.get('_route') == 'admin_purchases' %}
+                    {% set ul1 = 'current' %}
+                    {% set div1 = 'show' %}
+                {% else %}
+                    {% set ul1 = 'select' %}
+                    {% set div1 = '' %}
+                {% endif %}
+
+                <ul class="{{ ul1 }}">
+                    <li><a href="#nogo"><b>{% trans %}Sales{% endtrans %}</b><!--[if IE 7]><!--></a><!--<menus![endif]-->
+                        <div class="select_sub {{ div1 }}">
+                            <ul class="sub">
+                                <li {% if app.request.get('_route') == 'admin_countries' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_countries") }}">{% trans %}Countries{% endtrans %}</a>
+                                </li>
+                                <li {% if app.request.get('_route') == 'admin_coupons' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_coupons") }}">{% trans %}Coupons{% endtrans %}</a>
+                                </li>
+                                <li {% if app.request.get('_route') == 'admin_purchases' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_purchases") }}">{% trans %}Purchases{% endtrans %}</a>
+                                </li>
+                                <li><a href="#nogo">{% trans %}Orders{% endtrans %}</a></li>
+                                <li {% if app.request.get('_route') == 'admin_shipping_rules' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_shipping_rules") }}">{% trans %}Shipping rules{% endtrans %}</a>
+                                </li>
+                                <li {% if app.request.get('_route') == 'admin_tax_rules' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_tax_rules") }}">{% trans %}Tax rules{% endtrans %}</a>
+                                </li>
+                                <li {% if app.request.get('_route') == 'admin_zones' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_zones") }}">{% trans %}Zones{% endtrans %}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="nav-divider">&nbsp;</div>
+                {% if app.request.get('_route') == 'admin_categories' or app.request.get('_route') == 'admin_currencies'
+                    or app.request.get('_route') == 'admin_shops' or app.request.get('_route') == 'admin_items' %}
+                    {% set ul2 = 'current' %}
+                    {% set div2 = 'show' %}
+                {% else %}
+                    {% set ul2 = 'select' %}
+                    {% set div2 = '' %}
+                {% endif %}
+
+                <ul class="{{ ul2 }}">
+                    <li><a href="#nogo"><b>{% trans %}Catalog{% endtrans %}</b><!--[if IE 7]><!--></a><!--<![endif]-->
+                        <div class="select_sub {{ div2 }}">
+                            <ul class="sub">
+                                <li {% if app.request.get('_route') == 'admin_categories' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_categories") }}">{% trans %}Categories{% endtrans %}</a>
+                                </li>
+                                <li {% if app.request.get('_route') == 'admin_currencies' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_currencies") }}">{% trans %}Currencies{% endtrans %}</a>
+                                </li>
+                                <li {% if app.request.get('_route') == 'admin_items' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_items") }}">{% trans %}Products{% endtrans %}</a>
+                                </li>
+                                <li {% if app.request.get('_route') == 'admin_shops' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_shops") }}">{% trans %}Shops{% endtrans %}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="nav-divider">&nbsp;</div>
+                {% if app.request.get('_route') == 'admin_customers' %}
+                    {% set ul3 = 'current' %}
+                    {% set div3 = 'show' %}
+                {% else %}
+                    {% set ul3 = 'select' %}
+                    {% set div3 = '' %}
+                {% endif %}
+
+                <ul class="{{ ul3 }}"><li><a href="#nogo"><b>{% trans %}Customers{% endtrans %}</b><!--[if IE 7]><!--></a><!--<![endif]-->
+                    <div class="select_sub {{ div3 }}">
+                        <ul class="sub">
+                            <li {% if app.request.get('_route') == 'admin_customers' %}class="sub_show"{% endif %}>
+                                <a href="{{ url("admin_customers") }}">{% trans %}Customers{% endtrans %}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                </ul>
+
+                <div class="nav-divider">&nbsp;</div>
+
+                <ul class="{% if app.request.get('_route') == 'admin_users' %} current {% else %} select {% endif %}">
+                    <li><a href="#nogo"><b>{% trans %}System{% endtrans %}</b><!--[if IE 7]><!--></a><!--<![endif]-->
+                        <div class="select_sub {% if app.request.get('_route') == 'admin_users' %} show {% endif %}">
+                            <ul class="sub">
+                                <li {% if app.request.get('_route') == 'admin_users' %}class="sub_show"{% endif %}>
+                                    <a href="{{ url("admin_users") }}">{% trans %}Users{% endtrans %}</a>
+                                </li>
+                                <li><a href="#nogo">{% trans %}Order status{% endtrans %}</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="clear"></div>
+                #}
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--  start nav -->
+
+    </div>
+    <div class="clear"></div>
+    <!--  start nav-outer -->
+</div>
+<!--  start nav-outer-repeat................................................... END -->

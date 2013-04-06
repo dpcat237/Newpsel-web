@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<!--[if IE 7]><html lang="es" class="ie7"><![endif]-->
+<!--[if IE 8]><html lang="es" class="ie8"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="es"><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block title %}BaseEcommerce{% endblock title %}</title>
+        {% block head_style %}{% endblock head_style %}
+        {% block head_script %}{% endblock head_script %}
+        <link rel="shortcut icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body {% block bodyclass %}class=""{% endblock bodyclass %}>
+        {% block body %}{% endblock body %}
+        {% block javascripts %}{% endblock javascripts %}
+        {% block foot_script %}{% endblock foot_script %}
+    </body>
+</html>

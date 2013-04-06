@@ -17,7 +17,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        echo 'tut: '; exit();
+        $name = ':)';
 
         return $this->render('NPSFrontendBundle:Default:index.html.twig', array('name' => $name));
     }
