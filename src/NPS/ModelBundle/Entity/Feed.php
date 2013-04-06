@@ -33,11 +33,13 @@ class Feed
 
     /**
      * @var string
+     * @ORM\Column(name="url", type="string", length=255, nullable=false, unique=true)
      */
     private $url;
 
     /**
      * @var string
+     * @ORM\Column(name="website", type="string", length=255, nullable=false, unique=true)
      */
     private $website;
 
@@ -68,14 +70,14 @@ class Feed
 
     /**
      * Set name
-     *
      * @param string $name
+     *
      * @return Feed
      */
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -91,14 +93,14 @@ class Feed
 
     /**
      * Set url
-     *
      * @param string $url
+     *
      * @return Feed
      */
     public function setUrl($url)
     {
         $this->url = $url;
-    
+
         return $this;
     }
 
@@ -114,14 +116,14 @@ class Feed
 
     /**
      * Set website
-     *
      * @param string $website
+     *
      * @return Feed
      */
     public function setWebsite($website)
     {
         $this->website = $website;
-    
+
         return $this;
     }
 
