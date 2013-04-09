@@ -71,3 +71,15 @@ services:
               - { name: doctrine.event_subscriber, connection: default }
           calls:
               - [ setAnnotationReader, [ @annotation_reader ] ]
+
+    NPS.CoreBundle.listener.preexecute:
+            class: NPS\CoreBundle\Listener\PredispatchListener
+            tags:
+                - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+            arguments: [ '@router', '@service_container' ]
+
+#SimplePie RSS
+fkr_simple_pie:
+    cache_enabled: false
+    cache_dir: %kernel.cache_dir%/rss
+    cache_duration: 3600

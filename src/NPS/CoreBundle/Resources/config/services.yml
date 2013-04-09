@@ -1,0 +1,7 @@
+parameters:
+#    nps_core.example.class: NPS\CoreBundle\Example
+
+services:
+#    nps_core.example:
+#        class: %nps_core.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

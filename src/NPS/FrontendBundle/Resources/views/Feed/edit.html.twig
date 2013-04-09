@@ -1,0 +1,54 @@
+{% extends 'NPSFrontendBundle::Default/layout.html.twig' %}
+
+{% block content %}
+    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+        <tr valign="top">
+            <td>
+                <!-- step-holder -->
+                {% include "NPSFrontendBundle:Default:step_holder.html.twig" %}
+
+                <!-- start id-form -->
+                <form method="post" id="FeedEditForm" {{ form_enctype(form) }}>
+                    <table border="0" cellpadding="0" cellspacing="0"  id="id-form">
+                        <tr>
+                            <th valign="top">{{ form_label(form.url,'Feed url', {'attr' : {'class':''} }) }}</th>
+                            <td>
+                                {% if form_errors(form.url) %}
+                                    {% set name_class = 'inp-form-error' %}
+                                {% else %}
+                                    {% set name_class = 'inp-form' %}
+                                {% endif %}
+                                http:// {{ form_widget(form.url, { 'attr' : {'class':name_class, 'placeholder':'write a url' }} ) }}
+                            </td>
+                            <td>
+                                {% if form_errors(form.url) %}
+                                    <div class="error-left"></div>
+                                    <div class="error-inner">{{ form_errors(form.url) }}</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <td valign="top">
+                                {{ form_row(form._token) }}
+                                <input type="submit" value="" class="form-submit" id="form-submit" />
+                                <input type="reset" value="" class="form-reset" />
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </form>
+                <!-- end id-form  -->
+
+            </td>
+            <td>
+                <!--  related-activities -->
+                {% include "NPSFrontendBundle:Default:related_activities.html.twig" %}
+            </td>
+        </tr>
+        <tr>
+            <td><img src="images/shared/blank.gif" width="695" height="1" alt="blank" /></td>
+            <td></td>
+        </tr>
+    </table>
+{% endblock %}

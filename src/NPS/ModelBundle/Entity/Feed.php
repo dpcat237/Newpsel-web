@@ -28,22 +28,34 @@ class Feed
 
     /**
      * @var string
-     * @ORM\Column(name="name", type="string", length=255, nullable=false, unique=true)
-     * @Assert\NotNull(message={"Write a name"})
+     * @ORM\Column(name="title", type="string", length=255, nullable=false)
      */
-    private $name;
+    private $title;
 
     /**
      * @var string
      * @ORM\Column(name="url", type="string", length=255, nullable=false, unique=true)
+     * @Assert\NotNull(message={"Write a url"})
      */
     private $url;
 
     /**
      * @var string
-     * @ORM\Column(name="website", type="string", length=255, nullable=false, unique=true)
+     * @ORM\Column(name="website", type="string", length=255, nullable=false)
      */
     private $website;
+
+    /**
+     * @var string
+     * @ORM\Column(name="language", type="string", length=255, nullable=true)
+     */
+    private $language;
+
+    /**
+     * @var string
+     * @ORM\Column(name="favicon", type="string", length=255, nullable=true)
+     */
+    private $favicon;
 
     /**
      * @var integer
@@ -58,6 +70,12 @@ class Feed
      * @ORM\Column(name="date_up", type="integer")
      */
     private $dateUp;
+
+    /**
+     * @var integer
+     * @ORM\Column(name="date_sync", type="integer", nullable=true)
+     */
+    private $dateSync;
 
     /**
      * @ORM\OneToMany(targetEntity="Entry", mappedBy="feed")
@@ -76,7 +94,7 @@ class Feed
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -84,14 +102,14 @@ class Feed
     }
 
     /**
-     * Set name
-     * @param string $name
+     * Set title
+     * @param string $title
      *
      * @return Feed
      */
-    public function setName($name)
+    public function setTitle($title)
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }
@@ -99,11 +117,11 @@ class Feed
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
-    public function getName()
+    public function getTitle()
     {
-        return $this->name;
+        return $this->title;
     }
 
     /**
@@ -153,6 +171,52 @@ class Feed
     }
 
     /**
+     * Set language
+     * @param string $language
+     *
+     * @return Feed
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    /**
+     * Get website
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * Set favicon
+     * @param string $favicon
+     *
+     * @return Feed
+     */
+    public function setFavicon($favicon)
+    {
+        $this->favicon = $favicon;
+
+        return $this;
+    }
+
+    /**
+     * Get website
+     *
+     * @return string
+     */
+    public function getFavicon()
+    {
+        return $this->favicon;
+    }
+
+    /**
      * Set dateAdd
      * @param int $dateAdd
      *
@@ -197,6 +261,29 @@ class Feed
     public function getDateUp()
     {
         return $this->dateUp;
+    }
+
+    /**
+     * Set dateSync
+     * @param \int $dateSync
+     *
+     * @return Feed
+     */
+    public function setDateSync($dateSync = null)
+    {
+        $this->dateSync = (empty($dateSync))? time() : $dateSync;
+
+        return $this;
+    }
+
+    /**
+     * Get dateSync
+     *
+     * @return \int
+     */
+    public function getDateSync()
+    {
+        return $this->dateSync;
     }
 
     /**
