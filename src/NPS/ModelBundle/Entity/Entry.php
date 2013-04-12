@@ -49,6 +49,18 @@ class Entry
     private $contentHash;
 
     /**
+     * @var string
+     * @ORM\Column(name="author", type="string", length=255, nullable=true)
+     */
+    private $author;
+
+    /**
+     * @var string
+     * @ORM\Column(name="category", type="string", length=255, nullable=true)
+     */
+    private $category;
+
+    /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
@@ -173,15 +185,60 @@ class Entry
     }
 
     /**
+     * Set category
+     *
+     * @param string $category
+     * @return Entry
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Set author
+     *
+     * @param string $author
+     * @return Entry
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
      * Set dateAdd
      * @param int $dateAdd
      *
      * @return Feed
      */
-    public function setDateAdd($dateAdd = null)
+    public function setDateAdd($dateAdd)
     {
-        $dateAddNow = $this->getDateAdd();
-        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
+        $this->dateAdd = $dateAdd;
 
         return $this;
     }

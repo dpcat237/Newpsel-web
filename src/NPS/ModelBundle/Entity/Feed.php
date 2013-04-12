@@ -34,10 +34,16 @@ class Feed
 
     /**
      * @var string
-     * @ORM\Column(name="url", type="string", length=255, nullable=false, unique=true)
+     * @ORM\Column(name="url", type="string", length=255, nullable=false)
      * @Assert\NotNull(message={"Write a url"})
      */
     private $url;
+
+    /**
+     * @var string
+     * @ORM\Column(name="url_hash", type="string", length=255, nullable=false, unique=true)
+     */
+    private $urlHash;
 
     /**
      * @var string
@@ -145,6 +151,29 @@ class Feed
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Set urlHash
+     * @param string $urlHash
+     *
+     * @return Feed
+     */
+    public function setUrlHash($urlHash)
+    {
+        $this->urlHash = $urlHash;
+
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string
+     */
+    public function getUrlHash()
+    {
+        return $this->urlHash;
     }
 
     /**

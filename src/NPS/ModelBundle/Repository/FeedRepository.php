@@ -29,6 +29,7 @@ class FeedRepository extends BaseRepository
      * Subscribe to feed
      * @param string $url
      *
+     * @throws Exception it's necessary set $rss
      * @return array
      */
     public function createFeed($url)
@@ -52,16 +53,18 @@ class FeedRepository extends BaseRepository
 
                     $feed = new Feed();
                     $feed->setUrl($url);
+                    $feed->setUrlHash(sha1($url));
                     $feed->setTitle($this->rss->get_title());
                     $feed->setWebsite($this->rss->get_link());
                     $feed->setLanguage($this->rss->get_language());
                     $feed->setFavicon($this->rss->get_favicon());
                     $em->persist($feed);
-
                     $em->flush();
                 } catch (\Exception $e) {
                     $error = $e->getMessage();
                 }
+            } else {
+                $feed = $checkFeed;
             }
         } else {
             throw new Exception('SimplePie object not set');
@@ -81,7 +84,8 @@ class FeedRepository extends BaseRepository
     public function checkExistFeedUrl($url) {
         $em = $this->getEntityManager();
         $feedRepo = $em->getRepository('NPSModelBundle:Feed');
-        $feed = $feedRepo->findByUrl($url);
+        $urlHash = sha1($url);
+        $feed = $feedRepo->findOneByUrlHash($urlHash);
 
         return $feed;
     }
@@ -89,70 +93,91 @@ class FeedRepository extends BaseRepository
     /**
      * Update feed's data
      */
-    public function updateFeedData($rss, $feedId, $ignoreDaemon = false, $noCache = false, $overrideUrl = false)
+    public function updateFeedData($feedId)
     {
-        $error = null;
-        $em = $this->getEntityManager();
-        $feedRepo = $em->getRepository('NPSModelBundle:Feed');
-        $feed = $feedRepo->find($feedId);
+        if (!empty($this->rss) and get_class($this->rss) == "SimplePie") {
+            $error = null;
+            $em = $this->getEntityManager();
+            $feedRepo = $em->getRepository('NPSModelBundle:Feed');
+            $feed = $feedRepo->find($feedId);
 
-        if ($feed instanceof Feed) {
-            //$url = $feed->getUrl();
-            $url = 'http://www.androidcentral.com/rss.xml';
-            $checkContents = TextHelper::fetchFileContents($url); //TODO: review timestamp
-            $contents = $checkContents['contents'];
-            if (!$checkContents['error']) {
-                //$rss->set_sanitize_class("SimplePie_Sanitize");
-                //$rss->sanitize = new SimplePie_Sanitize();
-                $rss->set_output_encoding('UTF-8');
-                $rss->set_raw_data($contents);
-                $rss->enable_cache(false);
-                $rss->init();
+            if ($feed instanceof Feed) {
+                $this->rss->set_feed_url($feed->getUrl());
+                $this->rss->set_parser_class();
+                $this->rss->enable_xml_dump();
+                $this->rss->init();
+                $rssError = $this->rss->error();
 
-
-                $new = array();
-                $yesterday = time() - (24*60*60);
-
-                foreach ($rss->get_items() as $item) {
-
-                    // Calculate 24 hours ago
-                    echo $item->get_date()."<br />";
-
-                    // Compare the timestamp of the feed item with 24 hours ago.
-                    if ($item->get_date('U') > $yesterday) {
-
-                        // If the item was posted within the last 24 hours, store the item in our array we set up.
-                        $new[] = $item;
+                if (empty($rssError)) {
+                    if (!$feed->getDateSync()) {
+                        $newItems = $this->getItemNew($this->rss->get_items());
+                    } else {
+                        $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
                     }
+
+                    if (count($newItems)) {
+                        $entryRepo = $em->getRepository('NPSModelBundle:Entry');
+                        foreach ($newItems as $newItem) {
+                            $entryRepo->addEntry($newItem, $feed);
+                        }
+                    }
+
+                    $feed->setDateSync();
+                    $em->persist($feed);
+                    $em->flush();
+                } else {
+                    $error = $rssError;
                 }
-
-                // Loop through all of the items in the new array and display whatever we want.
-                echo 'tut: '.count($new); exit();
-
-                foreach($new as $item) {
-                    echo '<h3>' . $item->get_title() . '</h3>';
-                    echo '<p>' . $item->get_date('j M Y, H:i:s O') . '</p>';
-                    echo $item->get_description();
-                    echo '<hr />';
-                }
-
-
-
-                echo "tuta: ".count($rss->get_items()); exit();
-                //TODO: install bundle -> rssfuncs.php L331
-
-
-
-
-
             } else {
-                $error = $checkContents['error'];
+                $error = 303;
             }
         } else {
-            $error = 303;
+            throw new Exception('SimplePie object not set');
         }
         $result['error'] = $error;
 
-        return result;
+        return $result;
+    }
+
+    /**
+     * Get last 25 items for new feed
+     * @param array $items
+     *
+     * @return array
+     */
+    private function getItemNew($items)
+    {
+        $c = 0;
+        $newItems = array();
+        foreach ($items as $item) {
+            $newItems[] = $item;
+            $c++;
+            if ($c >= 25) {
+                break;
+            }
+        }
+
+        return $newItems;
+    }
+
+    /**
+     * Get new items since last sync of feed
+     * @param array   $items
+     * @param integer $dateSync
+     *
+     * @return array
+     */
+    private function getItemSync($items, $dateSync)
+    {
+        $newItems = array();
+        foreach ($items as $item) {
+            if ($item->get_date('U') > $dateSync) {
+                $newItems[] = $item;
+            } else {
+                break;
+            }
+        }
+
+        return $newItems;
     }
 }

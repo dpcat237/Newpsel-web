@@ -83,9 +83,13 @@ class NotificationHelper extends Helper
     public function setNotification($messageId)
     {
         switch ($messageId){
-            case 1:
+            case 101:
                 $this->setMessageType('success');
                 $this->setMessage($this->getObjectName()."'s data saved successfully");
+                break;
+            case 102:
+                $this->setMessageType('success');
+                $this->setMessage("Feed synchronized successfully");
                 break;
             case 201:
                 $this->setMessageType('alert');

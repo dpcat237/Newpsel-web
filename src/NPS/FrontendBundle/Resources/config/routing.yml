@@ -8,19 +8,19 @@ feeds:
     pattern:  /feeds
     defaults: { _controller: NPSFrontendBundle:Feed:list }
 
-feed_edit:
-    pattern:  /feed_edit/{id}
-    defaults: { _controller: NPSFrontendBundle:Feed:edit, id: 0 }
-    requirements:
-      id: \d+
-      _method: GET
-
 feed_edit_process:
     pattern:  /feed_edit/{id}
     defaults: { _controller: NPSFrontendBundle:Feed:editProcess, id: 0 }
     requirements:
       id: \d+
       _method: POST
+
+feed_edit:
+    pattern:  /feed_edit/{id}
+    defaults: { _controller: NPSFrontendBundle:Feed:edit, id: 0 }
+    requirements:
+      id: \d+
+      _method: GET
 
 feed_enabled:
     pattern:  /feed_enabled/{id}

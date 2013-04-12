@@ -66,131 +66,6 @@ class FeedController extends BaseController
      */
     public function editProcessAction(Request $request)
     {
-        /**
-         * http://simplepie.org/wiki/tutorial/start
-         * http://simplepie.org/wiki/tutorial/only_display_items_from_the_last_24_hours
-         * http://simplepie.org/wiki/reference/start
-         * http://net.tutsplus.com/articles/news/extending-simplepie-to-parse-unique-rss-feeds/
-         */
-
-
-        /** Feed
-         * http://feeds.feedburner.com/nettuts
-         * http://feeds2.feedburner.com/Wwwhatsnew
-         * http://feeds.weblogssl.com/xataka2
-         * http://feeds.weblogssl.com/xatakafoto
-         * http://feeds.weblogssl.com/xatakandroid
-         */
-
-        /** XML
-         * http://www.mobile-review.com/podcasts/rss.xml
-         */
-
-        /*$feed = $this->get('fkr_simple_pie.rss');
-        $feed->set_feed_url('http://www.androidcentral.com/rss.xml');
-        $feed->set_parser_class();
-        $feed->enable_xml_dump();
-        $feed->init();
-        $new = array();*/
-
-        /*
-        //echo "<br />bitrate: ".$feed->get_bitrate();
-        //echo "<br />caption: ".$feed->get_caption();
-        //echo "<br />captions: ".$feed->get_captions();
-        echo "<br />category: ".$feed->get_category();
-        echo "<br />categories: ".$feed->get_categories();
-        //echo "<br />channels: ".$feed->get_channels();
-        echo "<br />copyright: ".$feed->get_copyright();
-        //echo "<br />credit: ".$feed->get_credit();
-        //echo "<br />credits: ".$feed->get_credits();
-        echo "<br />description: ".$feed->get_description();
-        //echo "<br />duration: ".$feed->get_duration();
-        //echo "<br />expression: ".$feed->get_expression();
-        //echo "<br />framerate: ".$feed->get_framerate();
-        //echo "<br />hash: ".$feed->get_hash();
-        //echo "<br />hashes: ".$feed->get_hashes();
-        //echo "<br />height: ".$feed->get_height();
-        //echo "<br />keyword: ".$feed->get_keyword();
-        //echo "<br />keywords: ".$feed->get_keywords();
-        echo "<br />language: ".$feed->get_language();
-        //echo "<br />medium: ".$feed->get_medium();
-        //echo "<br />player: ".$feed->get_player();
-        //echo "<br />rating: ".$feed->get_rating();
-        //echo "<br />ratings: ".$feed->get_ratings();
-        //echo "<br />restriction: ".$feed->get_restriction();
-        //echo "<br />sampling_rate: ".$feed->get_sampling_rate();
-        //echo "<br />thumbnail: ".$feed->get_thumbnail();
-        //echo "<br />thumbnails: ".$feed->get_thumbnails();
-        echo "<br />title: ".$feed->get_title();
-        //echo "<br />width: ".$feed->get_width();
-
-        echo "<br />favicon: ".$feed->get_favicon();
-        echo "<br />encoding: ".$feed->get_encoding();
-        echo "<br />type: ".$feed->get_type();
-        echo 'tut: end'; exit();*/
-
-        /*foreach ($feed->get_items() as $item) {
-
-            // Calculate 24 hours ago
-            $yesterday = time() - (2*24*60*60);
-
-            // Compare the timestamp of the feed item with 24 hours ago.
-            if ($item->get_date('U') > $yesterday) {
-
-                // If the item was posted within the last 24 hours, store the item in our array we set up.
-                $new[] = $item;
-            }
-        }*/
-
-        // Loop through all of the items in the new array and display whatever we want.
-        //echo 'tut: '.count($new); exit();
-        /*foreach($new as $item) {
-            echo '<h3>' . $item->get_title() . '</h3>';
-            echo '<p>' . $item->get_date('j M Y, H:i:s O') . '</p>';
-            echo $item->get_description();
-            echo '<hr />';
-        }*/
-        /*foreach($new as $item) {
-            echo "<br />author: ".$item->get_author();
-            echo "<br />authors: ".$item->get_authors();
-            echo "<br />categories: ".$item->get_categories();
-            echo "<br />category: ".$item->get_category();
-            echo "<br />contributor: ".$item->get_contributor();
-            echo "<br />contributors: ".$item->get_contributors();
-            echo "<br />copyright: ".$item->get_copyright();
-            echo "<br />description: ".$item->get_description();
-            //echo "<br />image_url: ".$item->get_image_url();
-            //echo "<br />item: ".$item->get_item();
-            //echo "<br />language: ".$item->get_language();
-            echo "<br />link: ".$item->get_link();
-            echo "<br />links: ".$item->get_links();
-            echo "<br />permalink: ".$item->get_permalink();
-            echo "<br />title: ".$item->get_title();
-            echo "<br />date: ".$item->get_date();
-        }
-
-        echo 'tut: '; exit();*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //depends if it's edit or creation
         $objectId = $request->get('id');
         $objectName = 'Feed';
@@ -209,23 +84,20 @@ class FeedController extends BaseController
             $feedRepo->setRss($rss);
             $checkCreate = $feedRepo->createFeed($formObject->getUrl());
 
-
-            /*echo 'tut: end'; exit();
-            $feedRepo->updateFeedData($rss, 1, true); //TODO: remove line
             if (!$checkCreate['error']) {
-                $feedRepo->updateFeedData($checkCreate['feed']->getId(), true);
+                $checkUpdate = $feedRepo->updateFeedData($checkCreate['feed']->getId());
+
+                if (!$checkUpdate['error']) {
+                    $this->notification->setNotification(102);
+                } else {
+                    $this->notification->setNotification($checkUpdate['error']);
+                }
             } else {
                 $this->notification->setNotification($checkCreate['error']);
             }
-
-
-
-
-            $this->saveObject($formObject);*/
         } else {
             $this->notification->setNotification(201);
         }
-        echo 'tut: oki'; exit();
         $this->setNotificationMessage();
 
         return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form);

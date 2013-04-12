@@ -96,6 +96,7 @@ abstract class BaseController extends Controller
         $objectName = str_replace(' ', '', $objectName);
         //render template or redirect to edit page
         $notification = new NotificationHelper($objectName);
+
         if (is_object($notification) && $notification->getMessageType() == 'success') {
             return new RedirectResponse($this->router->generate($routeName.'_edit', array('id' => $this->formObject->getId())));
         } else {
