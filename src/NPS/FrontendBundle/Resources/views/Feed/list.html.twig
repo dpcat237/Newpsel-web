@@ -3,15 +3,18 @@
 {% block content %}
     <!--  start product-table ..................................................................................... -->
     <form id="mainform" action="">
+        <a href="{{ url('feeds_sync') }}">{% trans %}Sync all{% endtrans %}</a>
         <table border="0" width="100%" cellpadding="0" cellspacing="0" id="product-table">
             <tr>
                 <th class="table-header-repeat line-left minwidth-1"><a href="">{% trans %}Title{% endtrans %}</a></th>
+                <th class="table-header-repeat line-left minwidth-1"><a href="">{% trans %}Last sync{% endtrans %}</a></th>
                 <th class="table-header-options line-left"><a href="">{% trans %}Options{% endtrans %}</a></th>
             </tr>
 
             {% for feed in feeds %}
                 <tr>
                     <td>{{ feed.title }}</td>
+                    <td>{{ feed.humanDateSync }}</td>
                     <td class="options-width">
                         <a href="{{ url('feed_edit', {'id': feed.id}) }}" title="Edit" class="icon-1 info-tooltip"></a>
                     </td>

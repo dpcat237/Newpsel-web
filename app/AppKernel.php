@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new NPS\FrontendBundle\NPSFrontendBundle(),
             new NPS\ApiBundle\NPSApiBundle(),
             new Fkr\SimplePieBundle\FkrSimplePieBundle(),
+            new BCC\CronManagerBundle\BCCCronManagerBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

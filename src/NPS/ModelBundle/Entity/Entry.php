@@ -5,6 +5,7 @@ namespace NPS\ModelBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NPS\ModelBundle\Entity\Feed;
+use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**
  * Entry
@@ -251,6 +252,16 @@ class Entry
     public function getDateAdd()
     {
         return $this->dateAdd;
+    }
+
+    /**
+     * Get added date with human format
+     *
+     * @return integer
+     */
+    public function getHumanDateAdd()
+    {
+        return DisplayHelper::displayDate($this->dateAdd);
     }
 
     /**

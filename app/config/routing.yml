@@ -6,3 +6,7 @@ nps_frontend:
     resource: "@NPSFrontendBundle/Resources/config/routing.yml"
     prefix:   /
 
+#BCCCronManager routing
+BCCCronManagerBundle:
+    resource: "@BCCCronManagerBundle/Resources/config/routing.xml"
+    prefix:   /cron-manager

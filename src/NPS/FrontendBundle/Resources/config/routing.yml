@@ -8,6 +8,10 @@ feeds:
     pattern:  /feeds
     defaults: { _controller: NPSFrontendBundle:Feed:list }
 
+feeds_sync:
+    pattern:  /feeds_sync
+    defaults: { _controller: NPSFrontendBundle:Feed:sync }
+
 feed_edit_process:
     pattern:  /feed_edit/{id}
     defaults: { _controller: NPSFrontendBundle:Feed:editProcess, id: 0 }

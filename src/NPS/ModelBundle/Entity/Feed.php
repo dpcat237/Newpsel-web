@@ -7,6 +7,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use NPS\ModelBundle\Entity\Entry;
+use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**
  * Feed
@@ -313,6 +314,16 @@ class Feed
     public function getDateSync()
     {
         return $this->dateSync;
+    }
+
+    /**
+     * Get added date with human format
+     *
+     * @return integer
+     */
+    public function getHumanDateSync()
+    {
+        return DisplayHelper::displayDate($this->dateSync);
     }
 
     /**

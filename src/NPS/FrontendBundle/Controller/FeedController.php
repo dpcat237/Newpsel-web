@@ -86,13 +86,13 @@ class FeedController extends BaseController
             $checkCreate = $feedRepo->createFeed($formObject->getUrl());
 
             if (!$checkCreate['error']) {
-                $checkUpdate = $feedRepo->updateFeedData($checkCreate['feed']->getId());
+                /*$checkUpdate = $feedRepo->updateFeedData($checkCreate['feed']->getId());
 
                 if (!$checkUpdate['error']) {
                     $this->notification->setNotification(102);
                 } else {
                     $this->notification->setNotification($checkUpdate['error']);
-                }
+                }*/
             } else {
                 $this->notification->setNotification($checkCreate['error']);
             }
@@ -101,7 +101,7 @@ class FeedController extends BaseController
         }
         $this->setNotificationMessage();
 
-        return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form);
+        return new RedirectResponse($this->router->generate('feeds'));
     }
 
     /**
@@ -142,26 +142,20 @@ class FeedController extends BaseController
     }
 
     /**
-     * Change stat of feed: enabled/disabled
-     * @param Request $request the current request
-     *
+     * Sync all feeds
      * @return Response
      */
-    public function enabledStateAction(Request $request)
+    public function syncAction()
     {
-        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            $objectName = 'Feed';
-            $objectClass = 'NPS\ModelBundle\Entity\Feed';
-            $check = $this->genericChangeObjectStatus($objectName, $objectClass, $request->get('id'));
-        } else {
-            $check = false;
+        $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
+        $rss = $this->get('fkr_simple_pie.rss');
+        $feedRepo->setRss($rss);
+        $feeds = $feedRepo->findAll();
+        foreach ($feeds as $feed) {
+            $feedRepo->updateFeedData($feed->getId());
         }
 
-        if ($check) {
-            return new RedirectResponse($this->router->generate('feeds'));
-        } else {
-            return new RedirectResponse($this->router->generate('login'));
-        }
+        return new RedirectResponse($this->router->generate('feeds'));
     }
 
 }

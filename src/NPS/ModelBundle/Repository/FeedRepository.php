@@ -110,8 +110,10 @@ class FeedRepository extends BaseRepository
 
                 if (empty($rssError)) {
                     if (!$feed->getDateSync()) {
+                        //get last 25 entries
                         $newItems = $this->getItemNew($this->rss->get_items());
                     } else {
+                        //get all entries since last sync
                         $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
                     }
 
@@ -120,11 +122,12 @@ class FeedRepository extends BaseRepository
                         foreach ($newItems as $newItem) {
                             $entryRepo->addEntry($newItem, $feed);
                         }
-                    }
 
-                    $feed->setDateSync();
-                    $em->persist($feed);
-                    $em->flush();
+                        //update last sync data
+                        $feed->setDateSync();
+                        $em->persist($feed);
+                        $em->flush();
+                    }
                 } else {
                     $error = $rssError;
                 }
