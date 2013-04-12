@@ -8,22 +8,22 @@
                 {% include "NPSFrontendBundle:Default:step_holder.html.twig" %}
 
                 <!-- start id-form -->
-                <form method="post" id="FeedEditForm" {{ form_enctype(form) }}>
+                <form method="post" id="FeedAddForm" {{ form_enctype(form) }}>
                     <table border="0" cellpadding="0" cellspacing="0"  id="id-form">
                         <tr>
-                            <th valign="top">{{ form_label(form.title,'Feed title', {'attr' : {'class':''} }) }}</th>
+                            <th valign="top">{{ form_label(form.url,'Feed url', {'attr' : {'class':''} }) }}</th>
                             <td>
-                                {% if form_errors(form.title) %}
+                                {% if form_errors(form.url) %}
                                     {% set name_class = 'inp-form-error' %}
                                 {% else %}
                                     {% set name_class = 'inp-form' %}
                                 {% endif %}
-                                http:// {{ form_widget(form.title, { 'attr' : {'class':name_class, 'placeholder':'write a title' }} ) }}
+                                http:// {{ form_widget(form.url, { 'attr' : {'class':name_class, 'placeholder':'write a url' }} ) }}
                             </td>
                             <td>
-                                {% if form_errors(form.title) %}
+                                {% if form_errors(form.url) %}
                                     <div class="error-left"></div>
-                                    <div class="error-inner">{{ form_errors(form.title) }}</div>
+                                    <div class="error-inner">{{ form_errors(form.url) }}</div>
                                 {% endif %}
                             </td>
                         </tr>

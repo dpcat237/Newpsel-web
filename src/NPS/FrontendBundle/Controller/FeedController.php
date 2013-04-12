@@ -20,15 +20,16 @@ class FeedController extends BaseController
      */
     public function listAction(Request $request)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        /*if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->router->generate('login'));
-        } else {
+        } else {*/
             $objectName = 'Feed';
             $routeName = 'feed';
             $routeNameMany = 'feeds';
+            $orderBy = array('title' => 'ASC');
 
-            return $this->genericListRender($objectName, $routeName, $routeNameMany, $request->get('page'));
-        }
+            return $this->genericListRender($objectName, $routeName, $routeNameMany, $orderBy);
+        //}
     }
 
     /**
@@ -48,32 +49,32 @@ class FeedController extends BaseController
             $routeName = 'feed';
             $routeNameMany = 'feeds';
             $objectClass = 'NPS\ModelBundle\Entity\Feed';
-            $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedType';
+            $form =($objectId)? '\FeedEditType' : '\FeedAddType';
+            $objectTypeClass = 'NPS\FrontendBundle\Form\Type'.$form;
+            $template =($objectId)? 'edit':'add';
 
             //depends if it's edit or creation
             $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
 
-            return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form);
+            return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form, $template);
         //}
     }
 
     /**
-     * Edit/create process form of feeds [POST]
-     * Route defined in routing.yml
+     * Create process form of feeds
      * @param Request $request the current request
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editProcessAction(Request $request)
+    public function addProcess(Request $request)
     {
         //depends if it's edit or creation
-        $objectId = $request->get('id');
         $objectName = 'Feed';
         $routeName = 'feed';
         $routeNameMany = 'feeds';
         $objectClass = 'NPS\ModelBundle\Entity\Feed';
-        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedType';
-        $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
+        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedAddType';
+        $form = $this->createFormEdit(null, $objectName, $objectClass, $objectTypeClass);
         $form->bind($request);
         $this->createNotification($objectName);
         $formObject = $form->getData();
@@ -101,6 +102,43 @@ class FeedController extends BaseController
         $this->setNotificationMessage();
 
         return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form);
+    }
+
+    /**
+     * Edit process form of feeds
+     * @param Request $request the current request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function editProcess(Request $request)
+    {
+        //depends if it's edit or creation
+        $objectId = $request->get('id');
+        $objectName = 'Feed';
+        $routeName = 'feed';
+        $routeNameMany = 'feeds';
+        $objectClass = 'NPS\ModelBundle\Entity\Feed';
+        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedEditType';
+        $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
+        $this->saveGenericForm($objectName, $form->bind($request));
+
+        return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form);
+    }
+
+    /**
+     * Edit/create process form of feeds [POST]
+     * Route defined in routing.yml
+     * @param Request $request the current request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function editProcessAction(Request $request)
+    {
+        if ($request->get('id')) {
+            return $this->editProcess($request);
+        } else {
+            return $this->addProcess($request);
+        }
     }
 
     /**

@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * Type for a feed edit profile form
  */
-class FeedType extends AbstractType
+class FeedEditType extends AbstractType
 {
     /**
      * Default form options
@@ -32,7 +32,7 @@ class FeedType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('url', null, array('label' => 'Name', 'required' => true));
+        $builder->add('title', null, array('label' => 'Name', 'required' => true));
     }
 
     /**
