@@ -13,7 +13,7 @@
 
             {% for feed in feeds %}
                 <tr>
-                    <td>{{ feed.title }}</td>
+                    <td><a href="{{ url('entries', {'id': feed.id}) }}">{{ feed.title }}<a/></td>
                     <td>{{ feed.humanDateSync }}</td>
                     <td class="options-width">
                         <a href="{{ url('feed_edit', {'id': feed.id}) }}" title="Edit" class="icon-1 info-tooltip"></a>

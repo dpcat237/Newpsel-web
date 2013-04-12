@@ -3,6 +3,15 @@ homepage:
     pattern:  /
     defaults: { _controller: NPSFrontendBundle:Default:index }
 
+
+#Entry
+entries:
+    pattern:  /entries/{id}
+    defaults: { _controller: NPSFrontendBundle:Entry:list, id: 0 }
+    requirements:
+      id: \d+
+
+
 #Feed
 feeds:
     pattern:  /feeds
