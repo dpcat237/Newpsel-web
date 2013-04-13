@@ -4,7 +4,6 @@ namespace NPS\ModelBundle\Repository;
 
 use NPS\ModelBundle\Entity\Entry;
 use NPS\ModelBundle\Repository\BaseRepository;
-use NPS\CoreBundle\Helper\TextHelper;
 
 /**
  * EntryRepository
@@ -41,8 +40,8 @@ class EntryRepository extends BaseRepository
 
     /**
      * Get author
-     * @param string $one
-     * @param array $many
+     * @param string $one  [description]
+     * @param array  $many [description]
      *
      * @return string
      */

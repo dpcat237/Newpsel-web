@@ -19,6 +19,7 @@ class FeedRepository extends BaseRepository
 
     /**
      * Set SimplePie RSS
+     * @param SimplePie $rss
      */
     public function setRss($rss)
     {
@@ -39,7 +40,7 @@ class FeedRepository extends BaseRepository
             $em = $this->getEntityManager();
             $url = TextHelper::fixUrl($url);
 
-            if (!$url || !TextHelper::validateFeedUrl($url)){
+            if (!$url || !TextHelper::validateFeedUrl($url)) {
                 $error = 302;
             }
 
@@ -81,7 +82,8 @@ class FeedRepository extends BaseRepository
      *
      * @return Feed
      */
-    public function checkExistFeedUrl($url) {
+    public function checkExistFeedUrl($url)
+    {
         $em = $this->getEntityManager();
         $feedRepo = $em->getRepository('NPSModelBundle:Feed');
         $urlHash = sha1($url);
@@ -92,6 +94,9 @@ class FeedRepository extends BaseRepository
 
     /**
      * Update feed's data
+     * @param integer $feedId
+     *
+     * @return array
      */
     public function updateFeedData($feedId)
     {

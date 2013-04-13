@@ -11,6 +11,23 @@ entries:
     requirements:
       id: \d+
 
+entry:
+    pattern:  /entry/{id}
+    defaults: { _controller: NPSFrontendBundle:Entry:view }
+    requirements:
+      id: \d+
+
+entry_read:
+    pattern:  /entry_read/{feedId}/{entryId}
+    defaults: { _controller: NPSFrontendBundle:Entry:read }
+    requirements:
+      id: \d+
+
+entry_starred:
+    pattern:  /entry_starred/{feedId}/{entryId}
+    defaults: { _controller: NPSFrontendBundle:Entry:star }
+    requirements:
+      id: \d+
 
 #Feed
 feeds:

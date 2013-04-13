@@ -62,6 +62,18 @@ class Entry
     private $category;
 
     /**
+     * @var int
+     * @ORM\Column(name="is_read", type="boolean")
+     */
+    private $isRead;
+
+    /**
+     * @var int
+     * @ORM\Column(name="is_starred", type="boolean")
+     */
+    private $isStarred;
+
+    /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
@@ -95,14 +107,14 @@ class Entry
 
     /**
      * Set title
-     *
      * @param string $title
+     *
      * @return Entry
      */
     public function setTitle($title)
     {
         $this->title = $title;
-    
+
         return $this;
     }
 
@@ -118,14 +130,14 @@ class Entry
 
     /**
      * Set link
-     *
      * @param string $link
+     *
      * @return Entry
      */
     public function setLink($link)
     {
         $this->link = $link;
-    
+
         return $this;
     }
 
@@ -141,14 +153,14 @@ class Entry
 
     /**
      * Set content
-     *
      * @param string $content
+     *
      * @return Entry
      */
     public function setContent($content)
     {
         $this->content = $content;
-    
+
         return $this;
     }
 
@@ -164,14 +176,14 @@ class Entry
 
     /**
      * Set contentHash
-     *
      * @param string $contentHash
+     *
      * @return Entry
      */
     public function setContentHash($contentHash)
     {
         $this->contentHash = $contentHash;
-    
+
         return $this;
     }
 
@@ -187,8 +199,8 @@ class Entry
 
     /**
      * Set category
-     *
      * @param string $category
+     *
      * @return Entry
      */
     public function setCategory($category)
@@ -210,8 +222,8 @@ class Entry
 
     /**
      * Set author
-     *
      * @param string $author
+     *
      * @return Entry
      */
     public function setAuthor($author)
@@ -229,6 +241,52 @@ class Entry
     public function getAuthor()
     {
         return $this->author;
+    }
+
+    /**
+     * Set isRead
+     * @param boolean $isRead
+     *
+     * @return Category
+     */
+    public function setIsRead($isRead)
+    {
+        $this->isRead = $isRead;
+
+        return $this;
+    }
+
+    /**
+     * Get isRead
+     *
+     * @return boolean
+     */
+    public function getIsRead()
+    {
+        return $this->isRead;
+    }
+
+    /**
+     * Set isStarred
+     * @param boolean $isStarred
+     *
+     * @return Category
+     */
+    public function setIsStarred($isStarred)
+    {
+        $this->isStarred = $isStarred;
+
+        return $this;
+    }
+
+    /**
+     * Get isStarred
+     *
+     * @return boolean
+     */
+    public function getIsStarred()
+    {
+        return $this->isStarred;
     }
 
     /**

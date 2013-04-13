@@ -87,6 +87,7 @@ abstract class BaseController extends Controller
      * @param string $routeName     [description]
      * @param object $routeNameMany [description]
      * @param object $form          [description]
+     * @param string $template      [description]
      *
      * @return Render
      */
@@ -111,13 +112,13 @@ abstract class BaseController extends Controller
 
     /**
      * Generate generic list of objects
-     * @param string  $objectName    [description]
-     * @param string  $routeName     [description]
-     * @param string  $routeNameMany [description]
-     * @param integer $pageActual    [description]
-     * @param array   $orderBy       [description]
-     * @param array   $where         [description]
+     * @param string $objectName    [description]
+     * @param string $routeName     [description]
+     * @param string $routeNameMany [description]
+     * @param array  $orderBy       [description]
+     * @param array  $where         [description]
      *
+     * @internal param int $pageActual [description]
      * @return object render
      */
     protected function genericListRender($objectName, $routeName, $routeNameMany, $orderBy = array(), $where = array())
@@ -182,7 +183,7 @@ abstract class BaseController extends Controller
      *
      * @return boolean
      */
-    private function checkRoute($routeName)
+    protected function checkRoute($routeName)
     {
         try {
             $this->router->generate($routeName);
@@ -252,20 +253,23 @@ abstract class BaseController extends Controller
      * @param string  $objectName  [description]
      * @param string  $objectClass [description]
      * @param integer $id          [description]
+     * @param string  $func        [description]
      *
      * @return boolean
      */
-    protected function genericChangeObjectStatus($objectName, $objectClass, $id)
+    protected function genericChangeObjectStatus($objectName, $objectClass, $id, $func = 'IsEnabled')
     {
         $objectRepo = $this->em->getRepository('NPSModelBundle:'.$objectName);
         $object = $objectRepo->find($id);
+        $funcGet = 'get'.$func;
+        $funcSet = 'set'.$func;
 
         if ($object instanceof $objectClass) {
             try {
-                if ($object->getIsEnabled()) {
-                    $object->setIsEnabled(0);
+                if ($object->$funcGet()) {
+                    $object->$funcSet(0);
                 } else {
-                    $object->setIsEnabled(1);
+                    $object->$funcSet(1);
                 }
 
                 $this->em->persist($object);

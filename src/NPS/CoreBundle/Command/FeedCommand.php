@@ -17,6 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class FeedCommand
+ *
  * @package NPS\CoreBundle\Command
  */
 class FeedCommand extends ContainerAwareCommand
@@ -28,14 +29,14 @@ class FeedCommand extends ContainerAwareCommand
     {
         $this
             ->setName('feeds:sync')
-            ->setDescription('Sync all feeds')
-        ;
+            ->setDescription('Sync all feeds');
     }
 
     /**
      * Synchronize all feeds
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param InputInterface  $input  [description]
+     * @param OutputInterface $output [description]
+     *
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output)

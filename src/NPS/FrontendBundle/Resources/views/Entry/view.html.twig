@@ -1,0 +1,9 @@
+{% extends 'NPSFrontendBundle::Default/layout.html.twig' %}
+
+{% block content %}
+    <div>
+        {{ entry.content|raw }}
+    </div>
+    <br /><br />
+    <div><a href="{{ url('entries', {'id': entry.feedId}) }}">Feed</a></div>
+{% endblock %}
