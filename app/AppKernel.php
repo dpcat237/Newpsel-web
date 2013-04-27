@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new NPS\ApiBundle\NPSApiBundle(),
             new Fkr\SimplePieBundle\FkrSimplePieBundle(),
             new BCC\CronManagerBundle\BCCCronManagerBundle()
+            //new JMS\SerializerBundle\JMSSerializerBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

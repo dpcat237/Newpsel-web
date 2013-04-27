@@ -188,4 +188,25 @@ class FeedRepository extends BaseRepository
 
         return $newItems;
     }
+
+    /**
+     * Return array of feeds
+     * @return array
+     */
+    public function getFeedArray()
+    {
+        $em = $this->getEntityManager();
+        $objectRepo = $em->getRepository('NPSModelBundle:Feed');
+        $collection = $objectRepo->findAll();
+
+        $collectionArray = array();
+        foreach ($collection as $value) {
+            $collectionArray[$value->getId()] = array (
+                'id' => $value->getId(),
+                'title' => $value->getTitle()
+            );
+        }
+
+        return $collectionArray;
+    }
 }

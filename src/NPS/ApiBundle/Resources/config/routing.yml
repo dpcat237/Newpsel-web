@@ -1,0 +1,5 @@
+feeds_sync:
+    pattern:  /feeds_sync/
+    defaults: { _controller: NPSApiBundle:Feed:sync }
+    requirements:
+      _method: GET
