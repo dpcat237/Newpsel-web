@@ -21,7 +21,6 @@
         "gedmo/doctrine-extensions": "2.3.*@dev",
         "fkr/simplepie-bundle": "1.*",
         "bcc/cron-manager-bundle": "dev-master"
-        //"jms/serializer-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
