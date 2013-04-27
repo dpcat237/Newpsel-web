@@ -46,7 +46,8 @@ abstract class CoreController extends Controller
     {
         $name = $objectName;
         $objectName = str_replace(' ', '', $objectName);
-        $objectCollection = $this->getCollection($objectName, $orderBy, $where);
+        $objectRepo = $this->em->getRepository('NPSModelBundle:'.$objectName);
+        $objectCollection = $objectRepo->getListPagination(0, 0, $orderBy, $where);
 
         $renderData = array(
             'heading' => $this->get('translator')->trans($name),
