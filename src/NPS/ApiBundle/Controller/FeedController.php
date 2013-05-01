@@ -27,12 +27,11 @@ class FeedController extends BaseController
         $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
         $feedCollection = $feedRepo->getFeedArray();
 
-        $renderData = array(
-            'success' => true,
-            'data' => $feedCollection
-        );
+        $jsonData = json_encode($feedCollection);
+        $headers = array('Content-Type' => 'application/json');
+        $response = new Response($jsonData, 200, $headers);
 
-        return $this->render('NPSApiBundle:Default:base.json.twig', $renderData);
+        return $response;
         //}
     }
 
