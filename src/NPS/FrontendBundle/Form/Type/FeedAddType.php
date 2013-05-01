@@ -4,6 +4,7 @@ namespace NPS\FrontendBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Type for a feed edit profile form
@@ -11,17 +12,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 class FeedAddType extends AbstractType
 {
     /**
-     * Default form options
-     *
-     * @param array $options
-     *
-     * @return array With the options
+     * @param OptionsResolverInterface $resolver
      */
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return array(
+        $resolver->setDefaults(array(
             'data_class' => 'NPS\ModelBundle\Entity\Feed',
-        );
+        ));
     }
 
     /**

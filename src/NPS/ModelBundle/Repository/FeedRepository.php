@@ -201,8 +201,8 @@ class FeedRepository extends BaseRepository
 
         $collectionArray = array();
         foreach ($collection as $value) {
-            $collectionArray[$value->getId()] = array (
-                'id' => $value->getId(),
+            $collectionArray[] = array (
+                'api_id' => $value->getId(),
                 'title' => $value->getTitle(),
                 'website' => $value->getWebsite(),
                 'favicon' => $value->getFavicon()
