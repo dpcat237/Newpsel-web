@@ -63,13 +63,13 @@ class Entry
 
     /**
      * @var int
-     * @ORM\Column(name="is_read", type="boolean")
+     * @ORM\Column(name="is_read", type="boolean", nullable=true)
      */
     private $isRead;
 
     /**
      * @var int
-     * @ORM\Column(name="is_starred", type="boolean")
+     * @ORM\Column(name="is_starred", type="boolean", nullable=true)
      */
     private $isStarred;
 

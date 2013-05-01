@@ -18,7 +18,7 @@
                                 {% else %}
                                     {% set name_class = 'inp-form' %}
                                 {% endif %}
-                                http:// {{ form_widget(form.title, { 'attr' : {'class':name_class, 'placeholder':'write a title' }} ) }}
+                                {{ form_widget(form.title, { 'attr' : {'class':name_class, 'placeholder':'write a title' }} ) }}
                             </td>
                             <td>
                                 {% if form_errors(form.title) %}

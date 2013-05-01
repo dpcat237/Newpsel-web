@@ -1,4 +1,4 @@
-feeds_sync:
+api_feeds_sync:
     pattern:  /feeds_sync/
     defaults: { _controller: NPSApiBundle:Feed:sync }
     requirements:
