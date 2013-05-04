@@ -20,6 +20,7 @@ class UserController extends BaseController
      */
     public function loginAction(Request $request)
     {
+        echo 'tut: symf'; exit();
         $json = $request->request->get('JSONFile');
         $jsonData = json_decode($json);
         echo '<pre>tut: '; print_r($jsonData); echo '</pre>'; exit();
