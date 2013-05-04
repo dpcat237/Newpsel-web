@@ -6,7 +6,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use NPS\ModelBundle\Entity\Device;
 
 /**
  * User
@@ -70,6 +72,19 @@ class User implements UserInterface
      */
     private $dateUp;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Device", mappedBy="feed")
+     */
+    protected $devices;
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->devices = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -269,5 +284,38 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         return "";
+    }
+
+    /**
+     * Add devices
+     * @param Device $device
+     *
+     * @return Feed
+     */
+    public function addDevice(Device $device)
+    {
+        $this->devices[] = $device;
+
+        return $this;
+    }
+
+    /**
+     * Remove devices
+     *
+     * @param Device $device
+     */
+    public function removeDevice(Device $device)
+    {
+        $this->devices->removeElement($device);
+    }
+
+    /**
+     * Get devices
+     *
+     * @return Collection
+     */
+    public function getEntries()
+    {
+        return $this->devices;
     }
 }

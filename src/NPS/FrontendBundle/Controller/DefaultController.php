@@ -138,8 +138,7 @@ class DefaultController extends BaseController
         $form->bind($request);
         $user = $form->getData();
         // Set encrypted password
-        $encoder = $this->container->get('security.encoder.blowfish');
-        $password = $encoder->encodePassword($user->getPassword());
+        $password = sha1("sc_".$user->getPassword());
         $user->setPassword($password);
         $user->setIsEnabled(true);
         if ($form->isValid()) {
@@ -149,8 +148,8 @@ class DefaultController extends BaseController
             // Generate Activation Code
             $ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
             // Set verification code key in cache
-            $cache = $this->container->get('redis_cache');
-            $cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
+            //$cache = $this->container->get('redis_cache');
+            //$cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
             //  Show message 'check your email to confirm registration...'
             $viewVars = array('Name' => $user->getUsername());
 

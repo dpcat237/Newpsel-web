@@ -79,15 +79,15 @@ services:
                 - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
             arguments: [ '@router', '@service_container' ]
 
+    server_cache:
+            class: NPS\CoreBundle\Service\ServerCache
+            arguments: ['@snc_redis.default', 3600]
+
 #SimplePie RSS
 fkr_simple_pie:
     cache_enabled: false
     cache_dir: %kernel.cache_dir%/rss
     cache_duration: 3600
-
-#blowfish cost is HIGH (default 15)
-elnur_blowfish_password_encoder:
-    cost: 15
 
 #snc redis bundle, requires 'predis'
 snc_redis:

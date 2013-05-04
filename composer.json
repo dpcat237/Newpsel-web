@@ -21,7 +21,6 @@
         "gedmo/doctrine-extensions": "2.3.*@dev",
         "fkr/simplepie-bundle": "1.*",
         "bcc/cron-manager-bundle": "dev-master",
-        "elnur/blowfish-password-encoder-bundle": "0.4.0",
         "predis/predis": "0.*",
         "snc/redis-bundle": "2.*"
     },
