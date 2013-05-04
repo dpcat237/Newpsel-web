@@ -3,3 +3,9 @@ api_feeds_sync:
     defaults: { _controller: NPSApiBundle:Feed:sync }
     requirements:
       _method: GET
+
+api_login:
+    pattern:  /login/
+    defaults: { _controller: NPSApiBundle:User:login }
+    requirements:
+      _method: POST
