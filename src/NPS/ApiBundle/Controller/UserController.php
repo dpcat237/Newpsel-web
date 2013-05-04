@@ -21,7 +21,11 @@ class UserController extends BaseController
     public function loginAction(Request $request)
     {
         $json = json_decode($request->getContent());
-        echo '<pre>tut: '; print_r($json); echo '</pre>'; exit();
+
+        echo '<pre>tut: '; print_r($json); echo '</pre>';
+        echo '<pre>tut1: '; print_r($json->username); echo '</pre>';
+        echo '<pre>tut1: '; print_r($json->password); echo '</pre>';
+        exit();
 
 
 
