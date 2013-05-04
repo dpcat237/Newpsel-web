@@ -22,7 +22,7 @@ class UserController extends BaseController
     {
         //echo 'tut: '.$request->getMethod();
         echo '<pre>tut: '; print_r($_FILES); echo '</pre>';
-        \Doctrine\Common\Util\Debug::dump($_POST); exit();
+        \Doctrine\Common\Util\Debug::dump($_POST);
         $json = $request->request->get('JSONFile');
         $jsonData = json_decode($json);
         echo '<pre>tut: '; print_r($jsonData); echo '</pre>'; exit();
