@@ -7,3 +7,5 @@ api_feeds_sync:
 api_login:
     pattern:  /login/
     defaults: { _controller: NPSApiBundle:User:login }
+    requirements:
+      _method: POST
