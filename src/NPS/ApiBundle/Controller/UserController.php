@@ -31,7 +31,7 @@ class UserController extends BaseController
 
             if ($checkUser instanceof User) {
                 $deviceRepo = $this->em->getRepository('NPSModelBundle:Device');
-                $deviceRepo->addDevice('device_test', $checkUser);
+                $deviceRepo->addDevice($json->appKey, $checkUser);
 
                 $cache = $this->container->get('server_cache');
                 $cache->set("device_".$json->appKey, $checkUser->getId());
