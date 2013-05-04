@@ -3,6 +3,34 @@ homepage:
     pattern:  /
     defaults: { _controller: NPSFrontendBundle:Default:index }
 
+login:
+    pattern:  /login
+    defaults: { _controller: NPSFrontendBundle:Default:login }
+
+login_check_process:
+    pattern:  /login_check
+    defaults: { _controller: NPSFrontendBundle:Default:processLogin }
+    requirements:
+        _method: POST
+
+login_check:
+    pattern:  /login_check
+    defaults: { _controller: NPSFrontendBundle:Default:loginCheck }
+    requirements:
+        _method: GET
+
+signup_process:
+    pattern:  /signup
+    defaults: { _controller: NPSFrontendBundle:Default:signupProcess }
+    requirements:
+        _method: POST
+
+signup:
+    pattern:  /signup
+    defaults: { _controller: NPSFrontendBundle:Default:signup }
+    requirements:
+        _method: GET
+
 
 #Entry
 entries:

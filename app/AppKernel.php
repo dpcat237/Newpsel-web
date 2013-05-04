@@ -24,7 +24,9 @@ class AppKernel extends Kernel
             new NPS\FrontendBundle\NPSFrontendBundle(),
             new NPS\ApiBundle\NPSApiBundle(),
             new Fkr\SimplePieBundle\FkrSimplePieBundle(),
-            new BCC\CronManagerBundle\BCCCronManagerBundle()
+            new BCC\CronManagerBundle\BCCCronManagerBundle(),
+            new Elnur\BlowfishPasswordEncoderBundle\ElnurBlowfishPasswordEncoderBundle(),
+            new Snc\RedisBundle\SncRedisBundle()
             //new JMS\SerializerBundle\JMSSerializerBundle()
         );
 

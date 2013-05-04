@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use NPS\ModelBundle\Entity\Entry;
 use NPS\CoreBundle\Helper\DisplayHelper;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Feed

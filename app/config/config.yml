@@ -84,3 +84,50 @@ fkr_simple_pie:
     cache_enabled: false
     cache_dir: %kernel.cache_dir%/rss
     cache_duration: 3600
+
+#blowfish cost is HIGH (default 15)
+elnur_blowfish_password_encoder:
+    cost: 15
+
+#snc redis bundle, requires 'predis'
+snc_redis:
+    clients:
+        default:
+            type: predis
+            alias: default
+            dsn: [ %redis_cache_server% ]
+            logging: %kernel.debug%
+            options:
+                profile: 2.4
+                connection_timeout: 10
+                connection_persistent: true
+                read_write_timeout: 30
+                iterable_multibulk: false
+                throw_errors: true
+        #save db data in redis
+        data:
+            type: predis
+            alias: data
+            dsn: [ %redis_cache_server%]
+            logging: %kernel.debug%
+        #save sessions in redis
+        session:
+            type: predis
+            alias: session
+            dsn: [ %redis_sessions_server% ]
+            logging: %kernel.debug%
+    #doctrine:
+    #    metadata_cache:
+    #        client: data
+    #        entity_manager: default          # the name of your entity_manager connection
+    #        document_manager: default        # the name of your document_manager connection
+    #    result_cache:
+    #        client: data
+    #        entity_manager: default          # you may specify multiple entity_managers [default, test, waka]
+    #    query_cache:
+    #        client: data
+    #        entity_manager: default
+    session:
+        client: session
+        prefix: session
+        use_as_default: true

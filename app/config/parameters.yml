@@ -13,3 +13,6 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    redis_cache_server:    redis://localhost/4
+    redis_sessions_server: redis://localhost/5

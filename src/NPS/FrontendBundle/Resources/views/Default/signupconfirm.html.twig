@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+</head>
+<body>
+<p><span>¡Estás a un sólo paso de formar parte de ThClone!</span></p>
+<p><span>Confirma tu dirección de correo haciendo clic en este enlace.</span></p>
+<p><a href="{{ url('validate', { 'id' : data.userid, 'code' : data.activationcode }) }}">
+    {{ url('validate', { 'id' : data.userid, 'code' : data.activationcode }) }}
+</a></p>
+<p>Un saludo,</p>
+<p>El equipo de ThClone</p>
+</body>
+</html>
