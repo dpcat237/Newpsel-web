@@ -20,6 +20,7 @@ class UserController extends BaseController
      */
     public function loginAction(Request $request)
     {
+        \Doctrine\Common\Util\Debug::dump($request); exit();
         $json = $request->request->get('JSONFile');
         $jsonData = json_decode($json);
         echo '<pre>tut: '; print_r($jsonData); echo '</pre>'; exit();
