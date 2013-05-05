@@ -14,15 +14,15 @@
 {% block content %}
     <div id="login-bg">
     <div>
-        <a href="{{ path('admin_index') }}">
-            <img src="{{ asset('bundles/npsfrontend/images/logo.jpg') }}" alt="NPS" />
+        <a href="{{ path('homepage') }}">
+            <img src="{{ asset('bundles/npsfrontend/images/logo.png') }}" alt="NPS" />
         </a>
     </div>
     <div id="login-holder">
         <div id="loginbox">
             <!--  start login-inner -->
             <div id="login-inner">
-                <form action="{{ url("admin_login_check") }}" method="post" id="login">
+                <form method="post" id="login">
                     <table border="0" cellpadding="0" cellspacing="0">
                         <tr>
                             <th>{{ form_label(form.username,'', {'attr' : {'class':''} }) }}</th>

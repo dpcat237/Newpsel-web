@@ -6,9 +6,11 @@ homepage:
 login:
     pattern:  /login
     defaults: { _controller: NPSFrontendBundle:Default:login }
+    requirements:
+        _method: GET
 
-login_check_process:
-    pattern:  /login_check
+login_process:
+    pattern:  /login
     defaults: { _controller: NPSFrontendBundle:Default:processLogin }
     requirements:
         _method: POST
@@ -18,6 +20,9 @@ login_check:
     defaults: { _controller: NPSFrontendBundle:Default:loginCheck }
     requirements:
         _method: GET
+
+logout:
+    pattern:  /logout
 
 signup_process:
     pattern:  /signup

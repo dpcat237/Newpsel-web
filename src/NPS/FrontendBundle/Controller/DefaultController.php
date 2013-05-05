@@ -2,7 +2,12 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ModelBundle\Entity\User;
 
 /**
@@ -18,9 +23,60 @@ class DefaultController extends BaseController
      */
     public function indexAction()
     {
-        $name = ':)';
+        if ($this->get('security.context')->isGranted('ROLE_USER')) {
+            $name = ':)';
 
-        return $this->render('NPSFrontendBundle:Default:index.html.twig', array('name' => $name));
+            return $this->render('NPSFrontendBundle:Default:index.html.twig', array('name' => $name));
+        } else {
+            return new RedirectResponse($this->container->get('router')->generate('login'));
+        }
+
+    }
+
+    /**
+     * Process a POST for a login. Defined in routing.yml, only accepts POST
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return Response
+     */
+    public function processLoginAction(Request $request)
+    {
+        if ($this->get('security.context')->isGranted('ROLE_USER')) {
+            //if the user is logged, go to the homepage
+            $redirectRoute = $this->container->get('router')->generate('homepage');
+
+            return new RedirectResponse($redirectRoute);
+        }
+
+        //if he's not logged
+        $formData = $request->get('form');
+        $username = $formData['username'];
+        $password = $formData['password'];
+
+        //check password
+        $user = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('NPSModelBundle:User')
+            ->findOneByUsername($username);
+        $ok = false;
+        if ($user instanceof User) {
+            $ok = ($user->getPassword() == sha1("sc_".$password));
+        }
+
+        //check that pwd is OK and user is enabled
+        if ($ok && $user->getIsEnabled()) {
+            //password is correct, make login
+            $this->doLogin($user);
+            //make login, got to admin_index
+            $redirectRoute = $this->container->get('router')->generate('homepage');
+
+            return new RedirectResponse($redirectRoute);
+        }
+
+        //login is not correct, set AUTH_ERROR in context, display login page
+        $request->attributes->set(SecurityContext::AUTHENTICATION_ERROR, true);
+
+        return $this->loginAction($request);
     }
 
     /**
@@ -32,7 +88,7 @@ class DefaultController extends BaseController
      */
     public function loginCheckAction(Request $request)
     {
-        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.context')->isGranted('ROLE_USER')) {
             //if the user is logged, go to the homepage
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
@@ -49,14 +105,14 @@ class DefaultController extends BaseController
      */
     public function loginAction(Request $request)
     {
-        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.context')->isGranted('ROLE_USER')) {
             //if the user is logged, go to the homepage
             $redirectRoute = $this->container->get('router')->generate('homepage');
 
             return new RedirectResponse($redirectRoute);
         }
-        $session = $request->getSession();
 
+        $session = $request->getSession();
         // get the login error if there is one
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
@@ -168,7 +224,6 @@ class DefaultController extends BaseController
      */
     public function doLogin(UserInterface $user)
     {
-
         //ok is true by default
         $ok = true;
         //invalidate current token

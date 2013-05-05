@@ -15,20 +15,20 @@ security:
     #    ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-        in_memory:
-            memory:
-                users:
-                    user:  { password: passs, roles: [ 'ROLE_USER' ] }
+        entity_admin:
+            entity:
+                class: NPS\ModelBundle\Entity\User
+                property: username
 
     firewalls:
-        admin_secured_area:
-              pattern: /api/.*
+        web_secured_area:
+              pattern: /.*
               anonymous: ~
               form_login:
-                  login_path: /api/login
+                  login_path: /login
               logout:
-                  path:   /api/logout
-                  target: /api/
+                  path:   /logout
+                  target: /
         #members_secured_area:
         #    pattern: /members/.*
         #    provider: entity_members
@@ -44,4 +44,12 @@ security:
             security: false
 
     access_control:
-        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        web_login:
+                path: /login
+                roles: IS_AUTHENTICATED_ANONYMOUSLY
+        api_area:
+            path: /api/.*
+            roles: IS_AUTHENTICATED_ANONYMOUSLY
+        #web_area:
+        #        path: /.*
+        #        roles: ROLE_USER
