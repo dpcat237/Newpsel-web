@@ -14,14 +14,15 @@
                 <tr>
                     <td>{{ entry.humanDateAdd }}</td>
                     <td>
-                        {% if entry.isRead %}
+                        <a href="{{ url('entry', {'id': entry.id}) }}"><b>{{ entry.title|raw }}</b></a>
+                        {# {% if entry.isRead %}
                             <a href="{{ url('entry', {'id': entry.id}) }}">{{ entry.title|raw }}</a>
                         {% else %}
-                        <a href="{{ url('entry', {'id': entry.id}) }}"><b>{{ entry.title|raw }}</b></a>
-                        {% endif %}
+                            <a href="{{ url('entry', {'id': entry.id}) }}"><b>{{ entry.title|raw }}</b></a>
+                        {% endif %}#}
                     </td>
                     <td class="options-width">
-                        {% if entry.isRead %}
+                        {#{% if entry.isRead %}
                             <a href="{{ url('entry_read', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Unread" class="icon-5 info-tooltip"></a>
                         {% else %}
                             <a href="{{ url('entry_read', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Read" class="icon-2 info-tooltip"></a>
@@ -30,7 +31,7 @@
                             <a href="{{ url('entry_starred', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Unread" class="icon-3 icon-3_on info-tooltip"></a>
                         {% else %}
                             <a href="{{ url('entry_starred', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Read" class="icon-3 info-tooltip"></a>
-                        {% endif %}
+                        {% endif %}#}
                     </td>
                 </tr>
             {% endfor %}

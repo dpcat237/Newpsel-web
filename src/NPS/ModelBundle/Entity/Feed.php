@@ -389,7 +389,7 @@ class Feed
     }
 
     /**
-     * Get userFeeds
+     * Get userEntries
      *
      * @return Collection
      */

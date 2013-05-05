@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\ModelBundle\Entity\User;
+use NPS\ModelBundle\Entity\Device;
 
 /**
  * FeedController
@@ -62,12 +63,18 @@ class UserController extends BaseController
     private function checkLogged($appKey, $username = null)
     {
         $cache = $this->container->get('server_cache');
-        $key = $cache->get($appKey);
-        if ($key && $username) {
+        $key = $cache->get("device_".$appKey);
+        if (!$key && $username) {
             $deviceRepo = $this->em->getRepository('NPSModelBundle:Device');
             $device = $deviceRepo->findOneByAppKey($appKey);
-            if ($username == $device->getUser()->getIsername()) {
-                return true;
+            if ($device instanceof Device) {
+                if ($username == $device->getUser()->getUsername()) {
+                    $cache->set("device_".$appKey, $device->getUserId());
+
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }

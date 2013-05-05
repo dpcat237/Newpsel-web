@@ -2,12 +2,12 @@
 
 namespace NPS\ModelBundle\Entity;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\ORM\Mapping as ORM;
 use NPS\ModelBundle\Entity\Feed;
 use NPS\ModelBundle\Entity\User;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
- * FeedUser
+ * UserFeed
  *
  * @ORM\Entity(repositoryClass="NPS\ModelBundle\Repository\UserFeedRepository")
  * @ORM\Table(name="user_feed")
@@ -123,6 +123,52 @@ class UserFeed
         }
 
         return $userId;
+    }
+
+    /**
+     * Set isUnread
+     * @param \boolean $isUnread
+     *
+     * @return UserFeed
+     */
+    public function setIsUnread($isUnread)
+    {
+        $this->isUnread = $isUnread;
+
+        return $this;
+    }
+
+    /**
+     * Get isEnabled
+     *
+     * @return \int
+     */
+    public function getIsUnread()
+    {
+        return $this->isUnread;
+    }
+
+    /**
+     * Set isStared
+     * @param \boolean $isStared
+     *
+     * @return UserFeed
+     */
+    public function setIsStared($isStared)
+    {
+        $this->isStared = $isStared;
+
+        return $this;
+    }
+
+    /**
+     * Get isStared
+     *
+     * @return \int
+     */
+    public function getIsStared()
+    {
+        return $this->isStared;
     }
 
     /**

@@ -64,18 +64,6 @@ class Entry
     private $category;
 
     /**
-     * @var int
-     * @ORM\Column(name="is_read", type="boolean", nullable=true)
-     */
-    private $isRead;
-
-    /**
-     * @var int
-     * @ORM\Column(name="is_starred", type="boolean", nullable=true)
-     */
-    private $isStarred;
-
-    /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
@@ -256,52 +244,6 @@ class Entry
     public function getAuthor()
     {
         return $this->author;
-    }
-
-    /**
-     * Set isRead
-     * @param boolean $isRead
-     *
-     * @return Category
-     */
-    public function setIsRead($isRead)
-    {
-        $this->isRead = $isRead;
-
-        return $this;
-    }
-
-    /**
-     * Get isRead
-     *
-     * @return boolean
-     */
-    public function getIsRead()
-    {
-        return $this->isRead;
-    }
-
-    /**
-     * Set isStarred
-     * @param boolean $isStarred
-     *
-     * @return Category
-     */
-    public function setIsStarred($isStarred)
-    {
-        $this->isStarred = $isStarred;
-
-        return $this;
-    }
-
-    /**
-     * Get isStarred
-     *
-     * @return boolean
-     */
-    public function getIsStarred()
-    {
-        return $this->isStarred;
     }
 
     /**

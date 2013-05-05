@@ -4,6 +4,7 @@ namespace NPS\ModelBundle\Repository;
 
 use NPS\ModelBundle\Entity\Feed;
 use NPS\ModelBundle\Entity\User;
+use NPS\ModelBundle\Entity\UserFeed;
 use NPS\ModelBundle\Repository\BaseRepository;
 use NPS\CoreBundle\Helper\TextHelper;
 
@@ -62,7 +63,6 @@ class FeedRepository extends BaseRepository
                     $feed->setLanguage($this->rss->get_language());
                     $feed->setFavicon($this->rss->get_favicon());
                     $em->persist($feed);
-                    $em->flush();
                 } catch (\Exception $e) {
                     $error = $e->getMessage();
                 }
@@ -71,13 +71,15 @@ class FeedRepository extends BaseRepository
             }
 
             if ($user instanceof User) {
-                $feedSubscribed = $user->checkFeedExists($feed);
+                $feedSubscribed = $this->checkUserSubscribed($user->getId(), $feed->getId());
                 if (!$feedSubscribed) {
-                    $user->addFeed($feed);
-                    $em->persist($feed);
-                    $em->flush();
+                    $userFeed = new UserFeed();
+                    $userFeed->setUser($user);
+                    $userFeed->setFeed($feed);
+                    $em->persist($userFeed);
                 }
             }
+            $em->flush();
 
         } else {
             throw new Exception('SimplePie object not set');
@@ -86,6 +88,25 @@ class FeedRepository extends BaseRepository
         $result['error'] = $error;
 
         return $result;
+    }
+
+    public function checkUserSubscribed($userId, $feedId)
+    {
+        $em = $this->getEntityManager();
+        $repository = $em->getRepository('NPSModelBundle:UserFeed');
+        $query = $repository->createQueryBuilder('o')
+            ->where('o.user = :userId')
+            ->andWhere('o.feed = :feedId')
+            ->setParameter('userId', $userId)
+            ->setParameter('feedId', $feedId)
+            ->getQuery();
+        $feedCollection = $query->getResult();
+
+        if (count($feedCollection)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

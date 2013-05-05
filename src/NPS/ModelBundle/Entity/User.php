@@ -77,17 +77,17 @@ class User implements UserInterface
     private $dateUp;
 
     /**
-     * @ORM\OneToMany(targetEntity="Device", mappedBy="feed")
+     * @ORM\OneToMany(targetEntity="Device", mappedBy="user")
      */
     protected $devices;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserEntry", mappedBy="entry", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="UserEntry", mappedBy="user")
      */
     protected $userEntries;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="feed", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="user")
      */
     protected $userFeeds;
 
@@ -330,7 +330,7 @@ class User implements UserInterface
      *
      * @return Collection
      */
-    public function getEntries()
+    public function getDevices()
     {
         return $this->devices;
     }
@@ -367,6 +367,7 @@ class User implements UserInterface
         return $this->userEntries;
     }
 
+
     /**
      * Add userFeed
      * @param UserFeed $userFeed
@@ -378,21 +379,6 @@ class User implements UserInterface
         $this->userFeeds[] = $userFeed;
 
         return $this;
-    }
-
-    /**
-     * Add feed
-     * @param Feed $feed
-     *
-     * @return User
-     */
-    public function addFeed(Feed $feed)
-    {
-        $userFeed = new UserFeed();
-        $userFeed->setUser($this);
-        $userFeed->setFeed($feed);
-
-        return $this->addUserFeed($userFeed);
     }
 
     /**
@@ -412,22 +398,5 @@ class User implements UserInterface
     public function getUserFeeds()
     {
         return $this->userFeeds;
-    }
-
-    /**
-     * Check if user already is subscribed to this feed
-     * @param $feedId
-     *
-     * @return Boolean
-     */
-    public function checkFeedExists($feedId)
-    {
-        foreach ($this->getUserFeeds() as $feed) {
-            if ($feedId == $feed->getFeedId()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -39,15 +39,15 @@ class UserEntry
 
     /**
      * @var int
-     * @ORM\Column(name="is_unread", type="boolean")
+     * @ORM\Column(name="is_unread", type="boolean", nullable=false)
      */
-    private $isUnread;
+    private $isUnread = false;
 
     /**
      * @var int
-     * @ORM\Column(name="is_stared", type="boolean")
+     * @ORM\Column(name="is_stared", type="boolean", nullable=false)
      */
-    private $isStared;
+    private $isStared = false;
 
     /**
      * @var integer

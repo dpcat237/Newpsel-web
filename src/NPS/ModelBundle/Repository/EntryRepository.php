@@ -3,6 +3,8 @@
 namespace NPS\ModelBundle\Repository;
 
 use NPS\ModelBundle\Entity\Entry;
+use NPS\ModelBundle\Entity\User;
+use NPS\ModelBundle\Entity\UserEntry;
 use NPS\ModelBundle\Repository\BaseRepository;
 
 /**
@@ -65,4 +67,87 @@ class EntryRepository extends BaseRepository
         }
     }
 
+    public function changeStatus(User $user, Entry $entry, $statusSet, $change = null)
+    {
+        $statusGet = 'get'.$statusSet;
+        $statusSet = 'set'.$statusSet;
+        $em = $this->getEntityManager();
+        $userEntry = $this->hasEntry($user->getId(), $entry->getId());
+
+        if ($userEntry instanceof UserEntry) {
+            if ($change == 1) {
+                $status = true;
+            } elseif ($change == 2)  {
+                $status = false;
+            } else {
+                if ($userEntry->$statusGet()) { //change actual status
+                    $status = false;
+                } else {
+                    $status = true;
+                }
+            }
+        } else {
+            $userEntry = new UserEntry();
+            $userEntry->setUser($user);
+            $userEntry->setEntry($entry);
+            if ($change == 1) {
+                $status = true;
+            } else {
+                $status = false;
+            }
+        }
+        $userEntry->$statusSet($status);
+        $em->persist($userEntry);
+        $em->flush();
+    }
+
+    /**
+     * Check if are relation between user and entry.
+     * @param $userId
+     * @param $entryId
+     *
+     * @return null|Entry
+     */
+    public function hasEntry($userId, $entryId)
+    {
+        $em = $this->getEntityManager();
+        $repository = $em->getRepository('NPSModelBundle:UserEntry');
+        $query = $repository->createQueryBuilder('o')
+            ->where('o.user = :userId')
+            ->andWhere('o.entry = :entryId')
+            ->setParameter('userId', $userId)
+            ->setParameter('entryId', $entryId)
+            ->getQuery();
+        $entryCollection = $query->getResult();
+        $entry = null;
+
+        if (count($entryCollection) == 1) {
+            foreach ($entryCollection as $value) {
+                $entry = $value;
+            }
+        }
+
+        return $entry;
+    }
+
+    public function canSee($userId, $entryId)
+    {
+        $em = $this->getEntityManager();
+        $repository = $em->getRepository('NPSModelBundle:Feed');
+        $query = $repository->createQueryBuilder('f')
+            ->join('f.userFeeds', 'uf')
+            ->join('f.entries', 'e')
+            ->join('uf.user', 'u')
+            ->where('u.id = :userId')
+            ->andWhere('e.id = :entryId')
+            ->setParameter('userId', $userId)
+            ->setParameter('entryId', $entryId)
+            ->getQuery();
+        $feedCollection = $query->getResult();
+        if (count($feedCollection)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
