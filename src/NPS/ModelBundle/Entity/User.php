@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use NPS\ModelBundle\Entity\Device;
+use NPS\ModelBundle\Entity\Feed;
+use NPS\ModelBundle\Entity\UserEntry;
+use NPS\ModelBundle\Entity\UserFeed;
+
 
 /**
  * User
@@ -77,6 +81,16 @@ class User implements UserInterface
      */
     protected $devices;
 
+    /**
+     * @ORM\OneToMany(targetEntity="UserEntry", mappedBy="entry", cascade={"persist"})
+     */
+    protected $userEntries;
+
+    /**
+     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="feed", cascade={"persist"})
+     */
+    protected $userFeeds;
+
 
     /**
      * Constructor
@@ -84,6 +98,8 @@ class User implements UserInterface
     public function __construct()
     {
         $this->devices = new ArrayCollection();
+        $this->userEntries = new ArrayCollection();
+        $this->userFeeds = new ArrayCollection();
     }
 
     /**
@@ -317,5 +333,101 @@ class User implements UserInterface
     public function getEntries()
     {
         return $this->devices;
+    }
+
+    /**
+     * Add userEntry
+     * @param UserEntry $userEntry
+     *
+     * @return User
+     */
+    public function addUserEntry(UserEntry $userEntry)
+    {
+        $this->userEntries[] = $userEntry;
+
+        return $this;
+    }
+
+    /**
+     * Remove userEntry
+     *
+     */
+    public function removeUserEntry(UserEntry $userEntry)
+    {
+        $this->userEntries->removeElement($userEntry);
+    }
+
+    /**
+     * Get userEntries
+     *
+     * @return Collection
+     */
+    public function getUserEntries()
+    {
+        return $this->userEntries;
+    }
+
+    /**
+     * Add userFeed
+     * @param UserFeed $userFeed
+     *
+     * @return User
+     */
+    public function addUserFeed(UserFeed $userFeed)
+    {
+        $this->userFeeds[] = $userFeed;
+
+        return $this;
+    }
+
+    /**
+     * Add feed
+     * @param Feed $feed
+     *
+     * @return User
+     */
+    public function addFeed(Feed $feed)
+    {
+        $userFeed = new UserFeed();
+        $userFeed->setUser($this);
+        $userFeed->setFeed($feed);
+
+        return $this->addUserFeed($userFeed);
+    }
+
+    /**
+     * Remove userFeed
+     *
+     */
+    public function removeUserFeed(UserFeed $userFeed)
+    {
+        $this->userFeeds->removeElement($userFeed);
+    }
+
+    /**
+     * Get userFeeds
+     *
+     * @return Collection
+     */
+    public function getUserFeeds()
+    {
+        return $this->userFeeds;
+    }
+
+    /**
+     * Check if user already is subscribed to this feed
+     * @param $feedId
+     *
+     * @return Boolean
+     */
+    public function checkFeedExists($feedId)
+    {
+        foreach ($this->getUserFeeds() as $feed) {
+            if ($feedId == $feed->getFeedId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

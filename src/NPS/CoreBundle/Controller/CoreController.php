@@ -38,16 +38,17 @@ abstract class CoreController extends Controller
      * @param string $routeNameMany [description]
      * @param array  $orderBy       [description]
      * @param array  $where         [description]
+     * @param array  $join          [description]
      *
      * @internal param int $pageActual [description]
      * @return object render
      */
-    public function genericListRender($objectName, $routeName, $routeNameMany, $orderBy = array(), $where = array())
+    public function genericListRender($objectName, $routeName, $routeNameMany, $orderBy = array(), $where = array(), $join = array())
     {
         $name = $objectName;
         $objectName = str_replace(' ', '', $objectName);
         $objectRepo = $this->em->getRepository('NPSModelBundle:'.$objectName);
-        $objectCollection = $objectRepo->getListPagination(0, 0, $orderBy, $where);
+        $objectCollection = $objectRepo->getListPagination(0, 0, $orderBy, $where, $join);
 
         $renderData = array(
             'heading' => $this->get('translator')->trans($name),

@@ -4,7 +4,9 @@ namespace NPS\ModelBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\Common\Collections\ArrayCollection;
 use NPS\ModelBundle\Entity\Feed;
+use NPS\ModelBundle\Entity\UserEntry;
 use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**
@@ -94,6 +96,19 @@ class Entry
      */
     private $feed;
 
+    /**
+     * @ORM\OneToMany(targetEntity="UserEntry", mappedBy="entry")
+     */
+    protected $userEntries;
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->userEntries = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -378,5 +393,37 @@ class Entry
         }
 
         return $feedId;
+    }
+
+    /**
+     * Add userEntry
+     * @param UserEntry $userEntry
+     *
+     * @return Entry
+     */
+    public function addUserEntry(UserEntry $userEntry)
+    {
+        $this->userEntries[] = $userEntry;
+
+        return $this;
+    }
+
+    /**
+     * Remove userEntry
+     *
+     */
+    public function removeUserEntry(UserEntry $userEntry)
+    {
+        $this->userEntries->removeElement($userEntry);
+    }
+
+    /**
+     * Get userEntries
+     *
+     * @return Collection
+     */
+    public function getUserEntries()
+    {
+        return $this->userEntries;
     }
 }

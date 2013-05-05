@@ -7,6 +7,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use NPS\ModelBundle\Entity\Entry;
+use NPS\ModelBundle\Entity\UserFeed;
 use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**
@@ -89,6 +90,11 @@ class Feed
      */
     protected $entries;
 
+    /**
+     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="feed")
+     */
+    protected $userFeeds;
+
 
     /**
      * Constructor
@@ -96,6 +102,7 @@ class Feed
     public function __construct()
     {
         $this->entries = new ArrayCollection();
+        $this->userFeeds = new ArrayCollection();
     }
 
     /**
@@ -357,5 +364,37 @@ class Feed
     public function getEntries()
     {
         return $this->entries;
+    }
+
+    /**
+     * Add userFeed
+     * @param UserFeed $userFeed
+     *
+     * @return Feed
+     */
+    public function addUserFeed(UserFeed $userFeed)
+    {
+        $this->userFeeds[] = $userFeed;
+
+        return $this;
+    }
+
+    /**
+     * Remove userFeed
+     *
+     */
+    public function removeUserFeed(UserFeed $userFeed)
+    {
+        $this->userFeeds->removeElement($userFeed);
+    }
+
+    /**
+     * Get userFeeds
+     *
+     * @return Collection
+     */
+    public function getUserFeeds()
+    {
+        return $this->userFeeds;
     }
 }

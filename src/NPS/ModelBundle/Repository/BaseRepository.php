@@ -18,10 +18,11 @@ class BaseRepository extends EntityRepository
      * @param integer $limit   limit
      * @param array   $orderBy rows to order by
      * @param array   $where   array of "where" filter, only equals
+     * @param array   $join    array
      *
      * @return array
      */
-    public function getListPagination($offset = 0, $limit = 0, $orderBy = array(), $where = array())
+    public function getListPagination($offset = 0, $limit = 0, $orderBy = array(), $where = array(), $join = array())
     {
         $obj = $this->createQueryBuilder('o');
 
@@ -32,6 +33,14 @@ class BaseRepository extends EntityRepository
                 $obj->setMaxResults($limit);
             }
             //else we want to display all items on one page
+        }
+
+        //Adding join
+        if (count($join)) { //TODO:
+            foreach ($join as $key2 => $value2) {
+                //$obj->leftJoin($key2, $value2);
+                //$obj->add('leftJoin', $key2.' ON '.$value2);
+            }
         }
 
         //Adding filters (only equal)
@@ -52,7 +61,7 @@ class BaseRepository extends EntityRepository
         //Adding defined sorting parameters from variable into query
         if (count($orderBy)) {
             foreach ($orderBy as $key2 => $value2) {
-                $obj->add('orderBy', 'o.' . $key2 . ' ' . $value2);
+                $obj->add('orderBy', $key2.' '.$value2);
             }
         }
 

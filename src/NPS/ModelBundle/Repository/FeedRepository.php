@@ -3,6 +3,7 @@
 namespace NPS\ModelBundle\Repository;
 
 use NPS\ModelBundle\Entity\Feed;
+use NPS\ModelBundle\Entity\User;
 use NPS\ModelBundle\Repository\BaseRepository;
 use NPS\CoreBundle\Helper\TextHelper;
 
@@ -29,11 +30,12 @@ class FeedRepository extends BaseRepository
     /**
      * Subscribe to feed
      * @param string $url
+     * @param User   $user
      *
      * @throws Exception it's necessary set $rss
      * @return array
      */
-    public function createFeed($url)
+    public function createFeed($url, $user = null)
     {
         if (!empty($this->rss) and get_class($this->rss) == "SimplePie") {
             $error = null;
@@ -67,6 +69,16 @@ class FeedRepository extends BaseRepository
             } else {
                 $feed = $checkFeed;
             }
+
+            if ($user instanceof User) {
+                $feedSubscribed = $user->checkFeedExists($feed);
+                if (!$feedSubscribed) {
+                    $user->addFeed($feed);
+                    $em->persist($feed);
+                    $em->flush();
+                }
+            }
+
         } else {
             throw new Exception('SimplePie object not set');
         }

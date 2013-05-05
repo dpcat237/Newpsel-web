@@ -20,16 +20,19 @@ class FeedController extends BaseController
      */
     public function listAction(Request $request)
     {
-        /*if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('login'));
-        } else {*/
+        } else {
+            $user = $this->get('security.context')->getToken()->getUser();
             $objectName = 'Feed';
             $routeName = 'feed';
             $routeNameMany = 'feeds';
-            $orderBy = array('title' => 'ASC');
+            $join = array('userFeeds uf' => 'o.if = uf.feedId'); //TODO:
+            $where = array('uf.userId' => $user->getId());
+            $orderBy = array('o.title' => 'ASC');
 
             return $this->genericListRender($objectName, $routeName, $routeNameMany, $orderBy);
-        //}
+        }
     }
 
     /**
@@ -41,9 +44,9 @@ class FeedController extends BaseController
      */
     public function editAction(Request $request)
     {
-        /*if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('login'));
-        } else {*/
+        } else {
             $objectId = $request->get('id');
             $objectName = 'Feed';
             $routeName = 'feed';
@@ -57,7 +60,7 @@ class FeedController extends BaseController
             $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
 
             return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form, $template);
-        //}
+        }
     }
 
     /**
@@ -68,40 +71,43 @@ class FeedController extends BaseController
      */
     public function addProcess(Request $request)
     {
-        //depends if it's edit or creation
-        $objectName = 'Feed';
-        $routeName = 'feed';
-        $routeNameMany = 'feeds';
-        $objectClass = 'NPS\ModelBundle\Entity\Feed';
-        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedAddType';
-        $form = $this->createFormEdit(null, $objectName, $objectClass, $objectTypeClass);
-        $form->bind($request);
-        $this->createNotification($objectName);
-        $formObject = $form->getData();
-
-        if ($form->isValid()) {
-            $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
-            $rss = $this->get('fkr_simple_pie.rss');
-            $feedRepo->setRss($rss);
-            $checkCreate = $feedRepo->createFeed($formObject->getUrl());
-
-            if (!$checkCreate['error']) {
-                /*$checkUpdate = $feedRepo->updateFeedData($checkCreate['feed']->getId());
-
-                if (!$checkUpdate['error']) {
-                    $this->notification->setNotification(102);
-                } else {
-                    $this->notification->setNotification($checkUpdate['error']);
-                }*/
-            } else {
-                $this->notification->setNotification($checkCreate['error']);
-            }
+        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
+            return new RedirectResponse($this->router->generate('login'));
         } else {
-            $this->notification->setNotification(201);
-        }
-        $this->setNotificationMessage();
+            //depends if it's edit or creation
+            $objectName = 'Feed';
+            $objectClass = 'NPS\ModelBundle\Entity\Feed';
+            $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedAddType';
+            $form = $this->createFormEdit(null, $objectName, $objectClass, $objectTypeClass);
+            $form->bind($request);
+            $this->createNotification($objectName);
+            $formObject = $form->getData();
 
-        return new RedirectResponse($this->router->generate('feeds'));
+            if ($form->isValid()) {
+                $user = $this->get('security.context')->getToken()->getUser();
+                $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
+                $rss = $this->get('fkr_simple_pie.rss');
+                $feedRepo->setRss($rss);
+                $checkCreate = $feedRepo->createFeed($formObject->getUrl(), $user);
+
+                if (!$checkCreate['error']) {
+                    /*$checkUpdate = $feedRepo->updateFeedData($checkCreate['feed']->getId());
+
+                    if (!$checkUpdate['error']) {
+                        $this->notification->setNotification(102);
+                    } else {
+                        $this->notification->setNotification($checkUpdate['error']);
+                    }*/
+                } else {
+                    $this->notification->setNotification($checkCreate['error']);
+                }
+            } else {
+                $this->notification->setNotification(201);
+            }
+            $this->setNotificationMessage();
+
+            return new RedirectResponse($this->router->generate('feeds'));
+        }
     }
 
     /**
@@ -143,19 +149,24 @@ class FeedController extends BaseController
 
     /**
      * Sync all feeds
+     * TODO: temp (later all with cron)
      * @return Response
      */
     public function syncAction()
     {
-        $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
-        $rss = $this->get('fkr_simple_pie.rss');
-        $feedRepo->setRss($rss);
-        $feeds = $feedRepo->findAll();
-        foreach ($feeds as $feed) {
-            $feedRepo->updateFeedData($feed->getId());
-        }
+        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
+            return new RedirectResponse($this->router->generate('login'));
+        } else {
+            $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
+            $rss = $this->get('fkr_simple_pie.rss');
+            $feedRepo->setRss($rss);
+            $feeds = $feedRepo->findAll();
+            foreach ($feeds as $feed) {
+                $feedRepo->updateFeedData($feed->getId());
+            }
 
-        return new RedirectResponse($this->router->generate('feeds'));
+            return new RedirectResponse($this->router->generate('feeds'));
+        }
     }
 
 }
