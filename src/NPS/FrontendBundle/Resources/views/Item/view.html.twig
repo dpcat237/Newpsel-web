@@ -2,8 +2,8 @@
 
 {% block content %}
     <div>
-        {{ entry.content|raw }}
+        {{ item.content|raw }}
     </div>
     <br /><br />
-    <div><a href="{{ url('entries', {'id': entry.feedId}) }}">Feed</a></div>
+    <div><a href="{{ url('items', {'id': item.feedId}) }}">Feed</a></div>
 {% endblock %}

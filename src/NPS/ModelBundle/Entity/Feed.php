@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-use NPS\ModelBundle\Entity\Entry;
+use NPS\ModelBundle\Entity\Item;
 use NPS\ModelBundle\Entity\UserFeed;
 use NPS\CoreBundle\Helper\DisplayHelper;
 
@@ -80,20 +80,20 @@ class Feed
     private $dateUp;
 
     /**
-     * @var integer
-     * @ORM\Column(name="date_sync", type="integer", nullable=true)
+     * @ORM\OneToMany(targetEntity="Item", mappedBy="feed")
      */
-    private $dateSync;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Entry", mappedBy="feed")
-     */
-    protected $entries;
+    protected $items;
 
     /**
      * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="feed")
      */
     protected $userFeeds;
+
+    /**
+     * @var integer
+     * @ORM\Column(name="date_sync", type="integer", nullable=true)
+     */
+     private $dateSync;
 
 
     /**
@@ -101,7 +101,7 @@ class Feed
      */
     public function __construct()
     {
-        $this->entries = new ArrayCollection();
+        $this->items = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
     }
 
@@ -301,6 +301,71 @@ class Feed
     }
 
     /**
+     * Add items
+     * @param Item $item
+     *
+     * @return Feed
+     */
+    public function addItem(Item $item)
+    {
+        $this->items[] = $item;
+
+        return $this;
+    }
+
+    /**
+     * Remove items
+     *
+     * @param Item $item
+     */
+    public function removeItem(Item $item)
+    {
+        $this->items->removeElement($item);
+    }
+
+    /**
+     * Get items
+     *
+     * @return Collection
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Add userFeed
+     * @param UserFeed $userFeed
+     *
+     * @return Feed
+     */
+    public function addUserFeed(UserFeed $userFeed)
+    {
+        $this->userFeeds[] = $userFeed;
+
+        return $this;
+    }
+
+    /**
+     * Remove userFeed
+     *
+     */
+    public function removeUserFeed(UserFeed $userFeed)
+    {
+        $this->userFeeds->removeElement($userFeed);
+    }
+
+    /**
+     * Get userItems
+     *
+     * @return Collection
+     */
+    public function getUserFeeds()
+    {
+        return $this->userFeeds;
+    }
+
+    /**
      * Set dateSync
      * @param \int $dateSync
      *
@@ -333,68 +398,4 @@ class Feed
         return DisplayHelper::displayDate($this->dateSync);
     }
 
-    /**
-     * Add entries
-     * @param Entry $entry
-     *
-     * @return Feed
-     */
-    public function addEntry(Entry $entry)
-    {
-        $this->entries[] = $entry;
-
-        return $this;
-    }
-
-    /**
-     * Remove entries
-     *
-     * @param Entry $entry
-     */
-    public function removeEntry(Entry $entry)
-    {
-        $this->entries->removeElement($entry);
-    }
-
-    /**
-     * Get entries
-     *
-     * @return Collection
-     */
-    public function getEntries()
-    {
-        return $this->entries;
-    }
-
-    /**
-     * Add userFeed
-     * @param UserFeed $userFeed
-     *
-     * @return Feed
-     */
-    public function addUserFeed(UserFeed $userFeed)
-    {
-        $this->userFeeds[] = $userFeed;
-
-        return $this;
-    }
-
-    /**
-     * Remove userFeed
-     *
-     */
-    public function removeUserFeed(UserFeed $userFeed)
-    {
-        $this->userFeeds->removeElement($userFeed);
-    }
-
-    /**
-     * Get userEntries
-     *
-     * @return Collection
-     */
-    public function getUserFeeds()
-    {
-        return $this->userFeeds;
-    }
 }

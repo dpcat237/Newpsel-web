@@ -3,6 +3,9 @@
 namespace NPS\ModelBundle\Repository;
 
 use NPS\ModelBundle\Repository\BaseRepository;
+use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\ModelBundle\Entity\User;
+use NPS\ModelBundle\Entity\Device;
 
 /**
  * UserRepository
@@ -12,4 +15,84 @@ use NPS\ModelBundle\Repository\BaseRepository;
  */
 class UserRepository extends BaseRepository
 {
+    /**
+     * Check user data for login
+     * @param $username
+     * @param $password
+     *
+     * @return int|User
+     */
+    public function checkLogin($username, $password){
+        parent::preExecute();
+        $userRepo = $this->em->getRepository('NPSModelBundle:User');
+        $user = $userRepo->findOneByUsername($username);
+
+        if ($user instanceof User) {
+            $appKey = sha1("checkPwd_".$user->getPassword());
+
+            if ($password == $appKey) {
+                return $user;
+            } else {
+                return NotificationHelper::ERROR_LOGIN_DATA;
+            }
+        } else {
+            return NotificationHelper::ERROR_LOGIN_DATA;
+        }
+    }
+
+    /**
+     * Check if device is logged
+     * @param object $cache
+     * @param string $appKey
+     * @param string $username
+     *
+     * @return bool | User
+     */
+    public function checkLogged($cache, $appKey, $username = null)
+    {
+        parent::preExecute();
+        $key = $cache->get("device_".$appKey);
+        $deviceRepo = $this->em->getRepository('NPSModelBundle:Device');
+        if ($key) {
+            return true;
+        } else if (!$key && $username) {
+            $device = $deviceRepo->findOneByAppKey($appKey);
+            if ($device instanceof Device) {
+                $user = $device->getUser();
+                if ($username == $user->getUsername()) {
+                    $cache->set("device_".$appKey, $device->getUserId());
+
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            $device = $deviceRepo->findOneByAppKey($appKey);
+            if ($device instanceof Device) {
+                $cache->set("device_".$appKey, $device->getUserId());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get device user
+     * @param object $cache  Redis client
+     * @param string $appKey device appKey
+     *
+     * @return mixed
+     */
+    public function getDeviceUser($cache, $appKey)
+    {
+        $userId = $cache->get("device_".$appKey);
+        $userRepo = $this->em->getRepository('NPSModelBundle:User');
+
+        return $userRepo->find($userId);
+    }
 }

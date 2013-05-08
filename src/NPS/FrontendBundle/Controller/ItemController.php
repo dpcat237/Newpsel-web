@@ -8,12 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContext;
 
 /**
- * EntryController
+ * ItemController
  */
-class EntryController extends BaseController
+class ItemController extends BaseController
 {
     /**
-     * List of entries
+     * List of items
      * @param Request $request the current request
      *
      * @return Response
@@ -27,13 +27,13 @@ class EntryController extends BaseController
                 $user = $this->get('security.context')->getToken()->getUser();
                 $feedSubscribed = $user->checkFeedExists($feedId);
                 if ($feedSubscribed) {
-                    $routeNameMany = 'entries';
+                    $routeNameMany = 'items';
                     $orderBy = array('o.dateAdd' => 'DESC');
                     $where = array('feed' => $feedId);
                     $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
-                    $entryRepo = $this->em->getRepository('NPSModelBundle:Entry');
+                    $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
                     $feed = $feedRepo->find($feedId);
-                    $objectCollection = $entryRepo->getListPagination(0, 0, $orderBy, $where);
+                    $objectCollection = $itemRepo->getListPagination(0, 0, $orderBy, $where);
 
                     $renderData = array(
                         'heading' => $feed->getTitle(),
@@ -41,7 +41,7 @@ class EntryController extends BaseController
                         $routeNameMany => $objectCollection,
                     );
 
-                    return $this->render('NPSFrontendBundle:Entry:list.html.twig', $renderData);
+                    return $this->render('NPSFrontendBundle:Item:list.html.twig', $renderData);
                 }
             }
 
@@ -50,7 +50,7 @@ class EntryController extends BaseController
     }
 
     /**
-     * Show entry
+     * Show item
      * @param Request $request the current request
      *
      * @return Response
@@ -60,20 +60,20 @@ class EntryController extends BaseController
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('login'));
         } else {
-            if ($entryId = $request->get('id')) {
+            if ($itemId = $request->get('id')) {
                 $user = $this->get('security.context')->getToken()->getUser();
-                $entryRepo = $this->em->getRepository('NPSModelBundle:Entry');
-                $entry = $entryRepo->find($entryId);
+                $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+                $item = $itemRepo->find($itemId);
 
-                if ($entryRepo->canSee($user->getId(), $entryId)) {
-                    $entryRepo->changeStatus($user, $entry, "IsUnread", 2);
+                if ($itemRepo->canSee($user->getId(), $itemId)) {
+                    $itemRepo->changeStatus($user, $item, "IsUnread", 2);
 
                     $renderData = array(
-                        'heading' => $entry->getTitle(),
-                        'entry' => $entry
+                        'heading' => $item->getTitle(),
+                        'item' => $item
                     );
 
-                    return $this->render('NPSFrontendBundle:Entry:view.html.twig', $renderData);
+                    return $this->render('NPSFrontendBundle:Item:view.html.twig', $renderData);
                 }
             }
         }
@@ -82,7 +82,7 @@ class EntryController extends BaseController
     }
 
     /**
-     * Change stat of entry to read/unread
+     * Change stat of item to read/unread
      * @param Request $request the current request
      *
      * @return Response
@@ -93,16 +93,16 @@ class EntryController extends BaseController
             return new RedirectResponse($this->router->generate0('login'));
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
-            $entryRepo = $this->em->getRepository('NPSModelBundle:Entry');
-            $entry = $entryRepo->find($request->get('entryId'));
-            $entryRepo->changeStatus($user, $entry, "IsUnread", 2);
+            $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+            $item = $itemRepo->find($request->get('itemId'));
+            $itemRepo->changeStatus($user, $item, "IsUnread", 2);
 
-            return new RedirectResponse($this->router->generate('entries', array('id' => $request->get('feedId'))));
+            return new RedirectResponse($this->router->generate('items', array('id' => $request->get('feedId'))));
         }
     }
 
     /**
-     * Add/remove star to entry
+     * Add/remove star to item
      * @param Request $request the current request
      *
      * @return Response
@@ -113,11 +113,11 @@ class EntryController extends BaseController
             return new RedirectResponse($this->router->generate0('login'));
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
-            $entryRepo = $this->em->getRepository('NPSModelBundle:Entry');
-            $entry = $entryRepo->find($request->get('entryId'));
-            $entryRepo->changeStatus($user, $entry, "IsStarred");
+            $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+            $item = $itemRepo->find($request->get('itemId'));
+            $itemRepo->changeStatus($user, $item, "IsStarred");
 
-            return new RedirectResponse($this->router->generate('entries', array('id' => $request->get('feedId'))));
+            return new RedirectResponse($this->router->generate('items', array('id' => $request->get('feedId'))));
         }
     }
 }

@@ -1,11 +1,20 @@
-api_feeds_sync:
-    pattern:  /feeds_sync/
-    defaults: { _controller: NPSApiBundle:Feed:sync }
-    requirements:
-      _method: GET
-
+#General
 api_login:
     pattern:  /login/
     defaults: { _controller: NPSApiBundle:User:login }
+    requirements:
+      _method: POST
+
+#Feed
+api_sync_feeds:
+    pattern:  /sync_feeds/
+    defaults: { _controller: NPSApiBundle:Feed:syncFeeds }
+    requirements:
+      _method: POST
+
+#Item
+api_sync_unread:
+    pattern:  /sync_unread/
+    defaults: { _controller: NPSApiBundle:Item:syncUnread }
     requirements:
       _method: POST

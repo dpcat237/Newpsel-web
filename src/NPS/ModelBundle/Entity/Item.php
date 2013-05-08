@@ -6,17 +6,17 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use NPS\ModelBundle\Entity\Feed;
-use NPS\ModelBundle\Entity\UserEntry;
+use NPS\ModelBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**
- * Entry
+ * Item
  *
- * @ORM\Entity(repositoryClass="NPS\ModelBundle\Repository\EntryRepository")
- * @ORM\Table(name="entry")
+ * @ORM\Entity(repositoryClass="NPS\ModelBundle\Repository\ItemRepository")
+ * @ORM\Table(name="item")
  * @ORM\HasLifecycleCallbacks
  */
-class Entry
+class Item
 {
     /**
      * @var integer
@@ -79,15 +79,15 @@ class Entry
 
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="Feed", inversedBy="entries", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Feed", inversedBy="items", cascade={"persist"})
      * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
      */
     private $feed;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserEntry", mappedBy="entry")
+     * @ORM\OneToMany(targetEntity="UserItem", mappedBy="item")
      */
-    protected $userEntries;
+    protected $userItems;
 
 
     /**
@@ -95,7 +95,7 @@ class Entry
      */
     public function __construct()
     {
-        $this->userEntries = new ArrayCollection();
+        $this->userItems = new ArrayCollection();
     }
 
     /**
@@ -112,7 +112,7 @@ class Entry
      * Set title
      * @param string $title
      *
-     * @return Entry
+     * @return Item
      */
     public function setTitle($title)
     {
@@ -135,7 +135,7 @@ class Entry
      * Set link
      * @param string $link
      *
-     * @return Entry
+     * @return Item
      */
     public function setLink($link)
     {
@@ -158,7 +158,7 @@ class Entry
      * Set content
      * @param string $content
      *
-     * @return Entry
+     * @return Item
      */
     public function setContent($content)
     {
@@ -181,7 +181,7 @@ class Entry
      * Set contentHash
      * @param string $contentHash
      *
-     * @return Entry
+     * @return Item
      */
     public function setContentHash($contentHash)
     {
@@ -204,7 +204,7 @@ class Entry
      * Set category
      * @param string $category
      *
-     * @return Entry
+     * @return Item
      */
     public function setCategory($category)
     {
@@ -227,7 +227,7 @@ class Entry
      * Set author
      * @param string $author
      *
-     * @return Entry
+     * @return Item
      */
     public function setAuthor($author)
     {
@@ -338,34 +338,34 @@ class Entry
     }
 
     /**
-     * Add userEntry
-     * @param UserEntry $userEntry
+     * Add userItem
+     * @param UserItem $userItem
      *
-     * @return Entry
+     * @return Item
      */
-    public function addUserEntry(UserEntry $userEntry)
+    public function addUserItem(UserItem $userItem)
     {
-        $this->userEntries[] = $userEntry;
+        $this->userItems[] = $userItem;
 
         return $this;
     }
 
     /**
-     * Remove userEntry
+     * Remove userItem
      *
      */
-    public function removeUserEntry(UserEntry $userEntry)
+    public function removeUserItem(UserItem $userItem)
     {
-        $this->userEntries->removeElement($userEntry);
+        $this->userItems->removeElement($userItem);
     }
 
     /**
-     * Get userEntries
+     * Get userItems
      *
      * @return Collection
      */
-    public function getUserEntries()
+    public function getUserItems()
     {
-        return $this->userEntries;
+        return $this->userItems;
     }
 }

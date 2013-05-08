@@ -11,7 +11,7 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 /**
  * FeedController
  */
-class FeedController extends BaseController
+class ItemController extends BaseController
 {
     /**
      * List of feeds
@@ -19,23 +19,31 @@ class FeedController extends BaseController
      *
      * @return Response
      */
-    public function syncFeedsAction(Request $request)
+    public function syncUnreadAction(Request $request)
     {
         $json = json_decode($request->getContent());
         $appKey = $json->appKey;
-        $lastUpdate = $json->lastUpdate;
+        $viewedFeeds = $json->viewedFeeds;
+        $isDownload = $json->isDownload;
 
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSModelBundle:User');
             $cache = $this->container->get('server_cache');
             if ($userRepo->checkLogged($cache, $appKey)) {
+                $actionStatus = NotificationHelper::OK;
+                $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
                 $user = $userRepo->getDeviceUser($cache, $appKey);
-                $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
-                $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
+                if (count($viewedFeeds)) {
+                    $itemRepo->syncViewedItems($user->getId(), $viewedFeeds);
+                }
+                $unreadItems = array();
+                if ($isDownload) {
+                    $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
+                }
 
                 $dataCollection = array(
-                    'status' => NotificationHelper::OK,
-                    'feeds' => $feedCollection
+                    'status' => $actionStatus,
+                    'items' => $unreadItems
                 );
                 $jsonData = json_encode($dataCollection);
                 $headers = array('Content-Type' => 'application/json');

@@ -37,28 +37,28 @@ signup:
         _method: GET
 
 
-#Entry
-entries:
-    pattern:  /entries/{id}
-    defaults: { _controller: NPSFrontendBundle:Entry:list, id: 0 }
+#Item
+items:
+    pattern:  /items/{id}
+    defaults: { _controller: NPSFrontendBundle:Item:list, id: 0 }
     requirements:
       id: \d+
 
-entry:
-    pattern:  /entry/{id}
-    defaults: { _controller: NPSFrontendBundle:Entry:view }
+item:
+    pattern:  /item/{id}
+    defaults: { _controller: NPSFrontendBundle:Item:view }
     requirements:
       id: \d+
 
-entry_read:
-    pattern:  /entry_read/{feedId}/{entryId}
-    defaults: { _controller: NPSFrontendBundle:Entry:read }
+item_read:
+    pattern:  /item_read/{feedId}/{itemId}
+    defaults: { _controller: NPSFrontendBundle:Item:read }
     requirements:
       id: \d+
 
-entry_starred:
-    pattern:  /entry_starred/{feedId}/{entryId}
-    defaults: { _controller: NPSFrontendBundle:Entry:star }
+item_starred:
+    pattern:  /item_starred/{feedId}/{itemId}
+    defaults: { _controller: NPSFrontendBundle:Item:star }
     requirements:
       id: \d+
 

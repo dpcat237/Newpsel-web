@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use NPS\ModelBundle\Entity\Device;
 use NPS\ModelBundle\Entity\Feed;
-use NPS\ModelBundle\Entity\UserEntry;
+use NPS\ModelBundle\Entity\UserItem;
 use NPS\ModelBundle\Entity\UserFeed;
 
 
@@ -82,9 +82,9 @@ class User implements UserInterface
     protected $devices;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserEntry", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="UserItem", mappedBy="user")
      */
-    protected $userEntries;
+    protected $userItems;
 
     /**
      * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="user")
@@ -98,7 +98,7 @@ class User implements UserInterface
     public function __construct()
     {
         $this->devices = new ArrayCollection();
-        $this->userEntries = new ArrayCollection();
+        $this->userItems = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
     }
 
@@ -336,35 +336,35 @@ class User implements UserInterface
     }
 
     /**
-     * Add userEntry
-     * @param UserEntry $userEntry
+     * Add userItem
+     * @param UserItem $userItem
      *
      * @return User
      */
-    public function addUserEntry(UserEntry $userEntry)
+    public function addUserItem(UserItem $userItem)
     {
-        $this->userEntries[] = $userEntry;
+        $this->userItems[] = $userItem;
 
         return $this;
     }
 
     /**
-     * Remove userEntry
+     * Remove userItem
      *
      */
-    public function removeUserEntry(UserEntry $userEntry)
+    public function removeUserItem(UserItem $userItem)
     {
-        $this->userEntries->removeElement($userEntry);
+        $this->userItems->removeElement($userItem);
     }
 
     /**
-     * Get userEntries
+     * Get userItems
      *
      * @return Collection
      */
-    public function getUserEntries()
+    public function getUserItems()
     {
-        return $this->userEntries;
+        return $this->userItems;
     }
 
 

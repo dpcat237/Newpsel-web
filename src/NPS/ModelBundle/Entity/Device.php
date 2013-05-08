@@ -60,7 +60,7 @@ class Device
      * Set appKey
      * @param string $appKey
      *
-     * @return Entry
+     * @return Item
      */
     public function setAppKey($appKey)
     {

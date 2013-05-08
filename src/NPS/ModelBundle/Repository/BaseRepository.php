@@ -12,6 +12,17 @@ use Doctrine\ORM\EntityRepository;
  */
 class BaseRepository extends EntityRepository
 {
+    //we will have an EntityManager here
+    protected $em;
+
+    /**
+     * This function will be executed before any controller action
+     */
+    public function preExecute()
+    {
+        $this->em = $this->getEntityManager();
+    }
+
     /**
      * Get list of shops with pagination limits
      * @param integer $offset  offset

@@ -3,17 +3,17 @@
 namespace NPS\ModelBundle\Entity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
-use NPS\ModelBundle\Entity\Entry;
+use NPS\ModelBundle\Entity\Item;
 use NPS\ModelBundle\Entity\User;
 
 /**
- * UserEntry
+ * UserItem
  *
- * @ORM\Entity(repositoryClass="NPS\ModelBundle\Repository\UserEntryRepository")
- * @ORM\Table(name="user_entry")
+ * @ORM\Entity(repositoryClass="NPS\ModelBundle\Repository\UserItemRepository")
+ * @ORM\Table(name="user_item")
  * @ORM\HasLifecycleCallbacks
  */
-class UserEntry
+class UserItem
 {
     /**
      * @var integer
@@ -25,14 +25,14 @@ class UserEntry
 
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="Entry", inversedBy="userEntries")
-     * @ORM\JoinColumn(name="entry_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Item", inversedBy="userItems")
+     * @ORM\JoinColumn(name="item_id", referencedColumnName="id", nullable=false)
      */
-    private $entry;
+    private $item;
 
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="userEntries")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="userItems")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $user;
@@ -68,38 +68,38 @@ class UserEntry
     }
 
     /**
-     * Get the entry
+     * Get the item
      *
-     * @return Entry
+     * @return Item
      */
-    public function getEntry()
+    public function getItem()
     {
-        return $this->entry;
+        return $this->item;
     }
 
     /**
-     * Set the entry
-     * @param Entry $entry
+     * Set the item
+     * @param Item $item
      */
-    public function setEntry(Entry $entry)
+    public function setItem(Item $item)
     {
-        $this->entry = $entry;
+        $this->item = $item;
     }
 
     /**
-     * Get the entry id
+     * Get the item id
      *
      * @return integer id
      */
-    public function getEntryId()
+    public function getItemId()
     {
-        if (is_object($this->getEntry())) {
-            $entryId = $this->getEntry()->getId();
+        if (is_object($this->getItem())) {
+            $itemId = $this->getItem()->getId();
         } else {
-            $entryId = 0;
+            $itemId = 0;
         }
 
-        return $entryId;
+        return $itemId;
     }
 
     /**
@@ -141,7 +141,7 @@ class UserEntry
      * Set isUnread
      * @param \boolean $isUnread
      *
-     * @return UserEntry
+     * @return UserItem
      */
     public function setIsUnread($isUnread)
     {
@@ -164,7 +164,7 @@ class UserEntry
      * Set isStared
      * @param \boolean $isStared
      *
-     * @return UserEntry
+     * @return UserItem
      */
     public function setIsStared($isStared)
     {

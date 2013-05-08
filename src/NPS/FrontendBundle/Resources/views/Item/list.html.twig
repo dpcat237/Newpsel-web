@@ -10,27 +10,27 @@
                 <th class="table-header-options line-left"><a href="">{% trans %}Options{% endtrans %}</a></th>
             </tr>
 
-            {% for entry in entries %}
+            {% for item in items %}
                 <tr>
-                    <td>{{ entry.humanDateAdd }}</td>
+                    <td>{{ item.humanDateAdd }}</td>
                     <td>
-                        <a href="{{ url('entry', {'id': entry.id}) }}"><b>{{ entry.title|raw }}</b></a>
-                        {# {% if entry.isRead %}
-                            <a href="{{ url('entry', {'id': entry.id}) }}">{{ entry.title|raw }}</a>
+                        <a href="{{ url('item', {'id': item.id}) }}"><b>{{ item.title|raw }}</b></a>
+                        {# {% if item.isRead %}
+                            <a href="{{ url('item', {'id': item.id}) }}">{{ item.title|raw }}</a>
                         {% else %}
-                            <a href="{{ url('entry', {'id': entry.id}) }}"><b>{{ entry.title|raw }}</b></a>
+                            <a href="{{ url('item', {'id': item.id}) }}"><b>{{ item.title|raw }}</b></a>
                         {% endif %}#}
                     </td>
                     <td class="options-width">
-                        {#{% if entry.isRead %}
-                            <a href="{{ url('entry_read', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Unread" class="icon-5 info-tooltip"></a>
+                        {#{% if item.isRead %}
+                            <a href="{{ url('item_read', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Unread" class="icon-5 info-tooltip"></a>
                         {% else %}
-                            <a href="{{ url('entry_read', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Read" class="icon-2 info-tooltip"></a>
+                            <a href="{{ url('item_read', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Read" class="icon-2 info-tooltip"></a>
                         {% endif %}
-                        {% if entry.isStarred %}
-                            <a href="{{ url('entry_starred', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Unread" class="icon-3 icon-3_on info-tooltip"></a>
+                        {% if item.isStarred %}
+                            <a href="{{ url('item_starred', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Unread" class="icon-3 icon-3_on info-tooltip"></a>
                         {% else %}
-                            <a href="{{ url('entry_starred', {'feedId': entry.feedId, 'entryId': entry.id}) }}" title="Read" class="icon-3 info-tooltip"></a>
+                            <a href="{{ url('item_starred', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Read" class="icon-3 info-tooltip"></a>
                         {% endif %}#}
                     </td>
                 </tr>

@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\ModelBundle\Entity\User;
 use NPS\ModelBundle\Entity\Device;
+use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
  * FeedController
@@ -23,66 +24,23 @@ class UserController extends BaseController
     public function loginAction(Request $request)
     {
         $json = json_decode($request->getContent());
-        $checkKey = $this->checkLogged($json->appKey, $json->username);
+        $userRepo = $this->em->getRepository('NPSModelBundle:User');
+        $cache = $this->container->get('server_cache');
 
-        if ($checkKey) {
-            die("true");
+        if ($userRepo->checkLogged($cache, $json->appKey, $json->username)) {
+            echo NotificationHelper::OK; exit();
         } else {
-            $checkUser = $this->checkLogin($json->username, $json->password);
+            $checkUser = $userRepo->checkLogin($json->username, $json->password);
 
             if ($checkUser instanceof User) {
                 $deviceRepo = $this->em->getRepository('NPSModelBundle:Device');
                 $deviceRepo->addDevice($json->appKey, $checkUser);
 
-                $cache = $this->container->get('server_cache');
                 $cache->set("device_".$json->appKey, $checkUser->getId());
-                die("true");
+                echo NotificationHelper::OK; exit();
             } else {
-                die('false');
+                echo $checkUser; exit();
             }
         }
     }
-
-    private function checkLogin($username, $password){
-        $userRepo = $this->em->getRepository('NPSModelBundle:User');
-        $user = $userRepo->findOneByUsername($username);
-
-        if ($user instanceof User) {
-            $appKey = sha1("checkPwd_".$user->getPassword());
-
-            if ($password == $appKey) {
-                return $user;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    private function checkLogged($appKey, $username = null)
-    {
-        $cache = $this->container->get('server_cache');
-        $key = $cache->get("device_".$appKey);
-        if (!$key && $username) {
-            $deviceRepo = $this->em->getRepository('NPSModelBundle:Device');
-            $device = $deviceRepo->findOneByAppKey($appKey);
-            if ($device instanceof Device) {
-                if ($username == $device->getUser()->getUsername()) {
-                    $cache->set("device_".$appKey, $device->getUserId());
-
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } elseif ($key) {
-            return true;
-        }
-
-        return false;
-    }
-
 }

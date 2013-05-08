@@ -13,6 +13,18 @@ class NotificationHelper extends Helper
     protected $message;
     protected $messageType;
 
+
+    /**API NOTIFICATIONS**/
+    /*Success*/
+    CONST OK = 100;
+    /*Warning*/
+    CONST WARNING = 200;
+    /*Error*/
+    CONST ERROR = 300;
+    CONST ERROR_LOGIN_DATA = 301;
+    CONST ERROR_NO_APP_KEY = 302;
+    CONST ERROR_NO_LOGGED = 303;
+
     /**
      * Constructor
      * @param string $objectName

@@ -148,17 +148,17 @@ class FeedRepository extends BaseRepository
 
                 if (empty($rssError)) {
                     if (!$feed->getDateSync()) {
-                        //get last 25 entries
+                        //get last 25 items
                         $newItems = $this->getItemNew($this->rss->get_items());
                     } else {
-                        //get all entries since last sync
+                        //get all items since last sync
                         $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
                     }
 
                     if (count($newItems)) {
-                        $entryRepo = $em->getRepository('NPSModelBundle:Entry');
+                        $itemRepo = $em->getRepository('NPSModelBundle:Item');
                         foreach ($newItems as $newItem) {
-                            $entryRepo->addEntry($newItem, $feed);
+                            $itemRepo->addItem($newItem, $feed);
                         }
 
                         //update last sync data
@@ -223,25 +223,27 @@ class FeedRepository extends BaseRepository
     }
 
     /**
-     * Return array of feeds
+     * Get user's feeds list for api
+     * @param int $userId
+     * @param int $lastUpdate
+     *
      * @return array
      */
-    public function getFeedArray()
+    public function getUserFeedsApi($userId, $lastUpdate = 0)
     {
-        $em = $this->getEntityManager();
-        $objectRepo = $em->getRepository('NPSModelBundle:Feed');
-        $collection = $objectRepo->findAll();
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSModelBundle:Feed');
+        $query = $repository->createQueryBuilder('f')
+            ->select('f.id, f.title, f.website, f.favicon, f.dateUp')
+            ->join('f.userFeeds', 'uf')
+            ->join('uf.user', 'u')
+            ->where('u.id = :userId')
+            ->andWhere('f.dateUp > :lastUpdate')
+            ->setParameter('userId', $userId)
+            ->setParameter('lastUpdate', $lastUpdate)
+            ->getQuery();
+        $feedCollection = $query->getResult();
 
-        $collectionArray = array();
-        foreach ($collection as $value) {
-            $collectionArray[] = array (
-                'api_id' => $value->getId(),
-                'title' => $value->getTitle(),
-                'website' => $value->getWebsite(),
-                'favicon' => $value->getFavicon()
-            );
-        }
-
-        return $collectionArray;
+        return $feedCollection;
     }
 }
