@@ -234,7 +234,7 @@ class FeedRepository extends BaseRepository
         parent::preExecute();
         $repository = $this->em->getRepository('NPSModelBundle:Feed');
         $query = $repository->createQueryBuilder('f')
-            ->select('f.id AS api_id, f.title, f.website, f.favicon')
+            ->select('f.id AS api_id, f.title, f.website, f.favicon, f.dateUp AS date_up')
             ->join('f.userFeeds', 'uf')
             ->join('uf.user', 'u')
             ->where('u.id = :userId')
