@@ -41,11 +41,7 @@ class ItemController extends BaseController
                     $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
                 }
 
-                $dataCollection = array(
-                    'status' => $actionStatus,
-                    'items' => $unreadItems
-                );
-                $jsonData = json_encode($dataCollection);
+                $jsonData = json_encode($unreadItems);
                 $headers = array('Content-Type' => 'application/json');
                 $response = new Response($jsonData, 200, $headers);
 

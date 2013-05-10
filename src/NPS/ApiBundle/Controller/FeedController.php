@@ -33,11 +33,7 @@ class FeedController extends BaseController
                 $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
                 $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
 
-                $dataCollection = array(
-                    'status' => NotificationHelper::OK,
-                    'feeds' => $feedCollection
-                );
-                $jsonData = json_encode($dataCollection);
+                $jsonData = json_encode($feedCollection);
                 $headers = array('Content-Type' => 'application/json');
                 $response = new Response($jsonData, 200, $headers);
 
