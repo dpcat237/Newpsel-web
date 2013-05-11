@@ -210,8 +210,9 @@ class ItemRepository extends BaseRepository
         parent::preExecute();
         $repository = $this->em->getRepository('NPSModelBundle:Item');
         $query = $repository->createQueryBuilder('i')
-            ->select('i.id, i.feedId AS feed_id, i.title, i.link, i.content, ui.isStared AS is_stared, i.dateAdd AS date_add')
+            ->select('i.id, f.id AS feed_id, i.title, i.link, i.content, ui.isStared AS is_stared, i.dateAdd AS date_add')
             ->leftJoin('i.userItems', 'ui')
+            ->leftJoin('i.feed', 'f')
             ->where('ui.isUnread = :isUnread')
             ->andWhere('ui.user = :userId')
             ->setParameter('isUnread', true)
