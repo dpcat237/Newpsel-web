@@ -21,11 +21,9 @@ class FeedController extends BaseController
      */
     public function syncFeedsAction(Request $request)
     {
-        /*$json = json_decode($request->getContent());
+        $json = json_decode($request->getContent());
         $appKey = $json->appKey;
-        $lastUpdate = $json->lastUpdate;*/
-        $appKey = 'device_test';
-        $lastUpdate = '0';
+        $lastUpdate = $json->lastUpdate;
 
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSModelBundle:User');
