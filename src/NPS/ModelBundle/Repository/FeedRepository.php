@@ -234,11 +234,12 @@ class FeedRepository extends BaseRepository
         parent::preExecute();
         $repository = $this->em->getRepository('NPSModelBundle:Feed');
         $query = $repository->createQueryBuilder('f')
-            ->select('f.id AS api_id, f.title, f.website, f.favicon, f.dateUp AS date_up')
+            ->select('f.id AS api_id, f.title, f.website, f.favicon, f.dateUp AS lastUpdate')
             ->join('f.userFeeds', 'uf')
             ->join('uf.user', 'u')
             ->where('u.id = :userId')
             ->andWhere('f.dateUp > :lastUpdate')
+            ->orderBy('f.dateUp', 'ASC')
             ->setParameter('userId', $userId)
             ->setParameter('lastUpdate', $lastUpdate)
             ->getQuery();
