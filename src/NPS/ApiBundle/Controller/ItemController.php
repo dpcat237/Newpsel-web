@@ -30,7 +30,6 @@ class ItemController extends BaseController
             $userRepo = $this->em->getRepository('NPSModelBundle:User');
             $cache = $this->container->get('server_cache');
             if ($userRepo->checkLogged($cache, $appKey)) {
-                $actionStatus = NotificationHelper::OK;
                 $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
                 $user = $userRepo->getDeviceUser($cache, $appKey);
                 if (count($viewedFeeds)) {
