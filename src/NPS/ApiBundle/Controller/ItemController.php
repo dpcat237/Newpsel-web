@@ -32,7 +32,7 @@ class ItemController extends BaseController
             if ($userRepo->checkLogged($cache, $appKey)) {
                 $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
                 $user = $userRepo->getDeviceUser($cache, $appKey);
-                if (count($viewedFeeds)) {
+                if (is_array($viewedFeeds) && count($viewedFeeds)) {
                     $itemRepo->syncViewedItems($user->getId(), $viewedFeeds);
                 }
                 $unreadItems = array();
