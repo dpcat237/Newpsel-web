@@ -43,6 +43,9 @@ class FeedCommand extends ContainerAwareCommand
     {
         $container = $this->getContainer();
         $em = $container->get('doctrine')->getManager();
+        $log = $container->get('logger');
+        $log->info('*** Start feeds sync ***');
+
         $feedRepo = $em->getRepository('NPSModelBundle:Feed');
         $rss = $container->get('fkr_simple_pie.rss');
         $feedRepo->setRss($rss);
@@ -51,7 +54,8 @@ class FeedCommand extends ContainerAwareCommand
             $feedRepo->updateFeedData($feed->getId());
         }
 
-        $date = date('Y-m-d H:i:s');
-        $output->writeln($date.' Synchronized successfully');
+        //$date = date('Y-m-d H:i:s');
+        //$output->writeln('*** Synchronized successfully ***');
+        $log->info('*** Synchronized successfully ***');
     }
 }

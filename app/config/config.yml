@@ -83,6 +83,12 @@ services:
             class: NPS\CoreBundle\Service\ServerCache
             arguments: ['@snc_redis.default', 3600]
 
+monolog:
+    handlers:
+        applog:
+            type: stream
+            path: /var/www/nps/app/logs/symfony.log
+
 #SimplePie RSS
 fkr_simple_pie:
     cache_enabled: false
