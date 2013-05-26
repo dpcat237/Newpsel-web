@@ -23,7 +23,7 @@ class ItemController extends BaseController
     {
         $json = json_decode($request->getContent());
         $appKey = $json->appKey;
-        $viewedFeeds = $json->viewedFeeds;
+        $viewedItems = $json->viewedItems;
         $isDownload = $json->isDownload;
 
         if ($appKey) {
@@ -32,8 +32,8 @@ class ItemController extends BaseController
             if ($userRepo->checkLogged($cache, $appKey)) {
                 $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
                 $user = $userRepo->getDeviceUser($cache, $appKey);
-                if (is_array($viewedFeeds) && count($viewedFeeds)) {
-                    $itemRepo->syncViewedItems($user->getId(), $viewedFeeds);
+                if (is_array($viewedItems) && count($viewedItems)) {
+                    $itemRepo->syncViewedItems($user->getId(), $viewedItems);
                 }
                 $unreadItems = array();
                 if ($isDownload) {
