@@ -26,13 +26,6 @@ class ItemController extends BaseController
         $viewedItems = $json->viewedItems;
         $isDownload = $json->isDownload;
 
-        foreach ($viewedItems as $itemData) {
-            echo '<pre>tut: '; print_r($itemData); echo '</pre>';
-            echo '<pre>tut: '; print_r($itemData->is_stared); echo '</pre>';
-        }
-
-        exit();
-
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSModelBundle:User');
             $cache = $this->container->get('server_cache');

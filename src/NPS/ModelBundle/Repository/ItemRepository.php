@@ -192,9 +192,9 @@ class ItemRepository extends BaseRepository
     {
         parent::preExecute();
         foreach ($items as $itemData) {
-            $userItem = $this->hasItem($userId, $itemData['id']);
-            $userItem->setIsUnread($itemData['is_unread']);
-            $userItem->setIsStared($itemData['is_stared']);
+            $userItem = $this->hasItem($userId, $itemData->id);
+            $userItem->setIsUnread($itemData->is_unread);
+            $userItem->setIsStared($itemData->is_stared);
             $this->em->persist($userItem);
         }
         $this->em->flush();
