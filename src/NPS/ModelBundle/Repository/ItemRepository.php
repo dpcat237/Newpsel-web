@@ -26,18 +26,41 @@ class ItemRepository extends BaseRepository
         //$author = $this->getOneMany($itemData->get_author(), $itemData->get_authors());
         //$category = $this->getOneMany($itemData->get_category(), $itemData->get_categories());
         //TODO: add author, category
-        $em = $this->getEntityManager();
-        $item = new Item();
-        $item->setFeed($feed);
-        $item->setTitle($itemData->get_title());
-        $item->setLink($itemData->get_link());
-        $item->setContent($itemData->get_description());
-        $item->setContentHash(sha1($itemData->get_description()));
-        $item->setDateAdd($itemData->get_date('U'));
-        $em->persist($item);
-        $em->flush();
 
-        $this->addItemToSubscribers($item, $feed->getUserFeeds());
+        $item = $this->checkExistByLink($itemData->get_link());
+        if ($item instanceof Item) {
+            $item->setTitle($itemData->get_title());
+            $item->setContent($itemData->get_description());
+
+            $this->em->persist($item);
+            $this->em->flush();
+        } else {
+            $item = new Item();
+            $item->setFeed($feed);
+            $item->setDateAdd($itemData->get_date('U'));
+            $item->setContentHash(sha1($itemData->get_description()));
+            $item->setLink($itemData->get_link());
+            $item->setTitle($itemData->get_title());
+            $item->setContent($itemData->get_description());
+
+            $this->em->persist($item);
+            $this->em->flush();
+
+            $this->addItemToSubscribers($item, $feed->getUserFeeds());
+        }
+    }
+
+    /**
+     * Check if exist item by url
+     * @param $link
+     *
+     * @return mixed
+     */
+    public function checkExistByLink($link) {
+        parent::preExecute();
+        $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+
+        return $itemRepo->findOneByLink($link);
     }
 
     /**
