@@ -48,7 +48,9 @@ class FeedCommand extends ContainerAwareCommand
 
         $feedRepo = $em->getRepository('NPSModelBundle:Feed');
         $rss = $container->get('fkr_simple_pie.rss');
+        $cache = $container->get('server_cache');
         $feedRepo->setRss($rss);
+        $feedRepo->setCache($cache);
         $feeds = $feedRepo->findAll();
         foreach ($feeds as $feed) {
             $feedRepo->updateFeedData($feed->getId());

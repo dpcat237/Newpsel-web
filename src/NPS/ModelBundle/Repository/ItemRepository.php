@@ -16,6 +16,18 @@ use NPS\ModelBundle\Repository\BaseRepository;
  */
 class ItemRepository extends BaseRepository
 {
+    //Redis
+    protected $cache;
+
+    /**
+     * Set Redis
+     * @param Redis $cache
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+    }
+
     /**
      * Add item
      * @param object $itemData
@@ -46,6 +58,10 @@ class ItemRepository extends BaseRepository
             $this->em->persist($item);
             $this->em->flush();
 
+            $linkHash = "item_url_hash_".sha1($itemData->get_link());
+            $ttl = 86400;
+            $this->cache->setex($linkHash, $ttl, $item->getId());
+
             $this->addItemToSubscribers($item, $feed->getUserFeeds());
         }
     }
@@ -58,9 +74,16 @@ class ItemRepository extends BaseRepository
      */
     public function checkExistByLink($link) {
         parent::preExecute();
-        $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
 
-        return $itemRepo->findOneByLink($link);
+        $linkHash = "item_url_hash_".sha1($link);
+        $itemId = $this->cache->get($linkHash);
+        if ($itemId) {
+            $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+
+            return $itemRepo->find($itemId);
+        } else {
+            return null;
+        }
     }
 
     /**

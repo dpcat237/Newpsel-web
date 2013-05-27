@@ -159,7 +159,9 @@ class FeedController extends BaseController
         } else {
             $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
             $rss = $this->get('fkr_simple_pie.rss');
+            $cache = $this->get('server_cache');
             $feedRepo->setRss($rss);
+            $feedRepo->setCache($cache);
             $feeds = $feedRepo->findAll();
             foreach ($feeds as $feed) {
                 $feedRepo->updateFeedData($feed->getId());

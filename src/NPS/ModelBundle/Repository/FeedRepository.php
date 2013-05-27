@@ -19,6 +19,9 @@ class FeedRepository extends BaseRepository
     //SimplePie RSS bundle object
     protected $rss;
 
+    //Redis
+    protected $cache;
+
     /**
      * Set SimplePie RSS
      * @param SimplePie $rss
@@ -26,6 +29,15 @@ class FeedRepository extends BaseRepository
     public function setRss($rss)
     {
         $this->rss = $rss;
+    }
+
+    /**
+     * Set Redis
+     * @param Redis $cache
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
     }
 
     /**
@@ -157,6 +169,7 @@ class FeedRepository extends BaseRepository
 
                     if (count($newItems)) {
                         $itemRepo = $em->getRepository('NPSModelBundle:Item');
+                        $itemRepo->setCache($this->cache);
                         foreach ($newItems as $newItem) {
                             $itemRepo->addItem($newItem, $feed);
                         }
