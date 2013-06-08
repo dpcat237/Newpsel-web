@@ -71,7 +71,7 @@ class FeedController extends BaseController
 
                 if (!$checkCreate['error']) {
                     $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
-                    $feed = $feedRepo->findOneByUrl($feedUrl);
+                    $feed = $checkCreate['feed'];
                     $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
 
                     $jsonData = json_encode($unreadItems);
