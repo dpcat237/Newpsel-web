@@ -80,6 +80,20 @@ class Device
     }
 
     /**
+     * Set dateAdd
+     * @param int $dateAdd
+     *
+     * @return User
+     */
+    public function setDateAdd($dateAdd = null)
+    {
+        $dateAddNow = $this->getDateAdd();
+        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
+
+        return $this;
+    }
+
+    /**
      * Get dateAdd
      *
      * @return int

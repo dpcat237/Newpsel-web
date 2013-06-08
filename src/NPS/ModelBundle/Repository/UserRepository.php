@@ -95,4 +95,49 @@ class UserRepository extends BaseRepository
 
         return $userRepo->find($userId);
     }
+
+    /**
+     * Check if username or email exists
+     * @param $username
+     * @param $email
+     * @return bool|int
+     */
+    public function checkUserExists($username, $email)
+    {
+        parent::preExecute();
+        $userRepo = $this->em->getRepository('NPSModelBundle:User');
+
+        $user = $userRepo->findOneByUsername($username);
+        if ($user instanceof User) {
+            return NotificationHelper::ERROR_USERNAME_EXISTS;
+        }
+
+        $user = $userRepo->findOneByEmail($email);
+        if ($user instanceof User) {
+            return NotificationHelper::ERROR_EMAIL_EXISTS;
+        }
+
+        return false;
+    }
+
+    /**
+     * Create User
+     * @param $username
+     * @param $email
+     * @param $password
+     *
+     * @return User
+     */
+    public function createUser($username, $email, $password)
+    {
+        parent::preExecute();
+        $user = new User();
+        $user->setUsername($username);
+        $user->setEmail($email);
+        $user->setPassword($password);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user;
+    }
 }

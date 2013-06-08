@@ -13,7 +13,7 @@ use NPS\ModelBundle\Repository\BaseRepository;
  */
 class DeviceRepository extends BaseRepository
 {
-    public function addDevice($appKey, $user) {
+    public function createDevice($appKey, $user) {
         $device = new Device();
         $device->setAppKey($appKey);
         $device->setUser($user);

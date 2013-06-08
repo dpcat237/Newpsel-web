@@ -60,7 +60,7 @@ class User implements UserInterface
      * @var int
      * @ORM\Column(name="is_enabled", type="boolean")
      */
-    private $isEnabled;
+    private $isEnabled = true;
 
     /**
      * @var integer

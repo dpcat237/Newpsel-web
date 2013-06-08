@@ -1,7 +1,13 @@
-#General
+#User
 api_login:
     pattern:  /login/
     defaults: { _controller: NPSApiBundle:User:login }
+    requirements:
+      _method: POST
+
+api_sign_up:
+    pattern:  /sign_up/
+    defaults: { _controller: NPSApiBundle:User:signUp }
     requirements:
       _method: POST
 

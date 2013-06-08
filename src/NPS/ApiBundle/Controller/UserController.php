@@ -34,13 +34,39 @@ class UserController extends BaseController
 
             if ($checkUser instanceof User) {
                 $deviceRepo = $this->em->getRepository('NPSModelBundle:Device');
-                $deviceRepo->addDevice($json->appKey, $checkUser);
+                $deviceRepo->createDevice($json->appKey, $checkUser);
 
                 $cache->set("device_".$json->appKey, $checkUser->getId());
                 echo NotificationHelper::OK; exit();
             } else {
                 echo $checkUser; exit();
             }
+        }
+    }
+
+    /**
+     * Sign up an user
+     * @param Request $request
+     */
+    public function signUpAction(Request $request)
+    {
+        $json = json_decode($request->getContent());
+        $userRepo = $this->em->getRepository('NPSModelBundle:User');
+        $cache = $this->container->get('server_cache');
+
+        $checkUser = $userRepo->checkUserExists($json->username, $json->email);
+        if (empty($checkUser)) {
+            $user = $userRepo->createUser($json->username, $json->email, $json->password);
+            if ($user instanceof User) {
+                $deviceRepo = $this->em->getRepository('NPSModelBundle:Device');
+                $deviceRepo->createDevice($json->appKey, $user);
+
+                $cache->set("device_".$json->appKey, $user->getId());
+                echo NotificationHelper::OK; exit();
+            }
+            echo NotificationHelper::ERROR_TRY_LATER; exit();
+        } else {
+            echo $checkUser; exit();
         }
     }
 }
