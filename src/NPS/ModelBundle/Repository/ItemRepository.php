@@ -249,9 +249,10 @@ class ItemRepository extends BaseRepository
     /**
      * Get users unread items
      * @param $userId
+     * @param $feedId
      * @return mixed
      */
-    public function getUnreadItemsApi($userId)
+    public function getUnreadItemsApi($userId, $feedId = null)
     {
         parent::preExecute();
         $repository = $this->em->getRepository('NPSModelBundle:Item');
@@ -260,10 +261,16 @@ class ItemRepository extends BaseRepository
             ->leftJoin('i.userItems', 'ui')
             ->leftJoin('i.feed', 'f')
             ->where('ui.isUnread = :isUnread')
-            ->andWhere('ui.user = :userId')
-            ->setParameter('isUnread', true)
-            ->setParameter('userId', $userId)
-            ->getQuery();
+            ->andWhere('ui.user = :userId');
+        if ($feedId) {
+            $query->andWhere('f.id = :feedId');
+        }
+        $query->setParameter('isUnread', true)
+            ->setParameter('userId', $userId);
+        if ($feedId) {
+            $query->setParameter('feedId', $feedId);
+        }
+        $query->getQuery();
         $itemCollection = $query->getResult();
 
         return $itemCollection;

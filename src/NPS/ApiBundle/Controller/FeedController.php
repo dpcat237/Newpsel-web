@@ -48,6 +48,8 @@ class FeedController extends BaseController
     /**
      * Add feed, subscribe user to this feed and add last items for user
      * @param Request $request
+     *
+     * @return Response
      */
     public function addFeedAction(Request $request)
     {
@@ -68,9 +70,17 @@ class FeedController extends BaseController
                 $checkCreate = $feedRepo->createFeed($feedUrl, $user);
 
                 if (!$checkCreate['error']) {
-                    echo NotificationHelper::OK; exit();
+                    $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+                    $feed = $feedRepo->findOneByUrl($feedUrl);
+                    $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
+
+                    $jsonData = json_encode($unreadItems);
+                    $headers = array('Content-Type' => 'application/json');
+                    $response = new Response($jsonData, 200, $headers);
+
+                    return $response;
                 } else {
-                    echo $checkCreate['error']; exit();
+                    echo NotificationHelper::ERROR_WRONG_FEED; exit();
                 }
             } else {
                 echo NotificationHelper::ERROR_NO_LOGGED; exit();
