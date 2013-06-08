@@ -18,6 +18,12 @@ api_sync_feeds:
     requirements:
       _method: POST
 
+api_add_feed:
+    pattern:  /add_feed/
+    defaults: { _controller: NPSApiBundle:Feed:addFeed }
+    requirements:
+      _method: POST
+
 #Item
 api_sync_unread:
     pattern:  /sync_unread/

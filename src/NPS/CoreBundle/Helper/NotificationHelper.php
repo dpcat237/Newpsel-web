@@ -26,6 +26,7 @@ class NotificationHelper extends Helper
     CONST ERROR_NO_LOGGED = 303;
     CONST ERROR_USERNAME_EXISTS = 304;
     CONST ERROR_EMAIL_EXISTS = 305;
+    CONST ERROR_WRONG_FEED = 306;
     CONST ERROR_TRY_LATER = 310;
 
     /**

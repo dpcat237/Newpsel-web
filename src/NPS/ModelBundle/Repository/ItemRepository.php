@@ -268,4 +268,26 @@ class ItemRepository extends BaseRepository
 
         return $itemCollection;
     }
+
+    /**
+     * Get last feed items
+     * @param $feedId
+     * @param int $limit
+     *
+     * @return mixed
+     */
+    public function getLast($feedId, $limit = 25)
+    {
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSModelBundle:Item');
+        $query = $repository->createQueryBuilder('i')
+            ->where('i.feed = :feedId')
+            ->orderBy('i.feed', 'DESC')
+            ->setMaxResults($limit)
+            ->setParameter('feedId', $feedId)
+            ->getQuery();
+        $itemCollection = $query->getResult();
+
+        return $itemCollection;
+    }
 }

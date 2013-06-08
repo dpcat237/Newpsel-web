@@ -5,8 +5,10 @@ namespace NPS\ModelBundle\Repository;
 use NPS\ModelBundle\Entity\Feed;
 use NPS\ModelBundle\Entity\User;
 use NPS\ModelBundle\Entity\UserFeed;
+use NPS\ModelBundle\Entity\UserItem;
 use NPS\ModelBundle\Repository\BaseRepository;
 use NPS\CoreBundle\Helper\TextHelper;
+use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
  * FeedRepository
@@ -52,6 +54,7 @@ class FeedRepository extends BaseRepository
     {
         if (!empty($this->rss) and get_class($this->rss) == "SimplePie") {
             $error = null;
+            $feed = null;
             $em = $this->getEntityManager();
             $url = TextHelper::fixUrl($url);
 
@@ -67,31 +70,42 @@ class FeedRepository extends BaseRepository
                     $this->rss->enable_xml_dump();
                     $this->rss->init();
 
-                    $feed = new Feed();
-                    $feed->setUrl($url);
-                    $feed->setUrlHash(sha1($url));
-                    $feed->setTitle($this->rss->get_title());
-                    $feed->setWebsite($this->rss->get_link());
-                    $feed->setLanguage($this->rss->get_language());
-                    $feed->setFavicon($this->rss->get_favicon());
-                    $em->persist($feed);
+
+                    if ($this->rss->get_title()) {
+                        $feed = new Feed();
+                        $feed->setUrl($url);
+                        $feed->setUrlHash(sha1($url));
+                        $feed->setTitle($this->rss->get_title());
+                        $feed->setWebsite($this->rss->get_link());
+                        $feed->setLanguage($this->rss->get_language());
+                        $feed->setFavicon($this->rss->get_favicon());
+                        $em->persist($feed);
+                    } else {
+                        $error = NotificationHelper::ERROR_WRONG_FEED;
+                    }
                 } catch (\Exception $e) {
                     $error = $e->getMessage();
+
                 }
             } else {
                 $feed = $checkFeed;
             }
 
-            if ($user instanceof User) {
-                $feedSubscribed = $this->checkUserSubscribed($user->getId(), $feed->getId());
-                if (!$feedSubscribed) {
-                    $userFeed = new UserFeed();
-                    $userFeed->setUser($user);
-                    $userFeed->setFeed($feed);
-                    $em->persist($userFeed);
+            if (empty($error)) {
+                if ($user instanceof User) {
+                    $feedSubscribed = $this->checkUserSubscribed($user->getId(), $feed->getId());
+                    if (!$feedSubscribed) {
+                        $userFeed = new UserFeed();
+                        $userFeed->setUser($user);
+                        $userFeed->setFeed($feed);
+                        $em->persist($userFeed);
+                        $em->flush();
+
+                        $this->addFirstItems($feed, $user);
+                    }
                 }
+                $em->flush();
             }
-            $em->flush();
 
         } else {
             throw new Exception('SimplePie object not set');
@@ -102,6 +116,39 @@ class FeedRepository extends BaseRepository
         return $result;
     }
 
+    /**
+     * Add first items for just subscribed user
+     * @param $feed
+     * @param $user
+     */
+    public function addFirstItems($feed, $user)
+    {
+        parent::preExecute();
+        if (count($feed->getItems()) < 1) {
+            $this->updateFeedData($feed->getId());
+        }
+        $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+        $items = $itemRepo->getLast($feed->getId());
+
+        if (count($items)) {
+            foreach ($items as $item) {
+                $userItem = new UserItem();
+                $userItem->setUser($user);
+                $userItem->setItem($item);
+                $userItem->setIsUnread(true);
+                $this->em->persist($userItem);
+            }
+            $this->em->flush();
+        }
+    }
+
+    /**
+     * Check if user is subscribed
+     * @param $userId
+     * @param $feedId
+     *
+     * @return bool
+     */
     public function checkUserSubscribed($userId, $feedId)
     {
         $em = $this->getEntityManager();
