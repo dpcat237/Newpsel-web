@@ -79,6 +79,7 @@ class FeedRepository extends BaseRepository
                         $feed->setWebsite($this->rss->get_link());
                         $feed->setLanguage($this->rss->get_language());
                         $feed->setFavicon($this->rss->get_favicon());
+                        $feed->setDateChange();
                         $em->persist($feed);
                     } else {
                         $error = NotificationHelper::ERROR_WRONG_FEED;
@@ -294,7 +295,7 @@ class FeedRepository extends BaseRepository
         parent::preExecute();
         $repository = $this->em->getRepository('NPSModelBundle:Feed');
         $query = $repository->createQueryBuilder('f')
-            ->select('f.id AS api_id, f.title, f.website, f.favicon, f.dateUp AS lastUpdate')
+            ->select('f.id AS api_id, f.title, f.website, f.favicon, f.dateChange AS lastUpdate')
             ->join('f.userFeeds', 'uf')
             ->join('uf.user', 'u')
             ->where('u.id = :userId')
