@@ -47,7 +47,7 @@ abstract class CoreController extends Controller
     {
         $name = $objectName;
         $objectName = str_replace(' ', '', $objectName);
-        $objectRepo = $this->em->getRepository('NPSModelBundle:'.$objectName);
+        $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
         $objectCollection = $objectRepo->getListPagination(0, 0, $orderBy, $where, $join);
 
         $renderData = array(
@@ -127,7 +127,7 @@ abstract class CoreController extends Controller
      */
     protected function genericChangeObjectStatus($objectName, $objectClass, $id, $func = 'IsEnabled')
     {
-        $objectRepo = $this->em->getRepository('NPSModelBundle:'.$objectName);
+        $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
         $object = $objectRepo->find($id);
         $funcGet = 'get'.$func;
         $funcSet = 'set'.$func;

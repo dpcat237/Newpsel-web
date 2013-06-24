@@ -1,0 +1,49 @@
+<div class="navbar">
+    <div class="navbar-inner">
+
+        <ul class="nav pull-right">
+
+            {#<li>
+                <form class="search form-inline">
+                    <input type="text" placeholder="Search...">
+                    <button class="search-submit btn-search" value="" type="submit"><i class="icon-search"></i></button>
+                </form>
+            </li>#}
+
+            {#<li class="dropdown header-border">
+                <a href="#" role="button" class="dropdown-toggle " data-toggle="dropdown">
+                    <div class="notify">7</div>
+                </a>
+
+                <ul class="dropdown-menu block-dark messages msg-notify">
+                    <li class="view-all"><a href="#">View all notifications</a></li>
+                    <li><a href="#"><div><i class="icon-comment"></i>  new comment <span class="timer">2 min</span></div></a>
+                    <li><a href="#"><div><i class="icon-twitter"></i>  new follower <span class="timer">6 min</span></div></a>
+                    <li><a href="#"><div><i class="icon-thumbs-up"></i> new like <span class="timer">9 min</span></div></a>
+                    <li><a href="#"><div><i class="icon-twitter"></i>  new follower <span class="timer">25 min</span></div></a>
+                    <li><a href="#"><div><i class="icon-user"></i>  new registration <span class="timer">32 min</span></div></a>
+                    <li><a href="#"><div><i class="icon-comment"></i>  new comment <span class="timer">2 hours</span></div></a>
+                    <li><a href="#"><div><i class="icon-map-marker"></i>  new localization <span class="timer">Yesterday</span></div></a>
+                </ul>
+            </li>#}
+
+            <li class="dropdown header-border">
+                <a href="#" role="button" class="dropdown-toggle " data-toggle="dropdown">
+                    <div class="thumb-account">
+                        <span class="add-dark"><i class="icon-cog"></i></span>
+                        <span><i class="icon-caret-down"></i></span>
+                    </div>
+                </a>
+
+                <ul class="dropdown-menu block-dark account">
+                    {#<li class="first"><a tabindex="-1" href="#"><i class="icon-user"></i> {% trans %}Your profile{% endtrans %}</a></li>
+                    <li class="first"><a tabindex="-1" href="#"><i class="icon-cogs"></i> {% trans %}Settings{% endtrans %}</a></li>#}
+                    <li class="last notify-disabled"><a tabindex="-1" href="{{ url("logout") }}"><i class="icon-signout"></i> {% trans %}Logout{% endtrans %}</a></li>
+                </ul>
+            </li>
+
+
+        </ul>
+        <a class="brand" href="{{ url("welcome") }}"><span class="title">{% trans %}Newpsel{% endtrans %}</span> <span class="logo"></span></a>
+    </div>
+</div>

@@ -17,7 +17,7 @@ class FeedAddType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'NPS\ModelBundle\Entity\Feed',
+            'data_class' => 'NPS\CoreBundle\Entity\Feed',
         ));
     }
 

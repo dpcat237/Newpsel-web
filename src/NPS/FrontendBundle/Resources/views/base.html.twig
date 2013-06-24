@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %}Newpsel{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="{% trans %}Newpsel - News Personal Selector. RSS feeds reader.{% endtrans %}">
+        <meta name="author" content="Denys Pasishnyi">
+        {% block head_style %}
+            {# Original Bootstrap styles, generated via LESS, by braincrafted/bootstrap-bundle #}
+            {% stylesheets filter='?yui_css,cssrewrite' output='bundles/npsfrontend/css/*.css' 'css/bootstrap.css' %}
+                <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+            {% endstylesheets %}
+
+            {# Customized Bootstrap application styles, generated via LESS #}
+            {% stylesheets debug=false filter='lessphp' output='bundles/npsfrontend/css/*.css'
+                '@NPSFrontendBundle/Resources/public/less/flat/_all.less'
+                '@NPSFrontendBundle/Resources/public/less/polaris/polaris.less'
+
+                '@NPSFrontendBundle/Resources/public/less/font-awesome.less'
+                '@NPSFrontendBundle/Resources/public/less/open-sans.less'
+                '@NPSFrontendBundle/Resources/public/less/styles.less'
+            %}
+                <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+            {% endstylesheets %}
+
+            {% javascripts
+                'http://html5shim.googlecode.com/svn/trunk/html5.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/jquery-1.9.1.js'
+                'js/bootstrap.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/fullcalendar/fullcalendar.min.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/pnotify/jquery.pnotify.min.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/justgage/justgage.1.0.1.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/justgage/raphael.2.1.0.min.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/flot/jquery.flot.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/flot/excanvas.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/flot/jquery.flot.pie.js'
+                '@NPSFrontendBundle/Resources/public/js/lib/flot/jquery.flot.stack.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/responsive-tables.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/jquery.sparkline.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/icheckdemo.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/charts.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/date.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/daterangepicker.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/jquery.icheck.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/wizard.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/jquery-ui-1.10.2.custom.min.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/wysihtml5-0.3.0.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/prettyprint.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/jquery.spellchecker.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/parsley.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/jquery.masonry.min.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/custom.js'
+
+                '@NPSFrontendBundle/Resources/public/js/core.js'
+                '@NPSFrontendBundle/Resources/public/js/functions.js'
+                '@NPSFrontendBundle/Resources/public/js/mycustomset.undfangular.js'
+
+            filter="angularjs, ?yui_js"
+            output="bundles/npsfrontend/js/*.js" %}
+            <script src="{{ asset_url }}" type="text/javascript" ></script>
+            {% endjavascripts %}
+
+        {% endblock head_style %}
+        {% block head_script %}{% endblock head_script %}
+        <link rel="shortcut icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body {% block bodyclass %}class=""{% endblock bodyclass %}>
+        {% block body %}{% endblock body %}
+        {% block javascripts %}{% endblock javascripts %}
+        {% block foot_script %}
+            {%- javascripts output='js/*.js'
+                '@NPSFrontendBundle/Resources/public/js/analytics.js'
+            filter='?yui_js'
+            %}
+            <script src="{{ asset_url }}" type="text/javascript"></script>
+            <script>
+                jsUrl.URL_HOMEPAGE = "{{ url("homepage") }}";
+                jsUrl.URL_SUBSCRIBE_FEED = "{{ url("add_feed") }}";
+            </script>
+            {% endjavascripts %}
+        {% endblock foot_script %}
+    </body>
+</html>

@@ -27,10 +27,10 @@ class ItemController extends BaseController
         $isDownload = $json->isDownload;
 
         if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSModelBundle:User');
+            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
             if ($userRepo->checkLogged($cache, $appKey)) {
-                $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+                $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
                 $user = $userRepo->getDeviceUser($cache, $appKey);
                 if (is_array($viewedItems) && count($viewedItems)) {
                     $itemRepo->syncViewedItems($user->getId(), $viewedItems);

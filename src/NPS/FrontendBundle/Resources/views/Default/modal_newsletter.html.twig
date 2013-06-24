@@ -1,0 +1,17 @@
+<div id="modalSubscribe" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalSubscribeLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="modalSubscribeLabel">{% trans %}Subscribe to newsletter{% endtrans %}</h3>
+    </div>
+    <div class="modal-body">
+        <form data-validate="parsley" action="" id="subscribe-form" class="form">
+            <div class="input-prepend">
+                <input id="subscribe_email" type="email" name="email" data-trigger="change" data-required="true" data-type="email" placeholder="{% trans %}Email{% endtrans %}">
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans %}Cancel{% endtrans %}</button>
+        <button id='subscribeSubmit' class="btn btn-primary" >{% trans %}Subscribe{% endtrans %}</button>
+    </div>
+</div>

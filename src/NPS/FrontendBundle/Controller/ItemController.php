@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
  * ItemController
@@ -14,46 +15,34 @@ class ItemController extends BaseController
 {
     /**
      * List of items
-     * @param Request $request the current request
+     * @param Request $request
      *
      * @return Response
+     * @Route("/feed/{feed_id}/items_list", name="items_list")
      */
     public function listAction(Request $request)
     {
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('login'));
+            return new RedirectResponse($this->router->generate('welcome'));
         } else {
-            if ($feedId = $request->get('id')) {
-                $user = $this->get('security.context')->getToken()->getUser();
-                $feedSubscribed = $user->checkFeedExists($feedId);
-                if ($feedSubscribed) {
-                    $routeNameMany = 'items';
-                    $orderBy = array('o.dateAdd' => 'DESC');
-                    $where = array('feed' => $feedId);
-                    $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
-                    $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
-                    $feed = $feedRepo->find($feedId);
-                    $objectCollection = $itemRepo->getListPagination(0, 0, $orderBy, $where);
+            $user = $this->get('security.context')->getToken()->getUser();
+            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
+            $itemsList = $itemRepo->getUnreadByFeedUser($user->getId(), $request->get('feed_id'));
 
-                    $renderData = array(
-                        'heading' => $feed->getTitle(),
-                        'url_list' => $this->router->generate($routeNameMany),
-                        $routeNameMany => $objectCollection,
-                    );
+            $viewData = array(
+                'items' => $itemsList,
+            );
 
-                    return $this->render('NPSFrontendBundle:Item:list.html.twig', $renderData);
-                }
-            }
-
-            return new RedirectResponse($this->router->generate('feeds'));
+            return $this->render('NPSFrontendBundle:Item:list.html.twig', $viewData);
         }
     }
 
     /**
      * Show item
-     * @param Request $request the current request
+     * @param Request $request
      *
      * @return Response
+     * @Route("/feed/{feed_id}/item/{item_id}", name="item_view")
      */
     public function viewAction(Request $request)
     {
@@ -62,7 +51,7 @@ class ItemController extends BaseController
         } else {
             if ($itemId = $request->get('id')) {
                 $user = $this->get('security.context')->getToken()->getUser();
-                $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+                $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
                 $item = $itemRepo->find($itemId);
 
                 if ($itemRepo->canSee($user->getId(), $itemId)) {
@@ -93,7 +82,7 @@ class ItemController extends BaseController
             return new RedirectResponse($this->router->generate0('login'));
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
-            $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
             $item = $itemRepo->find($request->get('itemId'));
             $itemRepo->changeStatus($user, $item, "IsUnread", 2);
 
@@ -106,6 +95,7 @@ class ItemController extends BaseController
      * @param Request $request the current request
      *
      * @return Response
+     * @Route("/feed/{feed_id}/item/{item_id}", name="mark_star")
      */
     public function starAction(Request $request)
     {
@@ -113,7 +103,7 @@ class ItemController extends BaseController
             return new RedirectResponse($this->router->generate0('login'));
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
-            $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
             $item = $itemRepo->find($request->get('itemId'));
             $itemRepo->changeStatus($user, $item, "IsStarred");
 

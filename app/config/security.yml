@@ -5,7 +5,7 @@ jms_security_extra:
 security:
     encoders:
         entity_api:
-            class: NPS\ModelBundle\Entity\User
+            class: NPS\CoreBundle\Entity\User
             algorithm: sha512
             iterations: 5000
             encode_as_base64: false
@@ -15,9 +15,9 @@ security:
     #    ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-        entity_admin:
+        main:
             entity:
-                class: NPS\ModelBundle\Entity\User
+                class: NPS\CoreBundle\Entity\User
                 property: username
 
     firewalls:

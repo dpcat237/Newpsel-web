@@ -46,7 +46,7 @@ class FeedCommand extends ContainerAwareCommand
         $log = $container->get('logger');
         $log->info('*** Start feeds sync ***');
 
-        $feedRepo = $em->getRepository('NPSModelBundle:Feed');
+        $feedRepo = $em->getRepository('NPSCoreBundle:Feed');
         $rss = $container->get('fkr_simple_pie.rss');
         $cache = $container->get('server_cache');
         $feedRepo->setRss($rss);

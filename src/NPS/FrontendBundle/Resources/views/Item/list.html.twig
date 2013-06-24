@@ -1,41 +1,47 @@
-{% extends 'NPSFrontendBundle::Default/layout.html.twig' %}
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
 
 {% block content %}
-    <!--  start product-table ..................................................................................... -->
-    <form id="mainform" action="">
-        <table border="0" width="100%" cellpadding="0" cellspacing="0" id="product-table">
-            <tr>
-                <th class="table-header-repeat line-left minwidth-1"><a href="">{% trans %}Date{% endtrans %}</a></th>
-                <th class="table-header-repeat line-left minwidth-1"><a href="">{% trans %}Title{% endtrans %}</a></th>
-                <th class="table-header-options line-left"><a href="">{% trans %}Options{% endtrans %}</a></th>
-            </tr>
+    <div class="row-fluid">
+        <div class="block span12 inbox">
+            <div class="block-body">
 
-            {% for item in items %}
-                <tr>
-                    <td>{{ item.humanDateAdd }}</td>
-                    <td>
-                        <a href="{{ url('item', {'id': item.id}) }}"><b>{{ item.title|raw }}</b></a>
-                        {# {% if item.isRead %}
-                            <a href="{{ url('item', {'id': item.id}) }}">{{ item.title|raw }}</a>
-                        {% else %}
-                            <a href="{{ url('item', {'id': item.id}) }}"><b>{{ item.title|raw }}</b></a>
-                        {% endif %}#}
-                    </td>
-                    <td class="options-width">
-                        {#{% if item.isRead %}
-                            <a href="{{ url('item_read', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Unread" class="icon-5 info-tooltip"></a>
-                        {% else %}
-                            <a href="{{ url('item_read', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Read" class="icon-2 info-tooltip"></a>
-                        {% endif %}
-                        {% if item.isStarred %}
-                            <a href="{{ url('item_starred', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Unread" class="icon-3 icon-3_on info-tooltip"></a>
-                        {% else %}
-                            <a href="{{ url('item_starred', {'feedId': item.feedId, 'itemId': item.id}) }}" title="Read" class="icon-3 info-tooltip"></a>
-                        {% endif %}#}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <!-- end product-table................................... -->
-    </form>
+                {#<div class="inbox-filter">
+                    <div class="btn-group">
+                        <a class="btn" href="#"><input type="checkbox"></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><i class="icon-exclamation-sign"></i> All</a></li>
+                            <li><a href="#"><i class="icon-star"></i> Starred</a></li>
+                            <li><a href="#"><i class="icon-star-empty"></i> Unstarred</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="btn demo-cancel-click" rel="tooltip" title="Refresh"><i class="icon-refresh"></i></div>
+
+                    <div class="btn-group">
+                        <button class="btn demo-cancel-click" rel="tooltip" title="Archive"><i class="icon-folder-close"></i></button>
+                        <button class="btn demo-cancel-click" rel="tooltip" title="Label"><i class="icon-tag"></i></button>
+                        <button class="btn demo-cancel-click" rel="tooltip" title="Delete"><i class="icon-trash"></i></button>
+                    </div>
+                </div>#}
+
+                <table class="table">
+                    <tbody>
+                    {% for userItem in items %}
+                        {% set item = userItem.item %}
+                        <tr>
+                            <td class="td-check"><i class="icon-star-empty"></i></td>
+                            {% if userItem.isUnread %}
+                                <td class="inbox-message"><a class="list-item" href="{{ url('item_view', {'feed_id': item.feedId, 'item_id': item.id}) }}"><b>{{ item.title|raw }}</b></a></td>
+                            {% else %}
+                                <td class="inbox-message"><a class="list-item" href="{{ url('item_view', {'feed_id': item.feedId, 'item_id': item.id}) }}">{{ item.title|raw }}</a></td>
+                            {% endif %}
+                            <td class="center">{{ item.humanDateAdd }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

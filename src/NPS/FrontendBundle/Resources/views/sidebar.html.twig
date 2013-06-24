@@ -1,0 +1,34 @@
+<div data-offset-top="360" data-spy="affix" class="sidebar-nav affix">
+    <form class="search form-inline">
+        <input type="text" placeholder="Search...">
+        <button class="search-submit btn-search" value="" type="submit"><i class="icon-search"></i></button>
+    </form>
+
+    <div class="sidebar-avatar">
+        <img src="{{ asset('bundles/npsfrontend/images/logo.png') }}" alt="avatar" class="thumbnail-avatar">
+        <a href="#modalAddFeed" role="button" class="" data-toggle="modal">
+            <div class="sidebar-avatar-message">
+                <div class="notify-message">
+                    <span class="add-dark" title="{% trans %}Subscribe{% endtrans %}"><i class="icon-plus"></i></span>
+                </div>
+            </div>
+        </a>
+        {#<a href="#"><div class="sidebar-avatar-message"><div class="notify notify-message"><i class="icon-envelope"></i></div></div></a>
+        <a href="#"><div class="sidebar-avatar-notify"><div class="notify ">7</div></div></a>#}
+    </div>
+
+
+    <div class="nav-collapse subnav-collapse collapse ">
+        <a href="{{ url("homepage") }}" class="nav-header{% if app.request.get('_route') == 'homepage' %} selected{% endif %}" ><i class="icon-home"></i>{% trans %}Home{% endtrans %}</a>
+        {#<a href="dashboard-dark.html" class="nav-header" ><i class="icon-dashboard"></i>{% trans %}Starred{% endtrans %}</a>#}
+        <div class="blank-space"></div>
+
+        <a href="#ui-elements" class="nav-header" data-toggle="collapse">
+            {% trans %}Subscriptions{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
+        </a>
+
+        {% render controller("NPSFrontendBundle:Feed:menu") %}
+    </div>
+
+
+</div>

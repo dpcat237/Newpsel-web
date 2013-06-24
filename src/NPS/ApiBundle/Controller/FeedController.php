@@ -26,11 +26,11 @@ class FeedController extends BaseController
         $lastUpdate = $json->lastUpdate;
 
         if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSModelBundle:User');
+            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
             if ($userRepo->checkLogged($cache, $appKey)) {
                 $user = $userRepo->getDeviceUser($cache, $appKey);
-                $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
+                $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
                 $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
 
                 $jsonData = json_encode($feedCollection);
@@ -58,11 +58,11 @@ class FeedController extends BaseController
         $feedUrl = $json->feed_url;
 
         if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSModelBundle:User');
+            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
             if ($userRepo->checkLogged($cache, $appKey)) {
                 $user = $userRepo->getDeviceUser($cache, $appKey);
-                $feedRepo = $this->em->getRepository('NPSModelBundle:Feed');
+                $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
                 $rss = $this->get('fkr_simple_pie.rss');
                 $cache = $this->get('server_cache');
                 $feedRepo->setRss($rss);
@@ -70,7 +70,7 @@ class FeedController extends BaseController
                 $checkCreate = $feedRepo->createFeed($feedUrl, $user);
 
                 if (!$checkCreate['error']) {
-                    $itemRepo = $this->em->getRepository('NPSModelBundle:Item');
+                    $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
                     $feed = $checkCreate['feed'];
                     $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
 

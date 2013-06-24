@@ -30,7 +30,7 @@ abstract class BaseController extends CoreController
         $objectName = str_replace(' ', '', $objectName);
 
         if ($objectId) {
-            $objectRepo = $this->em->getRepository('NPSModelBundle:'.$objectName);
+            $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
             $object = $objectRepo->find($objectId);
 
             if ($object instanceof $objectClass) {
@@ -107,7 +107,7 @@ abstract class BaseController extends CoreController
     {
         $name = $objectName;
         $objectName = str_replace(' ', '', $objectName);
-        $objectRepo = $this->em->getRepository('NPSModelBundle:'.$objectName);
+        $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
         $page = new PaginationHelper($pageActual, $objectRepo->getCount(), 10);
         $objectCollection = $objectRepo->getListPagination($page->getRegistersOffset(), $page->getRegistersLimit(), $orderBy, $where);
 

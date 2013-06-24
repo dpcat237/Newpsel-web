@@ -1,0 +1,53 @@
+{% extends 'NPSFrontendBundle::base.html.twig' %}
+
+{% block body %}
+{% block content %}
+    <div class="login">
+        <div class="wrapper">
+            <div class="block-dark sign-block">
+                <h3>{% trans %}Login to your account{% endtrans %}</h3>
+                <hr class="hr-dark">
+
+                {#<div class="row-fluid">
+                    <div class="span12 open-id">
+                        <a href="index.html" class="modern sign-facebook"><span class="mordern-id">Facebook</span></a>
+                        <a href="index.html" class="modern sign-google"><span class="mordern-id">Google +</span></a>
+                    </div>
+                </div>
+                <hr class="hr-dark">#}
+
+                <form data-validate="parsley" id="sign-form" class="form-dark" method="post">
+                    <div class="input-prepend">
+                        <span class="add-dark"><i class="icon-user"></i></span>
+                        {{ form_widget(form.username, { 'attr' : {'data-required':'true', 'placeholder':'Username' }} ) }}
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-dark"><i class="icon-lock"></i></span>
+                        {{ form_widget(form.password, { 'attr' : {'data-required':'true', 'placeholder':'Password' }} ) }}
+                        {% if errors == '301' %}
+                            <ul class="parsley-error-list" style="display: block;">
+                                <li class="required" style="display: list-item;">
+                                    {% trans %}Username and password combination isn't correct{% endtrans %}
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                        <span id="sign-form-valid">
+                            {{ form_row(form._token) }}
+                            <input type="submit" class="btn btn-inverse pull-right" value="Log In">
+                        </span>
+                    {#<div class="remember">
+                        <input type="checkbox" id="signIn[remember_me]" name="signIn[remember_me]" checked>
+                        <span{% trans %}>Remember me{% endtrans %}</span>
+                    </div>#}
+                </form>
+                <div class="clearfix"></div>
+                <hr class="hr-dark">
+                {#<p><a href="password.html">Forgot your password?</a></p>#}
+                <p class="para-account">{% trans %}Don't have an account yet?{% endtrans %} <a href="{{ url("sign_up") }}">{% trans %}Create an account{% endtrans %}</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% endblock body %}

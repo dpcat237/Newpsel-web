@@ -1,12 +1,8 @@
-nps_frontend:
-    resource: "@NPSFrontendBundle/Resources/config/routing.yml"
+chicplace_web:
+    resource: "@NPSFrontendBundle/Controller"
     prefix:   /
+    type:     annotation
 
 nps_api:
     resource: "@NPSApiBundle/Resources/config/routing.yml"
     prefix:   /api
-
-#BCCCronManager routing
-BCCCronManagerBundle:
-    resource: "@BCCCronManagerBundle/Resources/config/routing.xml"
-    prefix:   /cron-manager

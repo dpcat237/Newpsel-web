@@ -1,0 +1,21 @@
+{% extends 'NPSFrontendBundle::base.html.twig' %}
+
+{% block body %}
+    {% include "NPSFrontendBundle::navbar.html.twig" %}
+    {% include "NPSFrontendBundle::sidebar.html.twig" %}
+
+    <div class="content">
+        {% include "NPSFrontendBundle::header.html.twig" %}
+
+        <div class="wrapper-content">
+            <div class="container-fluid">
+                {#{% include "NPSFrontendBundle:Default:messages.html.twig" %}#}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+
+
+    </div>
+
+    {% include "NPSFrontendBundle::footer.html.twig" %}
+{% endblock body %}

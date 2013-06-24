@@ -8,7 +8,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\SecurityContext;
-use NPS\ModelBundle\Entity\User;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Entity\User;
 
 /**
  * Class DefaultController
@@ -18,46 +21,75 @@ use NPS\ModelBundle\Entity\User;
 class DefaultController extends BaseController
 {
     /**
-     * Home page
-     * @return mixed
+     * Welcome page with sing in and sign up
+     * @param Request $request
+     *
+     * @return Response
+     * @Route("/", name="welcome")
      */
-    public function indexAction()
+    public function welcomeAction(Request $request)
+    {
+        if ($this->get('security.context')->isGranted('ROLE_USER')) {
+            return new RedirectResponse($this->container->get('router')->generate('homepage'));
+        } else {
+            return $this->render('NPSFrontendBundle:Default:welcome.html.twig');
+        }
+    }
+
+    /**
+     * Homepage
+     * @param Request $request
+     *
+     * @return Response
+     * @Route("/home", name="homepage")
+     */
+    public function homeAction(Request $request)
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             $name = ':)';
 
             return $this->render('NPSFrontendBundle:Default:index.html.twig', array('name' => $name));
         } else {
-            return new RedirectResponse($this->container->get('router')->generate('login'));
+            return new RedirectResponse($this->container->get('router')->generate('welcome'));
         }
-
     }
 
     /**
-     * Process a POST for a login. Defined in routing.yml, only accepts POST
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * Subscribe to newsletter
+     * @param Request $request
      *
      * @return Response
+     * @Route("/subscribe", name="subscribe")
      */
-    public function processLoginAction(Request $request)
+    public function subscribeAction(Request $request)
     {
-        if ($this->get('security.context')->isGranted('ROLE_USER')) {
-            //if the user is logged, go to the homepage
-            $redirectRoute = $this->container->get('router')->generate('homepage');
+        $userRepo = $this->em->getRepository('NPSCoreBundle:User');
+        $userRepo->subscribeToNewsletter($request->get('email'));
 
-            return new RedirectResponse($redirectRoute);
-        }
+        $response = array (
+            'result' => NotificationHelper::OK
+        );
+
+        return new Response(json_encode($response));
+    }
+
+    /**
+     * Process a POST for a login
+     * @param Request $request
+     *
+     * @return boolean
+     */
+    public function processLogin($request)
+    {
 
         //if he's not logged
-        $formData = $request->get('form');
+        $formData = $request->get('signIn');
         $username = $formData['username'];
         $password = $formData['password'];
 
         //check password
-        $user = $this->getDoctrine()
-            ->getManager()
-            ->getRepository('NPSModelBundle:User')
-            ->findOneByUsername($username);
+        $userRepo = $this->em->getRepository('NPSCoreBundle:User');
+        $user = $userRepo->findOneByUsername($username);
         $ok = false;
         if ($user instanceof User) {
             $ok = ($user->getPassword() == sha1("sc_".$password));
@@ -67,33 +99,14 @@ class DefaultController extends BaseController
         if ($ok && $user->getIsEnabled()) {
             //password is correct, make login
             $this->doLogin($user);
-            //make login, got to admin_index
-            $redirectRoute = $this->container->get('router')->generate('homepage');
 
-            return new RedirectResponse($redirectRoute);
+            return true;
         }
 
         //login is not correct, set AUTH_ERROR in context, display login page
         $request->attributes->set(SecurityContext::AUTHENTICATION_ERROR, true);
 
-        return $this->loginAction($request);
-    }
-
-    /**
-     * Login check action. Defined in routing.yml, only accepts GET
-     *
-     * @param Request $request the current request
-     *
-     * @return Response
-     */
-    public function loginCheckAction(Request $request)
-    {
-        if ($this->get('security.context')->isGranted('ROLE_USER')) {
-            //if the user is logged, go to the homepage
-            return new RedirectResponse($this->container->get('router')->generate('homepage'));
-        }
-        //if user is not logged, go to admin login
-        return new RedirectResponse($this->container->get('router')->generate('login'));
+        return false;
     }
 
     /**
@@ -102,6 +115,7 @@ class DefaultController extends BaseController
      * @param Request $request the current request
      *
      * @return Response
+     * @Route("/sign_in", name="sign_in")
      */
     public function loginAction(Request $request)
     {
@@ -110,6 +124,14 @@ class DefaultController extends BaseController
             $redirectRoute = $this->container->get('router')->generate('homepage');
 
             return new RedirectResponse($redirectRoute);
+        }
+        $errors = "";
+
+        if ($request->getMethod() == 'POST') {
+            $check = $this->processLogin($request);
+            if ($check) {
+                return new RedirectResponse($this->container->get('router')->generate('homepage'));
+            }
         }
 
         $session = $request->getSession();
@@ -121,98 +143,72 @@ class DefaultController extends BaseController
             $session->remove(SecurityContext::AUTHENTICATION_ERROR);
         }
 
-        if (!empty($error)) {
-            // Get error list
-            $errors = array(
-                'hasErrors' => true,
-                'password' => 'Username and password combination is not good'
-            );
-            // Send the error list to javascript
-            return new Response(json_encode($errors));
+        if ($error) {
+            $errors = NotificationHelper::ERROR_LOGIN_DATA;
         }
 
-        $form = $this->createFormBuilder()
-            ->add('username', null, array('required' => true))
-            ->add('password', 'password', array('required' => true))
-            ->getForm();
-        $viewVars = array('error' => $error, 'form' => $form->createView());
+        $objectClass = 'NPS\CoreBundle\Entity\User';
+        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\SignInType';
+        $form = $this->createFormEdit(null, 'User', $objectClass, $objectTypeClass);
+        $viewVars = array(
+            'errors' => $errors,
+            'form' => $form->createView()
+        );
 
-        return $this->render('NPSFrontendBundle:Default:login.html.twig', $viewVars);
+        return $this->render('NPSFrontendBundle:Default:sign_in.html.twig', $viewVars);
     }
 
     /**
-     * Signup action, GET
-     *
-     * @param Request $request the current request
+     * Signup action
+     * @param Request $request
      *
      * @return Response
+     * @Route("/sign_up", name="sign_up")
      */
     public function signupAction(Request $request)
     {
-        $form = $this->_getSignupForm();
+        $errors = '';
+        $objectClass = 'NPS\CoreBundle\Entity\User';
+        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\SignUpType';
+        $form = $this->createFormEdit(null, 'User', $objectClass, $objectTypeClass);
 
-        return $this->render('NPSFrontendBundle:Default:signup.html.twig', array('form' => $form->createView()));
-    }
+        if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
+            $user = $form->getData();
+            $this->createNotification("User");
 
-    /**
-     * Return form for signup
-     * @param \Symfony\Component\Security\Core\User\UserInterface $user
-     *
-     * @return \Symfony\Component\Form\Form
-     */
-    private function _getSignupForm(UserInterface $user = null)
-    {
-        if (is_null($user)) {
-            $user = new User();
+            if ($form->isValid()) {
+                $userRepo = $this->em->getRepository('NPSCoreBundle:User');
+                $errors = $userRepo->checkUserExists($user->getUsername(), $user->getEmail());
+                if (empty($errors)) {
+                    $password = sha1("sc_".$user->getPassword());
+                    $user->setPassword($password);
+                    $user->setIsEnabled(true);
+                    $user->setRegistered(true);
+
+                    $this->saveObject($user);
+                    // Generate Activation Code
+                    //$ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
+                    // Set verification code key in cache
+                    //$cache = $this->container->get('redis_cache');
+                    //$cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
+                    //  Show message 'check your email to confirm registration...'
+
+                    return new RedirectResponse($this->container->get('router')->generate('sign_in'));
+                } else {
+                    $this->notification->setNotification($errors);
+                }
+            } else {
+                $this->notification->setNotification(201);
+            }
         }
 
-        return $this->createFormBuilder($user)
-            ->add('username', 'text', array('label' => 'Your username'))
-            ->add('email', 'text', array('label' => 'Your email'))
-            ->add('password', 'repeated', array('type' => 'password',
-                    'invalid_message' => "The passwords do not match",
-                    'first_name' => 'password',
-                    'first_options' => array(
-                        'label' => 'Your Password' // Custom label for element
-                    )
-                )
-            )
-            ->add('isEnabled', 'hidden', array('data' => 1))
-            ->getForm();
-    }
+        $viewData = array (
+            'form' => $form->createView(),
+            'errors' => $errors
+        );
 
-    /**
-     * Signup action, POST
-     *
-     * @param Request $request the current request
-     *
-     * @return Response
-     */
-    public function signupProcessAction(Request $request)
-    {
-        $form = $this->_getSignupForm();
-        $form->bind($request);
-        $user = $form->getData();
-        // Set encrypted password
-        $password = sha1("sc_".$user->getPassword());
-        $user->setPassword($password);
-        $user->setIsEnabled(true);
-        if ($form->isValid()) {
-            $this->em = $this->getDoctrine()->getManager();
-            $this->em->persist($user);
-            $this->em->flush();
-            // Generate Activation Code
-            $ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
-            // Set verification code key in cache
-            //$cache = $this->container->get('redis_cache');
-            //$cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
-            //  Show message 'check your email to confirm registration...'
-            $viewVars = array('Name' => $user->getUsername());
-
-            return $this->render('NPSFrontendBundle:Default:signupok.html.twig', $viewVars);
-        }
-
-        return $this->render('NPSFrontendBundle:Default:signup.html.twig', array('form' => $form->createView()));
+        return $this->render('NPSFrontendBundle:Default:sign_up.html.twig', $viewData);
     }
 
     /**
@@ -247,5 +243,19 @@ class DefaultController extends BaseController
         }
 
         return $ok;
+    }
+
+    /**
+     * Logout
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     * @Route("/logout", name="logout")
+     */
+    public function logoutAction(Request $request)
+    {
+        $request->getSession()->invalidate();
+
+        return new RedirectResponse($this->container->get('router')->generate('welcome'));
     }
 }

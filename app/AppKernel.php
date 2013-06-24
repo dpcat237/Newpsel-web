@@ -19,13 +19,14 @@ class AppKernel extends Kernel
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
-            new NPS\ModelBundle\NPSModelBundle(),
+            new Fkr\SimplePieBundle\FkrSimplePieBundle(),
+            new Snc\RedisBundle\SncRedisBundle(),
             new NPS\CoreBundle\NPSCoreBundle(),
             new NPS\FrontendBundle\NPSFrontendBundle(),
             new NPS\ApiBundle\NPSApiBundle(),
-            new Fkr\SimplePieBundle\FkrSimplePieBundle(),
-            new BCC\CronManagerBundle\BCCCronManagerBundle(),
-            new Snc\RedisBundle\SncRedisBundle()
+            new Undf\AngularJsBundle\UndfAngularJsBundle(),
+            new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
+            //new BCC\CronManagerBundle\BCCCronManagerBundle(),
             //new JMS\SerializerBundle\JMSSerializerBundle()
         );
 

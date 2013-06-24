@@ -1,0 +1,130 @@
+{% extends 'NPSFrontendBundle::base.html.twig' %}
+
+{% block head_style %}
+    {% stylesheets filter='?yui_css,cssrewrite' output='bundles/npsfrontend/css/*.css' 'css/bootstrap.css' %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+    {% endstylesheets %}
+
+    {# Customized Bootstrap application styles, generated via LESS #}
+    {% stylesheets debug=false filter='lessphp' output='bundles/npsfrontend/css/*.css'
+        '@NPSFrontendBundle/Resources/public/less/telex.less'
+        '@NPSFrontendBundle/Resources/public/less/welcome.less'
+    %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+    {% endstylesheets %}
+
+    <script src="{{ asset('bundles/npsfrontend/js/jquery/jquery-1.9.1.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/npsfrontend/js/jquery/parsley.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/bootstrap_bootstrap-transition_1.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/bootstrap_bootstrap-modal_7.js') }}" type="text/javascript"></script>
+
+{% endblock head_style %}
+
+{% block body %}
+{% block content %}
+    <!-- Nav bar ================================================== -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="./index.html">Bootstrap</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        {#<li class="first"><a href="{{ url("sign_up") }}">{% trans %}Sign up{% endtrans %}</a></li>#}
+                        <li class="last" style="visibility:hidden"><a href="{{ url("sign_in") }}">{% trans %}Sign in{% endtrans %}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="jumbotron masthead">
+        <div class="container">
+            <img src="{{ asset('bundles/npsfrontend/images/logo_web.png') }}" alt="{% trans %}Newpsel{% endtrans %}" />
+            <h1 class="title">{% trans %}Newpsel{% endtrans %}</h1>
+            <p>{% trans %}News Personal Selector{% endtrans %}</p>
+        </div>
+
+    </div>
+
+    <div class="bs-docs-social">
+        <div class="container">
+            <ul class="bs-docs-social-buttons">
+                <li>
+                    <div class="fb-like" data-href="https://www.facebook.com/Newpsel" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+                </li>
+                <li style="margin-left: 30px" >
+                    <div class="g-plusone" data-size="medium" data-href="https://plus.google.com/117729248184020272725"></div>
+                </li>
+                <li >
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.newpsel.com" data-hashtags="Newpsel">Tweet</a>
+                </li>
+            </ul>
+
+            <div id="fb-root"></div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="marketing">
+
+            <h1>{% trans %}Introducing to Newpsel{% endtrans %}</h1>
+            <p class="marketing-byline">{% trans %}Spend a lot of time selecting and reading news? Newpsel can be your solution.{% endtrans %}</p>
+
+            <div class="row-fluid">
+                <div class="span4">
+                    <h2>{% trans %}The idea{% endtrans %}</h2>
+                    <p>{% trans %}Newpsel will have different futures with which you will spend less time selecting preferred news and save/share them.{% endtrans %}</p>
+                </div>
+                <div class="span4">
+                    <h2>{% trans %}About the project{% endtrans %}</h2>
+                    <p>{#{% trans %}Newpsle is under development and currently it's in alpha version. So for now it's simple RSS feeds reader but soon will come future functionality.{% endtrans %}#}
+                        {% trans %}Newpsle is under development. Very soon will be available web version.{% endtrans %}
+                        {% trans %}You can {% endtrans %} <a href="#modalSubscribe" role="button" class="" data-toggle="modal">{% trans %}subscribe{% endtrans %}</a> {% trans %} to our newsletter to be updated about future versions.{% endtrans %}
+                        {% trans %}Our email{% endtrans %} <a href="mailto:newpsel@gmail.com" target="_blank">newpsel@gmail.com</a>.
+                    </p>
+                </div>
+                <div class="span4">
+                    <h2>{% trans %}Application{% endtrans %}</h2>
+                    <label for="wm"><img src="http://developer.android.com/images/brand/en_app_rgb_wo_60.png" alt="{% trans %}Newpsel app on Google Play{% endtrans %}" /></label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer ================================================== -->
+    <footer class="footer">
+        <div class="container">
+            {#<p class="pull-right"><a href="#">Back to top</a></p>#}
+            <p>Made by Denys Pasishnyi</p>
+            <p>Newpsel &copy; 2013</p>
+            {#<p><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/es/deed.es"><img alt="Licencia Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/es/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Newpsel</span> por <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.newpsel.com" property="cc:attributionName" rel="cc:attributionURL">Denys Pasishnyi</a> se encuentra bajo una <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/es/deed.es">Licencia Creative Commons Atribución-NoComercial-SinDerivadas 3.0 España</a></p>#}
+            </ul>
+        </div>
+    </footer>
+    {% include "NPSFrontendBundle:Default:modal_newsletter.html.twig" %}
+
+{% endblock %}
+
+{% endblock body %}
+
+{% block foot_script %}
+    {%- javascripts output='js/*.js'
+        '@NPSFrontendBundle/Resources/public/js/core.js'
+        '@NPSFrontendBundle/Resources/public/js/welcome.js'
+        '@NPSFrontendBundle/Resources/public/js/analytics.js'
+    filter='?yui_js'
+    %}
+    <script src="{{ asset_url }}" type="text/javascript"></script>
+    <script>
+        jsUrl.URL_SUBSCRIBE = "{{ url("subscribe") }}";
+    </script>
+    {% endjavascripts %}
+{% endblock foot_script %}

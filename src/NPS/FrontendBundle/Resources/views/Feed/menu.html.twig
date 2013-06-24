@@ -1,0 +1,5 @@
+<ul id="ui-elements" class="nav nav-list in collapse">
+    {% for feed in feeds %}
+        <li><a href="{{ url("items_list", {'feed_id':feed.id}) }}"><span class="badge">{{ feed.count }}</span>{{ feed.title }}</a></li>
+    {% endfor %}
+</ul>
