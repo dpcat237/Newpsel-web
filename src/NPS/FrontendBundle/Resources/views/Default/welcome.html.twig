@@ -79,7 +79,7 @@
             <div class="row-fluid">
                 <div class="span4">
                     <h2>{% trans %}The idea{% endtrans %}</h2>
-                    <p>{% trans %}Newpsel will have different futures with which you will spend less time selecting preferred news and save/share them.{% endtrans %}</p>
+                    <p>{% trans %}Newpsel will have different futures with which you will spend less time selecting, reading and sharing interesting to you news.{% endtrans %}</p>
                 </div>
                 <div class="span4">
                     <h2>{% trans %}About the project{% endtrans %}</h2>
@@ -91,7 +91,11 @@
                 </div>
                 <div class="span4">
                     <h2>{% trans %}Application{% endtrans %}</h2>
-                    <label for="wm"><img src="http://developer.android.com/images/brand/en_app_rgb_wo_60.png" alt="{% trans %}Newpsel app on Google Play{% endtrans %}" /></label>
+                    <label for="wm">
+                        <a href="https://play.google.com/store/apps/details?id=com.dpcat237.nps" target="_blank">
+                            <img alt="Android app on Google Play" src="https://developer.android.com/images/brand/en_app_rgb_wo_60.png" />
+                        </a>
+                    </label>
                 </div>
             </div>
 
@@ -123,7 +127,7 @@
     %}
     <script src="{{ asset_url }}" type="text/javascript"></script>
     <script>
-        jsUrl.URL_SUBSCRIBE = "{{ url("subscribe") }}";
+        jsUrl.URL_SUBSCRIBE_NEWSLETTER = "{{ url("subscribe") }}";
     </script>
     {% endjavascripts %}
 {% endblock foot_script %}

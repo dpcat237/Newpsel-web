@@ -17,8 +17,8 @@ var jsUrl = function () {
 // ********************************************
 var subscribeNewsletter = function () {
     function accessInit() {
-        $('#subscribeSubmit').click(function(){
-            if($('#subscribe-form').parsley('validate')) {
+        $('#subscribeNewsletterSubmit').click(function(){
+            if($('#subscribeNewsletter').parsley('validate')) {
                 $('#modalSubscribe').modal('hide');
                 var email = $('#subscribe_email').val();
                 $('#subscribe_email').val('');

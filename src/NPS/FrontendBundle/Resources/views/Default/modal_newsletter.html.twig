@@ -4,7 +4,7 @@
         <h3 id="modalSubscribeLabel">{% trans %}Subscribe to newsletter{% endtrans %}</h3>
     </div>
     <div class="modal-body">
-        <form data-validate="parsley" action="" id="subscribe-form" class="form">
+        <form data-validate="parsley" action="" id="subscribeNewsletter" class="form">
             <div class="input-prepend">
                 <input id="subscribe_email" type="email" name="email" data-trigger="change" data-required="true" data-type="email" placeholder="{% trans %}Email{% endtrans %}">
             </div>
@@ -12,6 +12,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans %}Cancel{% endtrans %}</button>
-        <button id='subscribeSubmit' class="btn btn-primary" >{% trans %}Subscribe{% endtrans %}</button>
+        <button id='subscribeNewsletterSubmit' class="btn btn-primary" >{% trans %}Subscribe{% endtrans %}</button>
     </div>
 </div>
