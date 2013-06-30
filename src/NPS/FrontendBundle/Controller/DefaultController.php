@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Entity\User;
 
@@ -46,9 +47,9 @@ class DefaultController extends BaseController
     public function homeAction(Request $request)
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
-            $name = ':)';
+            $viewData = array();
 
-            return $this->render('NPSFrontendBundle:Default:index.html.twig', array('name' => $name));
+            return $this->render('NPSFrontendBundle:Default:index.html.twig', $viewData);
         } else {
             return new RedirectResponse($this->container->get('router')->generate('welcome'));
         }

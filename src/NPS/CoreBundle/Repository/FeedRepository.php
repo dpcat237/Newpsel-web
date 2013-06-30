@@ -57,6 +57,7 @@ class FeedRepository extends BaseRepository
             $feed = null;
             $em = $this->getEntityManager();
             $url = TextHelper::fixUrl($url);
+            $url = $this->removeUnnecessaryCharactersUrl($url);
 
             if (!$url || !TextHelper::validateFeedUrl($url)) {
                 $error = 302;
@@ -114,6 +115,22 @@ class FeedRepository extends BaseRepository
         $result['error'] = $error;
 
         return $result;
+    }
+
+    /**
+     * Remove unnecessary characters from url
+     * @param $url
+     *
+     * @return string
+     */
+    private function removeUnnecessaryCharactersUrl($url)
+    {
+        $checkSlash = substr("$url", -1);
+        if ($checkSlash == "/") {
+            $url = substr($url, 0, -1);
+        }
+
+        return $url;
     }
 
     /**

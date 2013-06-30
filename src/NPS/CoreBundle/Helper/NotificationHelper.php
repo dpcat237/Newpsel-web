@@ -17,6 +17,10 @@ class NotificationHelper extends Helper
     /**API NOTIFICATIONS**/
     /*Success*/
     CONST OK = 100;
+    CONST OK_IS_READ = 110;
+    CONST OK_IS_UNREAD = 111;
+    CONST OK_IS_STARED = 112;
+    CONST OK_IS_NOT_STARED = 113;
     /*Warning*/
     CONST WARNING = 200;
     /*Error*/

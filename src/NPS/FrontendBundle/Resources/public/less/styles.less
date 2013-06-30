@@ -27,16 +27,16 @@ body {
   height: 100%;
 }
 a {
-  color: #ee4646;
+  color: #4760ed;
 }
 a:hover {
   text-decoration: none;
-  color: #eb2727;
+  color: #2738ea;
   outline: transparent;
 }
 a:focus {
   text-decoration: none;
-  color: #eb2727;
+  color: #2738ea;
   outline: transparent;
 }
 h1 {
@@ -3404,7 +3404,39 @@ a .add-dark{
   color: #ffffff;
 }
 
-.list-item{
+.list-item {
   color: #000000;
   font-size: 12px;
+}
+a.list-item:hover {
+  color: #383838;
+}
+
+/*Menu*/
+div.sidebar-nav {
+  height: 82%;
+}
+div.subnav-collapse {
+  height: 67% !important;
+}
+ul.nav-list {
+  max-height: 100%;
+  overflow-y: scroll;
+  padding: 0;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px;
+}
+.sidebar-nav .nav-list > div > div > li > a:hover {
+  background: #222;
+}
+.sidebar-nav .nav-list > div > div > .active > a,
+.sidebar-nav .nav-list > div > div > .active > a:hover {
+  background: #222;
+}
+.sidebar-nav .nav-list > div > div  > li > a {
+  display: block;
+  color: #ddd;
+  text-shadow: none;
+  padding: .5em 1em;
 }

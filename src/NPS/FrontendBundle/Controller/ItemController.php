@@ -7,6 +7,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Entity\Item;
+use NPS\CoreBundle\Entity\Feed;
+use NPS\CoreBundle\Entity\UserItem;
 
 /**
  * ItemController
@@ -17,10 +23,12 @@ class ItemController extends BaseController
      * List of items
      * @param Request $request
      *
-     * @return Response
+     * @return array
      * @Route("/feed/{feed_id}/items_list", name="items_list")
+     * @Template()
+     * @ParamConverter("feed", class="NPSCoreBundle:Feed", options={"id": "feed_id"})
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request, Feed $feed)
     {
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('welcome'));
@@ -28,86 +36,93 @@ class ItemController extends BaseController
             $user = $this->get('security.context')->getToken()->getUser();
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
             $itemsList = $itemRepo->getUnreadByFeedUser($user->getId(), $request->get('feed_id'));
-
             $viewData = array(
                 'items' => $itemsList,
+                'title' => $feed->getTitle()
             );
 
-            return $this->render('NPSFrontendBundle:Item:list.html.twig', $viewData);
+            return $viewData;
         }
     }
 
     /**
      * Show item
      * @param Request $request
+     * @param Item    $item
      *
-     * @return Response
+     * @return array
      * @Route("/feed/{feed_id}/item/{item_id}", name="item_view")
+     * @Template()
+     * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
      */
-    public function viewAction(Request $request)
+    public function viewAction(Request $request, Item $item)
     {
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('login'));
-        } else {
-            if ($itemId = $request->get('id')) {
-                $user = $this->get('security.context')->getToken()->getUser();
-                $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-                $item = $itemRepo->find($itemId);
-
-                if ($itemRepo->canSee($user->getId(), $itemId)) {
-                    $itemRepo->changeStatus($user, $item, "IsUnread", 2);
-
-                    $renderData = array(
-                        'heading' => $item->getTitle(),
-                        'item' => $item
-                    );
-
-                    return $this->render('NPSFrontendBundle:Item:view.html.twig', $renderData);
-                }
-            }
+            return new RedirectResponse($this->router->generate('welcome'));
         }
 
-        return new RedirectResponse($this->router->generate('homepage'));
+        $user = $this->get('security.context')->getToken()->getUser();
+        $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
+        $itemRepo->changeStatus($user, $item, "IsUnread", 2);
+        $renderData = array(
+            'item' => $item,
+            'title' => $item->getFeed()->getTitle()
+        );
+
+        return $renderData;
     }
 
     /**
      * Change stat of item to read/unread
-     * @param Request $request the current request
+     * @param Request $request
+     * @param Item    $item
      *
      * @return Response
+     * @Route("/feed/{feed_id}/item/{item_id}/mark_read", name="mark_read")
+     * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
      */
-    public function readAction(Request $request)
+    public function readAction(Request $request, Item $item)
     {
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate0('login'));
+            return new RedirectResponse($this->router->generate('welcome'));
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $item = $itemRepo->find($request->get('itemId'));
-            $itemRepo->changeStatus($user, $item, "IsUnread", 2);
+            $status = $itemRepo->changeStatus($user, $item, "IsUnread");
+            $result=($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
 
-            return new RedirectResponse($this->router->generate('items', array('id' => $request->get('feedId'))));
+            $response = array (
+                'result' => $result
+            );
+
+            return new Response(json_encode($response));
         }
     }
 
     /**
      * Add/remove star to item
-     * @param Request $request the current request
+     * @param Request $request
+     * @param Item    $item
      *
      * @return Response
-     * @Route("/feed/{feed_id}/item/{item_id}", name="mark_star")
+     * @Route("/feed/{feed_id}/item/{item_id}/mark_star", name="mark_star")
+     * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
      */
-    public function starAction(Request $request)
+    public function starAction(Request $request, Item $item)
     {
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate0('login'));
+            return new RedirectResponse($this->router->generate('welcome'));
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $item = $itemRepo->find($request->get('itemId'));
-            $itemRepo->changeStatus($user, $item, "IsStarred");
+            $status = $itemRepo->changeStatus($user, $item, "IsStared");
+            $result=($status)? NotificationHelper::OK_IS_NOT_STARED : NotificationHelper::OK_IS_STARED ;
 
-            return new RedirectResponse($this->router->generate('items', array('id' => $request->get('feedId'))));
+            $response = array (
+                'result' => $result
+            );
+
+            return new Response(json_encode($response));
         }
     }
 }

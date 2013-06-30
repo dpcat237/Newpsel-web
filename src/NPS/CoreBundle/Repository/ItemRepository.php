@@ -136,8 +136,9 @@ class ItemRepository extends BaseRepository
      * @param User $user
      * @param Item $item
      * @param $statusSet
-     *
      * @param null $change
+     *
+     * @return boolean set status
      */
     public function changeStatus(User $user, Item $item, $statusSet, $change = null)
     {
@@ -171,6 +172,8 @@ class ItemRepository extends BaseRepository
         $userItem->$statusSet($status);
         $em->persist($userItem);
         $em->flush();
+
+        return $status;
     }
 
     /**
@@ -342,8 +345,8 @@ class ItemRepository extends BaseRepository
             ->setParameter('feedId', $feedId)
             ->setParameter('isUnread', true)
             ->getQuery();
-        $feedCollection = $query->getResult();
+        $itemCollection = $query->getResult();
 
-        return $feedCollection;
+        return $itemCollection;
     }
 }

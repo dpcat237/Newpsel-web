@@ -18,17 +18,15 @@
     </div>
 
 
-    <div class="nav-collapse subnav-collapse collapse ">
+    <div class="" style="height: 67% !important;">
         <a href="{{ url("homepage") }}" class="nav-header{% if app.request.get('_route') == 'homepage' %} selected{% endif %}" ><i class="icon-home"></i>{% trans %}Home{% endtrans %}</a>
         {#<a href="dashboard-dark.html" class="nav-header" ><i class="icon-dashboard"></i>{% trans %}Starred{% endtrans %}</a>#}
         <div class="blank-space"></div>
 
-        <a href="#ui-elements" class="nav-header" data-toggle="collapse">
+        <a class="nav-header mOptAction" data-sebmenu="mSubscriptionList">
             {% trans %}Subscriptions{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
         </a>
 
         {% render controller("NPSFrontendBundle:Feed:menu") %}
     </div>
-
-
 </div>

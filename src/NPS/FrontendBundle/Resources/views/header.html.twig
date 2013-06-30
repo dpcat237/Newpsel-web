@@ -1,3 +1,10 @@
 <div class="header">
-    <h1 class="page-title">{% trans %}Home{% endtrans %}</h1>
+    <div ng-init="title='Home'"></div>
+    <h1 class="page-title">
+        {% if title is defined %}
+            {{ title }}
+        {% else %}
+            {% trans %}Home{% endtrans %}
+        {% endif %}
+    </h1>
 </div>

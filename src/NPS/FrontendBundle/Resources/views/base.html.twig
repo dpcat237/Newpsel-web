@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="npsApp">
     <head>
         <meta charset="utf-8" />
         <title>{% block title %}Newpsel{% endblock title %}</title>
@@ -19,6 +19,7 @@
 
                 '@NPSFrontendBundle/Resources/public/less/font-awesome.less'
                 '@NPSFrontendBundle/Resources/public/less/open-sans.less'
+                '@NPSFrontendBundle/Resources/public/less/lib/mCustomScrollbar/jquery.mCustomScrollbar.less'
                 '@NPSFrontendBundle/Resources/public/less/styles.less'
             %}
                 <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
@@ -50,11 +51,13 @@
                 '@NPSFrontendBundle/Resources/public/js/jquery/jquery.spellchecker.js'
                 '@NPSFrontendBundle/Resources/public/js/jquery/parsley.js'
                 '@NPSFrontendBundle/Resources/public/js/jquery/jquery.masonry.min.js'
+                '@NPSFrontendBundle/Resources/public/js/jquery/jquery.mCustomScrollbar.concat.min.js'
                 '@NPSFrontendBundle/Resources/public/js/jquery/custom.js'
 
                 '@NPSFrontendBundle/Resources/public/js/core.js'
                 '@NPSFrontendBundle/Resources/public/js/functions.js'
                 '@NPSFrontendBundle/Resources/public/js/mycustomset.undfangular.js'
+                '@NPSFrontendBundle/Resources/public/js/functions.angular.js'
 
             filter="angularjs, ?yui_js"
             output="bundles/npsfrontend/js/*.js" %}

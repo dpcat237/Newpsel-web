@@ -1,9 +1,16 @@
-{% extends 'NPSFrontendBundle::Default/layout.html.twig' %}
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
 
 {% block content %}
-    <div>
-        {{ item.content|raw }}
+    <div class="row-fluid">
+        <div class="block span12">
+            <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>
+            <div class="block-body">
+                <p>
+                    <span class="label label-disabled">on {{ item.humanDateAdd }}</span>
+                    {% if (item.author) %}<span class="label label-disabled">by {{ item.author }}</span>{% endif %}
+                </p>
+                {{ item.content|raw }}
+            </div>
+        </div>
     </div>
-    <br /><br />
-    <div><a href="{{ url('items', {'id': item.feedId}) }}">Feed</a></div>
 {% endblock %}

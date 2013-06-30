@@ -161,6 +161,16 @@ class UserItem
     }
 
     /**
+     * Get isEnabled
+     *
+     * @return \int
+     */
+    public function getIsUnread()
+    {
+        return $this->isUnread;
+    }
+
+    /**
      * Set isStared
      * @param \boolean $isStared
      *
@@ -178,7 +188,7 @@ class UserItem
      *
      * @return \int
      */
-    public function getIsStared()
+    public function isStared()
     {
         return $this->isStared;
     }

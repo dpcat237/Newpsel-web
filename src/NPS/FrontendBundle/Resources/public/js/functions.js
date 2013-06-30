@@ -5,6 +5,18 @@ $(document).ready(function(){
     /*Subscribe to feed*/
     subscribeFeed.init();
 
+    /*Show / hide submenu*/
+    showSubmenu.init();
+
+    /*Custom scrollbar*/
+    navScrollbar.init();
+
+    /*Stared action*/
+    staredAction.init();
+
+    /*Read action*/
+    readAction.init();
+
     /*Login*/
     $('input').iCheck({
         checkboxClass: 'icheckbox_polaris',
@@ -12,9 +24,3 @@ $(document).ready(function(){
         increaseArea: '-10' // optional
     });
 });
-
-
-/*Angularjs*/
-function FetchCtrl() {
-    alert('tut: ');
-}
