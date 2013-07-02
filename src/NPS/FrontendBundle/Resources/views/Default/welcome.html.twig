@@ -74,28 +74,28 @@
         <div class="marketing">
 
             <h1>{% trans %}Introducing to Newpsel{% endtrans %}</h1>
-            <p class="marketing-byline">{% trans %}Spend a lot of time selecting and reading news? Newpsel can be your solution.{% endtrans %}</p>
+            <p class="marketing-byline">{% trans %}Spending a lot of time selecting and reading news? Newpsel can be your solution.{% endtrans %}</p>
 
             <div class="row-fluid">
                 <div class="span4">
                     <h2>{% trans %}The idea{% endtrans %}</h2>
-                    <p>{% trans %}Newpsel (News Personal Selector) will have different futures with which you will spend less time selecting, reading and sharing interesting to you news.{% endtrans %}</p>
-                    <p>{% trans %}Newpsel is under development and currently it's in alpha version. So for now it's simple RSS feeds reader but soon will come future functionality.{% endtrans %}
+                    <p>{% trans %}Newpsel (News Personal Selector) will have different futures with which you will spend less time selecting, reading and sharing interesting items to you.{% endtrans %}</p>
+                    <p>{% trans %}Newpsel is under development and it's in a currently  alpha version. So for now it's simple RSS feeds reader but it will soon have future functionality.{% endtrans %}
                         {#{% trans %}Newpsel is under development. Very soon will be available web version.{% endtrans %}#}
-                        {% trans %}You can {% endtrans %} <a href="#modalSubscribe" role="button" class="" data-toggle="modal">{% trans %}subscribe{% endtrans %}</a> {% trans %} to our newsletter to be updated about future versions.{% endtrans %}
+                        {% trans %}You can {% endtrans %} <a href="#modalSubscribe" role="button" class="" data-toggle="modal">{% trans %}subscribe{% endtrans %}</a> {% trans %} to our newsletter and update about future versions.{% endtrans %}
                         {% trans %}Email{% endtrans %} <a href="mailto:newpsel@gmail.com" target="_blank">newpsel@gmail.com</a>.
                     </p>
                 </div>
                 <div class="span4">
                     <h2>{% trans %}About the project{% endtrans %}</h2>
                     <p>
-                        {% trans %}I everyday was using Google Reader (since May Newpsel) in my mobile and had some ideas how improve it but never started until... When Google decided close Google Reader and as I didn't find good alternative for me I decide develop it. So Newpsel, for now, it's personal project which I develop in free time.{% endtrans %}
+                        {% trans %}I was everyday using Google Reader (since May Newpsel) in my mobile and I had some ideas about how to improve it but never started until... Google decided close, Google Reader and as I didn't find good alternative for me I decided to  develop it. So Newpsel, from now, it's a personal project which I developed in free time.{% endtrans %}
                     </p>
                     <p>
-                        {% trans %}Of course right now are a lot of Google Reader alternative apps but still any with futures as I'll develop (to solve principal idea of Newpsel).{% endtrans %}
+                        {% trans %}Of course right now there are a lot of Google Reader alternative apps but still any with future perspectives, as I'll develop (to solve some principal ideas of Newpsel). {% endtrans %}
                     </p>
                     <p>
-                        {% trans %}Interested developers will be able participate in project. Some used technology: PHP, Symfony 2, EC2, Vagrant, Git, Redis, AngularJS, Less, Java (Android), etc. In future iOS.{% endtrans %}
+                        {% trans %}Interested developers will be able to participate in the project. Some of the used technology: PHP, Symfony 2, EC2, Vagrant, Git, Redis, AngularJS, Less, Java (Android), etc. In future iOS.{% endtrans %}
                     </p>
                 </div>
                 <div class="span4">
@@ -138,11 +138,6 @@
     <script src="{{ asset_url }}" type="text/javascript"></script>
     <script>
         jsUrl.URL_SUBSCRIBE_NEWSLETTER = "{{ url("subscribe") }}";
-        (function() {
-            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-            po.src = 'https://apis.google.com/js/plusone.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-        })();
     </script>
     {% endjavascripts %}
 {% endblock foot_script %}
