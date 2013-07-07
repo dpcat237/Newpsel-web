@@ -133,13 +133,15 @@ abstract class BaseController extends CoreController
      * @param string $objectName [description]
      * @param object $form       [description]
      */
-    protected function saveGenericForm($objectName, $form)
+    protected function saveGenericForm($objectName, $form, $msg = null)
     {
         $this->createNotification($objectName);
         $formObject = $form->getData();
+        $msg = ($msg)? $msg : 101;
 
         if ($form->isValid()) {
             $this->saveObject($formObject);
+            $this->notification->setNotification($msg);
         } else {
             $this->notification->setNotification(201);
         }

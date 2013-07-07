@@ -1,5 +1,14 @@
 <ul id="mSubscriptionList" class="nav nav-list">
     {% for feed in feeds %}
-        <li><a href="{{ url("items_list", {'feed_id':feed.id}) }}"><span class="badge">{{ feed.count }}</span>{{ feed.title }}</a></li>
+        <li>
+            <a href="{{ url("items_list", {'feed_id':feed.id}) }}">
+                <span class="badge">{{ feed.count }}</span>
+                {% if (feed.title | length) > 22 %}
+                    {{ feed.title | slice(0, 22) }}...
+                {% else %}
+                    {{ feed.title }}
+                {% endif %}
+            </a>
+        </li>
     {% endfor %}
 </ul>

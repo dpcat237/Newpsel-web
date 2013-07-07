@@ -10,23 +10,6 @@
                 </form>
             </li>#}
 
-            {#<li class="dropdown header-border">
-                <a href="#" role="button" class="dropdown-toggle " data-toggle="dropdown">
-                    <div class="notify">7</div>
-                </a>
-
-                <ul class="dropdown-menu block-dark messages msg-notify">
-                    <li class="view-all"><a href="#">View all notifications</a></li>
-                    <li><a href="#"><div><i class="icon-comment"></i>  new comment <span class="timer">2 min</span></div></a>
-                    <li><a href="#"><div><i class="icon-twitter"></i>  new follower <span class="timer">6 min</span></div></a>
-                    <li><a href="#"><div><i class="icon-thumbs-up"></i> new like <span class="timer">9 min</span></div></a>
-                    <li><a href="#"><div><i class="icon-twitter"></i>  new follower <span class="timer">25 min</span></div></a>
-                    <li><a href="#"><div><i class="icon-user"></i>  new registration <span class="timer">32 min</span></div></a>
-                    <li><a href="#"><div><i class="icon-comment"></i>  new comment <span class="timer">2 hours</span></div></a>
-                    <li><a href="#"><div><i class="icon-map-marker"></i>  new localization <span class="timer">Yesterday</span></div></a>
-                </ul>
-            </li>#}
-
             <li class="dropdown header-border">
                 <a href="#" role="button" class="dropdown-toggle " data-toggle="dropdown">
                     <div class="thumb-account">
@@ -37,7 +20,9 @@
 
                 <ul class="dropdown-menu block-dark account">
                     {#<li class="first"><a tabindex="-1" href="#"><i class="icon-user"></i> {% trans %}Your profile{% endtrans %}</a></li>
-                    <li class="first"><a tabindex="-1" href="#"><i class="icon-cogs"></i> {% trans %}Settings{% endtrans %}</a></li>#}
+                    <li class="first"><a tabindex="-1" href="#"><i class="icon-cogs"></i> {% trans %}Settings{% endtrans %}</a></li>
+                    <li class=""><a tabindex="-1" href="{{ url("labels_list") }}"><i class="icon-rss"></i> {% trans %}Manage feeds{% endtrans %}</a></li>#}
+                    <li class="first"><a tabindex="-1" href="{{ url("labels_list") }}"><i class="icon-tags"></i> {% trans %}Manage labels{% endtrans %}</a></li>
                     <li class="last notify-disabled"><a tabindex="-1" href="{{ url("logout") }}"><i class="icon-signout"></i> {% trans %}Logout{% endtrans %}</a></li>
                 </ul>
             </li>

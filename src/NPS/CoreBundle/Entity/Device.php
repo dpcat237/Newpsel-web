@@ -23,27 +23,27 @@ class Device
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="app_key", type="string", length=255, nullable=false)
      */
-    private $appKey;
+    protected $appKey;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
      */
-    private $dateAdd;
+    protected $dateAdd;
 
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="User", inversedBy="devices")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    private $user;
+    protected $user;
 
 
     /**

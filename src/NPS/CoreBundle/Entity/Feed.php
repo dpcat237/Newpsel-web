@@ -26,58 +26,58 @@ class Feed
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
      */
-    private $title;
+    protected $title;
 
     /**
      * @var string
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
      * @Assert\NotNull(message={"Write a url"})
      */
-    private $url;
+    protected $url;
 
     /**
      * @var string
      * @ORM\Column(name="url_hash", type="string", length=255, nullable=false, unique=true)
      */
-    private $urlHash;
+    protected $urlHash;
 
     /**
      * @var string
      * @ORM\Column(name="website", type="string", length=255, nullable=false)
      */
-    private $website;
+    protected $website;
 
     /**
      * @var string
      * @ORM\Column(name="language", type="string", length=255, nullable=true)
      */
-    private $language;
+    protected $language;
 
     /**
      * @var string
      * @ORM\Column(name="favicon", type="string", length=255, nullable=true)
      */
-    private $favicon;
+    protected $favicon;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
      */
-    private $dateAdd;
+    protected $dateAdd;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="date_up", type="integer")
      */
-    private $dateUp;
+    protected $dateUp;
 
     /**
      * @ORM\OneToMany(targetEntity="Item", mappedBy="feed")
@@ -93,13 +93,13 @@ class Feed
      * @var integer
      * @ORM\Column(name="date_sync", type="integer", nullable=true)
      */
-     private $dateSync;
+     protected $dateSync;
 
     /**
      * @var integer
      * @ORM\Column(name="date_change", type="integer", nullable=true)
      */
-    private $dateChange;
+    protected $dateChange;
 
 
     /**

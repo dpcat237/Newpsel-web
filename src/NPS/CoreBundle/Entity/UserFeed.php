@@ -21,28 +21,28 @@ class UserFeed
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Feed", inversedBy="userFeeds")
      * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
      */
-    private $feed;
+    protected $feed;
 
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userFeeds")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    private $user;
+    protected $user;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
      */
-    private $dateAdd;
+    protected $dateAdd;
 
 
     /**

@@ -7,15 +7,9 @@
 <!--  start message-green -->
 {% for flashMessage_s in app.session.flashbag.get('success') %}
     {% if flashMessage_s %}
-        <div id="message-green">
-            <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td class="green-left">{{ flashMessage_s }}</td>
-                    <td class="green-right"><a class="close-green">
-                        <img src="{{ asset('bundles/npsfrontend/images/table/icon_close_green.gif') }}"   alt="" />
-                    </a></td>
-                </tr>
-            </table>
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert"><i class="icon-remove"></i></button>
+            <strong>{{ flashMessage_s }}</strong>
         </div>
     {% endif %}
 {% endfor %}
@@ -24,13 +18,9 @@
 <!--  start message-blue -->
 {% for flashMessage_n in app.session.flashbag.get('notification') %}
     {% if flashMessage_n %}
-        <div id="message-blue">
-            <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td class="blue-left">{{ flashMessage_n }}</td>
-                    <td class="blue-right"><a class="close-blue"><img src="images/table/icon_close_blue.gif"   alt="" /></a></td>
-                </tr>
-            </table>
+        <div class="alert alert-info">
+            <button type="button" class="close" data-dismiss="alert"><i class="icon-remove"></i></button>
+            <strong>{{ flashMessage_n }}</strong>
         </div>
     {% endif %}
 {% endfor %}
@@ -39,13 +29,9 @@
 <!--  start message-yellow -->
 {% for flashMessage_a in app.session.flashbag.get('alert') %}
     {% if flashMessage_a %}
-        <div id="message-yellow">
-            <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td class="yellow-left">{{ flashMessage_a }}</td>
-                    <td class="yellow-right"><a class="close-yellow"><img src="images/table/icon_close_yellow.gif"   alt="" /></a></td>
-                </tr>
-            </table>
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert"><i class="icon-remove"></i></button>
+            <strong>{{ flashMessage_a }}</strong>
         </div>
     {% endif %}
 {% endfor %}
@@ -54,13 +40,9 @@
 <!--  start message-red -->
 {% for flashMessage_e in app.session.flashbag.get('error') %}
     {% if flashMessage_e %}
-        <div id="message-red">
-            <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td class="red-left">{{ flashMessage_e }}</td>
-                    <td class="red-right"><a class="close-red"><img src="images/table/icon_close_red.gif"   alt="" /></a></td>
-                </tr>
-            </table>
+        <div class="alert alert-error">
+            <button type="button" class="close" data-dismiss="alert"><i class="icon-remove"></i></button>
+            <strong>{{ flashMessage_e }}</strong>
         </div>
     {% endif %}
 {% endfor %}

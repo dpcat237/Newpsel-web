@@ -31,6 +31,7 @@ class NotificationHelper extends Helper
     CONST ERROR_USERNAME_EXISTS = 304;
     CONST ERROR_EMAIL_EXISTS = 305;
     CONST ERROR_WRONG_FEED = 306;
+    CONST ERROR_NO_DATA = 307;
     CONST ERROR_TRY_LATER = 310;
 
     /**
@@ -110,6 +111,10 @@ class NotificationHelper extends Helper
             case 102:
                 $this->setMessageType('success');
                 $this->setMessage("Feed synchronized successfully");
+                break;
+            case 103:
+                $this->setMessageType('success');
+                $this->setMessage("Label's data saved successfully");
                 break;
             case 201:
                 $this->setMessageType('alert');

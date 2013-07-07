@@ -17,6 +17,9 @@ $(document).ready(function(){
     /*Read action*/
     readAction.init();
 
+    /*Create label*/
+    createLabel.init();
+
     /*Login*/
     $('input').iCheck({
         checkboxClass: 'icheckbox_polaris',

@@ -6,10 +6,10 @@
 
     <div class="sidebar-avatar">
         <img src="{{ asset('bundles/npsfrontend/images/logo.png') }}" alt="avatar" class="thumbnail-avatar">
-        <a href="#modalAddFeed" role="button" class="" data-toggle="modal">
-            <div class="sidebar-avatar-message">
+        <a href="#modalAddFeed" role="button" data-toggle="modal">
+            <div class="sidebar-avatar-message show-tip" title="{% trans %}Subscribe to feed{% endtrans %}">
                 <div class="notify-message">
-                    <span class="add-dark" title="{% trans %}Subscribe{% endtrans %}"><i class="icon-plus"></i></span>
+                    <span class="add-dark"><i class="icon-plus"></i></span>
                 </div>
             </div>
         </a>
@@ -26,7 +26,11 @@
         <a class="nav-header mOptAction" data-sebmenu="mSubscriptionList">
             {% trans %}Subscriptions{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
         </a>
-
         {% render controller("NPSFrontendBundle:Feed:menu") %}
+
+        <a class="nav-header mOptAction" data-sebmenu="mLabelsList">
+            {% trans %}Labels{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
+        </a>
+        {% render controller("NPSFrontendBundle:Label:menu") %}
     </div>
 </div>

@@ -30,3 +30,16 @@ api_sync_unread:
     defaults: { _controller: NPSApiBundle:Item:syncUnread }
     requirements:
       _method: POST
+
+#Label
+api_sync_labels:
+    pattern:  /sync_labels/
+    defaults: { _controller: NPSApiBundle:Label:syncLabels }
+    requirements:
+      _method: POST
+
+api_sync_later:
+    pattern:  /sync_later/
+    defaults: { _controller: NPSApiBundle:Label:syncLater }
+    requirements:
+      _method: POST

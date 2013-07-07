@@ -25,64 +25,64 @@ class Item
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
      */
-    private $title;
+    protected $title;
 
     /**
      * @var string
      * @ORM\Column(name="link", type="string", length=255, nullable=false)
      */
-    private $link;
+    protected $link;
 
     /**
      * @var string
      * @ORM\Column(name="content", type="text", nullable=false)
      */
-    private $content;
+    protected $content;
 
     /**
      * @var string
      * @ORM\Column(name="content_hash", type="string", length=255, nullable=false)
      */
-    private $contentHash;
+    protected $contentHash;
 
     /**
      * @var string
      * @ORM\Column(name="author", type="string", length=255, nullable=true)
      */
-    private $author;
+    protected $author;
 
     /**
      * @var string
      * @ORM\Column(name="category", type="string", length=255, nullable=true)
      */
-    private $category;
+    protected $category;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
      */
-    private $dateAdd;
+    protected $dateAdd;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="date_up", type="integer")
      */
-    private $dateUp;
+    protected $dateUp;
 
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Feed", inversedBy="items", cascade={"persist"})
      * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
      */
-    private $feed;
+    protected $feed;
 
     /**
      * @ORM\OneToMany(targetEntity="UserItem", mappedBy="item")

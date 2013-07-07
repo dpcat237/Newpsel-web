@@ -34,48 +34,48 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="username", type="string", length=255, nullable=true, unique=true)
      * @Assert\NotNull(message={"Write an username"})
      */
-    private $username;
+    protected $username;
 
     /**
      * @var string
      * @ORM\Column(name="email", type="string", length=255, nullable=false, unique=true)
      * @Assert\NotNull(message={"Write an email"})
      */
-    private $email;
+    protected $email;
 
     /**
      * @var string
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
      * @Assert\NotNull(groups={"registration"})
      */
-    private $password;
+    protected $password;
 
     /**
      * @var boolean
      * @ORM\Column(name="is_enabled", type="boolean")
      */
-    private $isEnabled = false;
+    protected $isEnabled = false;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
      */
-    private $dateAdd;
+    protected $dateAdd;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="date_up", type="integer")
      */
-    private $dateUp;
+    protected $dateUp;
 
     /**
      * @ORM\OneToMany(targetEntity="Device", mappedBy="user")
@@ -96,14 +96,19 @@ class User implements UserInterface
      * @var boolean
      * @ORM\Column(name="registered", type="boolean")
      */
-    private $registered = false;
+    protected $registered = false;
 
     /**
      * @var boolean
      * @ORM\Column(name="subscribed", type="boolean")
      */
-    private $subscribed = false;
+    protected $subscribed = false;
 
+
+    /**
+     * @ORM\OneToMany(targetEntity="Later", mappedBy="user")
+     */
+    protected $laters;
 
     /**
      * Constructor
@@ -113,6 +118,7 @@ class User implements UserInterface
         $this->devices = new ArrayCollection();
         $this->userItems = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
+        $this->laters = new ArrayCollection();
     }
 
     /**
@@ -457,5 +463,37 @@ class User implements UserInterface
     public function isSubscribed()
     {
         return $this->subscribed;
+    }
+
+    /**
+     * Add Later
+     * @param UserFeed $later
+     *
+     * @return User
+     */
+    public function addLater(Later $later)
+    {
+        $this->laters[] = $later;
+
+        return $this;
+    }
+
+    /**
+     * Remove userFeed
+     *
+     */
+    public function removeLater(Later $later)
+    {
+        $this->laters->removeElement($later);
+    }
+
+    /**
+     * Get Laters
+     *
+     * @return Collection
+     */
+    public function getLaters()
+    {
+        return $this->laters;
     }
 }

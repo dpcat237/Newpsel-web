@@ -1,0 +1,33 @@
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="block span12 inbox">
+            <div class="block-body">
+
+                <table class="table">
+                    <tbody>
+                    {% for laterItem in items %}
+                        {% set item = laterItem.userItem.item %}
+                        <tr>
+                            {#<td class="td-star" style="padding-left: 7px">
+                                <i class="readAction{% if laterItem.isUnread %} icon-check-empty{% else %} icon-check{% endif %}" data-url="{{ url('mark_read', {'feed_id': item.feedId, 'item_id': item.id}) }}" ></i>
+                            </td>#}
+                            <td class="inbox-message">
+                                <a class="list-item" href="{{ url('item_later_view', {'label_id': laterItem.LaterId, 'item_id': laterItem.id}) }}">
+                                    {% if laterItem.isUnread %}
+                                        <b>{{ item.title|raw }}</b>
+                                    {% else %}
+                                        {{ item.title|raw }}
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td class="center">{{ item.humanDateAdd }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

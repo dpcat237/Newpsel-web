@@ -14,7 +14,7 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class ItemController extends BaseController
 {
     /**
-     * List of feeds
+     * Sync items
      * @param Request $request the current request
      *
      * @return Response

@@ -1,10 +1,12 @@
 <?php
 
 namespace NPS\CoreBundle\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\LaterItem;
 
 /**
  * UserItem
@@ -21,41 +23,54 @@ class UserItem
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Item", inversedBy="userItems")
      * @ORM\JoinColumn(name="item_id", referencedColumnName="id", nullable=false)
      */
-    private $item;
+    protected $item;
 
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userItems")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    private $user;
+    protected $user;
 
     /**
      * @var int
      * @ORM\Column(name="is_unread", type="boolean", nullable=false)
      */
-    private $isUnread = false;
+    protected $isUnread = false;
 
     /**
      * @var int
      * @ORM\Column(name="is_stared", type="boolean", nullable=false)
      */
-    private $isStared = false;
+    protected $isStared = false;
 
     /**
      * @var integer
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="date_add", type="integer")
      */
-    private $dateAdd;
+    protected $dateAdd;
 
+    /**
+     * @ORM\OneToMany(targetEntity="LaterItem", mappedBy="userItems")
+     */
+    protected $laterItems;
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->laterItems = new ArrayCollection();
+    }
 
     /**
      * Get id

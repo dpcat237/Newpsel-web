@@ -13,6 +13,8 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\UserItem;
+use NPS\CoreBundle\Entity\Later;
+use NPS\CoreBundle\Entity\LaterItem;
 
 /**
  * ItemController
@@ -22,6 +24,7 @@ class ItemController extends BaseController
     /**
      * List of items
      * @param Request $request
+     * @param Feed    $feed
      *
      * @return array
      * @Route("/feed/{feed_id}/items_list", name="items_list")
@@ -46,8 +49,36 @@ class ItemController extends BaseController
     }
 
     /**
+     * List of items to read later
+     * @param Later   $label
+     *
+     * @return array
+     * @Route("/label/{label_id}/items_list", name="items_later_list")
+     * @Template()
+     * @ParamConverter("label", class="NPSCoreBundle:Later", options={"id": "label_id"})
+     */
+    public function laterListAction(Later $label)
+    {
+        if ($this->get('security.context')->isGranted('ROLE_USER')) {
+            $user = $this->get('security.context')->getToken()->getUser();
+            if ($label->getUserId() == $user->getId()) {
+                $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+                $itemsList = $labelRepo->getUnread($label->getId());
+
+                $viewData = array(
+                    'items' => $itemsList,
+                    'title' => 'Label '.$label->getName()
+                );
+
+                return $viewData;
+            }
+        }
+
+        return new RedirectResponse($this->router->generate('welcome'));
+    }
+
+    /**
      * Show item
-     * @param Request $request
      * @param Item    $item
      *
      * @return array
@@ -55,7 +86,7 @@ class ItemController extends BaseController
      * @Template()
      * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
      */
-    public function viewAction(Request $request, Item $item)
+    public function viewAction(Item $item)
     {
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('welcome'));
@@ -70,6 +101,40 @@ class ItemController extends BaseController
         );
 
         return $renderData;
+    }
+
+    /**
+     * Show item
+     * @param LaterItem $laterItem
+     *
+     * @return array
+     * @Route("/label/{label_id}/item/{item_id}", name="item_later_view")
+     * @Template()
+     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"item_id": "id", "label_id": "later"}})
+     */
+    public function viewLaterAction(LaterItem $laterItem)
+    {
+        if ($this->get('security.context')->isGranted('ROLE_USER')) {
+            $user = $this->get('security.context')->getToken()->getUser();
+            if ($laterItem->getLater()->getUserId() == $user->getId()) {
+                $laterItem->setIsUnread(false);
+                $this->em->persist($laterItem);
+                $this->em->flush();
+
+                $item = $laterItem->getUserItem()->getItem();
+                $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
+                $itemRepo->changeStatus($user, $item, "IsUnread", 2);
+
+                $renderData = array(
+                    'item' => $item,
+                    'title' => $item->getFeed()->getTitle()
+                );
+
+                return $renderData;
+            }
+        }
+
+        return new RedirectResponse($this->router->generate('welcome'));
     }
 
     /**

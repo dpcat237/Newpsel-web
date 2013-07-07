@@ -3,11 +3,13 @@ var jsUrl = function () {
     var URL_HOMEPAGE = "";
     var URL_SUBSCRIBE_NEWSLETTER = "";
     var URL_SUBSCRIBE_FEED = "";
+    var URL_CREATE_LABEL = "";
 
     return {
         URL_HOMEPAGE : URL_HOMEPAGE,
         URL_SUBSCRIBE_NEWSLETTER : URL_SUBSCRIBE_NEWSLETTER,
-        URL_SUBSCRIBE_FEED : URL_SUBSCRIBE_FEED
+        URL_SUBSCRIBE_FEED : URL_SUBSCRIBE_FEED,
+        URL_CREATE_LABEL : URL_CREATE_LABEL
     };
 }();
 
@@ -81,6 +83,8 @@ var validGenericForm = function () {
                 $('#sign-form').submit();
             }
         });
+
+        $(".show-tip").tooltip();
     }
 
     return{
@@ -216,6 +220,20 @@ var staredAction = function () {
                 }
             });
         });
+    }
+
+    return{
+        init : accessInit
+    }
+}();
+
+// ********************************************
+// Object createLabel
+// Create label
+// ********************************************
+var createLabel = function () {
+    function accessInit() {
+        $(".add-label").popover();
     }
 
     return{
