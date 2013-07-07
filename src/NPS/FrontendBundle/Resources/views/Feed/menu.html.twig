@@ -3,8 +3,8 @@
         <li>
             <a href="{{ url("items_list", {'feed_id':feed.id}) }}">
                 <span class="badge">{{ feed.count }}</span>
-                {% if (feed.title | length) > 22 %}
-                    {{ feed.title | slice(0, 22) }}...
+                {% if (feed.title | length) > 17 %}
+                    {{ feed.title | slice(0, 17) }}...
                 {% else %}
                     {{ feed.title }}
                 {% endif %}
