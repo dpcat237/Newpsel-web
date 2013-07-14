@@ -33,8 +33,12 @@ class LabelController extends BaseController
                 $user = $userRepo->getDeviceUser($cache, $appKey);
                 $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
 
-                $createdIds = $labelRepo->syncLabels($user, $changedLabels);
-                $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate, $changedLabels, $createdIds);
+                if (count($changedLabels)) {
+                    $createdIds = $labelRepo->syncLabels($user, $changedLabels);
+                    $labelCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels, $createdIds);
+                } else {
+                    $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
+                }
 
                 $jsonData = json_encode($labelCollection);
                 $headers = array('Content-Type' => 'application/json');

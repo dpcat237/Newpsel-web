@@ -117,21 +117,13 @@ class LaterRepository extends BaseRepository
      * Get user's labels list for api
      * @param int   $userId
      * @param int   $lastUpdate
-     * @param array $changedLabels
-     * @param array $createdIds
      *
      * @return array
      */
-    public function getUserLabelsApi($userId, $lastUpdate = 0, $changedLabels, $createdIds)
+    public function getUserLabelsApi($userId, $lastUpdate = 0)
     {
         parent::preExecute();
         $repository = $this->em->getRepository('NPSCoreBundle:Later');
-        $changedIds = null;
-        if (count($changedLabels)) {
-            foreach ($changedLabels as $changedLabel) {
-                $changedIds[] = $changedLabel->id;
-            }
-        }
 
         $query = $repository->createQueryBuilder('l')
             ->select('l.id AS api_id, l.name, l.dateUp AS lastUpdate')
@@ -139,23 +131,53 @@ class LaterRepository extends BaseRepository
             ->andWhere('l.dateUp > :lastUpdate')
             ->orderBy('l.dateUp', 'ASC')
             ->setParameter('userId', $userId)
-            ->setParameter('lastUpdate', $lastUpdate);
-        if (count($changedIds)) {
-            $changedIds = implode(',', $changedIds);
-            $query->andWhere('l.id NOT IN (:changedIds)')
-                ->setParameter('changedIds', $changedIds);
-        }
-        $query->getQuery();
+            ->setParameter('lastUpdate', $lastUpdate)
+            ->getQuery();
         $collection = $query->getResult();
         foreach ($collection as $key => $value) {
+            $collection[$key]['id'] = 0;
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Get user's labels list for api
+     * @param int   $userId
+     * @param int   $lastUpdate
+     * @param array $changedLabels
+     * @param array $createdIds
+     *
+     * @return array
+     */
+    public function getUserLabelsApiCreated($userId, $lastUpdate = 0, $changedLabels, $createdIds)
+    {
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSCoreBundle:Later');
+        foreach ($changedLabels as $changedLabel) {
+            $changedIds[] = $changedLabel->id;
+        }
+        $changedIds = implode(',', $changedIds);
+
+        $query = $repository->createQueryBuilder('l')
+            ->select('l.id AS api_id, l.name, l.dateUp AS lastUpdate')
+            ->where('l.user = :userId')
+            ->andWhere('l.dateUp > :lastUpdate')
+            ->andWhere('l.id NOT IN (:changedIds)')
+            ->orderBy('l.dateUp', 'ASC')
+            ->setParameter('userId', $userId)
+            ->setParameter('lastUpdate', $lastUpdate)
+            ->setParameter('changedIds', $changedIds)
+            ->getQuery();
+        $collection = $query->getResult();
+        foreach ($collection as $key => $value) {
+            $collection[$key]['id'] = 0;
             if (count($createdIds)) {
                 foreach ($createdIds as $apiId => $webId) {
                     if ($value['api_id'] == $webId) {
                         $collection[$key]['id'] = $apiId;
                     }
                 }
-            } else {
-                $collection[$key]['id'] = 0;
             }
         }
 
