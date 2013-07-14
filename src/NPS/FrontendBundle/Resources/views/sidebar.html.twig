@@ -23,14 +23,14 @@
         {#<a href="dashboard-dark.html" class="nav-header" ><i class="icon-dashboard"></i>{% trans %}Starred{% endtrans %}</a>#}
         <div class="blank-space"></div>
 
-        <a class="nav-header mOptAction" data-sebmenu="mSubscriptionList">
-            {% trans %}Subscriptions{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
-        </a>
-        {% render controller("NPSFrontendBundle:Feed:menu") %}
-
         <a class="nav-header mOptAction" data-sebmenu="mLabelsList">
             {% trans %}Labels{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
         </a>
         {% render controller("NPSFrontendBundle:Label:menu") %}
+
+        <a class="nav-header mOptAction" data-sebmenu="mSubscriptionList">
+            {% trans %}Subscriptions{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
+        </a>
+        {% render controller("NPSFrontendBundle:Feed:menu") %}
     </div>
 </div>
