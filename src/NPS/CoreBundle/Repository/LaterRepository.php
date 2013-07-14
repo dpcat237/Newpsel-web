@@ -4,6 +4,7 @@ namespace NPS\CoreBundle\Repository;
 
 use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Entity\LaterItem;
+use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Repository\BaseRepository;
 
@@ -52,7 +53,9 @@ class LaterRepository extends BaseRepository
         $collection = $query->getResult();
 
         if (count($collection)) {
-            return true;
+            foreach ($collection as $label) {
+                return $label;
+            }
         }
 
         return false;
@@ -112,25 +115,52 @@ class LaterRepository extends BaseRepository
 
     /**
      * Get user's labels list for api
-     * @param int $userId
-     * @param int $lastUpdate
+     * @param int   $userId
+     * @param int   $lastUpdate
+     * @param array $changedLabels
+     * @param array $createdIds
      *
      * @return array
      */
-    public function getUserLabelsApi($userId, $lastUpdate = 0)
+    public function getUserLabelsApi($userId, $lastUpdate = 0, $changedLabels, $createdIds)
     {
         parent::preExecute();
         $repository = $this->em->getRepository('NPSCoreBundle:Later');
+        $changedIds = null;
+        if (count($changedLabels)) {
+            foreach ($changedLabels as $changedLabel) {
+                $changedIds[] = $changedLabel->id;
+            }
+        }
+
         $query = $repository->createQueryBuilder('l')
             ->select('l.id AS api_id, l.name, l.dateUp AS lastUpdate')
             ->where('l.user = :userId')
             ->andWhere('l.dateUp > :lastUpdate')
             ->orderBy('l.dateUp', 'ASC')
             ->setParameter('userId', $userId)
-            ->setParameter('lastUpdate', $lastUpdate)
-            ->getQuery();
+            ->setParameter('lastUpdate', $lastUpdate);
+        if (count($changedIds)) {
+            $changedIds = implode(',', $changedIds);
+            $query->andWhere('l.id NOT IN (:changedIds)')
+                ->setParameter('changedIds', $changedIds);
+        }
+        $query->getQuery();
+        $collection = $query->getResult();
+        foreach ($collection as $key => $value) {
+            if (count($createdIds)) {
+                foreach ($createdIds as $apiId => $webId) {
+                    if ($value['api_id'] == $webId) {
+                        $collection[$key]['id'] = $apiId;
+                    }
+                }
+            } else {
+                $collection[$key]['id'] = 0;
+            }
+        }
 
-        return $query->getResult();
+
+        return $collection;
     }
 
     /**
@@ -188,5 +218,40 @@ class LaterRepository extends BaseRepository
         } else {
             return false;
         }
+    }
+
+    /**
+     * Sync labels from device
+     * @param User $user
+     * @param $changedLabels
+     *
+     * @return array
+     */
+    public function syncLabels(User $user, $changedLabels)
+    {
+        parent::preExecute();
+        $laterRepo = $this->em->getRepository('NPSCoreBundle:Later');
+        $createdIds = null;
+        foreach ($changedLabels as $changedLabel) {
+            if ($changedLabel->id) {
+                $label = $laterRepo->find($changedLabel->id);
+                $label->setName($changedLabel->name);
+                $this->em->persist($label);
+                $this->em->flush();
+            } else {
+                $label = $this->hasLabelByName($user->getId(), $changedLabel->name);
+                if (!$label instanceof Later) {
+                    $label = new Later();
+                    $label->setUser($user);
+                }
+                $label->setName($changedLabel->name);
+                $this->em->persist($label);
+                $this->em->flush();
+
+                $createdIds[$changedLabel->api_id] = $label->getId();
+            }
+        }
+
+        return $createdIds;
     }
 }
