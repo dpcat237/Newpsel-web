@@ -6,6 +6,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -71,7 +72,7 @@ class DefaultController extends BaseController
             'result' => NotificationHelper::OK
         );
 
-        return new Response(json_encode($response));
+        return new JsonResponse($response);
     }
 
     /**

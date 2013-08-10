@@ -20,6 +20,9 @@ $(document).ready(function(){
     /*Create label*/
     createLabel.init();
 
+    /*Show external link*/
+    showExternalLink.init();
+
     /*Login*/
     $('input').iCheck({
         checkboxClass: 'icheckbox_polaris',

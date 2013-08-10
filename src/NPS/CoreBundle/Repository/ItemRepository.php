@@ -135,15 +135,14 @@ class ItemRepository extends BaseRepository
      * Change item status
      * @param User $user
      * @param Item $item
+     * @param $statusGet
      * @param $statusSet
      * @param null $change
      *
      * @return boolean set status
      */
-    public function changeStatus(User $user, Item $item, $statusSet, $change = null)
+    public function changeStatus(User $user, Item $item, $statusGet, $statusSet, $change = null)
     {
-        $statusGet = 'get'.$statusSet;
-        $statusSet = 'set'.$statusSet;
         $em = $this->getEntityManager();
         $userItem = $this->hasItem($user->getId(), $item->getId());
 

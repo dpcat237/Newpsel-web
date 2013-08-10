@@ -3,7 +3,7 @@
 namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\CoreBundle\Helper\NotificationHelper;
@@ -17,7 +17,7 @@ class FeedController extends BaseController
      * List of feeds
      * @param Request $request the current request
      *
-     * @return Response
+     * @return JsonResponse | string
      */
     public function syncFeedsAction(Request $request)
     {
@@ -33,11 +33,7 @@ class FeedController extends BaseController
                 $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
                 $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
 
-                $jsonData = json_encode($feedCollection);
-                $headers = array('Content-Type' => 'application/json');
-                $response = new Response($jsonData, 200, $headers);
-
-                return $response;
+                return new JsonResponse($feedCollection);
             } else {
                 echo NotificationHelper::ERROR_NO_LOGGED; exit();
             }
@@ -49,7 +45,7 @@ class FeedController extends BaseController
      * Add feed, subscribe user to this feed and add last items for user
      * @param Request $request
      *
-     * @return Response
+     * @return JsonResponse | string
      */
     public function addFeedAction(Request $request)
     {
@@ -74,11 +70,7 @@ class FeedController extends BaseController
                     $feed = $checkCreate['feed'];
                     $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
 
-                    $jsonData = json_encode($unreadItems);
-                    $headers = array('Content-Type' => 'application/json');
-                    $response = new Response($jsonData, 200, $headers);
-
-                    return $response;
+                    return new JsonResponse($unreadItems);
                 } else {
                     echo NotificationHelper::ERROR_WRONG_FEED; exit();
                 }

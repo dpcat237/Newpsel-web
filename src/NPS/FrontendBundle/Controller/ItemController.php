@@ -5,6 +5,7 @@ namespace NPS\FrontendBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -94,7 +95,7 @@ class ItemController extends BaseController
 
         $user = $this->get('security.context')->getToken()->getUser();
         $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-        $itemRepo->changeStatus($user, $item, "IsUnread", 2);
+        $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
         $renderData = array(
             'item' => $item,
             'title' => $item->getFeed()->getTitle()
@@ -123,7 +124,7 @@ class ItemController extends BaseController
 
                 $item = $laterItem->getUserItem()->getItem();
                 $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-                $itemRepo->changeStatus($user, $item, "IsUnread", 2);
+                $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
 
                 $renderData = array(
                     'item' => $item,
@@ -142,8 +143,8 @@ class ItemController extends BaseController
      * @param Request $request
      * @param Item    $item
      *
-     * @return Response
-     * @Route("/feed/{feed_id}/item/{item_id}/mark_read", name="mark_read")
+     * @return JsonResponse
+     * @Route("/feed/{feed_id}/item/{item_id}/mark_read/{status}", name="mark_read", defaults={"status" = null})
      * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
      */
     public function readAction(Request $request, Item $item)
@@ -151,16 +152,49 @@ class ItemController extends BaseController
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('welcome'));
         } else {
+            $status = $request->get('status');
             $user = $this->get('security.context')->getToken()->getUser();
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $status = $itemRepo->changeStatus($user, $item, "IsUnread");
+            $status = $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", $status);
             $result=($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
 
             $response = array (
                 'result' => $result
             );
 
-            return new Response(json_encode($response));
+            return new JsonResponse($response);
+        }
+    }
+
+    /**
+     * Change stat of later item to read
+     * @param LaterItem $laterItem
+     *
+     * @return JsonResponse
+     * @Route("/label/{label_id}/item/{item_id}/mark_read", name="mark_later_read")
+     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"item_id": "id", "label_id": "later"}})
+     */
+    public function readLaterAction(LaterItem $laterItem)
+    {
+        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
+            return new RedirectResponse($this->router->generate('welcome'));
+        } else {
+            $user = $this->get('security.context')->getToken()->getUser();
+            if ($laterItem->getLater()->getUserId() == $user->getId()) {
+                $laterItem->setIsUnread(false);
+                $this->em->persist($laterItem);
+                $this->em->flush();
+
+                $item = $laterItem->getUserItem()->getItem();
+                $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
+                $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
+
+                $renderData = array(
+                    'result' => NotificationHelper::OK_IS_READ
+                );
+
+                return new JsonResponse($renderData);
+            }
         }
     }
 
@@ -169,7 +203,7 @@ class ItemController extends BaseController
      * @param Request $request
      * @param Item    $item
      *
-     * @return Response
+     * @return JsonResponse
      * @Route("/feed/{feed_id}/item/{item_id}/mark_star", name="mark_star")
      * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
      */
@@ -180,14 +214,14 @@ class ItemController extends BaseController
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $status = $itemRepo->changeStatus($user, $item, "IsStared");
+            $status = $itemRepo->changeStatus($user, $item, "isStared", "setIsStared");
             $result=($status)? NotificationHelper::OK_IS_NOT_STARED : NotificationHelper::OK_IS_STARED ;
 
             $response = array (
                 'result' => $result
             );
 
-            return new Response(json_encode($response));
+            return new JsonResponse($response);
         }
     }
 }

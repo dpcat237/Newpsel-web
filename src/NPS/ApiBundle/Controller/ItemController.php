@@ -3,7 +3,7 @@
 namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\CoreBundle\Helper\NotificationHelper;
@@ -17,7 +17,7 @@ class ItemController extends BaseController
      * Sync items
      * @param Request $request the current request
      *
-     * @return Response
+     * @return JsonResponse
      */
     public function syncUnreadAction(Request $request)
     {
@@ -40,9 +40,7 @@ class ItemController extends BaseController
                     $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
                 }
 
-                $jsonData = json_encode($unreadItems);
-                $headers = array('Content-Type' => 'application/json');
-                $response = new Response($jsonData, 200, $headers);
+                $response = new JsonResponse($unreadItems);
 
                 return $response;
             } else {

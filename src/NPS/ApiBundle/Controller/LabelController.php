@@ -3,7 +3,7 @@
 namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\CoreBundle\Helper\NotificationHelper;
@@ -17,7 +17,7 @@ class LabelController extends BaseController
      * List of labels
      * @param Request $request the current request
      *
-     * @return Response
+     * @return JsonResponse
      */
     public function syncLabelsAction(Request $request)
     {
@@ -40,9 +40,7 @@ class LabelController extends BaseController
                     $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
                 }
 
-                $jsonData = json_encode($labelCollection);
-                $headers = array('Content-Type' => 'application/json');
-                $response = new Response($jsonData, 200, $headers);
+                $response = new JsonResponse($labelCollection);
 
                 return $response;
             } else {
@@ -56,11 +54,11 @@ class LabelController extends BaseController
      * List of feeds
      * @param Request $request the current request
      *
-     * @return Response
+     * @return string
      */
     public function syncLaterAction(Request $request)
     {
-        $json = json_decode($request->getContent());
+        $json = json_decode($request->getContent()); //adding param true -> will be array!
         $appKey = $json->appKey;
         $laterItems = $json->laterItems;
 
