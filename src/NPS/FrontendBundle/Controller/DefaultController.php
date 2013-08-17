@@ -51,9 +51,9 @@ class DefaultController extends BaseController
             $viewData = array();
 
 
-            $this->container->get('user.notifications')->sendEmailVerification();
+            /*$this->container->get('user.notifications')->sendEmailVerification();
 
-            echo 'tut: '; exit();
+            echo 'tut: '; exit();*/
 
             return $this->render('NPSFrontendBundle:Default:index.html.twig', $viewData);
         } else {
