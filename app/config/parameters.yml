@@ -6,10 +6,10 @@ parameters:
     database_user:     root
     database_password: denysp
 
-    mailer_transport:  gmail
-    mailer_host:       ~
-    mailer_user:       newpsel
-    mailer_password:   n#06p04e2013r#s
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       ~
+    mailer_password:   ~
 
     locale:            en
     secret:            newpsel_key201306
