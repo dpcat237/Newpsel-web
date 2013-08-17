@@ -50,11 +50,6 @@ class DefaultController extends BaseController
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             $viewData = array();
 
-
-            /*$this->container->get('user.notifications')->sendEmailVerification();
-
-            echo 'tut: '; exit();*/
-
             return $this->render('NPSFrontendBundle:Default:index.html.twig', $viewData);
         } else {
             return new RedirectResponse($this->container->get('router')->generate('welcome'));
