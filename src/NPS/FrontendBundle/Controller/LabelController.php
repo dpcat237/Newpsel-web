@@ -27,10 +27,6 @@ class LabelController extends BaseController
      */
     public function listAction(Request $request)
     {
-        $this->container->get('user.notifications')->sendEmailVerification();
-
-            echo 'tut: '; exit();
-
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('welcome'));
         } else {
