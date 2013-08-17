@@ -2,6 +2,9 @@ parameters:
 #    nps_core.example.class: NPS\CoreBundle\Example
 
 services:
-#    nps_core.example:
-#        class: %nps_core.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    user.notifications:
+        class: NPS\CoreBundle\Services\UserNotifications
+        arguments:
+            templating: @templating
+            mailer:     @mailer
+            translator: @translator
