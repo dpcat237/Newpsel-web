@@ -86,22 +86,10 @@ class FeedController extends BaseController
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
             $this->createNotification("Feed");
-            $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
-            $rss = $this->get('fkr_simple_pie.rss');
-            $cache = $this->get('server_cache');
-            $feedRepo->setRss($rss);
-            $feedRepo->setCache($cache);
-            $checkCreate = $feedRepo->createFeed($request->get('feed'), $user);
+            $downloadFeeds = $this->get('download_feeds');
+            $checkCreate = $downloadFeeds->createFeed($request->get('feed'), $user);
 
-            if (!$checkCreate['error']) {
-                /*$checkUpdate = $feedRepo->updateFeedData($checkCreate['feed']->getId());
-
-                if (!$checkUpdate['error']) {
-                    $this->notification->setNotification(102);
-                } else {
-                    $this->notification->setNotification($checkUpdate['error']);
-                }*/
-            } else {
+            if ($checkCreate['error']) {
                 $this->notification->setNotification($checkCreate['error']);
             }
             $this->setNotificationMessage();
@@ -163,14 +151,11 @@ class FeedController extends BaseController
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->router->generate('login'));
         } else {
+            $downloadFeeds = $this->container->get('download_feeds');
             $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
-            $rss = $this->get('fkr_simple_pie.rss');
-            $cache = $this->get('server_cache');
-            $feedRepo->setRss($rss);
-            $feedRepo->setCache($cache);
             $feeds = $feedRepo->findAll();
             foreach ($feeds as $feed) {
-                $feedRepo->updateFeedData($feed->getId());
+                $downloadFeeds->updateFeedData($feed->getId());
             }
 
             return new RedirectResponse($this->router->generate('feeds'));

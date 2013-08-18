@@ -1,11 +1,11 @@
 <?php
-namespace NPS\CoreBundle\Service;
+namespace NPS\CoreBundle\Services;
 use Predis\Client;
 
 /**
  * A common front for caching. Must be compatible with Predis\Client
  */
-class ServerCache
+class CacheServer
 {
     private $redis;
     private $ttl = 0;

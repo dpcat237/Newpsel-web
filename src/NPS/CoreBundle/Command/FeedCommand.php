@@ -42,22 +42,21 @@ class FeedCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $em = $container->get('doctrine')->getManager();
         $log = $container->get('logger');
-        $log->info('*** Start feeds sync ***');
+        $downloadFeeds = $container->get('download_feeds');
 
-        $feedRepo = $em->getRepository('NPSCoreBundle:Feed');
-        $rss = $container->get('fkr_simple_pie.rss');
-        $cache = $container->get('server_cache');
-        $feedRepo->setRss($rss);
-        $feedRepo->setCache($cache);
+        $log->info('*** Start feeds sync ***');
+        $feedRepo = $container->get('doctrine')->getRepository('NPSCoreBundle:Feed');
         $feeds = $feedRepo->findAll();
+
         foreach ($feeds as $feed) {
-            $feedRepo->updateFeedData($feed->getId());
+            $downloadFeeds->updateFeedData($feed->getId());
         }
 
         //$date = date('Y-m-d H:i:s');
         //$output->writeln('*** Synchronized successfully ***');
         $log->info('*** Synchronized successfully ***');
+
+        echo 'tut: ok'; exit();
     }
 }

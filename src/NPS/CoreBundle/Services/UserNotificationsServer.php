@@ -1,29 +1,36 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
-class UserNotifications extends AbstractEmailNotificationService
+class UserNotificationsServer extends AbstractEmailNotificationService
 {
     public function sendEmailVerification()
     {
-        $to      = 'dpcat237@gmail.com';
+        /*$to      = 'dpcat237@gmail.com';
         $subject = 'the subject';
         $message = 'hello';
         $headers = 'From: newpsel@gmail.com' . "\r\n" .
             'Reply-To: newpsel@gmail.com' . "\r\n" .
             'X-Mailer: PHP/' . phpversion();
 
-        mail($to, $subject, $message, $headers);
+        mail($to, $subject, $message, $headers);*/
 
         $viewData = array();
 
         $message = \Swift_Message::newInstance()
-            ->setSubject("Subject")
+            ->setSubject("Subject test 2")
             ->setFrom('newpsel@gmail.com')
             ->setTo("dpcat237@gmail.com")
             ->setBody($this->getTemplating()->render('NPSFrontendBundle:Email:email_verification.html.twig', $viewData)
             )
             ->setContentType('text/html');
-        $this->getMailer()->send($message);
+        //$this->getMailer()->send($message);
+
+        $transporter = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
+            ->setUsername('newpsel@gmail.com')
+            ->setPassword('n#06p04e2013r#s');
+
+        $mailer = \Swift_Mailer::newInstance($transporter);
+        $mailer->send($message);
 
 
         echo 'tute: ok'; exit();

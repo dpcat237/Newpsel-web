@@ -35,12 +35,13 @@
         "gedmo/doctrine-extensions": "2.3.*@dev",
         "fkr/simplepie-bundle": "1.*",
         "predis/predis": "0.*",
-        "snc/redis-bundle": "2.*",
+        "snc/redis-bundle": "1.1.*",
         "leafo/lessphp": "dev-master",
         "braincrafted/bootstrap-bundle": "dev-master",
-        "twitter/bootstrap": "2.3.*",
+        "twbs/bootstrap": "2.3.*",
         "jquery/jquery": "1.9.*",
-        "undf/angularjsbundle" :"dev-master"
+        "undf/angularjsbundle" :"dev-master",
+        "ezyang/htmlpurifier": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

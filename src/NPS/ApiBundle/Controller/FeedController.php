@@ -58,12 +58,8 @@ class FeedController extends BaseController
             $cache = $this->container->get('server_cache');
             if ($userRepo->checkLogged($cache, $appKey)) {
                 $user = $userRepo->getDeviceUser($cache, $appKey);
-                $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
-                $rss = $this->get('fkr_simple_pie.rss');
-                $cache = $this->get('server_cache');
-                $feedRepo->setRss($rss);
-                $feedRepo->setCache($cache);
-                $checkCreate = $feedRepo->createFeed($feedUrl, $user);
+                $downloadFeeds = $this->get('download_feeds');
+                $checkCreate = $downloadFeeds->createFeed($feedUrl, $user);
 
                 if (!$checkCreate['error']) {
                     $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');

@@ -2,8 +2,26 @@ parameters:
 #    nps_core.example.class: NPS\CoreBundle\Example
 
 services:
+    download_feeds:
+        class: NPS\CoreBundle\Services\DownloadFeedsService
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @server_cache
+            simple_pie:   @fkr_simple_pie.rss
+            item:         @item
+
+    item:
+        class: NPS\CoreBundle\Services\ItemService
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @server_cache
+
+    server_cache:
+        class: NPS\CoreBundle\Services\CacheServer
+        arguments: ['@snc_redis.default', 3600]
+
     user.notifications:
-        class: NPS\CoreBundle\Services\UserNotifications
+        class: NPS\CoreBundle\Services\UserNotificationsServer
         arguments:
             templating: @templating
             mailer:     @mailer
