@@ -93,42 +93,6 @@ abstract class BaseController extends CoreController
     }
 
     /**
-     * Generate generic list of objects
-     * @param string  $objectName    [description]
-     * @param string  $routeName     [description]
-     * @param string  $routeNameMany [description]
-     * @param integer $pageActual    [description]
-     * @param array   $orderBy       [description]
-     * @param array   $where         [description]
-     *
-     * @return object render
-     */
-    protected function genericListRenderPages($objectName, $routeName, $routeNameMany, $pageActual, $orderBy = array(), $where = array())
-    {
-        $name = $objectName;
-        $objectName = str_replace(' ', '', $objectName);
-        $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
-        $page = new PaginationHelper($pageActual, $objectRepo->getCount(), 10);
-        $objectCollection = $objectRepo->getListPagination($page->getRegistersOffset(), $page->getRegistersLimit(), $orderBy, $where);
-
-        $renderData = array(
-            'heading' => $this->get('translator')->trans($name),
-            'url_list' => $this->router->generate($routeNameMany),
-            $routeNameMany => $objectCollection,
-            'page_total' => $page->getPageTotal(),
-            'page_previous' => $page->getPagePrevious(),
-            'page_actual' => $page->getPageActual(),
-            'page_next' => $page->getPageNext()
-        );
-
-        if ($this->checkRoute($routeName.'_edit')) {
-            $renderData['url_create_list'] = $this->router->generate($routeName.'_edit');
-        }
-
-        return $this->render('NPSFrontendBundle:'.$objectName.':list.html.twig', $renderData);
-    }
-
-    /**
      * Save generic form
      * @param string $objectName [description]
      * @param object $form       [description]

@@ -32,38 +32,6 @@ abstract class CoreController extends Controller
     }
 
     /**
-     * Generate generic list of objects
-     * @param string $objectName    [description]
-     * @param string $routeName     [description]
-     * @param string $routeNameMany [description]
-     * @param array  $orderBy       [description]
-     * @param array  $where         [description]
-     * @param array  $join          [description]
-     *
-     * @internal param int $pageActual [description]
-     * @return object render
-     */
-    public function genericListRender($objectName, $routeName, $routeNameMany, $orderBy = array(), $where = array(), $join = array())
-    {
-        $name = $objectName;
-        $objectName = str_replace(' ', '', $objectName);
-        $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
-        $objectCollection = $objectRepo->getListPagination(0, 0, $orderBy, $where, $join);
-
-        $renderData = array(
-            'heading' => $this->get('translator')->trans($name),
-            'url_list' => $this->router->generate($routeNameMany),
-            $routeNameMany => $objectCollection,
-        );
-
-        if ($this->checkRoute($routeName.'_edit')) {
-            $renderData['url_create_list'] = $this->router->generate($routeName.'_edit');
-        }
-
-        return $this->render('NPSFrontendBundle:'.$objectName.':list.html.twig', $renderData);
-    }
-
-    /**
      * Check that route exists
      * @param string $routeName
      *
