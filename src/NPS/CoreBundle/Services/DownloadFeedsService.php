@@ -74,47 +74,18 @@ class DownloadFeedsService
 
         $checkFeed = $feedRepo->checkExistFeedUrl($url);
         if (!$checkFeed instanceof Feed) {
-            try {
-                $this->rss->set_feed_url($url);
-                $this->rss->set_parser_class();
-                $this->rss->get_raw_data();
-                $this->rss->init();
-
-
-                if ($this->rss->get_title()) {
-                    $feed = new Feed();
-                    $feed->setUrl($url);
-                    $feed->setUrlHash(sha1($url));
-                    $feed->setTitle($this->rss->get_title());
-                    $feed->setWebsite($this->rss->get_link());
-                    $feed->setLanguage($this->rss->get_language());
-                    $feed->setDateChange();
-                    $this->entityManager->persist($feed);
-                } else {
-                    $error = NotificationHelper::ERROR_WRONG_FEED;
-                }
-            } catch (\Exception $e) {
-                $error = $e->getMessage();
-
+            $checkFeed = $this->createFeedProcess($url);
+            if ($checkFeed['feed'] instanceof Feed) {
+                $feed = $checkFeed['feed'];
+            } else {
+                $error = $checkFeed['error'];
             }
         } else {
             $feed = $checkFeed;
         }
 
         if (empty($error)) {
-            if ($user instanceof User) {
-                $feedSubscribed = $feedRepo->checkUserSubscribed($user->getId(), $feed->getId());
-                if (!$feedSubscribed) {
-                    $userFeed = new UserFeed();
-                    $userFeed->setUser($user);
-                    $userFeed->setFeed($feed);
-                    $this->entityManager->persist($userFeed);
-                    $this->entityManager->flush();
-
-                    $feed->addUserFeed($userFeed); //just to Doctrine Feed know right now about new userFeed
-                    $this->addFirstItems($feed, $user);
-                }
-            }
+            $this->subscribeUser($user, $feed);
             $this->entityManager->flush();
         }
 
@@ -175,8 +146,47 @@ class DownloadFeedsService
 
 
     /**
-     * Private funcations
+     * Private functions
      */
+
+    /**
+     * Create feed entity and persist it
+     * @param $url
+     *
+     * @return mixed
+     */
+    private function createFeedProcess($url){
+        $error = '';
+        $feed = null;
+
+        try {
+            $this->rss->set_feed_url($url);
+            $this->rss->set_parser_class();
+            $this->rss->get_raw_data();
+            $this->rss->init();
+
+            if ($this->rss->get_title()) {
+                $feed = new Feed();
+                $feed->setUrl($url);
+                $feed->setUrlHash(sha1($url));
+                $feed->setTitle($this->rss->get_title());
+                $feed->setWebsite($this->rss->get_link());
+                $feed->setLanguage($this->rss->get_language());
+                $feed->setDateChange();
+                $this->entityManager->persist($feed);
+            } else {
+                $error = NotificationHelper::ERROR_WRONG_FEED;
+            }
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+
+        }
+
+        $result['feed'] = $feed;
+        $result['error'] = $error;
+
+        return $result;
+    }
 
     /**
      * Add first items for just subscribed user
@@ -269,6 +279,29 @@ class DownloadFeedsService
             return $url;
         } else {
             return '';
+        }
+    }
+
+    /**
+     * Subscribe user to feed
+     * @param User $user
+     * @param Feed $feed
+     */
+    private function subscribeUser(User $user, Feed $feed)
+    {
+        if ($user instanceof User) {
+            $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
+            $feedSubscribed = $feedRepo->checkUserSubscribed($user->getId(), $feed->getId());
+            if (!$feedSubscribed) {
+                $userFeed = new UserFeed();
+                $userFeed->setUser($user);
+                $userFeed->setFeed($feed);
+                $this->entityManager->persist($userFeed);
+                $this->entityManager->flush();
+
+                $feed->addUserFeed($userFeed); //just to Doctrine Feed know right now about new userFeed
+                $this->addFirstItems($feed, $user);
+            }
         }
     }
 
