@@ -99,42 +99,57 @@ class NotificationHelper extends Helper
 
     /**
      * Set message and message type for notification
-     * @param integer $messageId
+     * @param mix $messageId
      */
     public function setNotification($messageId)
     {
+        $this->setType(substr($messageId, 0, 1));
+
         switch ($messageId){
             case 101:
-                $this->setMessageType('success');
                 $this->setMessage($this->getObjectName()."'s data saved successfully");
                 break;
             case 102:
-                $this->setMessageType('success');
                 $this->setMessage("Feed synchronized successfully");
                 break;
             case 103:
-                $this->setMessageType('success');
                 $this->setMessage("Label's data saved successfully");
                 break;
             case 201:
-                $this->setMessageType('alert');
                 $this->setMessage("Review the errors to save your data");
                 break;
             case 301:
-                $this->setMessageType('error');
                 $this->setMessage("Try again after several minutes");
                 break;
             case 302:
-                $this->setMessageType('error');
                 $this->setMessage("Feed's url is wrong");
                 break;
             case 303:
-                $this->setMessageType('error');
                 $this->setMessage("Feed doesn't exists");
                 break;
             default:
-                $this->setMessageType('undefined');
                 $this->setMessage("Undefined alert: ".$messageId);
+                break;
+        }
+    }
+
+    /**
+     * Set type of message
+     * @param $code
+     */
+    private function setType($code){
+        switch ($code){
+            case 1:
+                $this->setMessageType('success');
+                break;
+            case 2:
+                $this->setMessageType('alert');
+                break;
+            case 3:
+                $this->setMessageType('error');
+                break;
+            default:
+                $this->setMessageType('undefined');
                 break;
         }
     }
