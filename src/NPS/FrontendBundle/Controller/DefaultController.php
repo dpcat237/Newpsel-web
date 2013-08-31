@@ -28,14 +28,16 @@ class DefaultController extends BaseController
      *
      * @return Response
      * @Route("/", name="welcome")
+     * @Template("NPSFrontendBundle:Welcome:index.html.twig")
+     *
      */
     public function welcomeAction(Request $request)
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
-        } else {
-            return $this->render('NPSFrontendBundle:Default:welcome.html.twig');
         }
+
+        return array();
     }
 
     /**
