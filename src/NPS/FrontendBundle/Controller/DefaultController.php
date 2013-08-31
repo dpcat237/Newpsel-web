@@ -119,15 +119,14 @@ class DefaultController extends BaseController
      * @param Request $request the current request
      *
      * @return Response
+     *
      * @Route("/sign_in", name="sign_in")
+     * @Template("NPSFrontendBundle:Default:sign_in.html.twig")
      */
     public function loginAction(Request $request)
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
-            //if the user is logged, go to the homepage
-            $redirectRoute = $this->container->get('router')->generate('homepage');
-
-            return new RedirectResponse($redirectRoute);
+            return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
         $errors = "";
 
@@ -138,8 +137,31 @@ class DefaultController extends BaseController
             }
         }
 
+        if ($this->checkLoginErrors($request)) {
+            $errors = NotificationHelper::ERROR_LOGIN_DATA;
+        }
+
+        $objectClass = 'NPS\CoreBundle\Entity\User';
+        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\SignInType';
+        $form = $this->createFormEdit(null, 'User', $objectClass, $objectTypeClass);
+        $viewData = array(
+            'errors' => $errors,
+            'form' => $form->createView()
+        );
+
+        return $viewData;
+    }
+
+    /**
+     * Get the login error if there is one
+     * @param $request
+     *
+     * @return mixed
+     */
+    private function checkLoginErrors($request)
+    {
+        $error = null;
         $session = $request->getSession();
-        // get the login error if there is one
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
         } else {
@@ -147,19 +169,7 @@ class DefaultController extends BaseController
             $session->remove(SecurityContext::AUTHENTICATION_ERROR);
         }
 
-        if ($error) {
-            $errors = NotificationHelper::ERROR_LOGIN_DATA;
-        }
-
-        $objectClass = 'NPS\CoreBundle\Entity\User';
-        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\SignInType';
-        $form = $this->createFormEdit(null, 'User', $objectClass, $objectTypeClass);
-        $viewVars = array(
-            'errors' => $errors,
-            'form' => $form->createView()
-        );
-
-        return $this->render('NPSFrontendBundle:Default:sign_in.html.twig', $viewVars);
+        return $error;
     }
 
     /**
