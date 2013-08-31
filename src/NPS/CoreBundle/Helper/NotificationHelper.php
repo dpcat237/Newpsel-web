@@ -9,10 +9,6 @@ use Symfony\Component\Templating\Helper\Helper;
 class NotificationHelper extends Helper
 {
     public $name = 'NotificationHelper';
-    protected $objectName;
-    protected $message;
-    protected $messageType;
-
 
     /**API NOTIFICATIONS**/
     /*Success*/
@@ -34,125 +30,15 @@ class NotificationHelper extends Helper
     CONST ERROR_NO_DATA = 307;
     CONST ERROR_TRY_LATER = 310;
 
-    /**
-     * Constructor
-     * @param string $objectName
-     */
-    public function __construct($objectName)
-    {
-        $this->setObjectName($objectName);
-    }
-
-    /**
-     * Set object's name for messages
-     * @param string $objectName
-     */
-    public function setObjectName($objectName)
-    {
-        $this->objectName = $objectName;
-    }
-
-    /**
-     * Get object's name
-     * @return string
-     */
-    public function getObjectName()
-    {
-        return $this->objectName;
-    }
-
-    /**
-     * Set message text
-     * @param string $message
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-    }
-
-    /**
-     * Get message
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * Set message type
-     * @param string $messageType
-     */
-    public function setMessageType($messageType)
-    {
-        $this->messageType = $messageType;
-    }
-
-    /**
-     * Get message
-     * @return string
-     */
-    public function getMessageType()
-    {
-        return $this->messageType;
-    }
-
-    /**
-     * Set message and message type for notification
-     * @param mix $messageId
-     */
-    public function setNotification($messageId)
-    {
-        $this->setType(substr($messageId, 0, 1));
-
-        switch ($messageId){
-            case 101:
-                $this->setMessage($this->getObjectName()."'s data saved successfully");
-                break;
-            case 102:
-                $this->setMessage("Feed synchronized successfully");
-                break;
-            case 103:
-                $this->setMessage("Label's data saved successfully");
-                break;
-            case 201:
-                $this->setMessage("Review the errors to save your data");
-                break;
-            case 301:
-                $this->setMessage("Try again after several minutes");
-                break;
-            case 302:
-                $this->setMessage("Feed's url is wrong");
-                break;
-            case 303:
-                $this->setMessage("Feed doesn't exists");
-                break;
-            default:
-                $this->setMessage("Undefined alert: ".$messageId);
-                break;
-        }
-    }
-
-    /**
-     * Set type of message
-     * @param $code
-     */
-    private function setType($code){
-        switch ($code){
-            case 1:
-                $this->setMessageType('success');
-                break;
-            case 2:
-                $this->setMessageType('alert');
-                break;
-            case 3:
-                $this->setMessageType('error');
-                break;
-            default:
-                $this->setMessageType('undefined');
-                break;
-        }
-    }
+    /**FRONTEND NOTIFICATIONS**/
+    /*Success*/
+    CONST SAVED_OK = 101;
+    /*Notification*/
+    /*Notice*/
+    /*Alert*/
+    CONST ALERT_FORM_DATA = 401;
+    /*Error*/
+    CONST ERROR_TRY_AGAIN = 501;
 
     /**
      * Returns the canonical name of this helper.
@@ -163,6 +49,6 @@ class NotificationHelper extends Helper
      */
     public function getName()
     {
-        return $this->name;
+        return 'NotificationHelper';
     }
 }

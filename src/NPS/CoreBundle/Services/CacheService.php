@@ -5,7 +5,7 @@ use Predis\Client;
 /**
  * A common front for caching. Must be compatible with Predis\Client
  */
-class CacheServer
+class CacheService
 {
     private $redis;
     private $ttl = 0;

@@ -1,0 +1,14 @@
+# *** Global layout ***
+
+#*** Notifications ***
+#success
+notification_101: Data saved successfully
+notification_102: Feed synchronized successfully
+#notification
+#notice
+#alert
+notification_401: Review the errors to save your data
+#error
+notification_501: Try again after several minutes
+notification_502: Feed's url is wrong
+notification_503: Feed doesn't exists

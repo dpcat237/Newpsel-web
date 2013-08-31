@@ -53,9 +53,9 @@ class DefaultController extends BaseController
             $viewData = array();
 
             return $this->render('NPSFrontendBundle:Default:index.html.twig', $viewData);
-        } else {
-            return new RedirectResponse($this->container->get('router')->generate('welcome'));
         }
+
+        return new RedirectResponse($this->container->get('router')->generate('welcome'));
     }
 
     /**
@@ -179,7 +179,6 @@ class DefaultController extends BaseController
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
             $user = $form->getData();
-            $this->createNotification("User");
 
             if ($form->isValid()) {
                 $userRepo = $this->em->getRepository('NPSCoreBundle:User');
@@ -200,10 +199,10 @@ class DefaultController extends BaseController
 
                     return new RedirectResponse($this->container->get('router')->generate('sign_in'));
                 } else {
-                    $this->notification->setNotification($errors);
+                    $this->get('system_notification')->setMessage($errors);
                 }
             } else {
-                $this->notification->setNotification(201);
+                $this->get('system_notification')->setMessage(NotificationHelper::ALERT_FORM_DATA);
             }
         }
 

@@ -1,7 +1,7 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
-class UserNotificationsServer extends AbstractEmailNotificationService
+class UserNotificationsService extends AbstractEmailNotificationService
 {
     public function sendEmailVerification()
     {

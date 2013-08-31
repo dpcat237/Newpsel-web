@@ -17,11 +17,11 @@ services:
             server_cache: @server_cache
 
     server_cache:
-        class: NPS\CoreBundle\Services\CacheServer
+        class: NPS\CoreBundle\Services\CacheService
         arguments: ['@snc_redis.default', 3600]
 
     user.notifications:
-        class: NPS\CoreBundle\Services\UserNotificationsServer
+        class: NPS\CoreBundle\Services\UserNotificationsService
         arguments:
             templating: @templating
             mailer:     @mailer

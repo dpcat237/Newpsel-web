@@ -22,7 +22,7 @@ abstract class BaseController extends CoreController
      * @param class   $objectTypeClass [description]
      * @param array   $formSets        [description]
      *
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass, $formSets = null)
     {
@@ -80,7 +80,7 @@ abstract class BaseController extends CoreController
         //render template or redirect to edit page
         $notification = new NotificationHelper($objectName);
 
-        if (is_object($notification) && $notification->getMessageType() == 'success') {
+        if (is_object($notification) && $notification->getMessageType() == 'success') { //TODO: Refactory for new notification service
             return new RedirectResponse($this->router->generate($routeName.'_'.$template, array('id' => $this->formObject->getId())));
         } else {
             return $this->render('NPSFrontendBundle:'.$objectName.':'.$template.'.html.twig', array(
@@ -94,21 +94,16 @@ abstract class BaseController extends CoreController
 
     /**
      * Save generic form
-     * @param string $objectName [description]
-     * @param object $form       [description]
+     * @param Form $form form object
      */
-    protected function saveGenericForm($objectName, $form, $msg = null)
+    protected function saveGenericForm($form)
     {
-        $this->createNotification($objectName);
         $formObject = $form->getData();
-        $msg = ($msg)? $msg : 101;
 
         if ($form->isValid()) {
             $this->saveObject($formObject);
-            $this->notification->setNotification($msg);
         } else {
-            $this->notification->setNotification(201);
+            $this->get('system_notification')->setMessage(NotificationHelper::ALERT_FORM_DATA);
         }
-        $this->setNotificationMessage();
     }
 }

@@ -19,9 +19,6 @@ abstract class CoreController extends Controller
     //we will have the routing here
     protected $router;
 
-    //notification object
-    protected $notification;
-
     /**
      * This function will be executed before any controller action
      */
@@ -35,7 +32,7 @@ abstract class CoreController extends Controller
      * Check that route exists
      * @param string $routeName
      *
-     * @return boolean
+     * @return bool
      */
     protected function checkRoute($routeName)
     {
@@ -49,26 +46,6 @@ abstract class CoreController extends Controller
     }
 
     /**
-     * Create Notification object
-     * @param string $objectName
-     */
-    protected function createNotification($objectName)
-    {
-        $this->notification = new NotificationHelper($objectName);
-    }
-
-    /**
-     * Set template notification message
-     */
-    protected function setNotificationMessage()
-    {
-        //set message
-        if ($this->notification->getMessageType()) {
-            $this->get('session')->getFlashBag()->add($this->notification->getMessageType(), $this->notification->getMessage());
-        }
-    }
-
-    /**
      * Save object to data base
      * @param string $formObject [description]
      */
@@ -77,10 +54,10 @@ abstract class CoreController extends Controller
         try {
             $this->em->persist($formObject);
             $this->em->flush();
-            $this->notification->setNotification(1);
+            $this->get('system_notification')->setMessage(NotificationHelper::SAVED_OK);
         } catch (\Exception $e) {
             $this->get('logger')->err(__METHOD__.' '.$e->getMessage());
-            $this->notification->setNotification(301);
+            $this->get('system_notification')->setMessage(NotificationHelper::ERROR_TRY_AGAIN);
         }
     }
 

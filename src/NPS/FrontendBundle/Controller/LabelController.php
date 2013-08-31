@@ -5,6 +5,7 @@ namespace NPS\FrontendBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -22,25 +23,23 @@ class LabelController extends BaseController
      * @param Request $request
      *
      * @return array
+     *
      * @Route("/label/list", name="labels_list")
+     * @Secure(roles="ROLE_USER")
      * @Template()
      */
     public function listAction(Request $request)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('welcome'));
-        } else {
-            $user = $this->get('security.context')->getToken()->getUser();
-            $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
-            $labels = $labelRepo->getUserLabel($user->getId());
+        $user = $this->get('security.context')->getToken()->getUser();
+        $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+        $labels = $labelRepo->getUserLabel($user->getId());
 
-            $viewData = array(
-                'labels' => $labels,
-                'title' => 'Labels management'
-            );
+        $viewData = array(
+            'labels' => $labels,
+            'title' => 'Labels management'
+        );
 
-            return $viewData;
-        }
+        return $viewData;
     }
 
     /**
@@ -48,6 +47,7 @@ class LabelController extends BaseController
      * @param Request $request
      *
      * @return Response
+     *
      * @Route("/label/new", name="label_create")
      */
     public function createAction(Request $request)
@@ -107,7 +107,7 @@ class LabelController extends BaseController
                 $form = $this->createForm($formType, $label);
 
                 if ($request->getMethod() == 'POST') {
-                    $this->saveGenericForm('Later', $form->handleRequest($request), 103);
+                    $this->saveGenericForm($form->handleRequest($request));
 
                     return new RedirectResponse($this->router->generate('labels_list'));
                 }

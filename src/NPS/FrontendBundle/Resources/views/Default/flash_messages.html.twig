@@ -1,0 +1,24 @@
+{# Success message (green) #}
+{% for flashMessage in app.session.flashbag.get('success') %}
+    {% include "NPSFrontendBundle:Default:flash_message.html.twig" with {flashMessage: flashMessage, class: 'alert-success'} %}
+{% endfor %}
+
+{# Info message (blue) #}
+{% for flashMessage in app.session.flashbag.get('notification') %}
+    {% include "NPSFrontendBundle:Default:flash_message.html.twig" with {flashMessage: flashMessage, class: 'alert-info'} %}
+{% endfor %}
+
+{# Notice message (yellow) #}
+{% for flashMessage in app.session.flashbag.get('notice') %}
+    {% include "NPSFrontendBundle:Default:flash_message.html.twig" with {flashMessage: flashMessage, class: ''} %}
+{% endfor %}
+
+{# Warning message (yellow) #}
+{% for flashMessage in app.session.flashbag.get('alert') %}
+    {% include "NPSFrontendBundle:Default:flash_message.html.twig" with {flashMessage: flashMessage, class: ''} %}
+{% endfor %}
+
+{# Error message (red) #}
+{% for flashMessage in app.session.flashbag.get('error') %}
+    {% include "NPSFrontendBundle:Default:flash_message.html.twig" with {flashMessage: flashMessage, class: 'alert-error'} %}
+{% endfor %}

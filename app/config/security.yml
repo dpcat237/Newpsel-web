@@ -25,7 +25,7 @@ security:
               pattern: /.*
               anonymous: ~
               form_login:
-                  login_path: /login
+                  login_path: /sign_in
               logout:
                   path:   /logout
                   target: /
@@ -45,7 +45,7 @@ security:
 
     access_control:
         web_login:
-                path: /login
+                path: /sign_in
                 roles: IS_AUTHENTICATED_ANONYMOUSLY
         api_area:
             path: /api/.*

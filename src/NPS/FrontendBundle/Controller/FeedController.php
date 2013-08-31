@@ -85,14 +85,12 @@ class FeedController extends BaseController
             $result = NotificationHelper::ERROR;
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
-            $this->createNotification("Feed");
             $downloadFeeds = $this->get('download_feeds');
             $checkCreate = $downloadFeeds->createFeed($request->get('feed'), $user);
 
             if ($checkCreate['error']) {
-                $this->notification->setNotification($checkCreate['error']);
+                $this->get('system_notification')->setMessage($checkCreate['error']);
             }
-            $this->setNotificationMessage();
 
             $result = NotificationHelper::OK;
         }
@@ -120,7 +118,7 @@ class FeedController extends BaseController
         $objectClass = 'NPS\CoreBundle\Entity\Feed';
         $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedEditType';
         $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
-        $this->saveGenericForm($objectName, $form->handleRequest($request));
+        $this->saveGenericForm($form->handleRequest($request));
 
         return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form);
     }
