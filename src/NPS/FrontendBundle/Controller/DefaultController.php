@@ -125,18 +125,17 @@ class DefaultController extends BaseController
      */
     public function loginAction(Request $request)
     {
+        //if user is logged redirect to homepage
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
-        $errors = "";
 
-        if ($request->getMethod() == 'POST') {
-            $check = $this->processLogin($request);
-            if ($check) {
-                return new RedirectResponse($this->container->get('router')->generate('homepage'));
-            }
+        //if login process went well redirect to homepage
+        if ($request->getMethod() == 'POST' && $this->processLogin($request)) {
+            return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
 
+        //check for login process errors
         if ($this->checkLoginErrors($request)) {
             $errors = NotificationHelper::ERROR_LOGIN_DATA;
         }
