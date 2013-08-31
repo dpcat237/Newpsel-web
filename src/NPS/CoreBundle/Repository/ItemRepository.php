@@ -31,17 +31,7 @@ class ItemRepository extends BaseRepository
         $userItem = $this->hasItem($user->getId(), $item->getId());
 
         if ($userItem instanceof UserItem) {
-            if ($change == 1) {
-                $status = true;
-            } elseif ($change == 2)  {
-                $status = false;
-            } else {
-                if ($userItem->$statusGet()) { //change actual status
-                    $status = false;
-                } else {
-                    $status = true;
-                }
-            }
+            $status = $this->getNewStatus($userItem, $change, $statusGet);
         } else {
             $userItem = new UserItem();
             $userItem->setUser($user);
@@ -55,6 +45,30 @@ class ItemRepository extends BaseRepository
         $userItem->$statusSet($status);
         $em->persist($userItem);
         $em->flush();
+
+        return $status;
+    }
+
+    /**
+     * Get new status for existing userItem
+     * @param UserItem $userItem
+     * @param $change
+     * @param $statusGet
+     *
+     * @return bool
+     */
+    private function getNewStatus(UserItem $userItem, $change, $statusGet){
+        if ($change == 1) {
+            $status = true;
+        } elseif ($change == 2)  {
+            $status = false;
+        } else {
+            if ($userItem->$statusGet()) { //change actual status
+                $status = false;
+            } else {
+                $status = true;
+            }
+        }
 
         return $status;
     }
