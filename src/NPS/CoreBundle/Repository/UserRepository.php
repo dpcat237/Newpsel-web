@@ -88,12 +88,16 @@ class UserRepository extends BaseRepository
      *
      * @return mixed
      */
-    public function getDeviceUser($cache, $appKey)
+    public function getUserDevice($cache, $appKey)
     {
-        $userId = $cache->get("device_".$appKey);
-        $userRepo = $this->em->getRepository('NPSCoreBundle:User');
+        if($this->checkLogged($cache, $appKey)) {
+            $userId = $cache->get("device_".$appKey);
+            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
 
-        return $userRepo->find($userId);
+            return $userRepo->find($userId);
+        } else {
+            die(NotificationHelper::ERROR_NO_LOGGED);
+        }
     }
 
     /**

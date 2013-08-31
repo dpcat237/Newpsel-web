@@ -28,15 +28,11 @@ class FeedController extends BaseController
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
-            if ($userRepo->checkLogged($cache, $appKey)) {
-                $user = $userRepo->getDeviceUser($cache, $appKey);
-                $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
-                $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
+            $user = $userRepo->getUserDevice($cache, $appKey);
+            $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
+            $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
 
-                return new JsonResponse($feedCollection);
-            } else {
-                echo NotificationHelper::ERROR_NO_LOGGED; exit();
-            }
+            return new JsonResponse($feedCollection);
         }
         echo NotificationHelper::ERROR_NO_APP_KEY; exit();
     }
@@ -56,23 +52,18 @@ class FeedController extends BaseController
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
-            if ($userRepo->checkLogged($cache, $appKey)) {
-                $user = $userRepo->getDeviceUser($cache, $appKey);
-                $downloadFeeds = $this->get('download_feeds');
-                $checkCreate = $downloadFeeds->createFeed($feedUrl, $user);
-
-                if (!$checkCreate['error']) {
-                    $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-                    $feed = $checkCreate['feed'];
-                    $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
-
-                    return new JsonResponse($unreadItems);
-                } else {
-                    echo NotificationHelper::ERROR_WRONG_FEED; exit();
-                }
-            } else {
-                echo NotificationHelper::ERROR_NO_LOGGED; exit();
+            $user = $userRepo->getUserDevice($cache, $appKey);
+            $downloadFeeds = $this->get('download_feeds');
+            $checkCreate = $downloadFeeds->createFeed($feedUrl, $user);
+            if (!empty($checkCreate['error'])) {
+                echo NotificationHelper::ERROR_WRONG_FEED; exit();
             }
+
+            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
+            $feed = $checkCreate['feed'];
+            $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
+
+            return new JsonResponse($unreadItems);
         }
         echo NotificationHelper::ERROR_NO_APP_KEY; exit();
     }

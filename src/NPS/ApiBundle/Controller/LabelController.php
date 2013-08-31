@@ -29,23 +29,19 @@ class LabelController extends BaseController
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
-            if ($userRepo->checkLogged($cache, $appKey)) {
-                $user = $userRepo->getDeviceUser($cache, $appKey);
-                $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+            $user = $userRepo->getUserDevice($cache, $appKey);
+            $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
 
-                if (count($changedLabels)) {
-                    $createdIds = $labelRepo->syncLabels($user, $changedLabels);
-                    $labelCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels, $createdIds);
-                } else {
-                    $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
-                }
-
-                $response = new JsonResponse($labelCollection);
-
-                return $response;
+            if (count($changedLabels)) {
+                $createdIds = $labelRepo->syncLabels($user, $changedLabels);
+                $labelCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels, $createdIds);
             } else {
-                echo NotificationHelper::ERROR_NO_LOGGED; exit();
+                $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
             }
+
+            $response = new JsonResponse($labelCollection);
+
+            return $response;
         }
         echo NotificationHelper::ERROR_NO_APP_KEY; exit();
     }
@@ -65,18 +61,14 @@ class LabelController extends BaseController
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
-            if ($userRepo->checkLogged($cache, $appKey)) {
-                $user = $userRepo->getDeviceUser($cache, $appKey);
-                if (is_array($laterItems) && count($laterItems)) {
-                    $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
-                    $labelRepo->syncLaterItems($user->getId(), $laterItems);
+            $user = $userRepo->getUserDevice($cache, $appKey);
+            if (is_array($laterItems) && count($laterItems)) {
+                $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+                $labelRepo->syncLaterItems($user->getId(), $laterItems);
 
-                    echo NotificationHelper::OK; exit();
-                } else {
-                    echo NotificationHelper::ERROR_NO_DATA; exit();
-                }
+                echo NotificationHelper::OK; exit();
             } else {
-                echo NotificationHelper::ERROR_NO_LOGGED; exit();
+                echo NotificationHelper::ERROR_NO_DATA; exit();
             }
         }
         echo NotificationHelper::ERROR_NO_APP_KEY; exit();

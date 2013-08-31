@@ -29,23 +29,19 @@ class ItemController extends BaseController
         if ($appKey) {
             $userRepo = $this->em->getRepository('NPSCoreBundle:User');
             $cache = $this->container->get('server_cache');
-            if ($userRepo->checkLogged($cache, $appKey)) {
-                $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-                $user = $userRepo->getDeviceUser($cache, $appKey);
-                if (is_array($viewedItems) && count($viewedItems)) {
-                    $itemRepo->syncViewedItems($user->getId(), $viewedItems);
-                }
-                $unreadItems = array();
-                if ($isDownload) {
-                    $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
-                }
-
-                $response = new JsonResponse($unreadItems);
-
-                return $response;
-            } else {
-                echo NotificationHelper::ERROR_NO_LOGGED; exit();
+            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
+            $user = $userRepo->getUserDevice($cache, $appKey);
+            if (is_array($viewedItems) && count($viewedItems)) {
+                $itemRepo->syncViewedItems($user->getId(), $viewedItems);
             }
+            $unreadItems = array();
+            if ($isDownload) {
+                $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
+            }
+
+            $response = new JsonResponse($unreadItems);
+
+            return $response;
         }
         echo NotificationHelper::ERROR_NO_APP_KEY; exit();
     }
