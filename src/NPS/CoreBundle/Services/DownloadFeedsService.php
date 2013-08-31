@@ -38,6 +38,11 @@ class DownloadFeedsService
     private $rss;
 
     /**
+     * @var $error Last process error
+     */
+    private $error = null;
+
+    /**
      * @param Doctrine $doctrine
      * @param CacheService $cache
      * @param SimplePie $rss
@@ -62,35 +67,23 @@ class DownloadFeedsService
      */
     public function createFeed($url, $user = null)
     {
-        $error = null;
         $feed = null;
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
         $url = $this->fixUrl($url);
         $url = $this->removeUnnecessaryCharactersUrl($url);
 
         if (!$url || !$this->validateFeedUrl($url)) {
-            $error = 302;
+            $this->error = 302;
         }
 
-        $checkFeed = $feedRepo->checkExistFeedUrl($url);
-        if (!$checkFeed instanceof Feed) {
-            $checkFeed = $this->createFeedProcess($url);
-            if ($checkFeed['feed'] instanceof Feed) {
-                $feed = $checkFeed['feed'];
-            } else {
-                $error = $checkFeed['error'];
-            }
-        } else {
-            $feed = $checkFeed;
-        }
+        $feed = $this->getFeedByUrl($url);
 
-        if (empty($error)) {
+        if (empty($this->error)) {
             $this->subscribeUser($user, $feed);
             $this->entityManager->flush();
         }
 
         $result['feed'] = $feed;
-        $result['error'] = $error;
+        $result['error'] = $this->error;
 
         return $result;
     }
@@ -133,13 +126,36 @@ class DownloadFeedsService
      */
 
     /**
+     * Get Feed by url or create new one
+     * @param $url
+     *
+     * @return Feed
+     */
+    private function getFeedByUrl($url)
+    {
+        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
+        $checkFeed = $feedRepo->checkExistFeedUrl($url);
+        if (!$checkFeed instanceof Feed) {
+            $checkFeed = $this->createFeedProcess($url);
+            if ($checkFeed['feed'] instanceof Feed) {
+                $feed = $checkFeed['feed'];
+            } else {
+                $this->error = $checkFeed['error'];
+            }
+        } else {
+            $feed = $checkFeed;
+        }
+
+        return $feed;
+    }
+
+    /**
      * Create feed entity and persist it
      * @param $url
      *
-     * @return mixed
+     * @return Feed
      */
     private function createFeedProcess($url){
-        $error = '';
         $feed = null;
 
         try {
@@ -158,17 +174,14 @@ class DownloadFeedsService
                 $feed->setDateChange();
                 $this->entityManager->persist($feed);
             } else {
-                $error = NotificationHelper::ERROR_WRONG_FEED;
+                $this->error = NotificationHelper::ERROR_WRONG_FEED;
             }
         } catch (\Exception $e) {
-            $error = $e->getMessage();
+            $this->error = $e->getMessage();
 
         }
 
-        $result['feed'] = $feed;
-        $result['error'] = $error;
-
-        return $result;
+        return $feed;
     }
 
     /**
