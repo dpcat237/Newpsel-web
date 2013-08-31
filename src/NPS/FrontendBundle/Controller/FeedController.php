@@ -5,6 +5,7 @@ namespace NPS\FrontendBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -19,29 +20,26 @@ class FeedController extends BaseController
     /**
      * Menu build
      *
+     * @Secure(roles="ROLE_USER")
      * @Template()
      */
     public function menuAction()
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('welcome'));
-        } else {
-            $user = $this->get('security.context')->getToken()->getUser();
-            $em = $this->getDoctrine()->getManager();
-            $feedRepo = $em->getRepository('NPSCoreBundle:Feed');
-            $itemRepo = $em->getRepository('NPSCoreBundle:Item');
-            $feedsCollection = $feedRepo->getUserFeeds($user->getId());
-            $feedsList = array();
-            foreach ($feedsCollection as $feed) {
-                $addFeed['id'] = $feed->getId();
-                $addFeed['title'] = $feed->getTitle();
-                $addFeed['count'] = $itemRepo->countUnreadByFeedUser($user->getId(), $feed->getId());
-                $feedsList[] = $addFeed;
-                $addFeed = null;
-            }
-
-            return array('feeds' =>  $feedsList);
+        $user = $this->get('security.context')->getToken()->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $feedRepo = $em->getRepository('NPSCoreBundle:Feed');
+        $itemRepo = $em->getRepository('NPSCoreBundle:Item');
+        $feedsCollection = $feedRepo->getUserFeeds($user->getId());
+        $feedsList = array();
+        foreach ($feedsCollection as $feed) {
+            $addFeed['id'] = $feed->getId();
+            $addFeed['title'] = $feed->getTitle();
+            $addFeed['count'] = $itemRepo->countUnreadByFeedUser($user->getId(), $feed->getId());
+            $feedsList[] = $addFeed;
+            $addFeed = null;
         }
+
+        return array('feeds' =>  $feedsList);
     }
 
     /**
@@ -50,26 +48,24 @@ class FeedController extends BaseController
      * @param Request $request the current request
      *
      * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Secure(roles="ROLE_USER")
      */
     public function editAction(Request $request)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('login'));
-        } else {
-            $objectId = $request->get('id');
-            $objectName = 'Feed';
-            $routeName = 'feed';
-            $routeNameMany = 'feeds';
-            $objectClass = 'NPS\CoreBundle\Entity\Feed';
-            $form =($objectId)? '\FeedEditType' : '\FeedAddType';
-            $objectTypeClass = 'NPS\FrontendBundle\Form\Type'.$form;
-            $template =($objectId)? 'edit':'add';
+        $objectId = $request->get('id');
+        $objectName = 'Feed';
+        $routeName = 'feed';
+        $routeNameMany = 'feeds';
+        $objectClass = 'NPS\CoreBundle\Entity\Feed';
+        $form =($objectId)? '\FeedEditType' : '\FeedAddType';
+        $objectTypeClass = 'NPS\FrontendBundle\Form\Type'.$form;
+        $template =($objectId)? 'edit':'add';
 
-            //depends if it's edit or creation
-            $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
+        //depends if it's edit or creation
+        $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
 
-            return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form, $template);
-        }
+        return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form, $template);
     }
 
     /**
@@ -77,11 +73,13 @@ class FeedController extends BaseController
      * @param Request $request
      *
      * @return Response
+     *
      * @Route("/add_feed", name="add_feed")
+     * @Secure(roles="ROLE_USER")
      */
     public function addProcess(Request $request)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER') || !$request->get('feed')) {
+        if (!$request->get('feed')) {
             $result = NotificationHelper::ERROR;
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
@@ -143,21 +141,19 @@ class FeedController extends BaseController
      * Sync all feeds
      * TODO: temp (later all with cron)
      * @return Response
+     *
+     * @Secure(roles="ROLE_USER")
      */
     public function syncAction()
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('login'));
-        } else {
-            $downloadFeeds = $this->container->get('download_feeds');
-            $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
-            $feeds = $feedRepo->findAll();
-            foreach ($feeds as $feed) {
-                $downloadFeeds->updateFeedData($feed->getId());
-            }
-
-            return new RedirectResponse($this->router->generate('feeds'));
+        $downloadFeeds = $this->container->get('download_feeds');
+        $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
+        $feeds = $feedRepo->findAll();
+        foreach ($feeds as $feed) {
+            $downloadFeeds->updateFeedData($feed->getId());
         }
+
+        return new RedirectResponse($this->router->generate('feeds'));
     }
 
 }

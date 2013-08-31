@@ -49,18 +49,15 @@ class LabelController extends BaseController
      * @return Response
      *
      * @Route("/label/new", name="label_create")
+     * @Secure(roles="ROLE_USER")
      */
     public function createAction(Request $request)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('homepage'));
-        } else {
-            $user = $this->get('security.context')->getToken()->getUser();
-            $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
-            $labelRepo->createLabel($user, $request->get('label'));
+        $user = $this->get('security.context')->getToken()->getUser();
+        $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+        $labelRepo->createLabel($user, $request->get('label'));
 
-            return new RedirectResponse($this->router->generate('labels_list'));
-        }
+        return new RedirectResponse($this->router->generate('labels_list'));
     }
 
     /**
@@ -68,22 +65,21 @@ class LabelController extends BaseController
      * @param Later $label
      *
      * @return Response
+     *
      * @Route("/label/{label_id}/delete", name="label_delete")
+     * @Secure(roles="ROLE_USER")
+     *
      * @ParamConverter("label", class="NPSCoreBundle:Later", options={"id": "label_id"})
      */
     public function deleteAction(Later $label)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('homepage'));
-        } else {
-            $user = $this->get('security.context')->getToken()->getUser();
-            if ($label->getUserId() == $user->getId()) {
-                $this->em->remove($label);
-                $this->em->flush();
-            }
-
-            return new RedirectResponse($this->router->generate('labels_list'));
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($label->getUserId() == $user->getId()) {
+            $this->em->remove($label);
+            $this->em->flush();
         }
+
+        return new RedirectResponse($this->router->generate('labels_list'));
     }
 
     /**
@@ -92,66 +88,62 @@ class LabelController extends BaseController
      * @param Later $label
      *
      * @return Response
+     *
      * @Route("/label/{id}/edit", name="label_edit")
-     * @ParamConverter("label", class="NPSCoreBundle:Later")
+     * @Secure(roles="ROLE_USER")
      * @Template()
+     *
+     * @ParamConverter("label", class="NPSCoreBundle:Later")
      */
     public function editAction(Request $request, Later $label)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('homepage'));
-        } else {
-            $user = $this->get('security.context')->getToken()->getUser();
-            if ($label->getUserId() == $user->getId()) {
-                $formType = new LaterEditType($label);
-                $form = $this->createForm($formType, $label);
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($label->getUserId() == $user->getId()) {
+            $formType = new LaterEditType($label);
+            $form = $this->createForm($formType, $label);
 
-                if ($request->getMethod() == 'POST') {
-                    $this->saveGenericForm($form->handleRequest($request));
+            if ($request->getMethod() == 'POST') {
+                $this->saveGenericForm($form->handleRequest($request));
 
-                    return new RedirectResponse($this->router->generate('labels_list'));
-                }
-
-                $viewData = array(
-                    'title' => 'Edit label',
-                    'form' => $form->createView(),
-                    'label' => $label,
-                );
-
-                return $viewData;
+                return new RedirectResponse($this->router->generate('labels_list'));
             }
 
-            return new RedirectResponse($this->router->generate('labels_list'));
+            $viewData = array(
+                'title' => 'Edit label',
+                'form' => $form->createView(),
+                'label' => $label,
+            );
+
+            return $viewData;
         }
+
+        return new RedirectResponse($this->router->generate('labels_list'));
     }
 
     /**
      * Menu build
      *
+     * @Secure(roles="ROLE_USER")
      * @Template()
      */
     public function menuAction()
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USER')) {
-            return new RedirectResponse($this->router->generate('welcome'));
-        } else {
-            $user = $this->get('security.context')->getToken()->getUser();
-            $em = $this->getDoctrine()->getManager();
-            $labelRepo = $em->getRepository('NPSCoreBundle:Later');
+        $user = $this->get('security.context')->getToken()->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $labelRepo = $em->getRepository('NPSCoreBundle:Later');
 
-            $labels = array();
-            foreach ($user->getLaters() as $lab) {
-                $label['id'] = $lab->getId();
-                $label['name'] = $lab->getName();
-                $label['count'] = $labelRepo->getUnreadCount($label['id']);
-                $labels[] = $label;
-            }
-
-            $viewData = array(
-                'labels' => $labels
-            );
-
-            return $viewData;
+        $labels = array();
+        foreach ($user->getLaters() as $lab) {
+            $label['id'] = $lab->getId();
+            $label['name'] = $lab->getName();
+            $label['count'] = $labelRepo->getUnreadCount($label['id']);
+            $labels[] = $label;
         }
+
+        $viewData = array(
+            'labels' => $labels
+        );
+
+        return $viewData;
     }
 }
