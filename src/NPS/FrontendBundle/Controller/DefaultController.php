@@ -100,7 +100,7 @@ class DefaultController extends BaseController
         }
 
         //check that pwd is OK and user is enabled
-        if ($ok && $user->getIsEnabled()) {
+        if ($ok && $user->isEnabled()) {
             //password is correct, make login
             $this->doLogin($user);
 
@@ -229,7 +229,7 @@ class DefaultController extends BaseController
         $this->get('security.context')->setToken(null);
         $this->get('request')->getSession()->invalidate();
         // Only enabled users allowed. Set to true after activation code confirm e-mail.
-        if ($user->getIsEnabled()) {
+        if ($user->isEnabled()) {
             //create new token
             $token = new UsernamePasswordToken($user, null, 'secured_area', $user->getRoles());
             $this->get('security.context')->setToken($token);

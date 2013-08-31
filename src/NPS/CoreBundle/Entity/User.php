@@ -2,18 +2,13 @@
 
 namespace NPS\CoreBundle\Entity;
 
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Entity\UserFeed;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
-use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 
 /**
  * User
@@ -22,44 +17,8 @@ use NPS\CoreBundle\Entity\Traits\EnabledTrait;
  * @ORM\Table(name="user")
  * @ORM\HasLifecycleCallbacks
  */
-//TODO: when will be possible form->getErrorsAsArray (https://github.com/symfony/symfony/pull/7512 / https://github.com/symfony/symfony/issues/7205)
-//@UniqueEntity(fields="username", message="Sorry, this username is not available or allowed")
-//@UniqueEntity(fields="username", message="Sorry, this username is not available or allowed", groups={"registration"})
-//@UniqueEntity(fields="email", message="Sorry, this email is not available or allowed")
-class User implements UserInterface
+class User extends AbstractUser
 {
-    use DateTimeTrait, EnabledTrait;
-
-    /**
-     * @var bigint $id
-     *
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
-
-    /**
-     * @var string
-     * @ORM\Column(name="username", type="string", length=255, nullable=true, unique=true)
-     * @Assert\NotNull(message={"Write an username"})
-     */
-    protected $username;
-
-    /**
-     * @var string
-     * @ORM\Column(name="email", type="string", length=255, nullable=false, unique=true)
-     * @Assert\NotNull(message={"Write an email"})
-     */
-    protected $email;
-
-    /**
-     * @var string
-     * @ORM\Column(name="password", type="string", length=255, nullable=true)
-     * @Assert\NotNull(groups={"registration"})
-     */
-    protected $password;
-
     /**
      * @ORM\OneToMany(targetEntity="Device", mappedBy="user")
      */
@@ -93,6 +52,7 @@ class User implements UserInterface
      */
     protected $laters;
 
+
     /**
      * Constructor
      */
@@ -102,136 +62,6 @@ class User implements UserInterface
         $this->userItems = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
         $this->laters = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set user
-     * @param string $username
-     *
-     * @return User
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set email
-     * @param string $email
-     *
-     * @return User
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set password
-     * @param string $password
-     *
-     * @return User
-     */
-    public function setPassword($password)
-    {
-        if ($password) {
-            $this->password = $password;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Part of UserInterface. Dummy
-     *
-     * @return string ""
-     */
-    public function getSalt()
-    {
-        return "";
-    }
-
-    /**
-     * Part of UserInterface.
-     *
-     * Get the roles this user has. ROLE_USER by default and at least in the
-     * first implementation, as we only want to discriminate between logged
-     * and not logged
-     *
-     * @return array with the user roles
-     */
-    public function getRoles()
-    {
-        return array('ROLE_USER');
-    }
-
-    /**
-     * Part of UserInterface.
-     *
-     * Checks if $user is the same user and this instance
-     * @param UserInterface $user
-     *
-     * @return boolean if the user is the same
-     */
-    public function equals(UserInterface $user)
-    {
-        return $user->getId() === $this->getId();
-    }
-
-    /**
-     * Part of UserInterface.
-     *
-     * Dummy function, returns empty string
-     *
-     * @return string
-     */
-    public function eraseCredentials()
-    {
-        return "";
     }
 
     /**
@@ -380,7 +210,7 @@ class User implements UserInterface
 
     /**
      * Add Later
-     * @param UserFeed $later
+     * @param Later $later
      *
      * @return User
      */

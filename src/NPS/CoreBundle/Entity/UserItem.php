@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\LaterItem;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\AbstractEntity;
 
 /**
  * UserItem
@@ -16,18 +16,8 @@ use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
  * @ORM\Table(name="user_item")
  * @ORM\HasLifecycleCallbacks
  */
-class UserItem
+class UserItem extends AbstractEntity
 {
-    use DateTimeTrait;
-
-    /**
-     * @var integer
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
-
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Item", inversedBy="userItems")
@@ -66,16 +56,6 @@ class UserItem
     public function __construct()
     {
         $this->laterItems = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

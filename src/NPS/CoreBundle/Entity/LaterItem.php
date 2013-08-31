@@ -5,7 +5,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Entity\Later;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\AbstractEntity;
 
 /**
  * LaterItem
@@ -14,18 +14,8 @@ use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
  * @ORM\Table(name="later_item")
  * @ORM\HasLifecycleCallbacks
  */
-class LaterItem
+class LaterItem extends AbstractEntity
 {
-    use DateTimeTrait;
-
-    /**
-     * @var integer
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
-
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="UserItem", inversedBy="laterUserItems")
@@ -46,16 +36,6 @@ class LaterItem
      */
     protected $isUnread = true;
 
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Get the userItem

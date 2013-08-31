@@ -7,7 +7,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\UserItem;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\AbstractEntity;
 
 /**
  * Item
@@ -16,19 +16,8 @@ use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
  * @ORM\Table(name="item")
  * @ORM\HasLifecycleCallbacks
  */
-class Item
+class Item extends AbstractEntity
 {
-    use DateTimeTrait;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
-
     /**
      * @var string
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
@@ -84,16 +73,6 @@ class Item
     public function __construct()
     {
         $this->userItems = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

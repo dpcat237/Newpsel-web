@@ -1,11 +1,12 @@
 <?php
 
 namespace NPS\CoreBundle\Entity;
+
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\AbstractEntity;
 
 /**
  * UserFeed
@@ -14,18 +15,8 @@ use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
  * @ORM\Table(name="user_feed")
  * @ORM\HasLifecycleCallbacks
  */
-class UserFeed
+class UserFeed extends AbstractEntity
 {
-    use DateTimeTrait;
-
-    /**
-     * @var integer
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
-
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Feed", inversedBy="userFeeds")
@@ -40,16 +31,6 @@ class UserFeed
      */
     protected $user;
 
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Get the feed

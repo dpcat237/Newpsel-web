@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use NPS\CoreBundle\Entity\LaterItem;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\AbstractEntity;
 use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 
 /**
@@ -16,18 +16,9 @@ use NPS\CoreBundle\Entity\Traits\EnabledTrait;
  * @ORM\Table(name="`later`")
  * @ORM\HasLifecycleCallbacks
  */
-class Later
+class Later extends AbstractEntity
 {
-    use DateTimeTrait, EnabledTrait;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
+    use EnabledTrait;
 
     /**
      * @var string
@@ -54,16 +45,6 @@ class Later
     public function __construct()
     {
         $this->laterItems = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

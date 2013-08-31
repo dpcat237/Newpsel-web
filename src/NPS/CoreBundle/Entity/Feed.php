@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Helper\DisplayHelper;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\AbstractEntity;
 use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 
 /**
@@ -19,18 +19,9 @@ use NPS\CoreBundle\Entity\Traits\EnabledTrait;
  * @ORM\Table(name="feed")
  * @ORM\HasLifecycleCallbacks
  */
-class Feed
+class Feed extends AbstractEntity
 {
-    use DateTimeTrait, EnabledTrait;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
+    use EnabledTrait;
 
     /**
      * @var string
@@ -99,16 +90,6 @@ class Feed
     {
         $this->items = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

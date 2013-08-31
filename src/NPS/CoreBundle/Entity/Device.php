@@ -5,7 +5,7 @@ namespace NPS\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\AbstractEntity;
 
 /**
  * Device
@@ -14,19 +14,8 @@ use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
  * @ORM\Table(name="device")
  * @ORM\HasLifecycleCallbacks
  */
-class Device
+class Device extends AbstractEntity
 {
-    use DateTimeTrait;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    protected $id;
-
     /**
      * @var string
      * @ORM\Column(name="app_key", type="string", length=255, nullable=false)
@@ -40,16 +29,6 @@ class Device
      */
     protected $user;
 
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set appKey
