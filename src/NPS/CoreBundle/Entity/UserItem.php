@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\LaterItem;
+use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
 
 /**
  * UserItem
@@ -17,6 +18,8 @@ use NPS\CoreBundle\Entity\LaterItem;
  */
 class UserItem
 {
+    use DateTimeTrait;
+
     /**
      * @var integer
      * @ORM\Column(name="id", type="bigint", nullable=false)
@@ -50,13 +53,6 @@ class UserItem
      * @ORM\Column(name="is_stared", type="boolean", nullable=false)
      */
     protected $isStared = false;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="date_add", type="integer")
-     */
-    protected $dateAdd;
 
     /**
      * @ORM\OneToMany(targetEntity="LaterItem", mappedBy="userItems")
@@ -166,7 +162,7 @@ class UserItem
     }
 
     /**
-     * Get isEnabled
+     * Get isUnread
      *
      * @return \int
      */
@@ -176,7 +172,7 @@ class UserItem
     }
 
     /**
-     * Get isEnabled
+     * Get isUnread
      *
      * @return \int
      */
@@ -206,29 +202,5 @@ class UserItem
     public function isStared()
     {
         return $this->isStared;
-    }
-
-    /**
-     * Set dateAdd
-     * @param int $dateAdd
-     *
-     * @return User
-     */
-    public function setDateAdd($dateAdd = null)
-    {
-        $dateAddNow = $this->getDateAdd();
-        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAdd
-     *
-     * @return int
-     */
-    public function getDateAdd()
-    {
-        return $this->dateAdd;
     }
 }

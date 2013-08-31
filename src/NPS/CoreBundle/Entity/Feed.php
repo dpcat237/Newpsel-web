@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Helper\DisplayHelper;
+use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 
 /**
  * Feed
@@ -19,6 +21,8 @@ use NPS\CoreBundle\Helper\DisplayHelper;
  */
 class Feed
 {
+    use DateTimeTrait, EnabledTrait;
+
     /**
      * @var integer
      *
@@ -64,20 +68,6 @@ class Feed
      * @ORM\Column(name="favicon", type="string", length=255, nullable=true)
      */
     protected $favicon;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="date_add", type="integer")
-     */
-    protected $dateAdd;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="date_up", type="integer")
-     */
-    protected $dateUp;
 
     /**
      * @ORM\OneToMany(targetEntity="Item", mappedBy="feed")
@@ -257,53 +247,6 @@ class Feed
     public function getFavicon()
     {
         return $this->favicon;
-    }
-
-    /**
-     * Set dateAdd
-     * @param int $dateAdd
-     *
-     * @return Feed
-     */
-    public function setDateAdd($dateAdd = null)
-    {
-        $dateAddNow = $this->getDateAdd();
-        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAdd
-     *
-     * @return int
-     */
-    public function getDateAdd()
-    {
-        return $this->dateAdd;
-    }
-
-    /**
-     * Set dateUp
-     * @param \int $dateUp
-     *
-     * @return Feed
-     */
-    public function setDateUp($dateUp = null)
-    {
-        $this->dateUp = (empty($dateUp))? time() : $dateUp;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUp
-     *
-     * @return \int
-     */
-    public function getDateUp()
-    {
-        return $this->dateUp;
     }
 
     /**

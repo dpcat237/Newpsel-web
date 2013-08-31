@@ -12,7 +12,8 @@ use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Entity\UserFeed;
-
+use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 
 /**
  * User
@@ -27,6 +28,8 @@ use NPS\CoreBundle\Entity\UserFeed;
 //@UniqueEntity(fields="email", message="Sorry, this email is not available or allowed")
 class User implements UserInterface
 {
+    use DateTimeTrait, EnabledTrait;
+
     /**
      * @var bigint $id
      *
@@ -56,26 +59,6 @@ class User implements UserInterface
      * @Assert\NotNull(groups={"registration"})
      */
     protected $password;
-
-    /**
-     * @var boolean
-     * @ORM\Column(name="is_enabled", type="boolean")
-     */
-    protected $isEnabled = false;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="date_add", type="integer")
-     */
-    protected $dateAdd;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="date_up", type="integer")
-     */
-    protected $dateUp;
 
     /**
      * @ORM\OneToMany(targetEntity="Device", mappedBy="user")
@@ -200,76 +183,6 @@ class User implements UserInterface
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Set isEnabled
-     * @param \boolean $isEnabled
-     *
-     * @return User
-     */
-    public function setIsEnabled($isEnabled)
-    {
-        $this->isEnabled = $isEnabled;
-
-        return $this;
-    }
-
-    /**
-     * Get isEnabled
-     *
-     * @return \int
-     */
-    public function getIsEnabled()
-    {
-        return $this->isEnabled;
-    }
-
-    /**
-     * Set dateAdd
-     * @param int $dateAdd
-     *
-     * @return User
-     */
-    public function setDateAdd($dateAdd = null)
-    {
-        $dateAddNow = $this->getDateAdd();
-        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAdd
-     *
-     * @return int
-     */
-    public function getDateAdd()
-    {
-        return $this->dateAdd;
-    }
-
-    /**
-     * Set dateUp
-     * @param \int $dateUp
-     *
-     * @return User
-     */
-    public function setDateUp($dateUp = null)
-    {
-        $this->dateUp = (empty($dateUp))? time() : $dateUp;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUp
-     *
-     * @return \int
-     */
-    public function getDateUp()
-    {
-        return $this->dateUp;
     }
 
     /**

@@ -5,7 +5,7 @@ namespace NPS\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Helper\DisplayHelper;
+use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
 
 /**
  * Device
@@ -16,6 +16,8 @@ use NPS\CoreBundle\Helper\DisplayHelper;
  */
 class Device
 {
+    use DateTimeTrait;
+
     /**
      * @var integer
      *
@@ -30,13 +32,6 @@ class Device
      * @ORM\Column(name="app_key", type="string", length=255, nullable=false)
      */
     protected $appKey;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="date_add", type="integer")
-     */
-    protected $dateAdd;
 
     /**
      * @var integer
@@ -77,40 +72,6 @@ class Device
     public function getAppKey()
     {
         return $this->appKey;
-    }
-
-    /**
-     * Set dateAdd
-     * @param int $dateAdd
-     *
-     * @return User
-     */
-    public function setDateAdd($dateAdd = null)
-    {
-        $dateAddNow = $this->getDateAdd();
-        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAdd
-     *
-     * @return int
-     */
-    public function getDateAdd()
-    {
-        return $this->dateAdd;
-    }
-
-    /**
-     * Get added date with human format
-     *
-     * @return integer
-     */
-    public function getHumanDateAdd()
-    {
-        return DisplayHelper::displayDate($this->dateAdd);
     }
 
     /**

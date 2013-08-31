@@ -5,6 +5,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
 
 /**
  * UserFeed
@@ -15,6 +16,8 @@ use NPS\CoreBundle\Entity\User;
  */
 class UserFeed
 {
+    use DateTimeTrait;
+
     /**
      * @var integer
      * @ORM\Column(name="id", type="bigint", nullable=false)
@@ -36,13 +39,6 @@ class UserFeed
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     protected $user;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="date_add", type="integer")
-     */
-    protected $dateAdd;
 
 
     /**
@@ -139,7 +135,7 @@ class UserFeed
     }
 
     /**
-     * Get isEnabled
+     * Get isUnread
      *
      * @return \int
      */
@@ -169,29 +165,5 @@ class UserFeed
     public function getIsStared()
     {
         return $this->isStared;
-    }
-
-    /**
-     * Set dateAdd
-     * @param int $dateAdd
-     *
-     * @return User
-     */
-    public function setDateAdd($dateAdd = null)
-    {
-        $dateAddNow = $this->getDateAdd();
-        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAdd
-     *
-     * @return int
-     */
-    public function getDateAdd()
-    {
-        return $this->dateAdd;
     }
 }

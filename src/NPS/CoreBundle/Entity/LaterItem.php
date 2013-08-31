@@ -5,6 +5,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Entity\Later;
+use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
 
 /**
  * LaterItem
@@ -15,6 +16,8 @@ use NPS\CoreBundle\Entity\Later;
  */
 class LaterItem
 {
+    use DateTimeTrait;
+
     /**
      * @var integer
      * @ORM\Column(name="id", type="bigint", nullable=false)
@@ -36,13 +39,6 @@ class LaterItem
      * @ORM\JoinColumn(name="later_id", referencedColumnName="id", nullable=false)
      */
     protected $later;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="date_add", type="integer")
-     */
-    protected $dateAdd;
 
     /**
      * @var int
@@ -132,30 +128,6 @@ class LaterItem
     }
 
     /**
-     * Set dateAdd
-     * @param int $dateAdd
-     *
-     * @return Later
-     */
-    public function setDateAdd($dateAdd = null)
-    {
-        $dateAddNow = $this->getDateAdd();
-        $this->dateAdd = (empty($dateAdd) && empty($dateAddNow))? time() : $dateAdd;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAdd
-     *
-     * @return int
-     */
-    public function getDateAdd()
-    {
-        return $this->dateAdd;
-    }
-
-    /**
      * Set isUnread
      * @param \boolean $isUnread
      *
@@ -169,7 +141,7 @@ class LaterItem
     }
 
     /**
-     * Get isEnabled
+     * Get isUnread
      *
      * @return \int
      */

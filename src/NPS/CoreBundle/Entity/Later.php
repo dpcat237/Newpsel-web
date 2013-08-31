@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use NPS\CoreBundle\Entity\LaterItem;
+use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 
 /**
  * Later
@@ -16,6 +18,8 @@ use NPS\CoreBundle\Entity\LaterItem;
  */
 class Later
 {
+    use DateTimeTrait, EnabledTrait;
+
     /**
      * @var integer
      *
@@ -30,20 +34,6 @@ class Later
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
      */
     protected $name;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="date_add", type="integer")
-     */
-    protected $dateAdd;
-
-    /**
-     * @var integer
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="date_up", type="integer")
-     */
-    protected $dateUp;
 
     /**
      * @ORM\OneToMany(targetEntity="LaterItem", mappedBy="later", cascade={"persist", "remove"})
@@ -97,62 +87,6 @@ class Later
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set dateAdd
-     * @param int $dateAdd
-     *
-     * @return Feed
-     */
-    public function setDateAdd($dateAdd)
-    {
-        $this->dateAdd = $dateAdd;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAdd
-     *
-     * @return int
-     */
-    public function getDateAdd()
-    {
-        return $this->dateAdd;
-    }
-
-    /**
-     * Get added date with human format
-     *
-     * @return integer
-     */
-    public function getHumanDateAdd()
-    {
-        return DisplayHelper::displayDate($this->dateAdd);
-    }
-
-    /**
-     * Set dateUp
-     * @param \int $dateUp
-     *
-     * @return Feed
-     */
-    public function setDateUp($dateUp = null)
-    {
-        $this->dateUp = (empty($dateUp))? time() : $dateUp;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUp
-     *
-     * @return \int
-     */
-    public function getDateUp()
-    {
-        return $this->dateUp;
     }
 
     /**
