@@ -170,6 +170,18 @@ class LaterRepository extends BaseRepository
             ->setParameter('changedIds', $changedIds)
             ->getQuery();
         $collection = $query->getResult();
+
+        return $this->addLabelsApiIds($collection, $createdIds);
+    }
+
+    /**
+     * Extract user labels data for api
+     * @param $collection
+     * @param $createdIds
+     *
+     * @return array
+     */
+    private function addLabelsApiIds($collection, $createdIds){
         foreach ($collection as $key => $value) {
             $collection[$key]['id'] = 0;
             if (count($createdIds)) {
@@ -180,7 +192,6 @@ class LaterRepository extends BaseRepository
                 }
             }
         }
-
 
         return $collection;
     }
