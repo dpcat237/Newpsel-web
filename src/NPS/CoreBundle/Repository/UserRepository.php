@@ -52,30 +52,19 @@ class UserRepository extends BaseRepository
     {
         parent::preExecute();
         $key = $cache->get("device_".$appKey);
-        $deviceRepo = $this->em->getRepository('NPSCoreBundle:Device');
         if ($key) {
             return true;
-        } else if (!$key && $username) {
-            $device = $deviceRepo->findOneByAppKey($appKey);
-            if ($device instanceof Device) {
-                $user = $device->getUser();
-                if ($username == $user->getUsername()) {
-                    $cache->set("device_".$appKey, $device->getUserId());
+        }
 
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
+        $deviceRepo = $this->em->getRepository('NPSCoreBundle:Device');
+        $device = $deviceRepo->findOneByAppKey($appKey);
+        if ($device instanceof Device) {
+            if ($username && $username != $device->getUser()->getUsername()) {
                 return false;
             }
-        } else {
-            $device = $deviceRepo->findOneByAppKey($appKey);
-            if ($device instanceof Device) {
-                $cache->set("device_".$appKey, $device->getUserId());
+            $cache->set("device_".$appKey, $device->getUserId());
 
-                return true;
-            }
+            return true;
         }
 
         return false;
