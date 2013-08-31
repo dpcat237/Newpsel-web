@@ -30,13 +30,7 @@ abstract class BaseController extends CoreController
         $objectName = str_replace(' ', '', $objectName);
 
         if ($objectId) {
-            $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
-            $object = $objectRepo->find($objectId);
-
-            if ($object instanceof $objectClass) {
-                $formType = (count($formSets))? $this->formSets(new $objectTypeClass($object), $formSets): new $objectTypeClass($object);
-                $form = $this->createForm($formType, $object);
-            }
+            $form = $this->createFormExistObject($objectId, $objectName, $objectClass, $objectTypeClass, $formSets);
         }
 
         if (!$object instanceof $objectClass) {
@@ -45,6 +39,30 @@ abstract class BaseController extends CoreController
         }
 
         return $form;
+    }
+
+    /**
+     * Get Form of exist object
+     * @param $objectId
+     * @param $objectName
+     * @param $objectClass
+     * @param $objectTypeClass
+     * @param null $formSets
+     *
+     * @return null|\Symfony\Component\Form\Form
+     */
+    private function createFormExistObject($objectId, $objectName, $objectClass, $objectTypeClass, $formSets = null)
+    {
+        $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
+        $object = $objectRepo->find($objectId);
+
+        if ($object instanceof $objectClass) {
+            $formType = (count($formSets))? $this->formSets(new $objectTypeClass($object), $formSets): new $objectTypeClass($object);
+
+            return $this->createForm($formType, $object);
+        }
+
+        return null;
     }
 
     /**
