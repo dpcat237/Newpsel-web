@@ -16,6 +16,35 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class UserController extends BaseController
 {
     /**
+     * List of feeds
+     * @param Request $request the current request
+     *
+     * @return Response
+     */
+    public function loginAction(Request $request)
+    {
+        $json = json_decode($request->getContent());
+        $userRepo = $this->em->getRepository('NPSCoreBundle:User');
+        $cache = $this->container->get('server_cache');
+
+        if ($userRepo->checkLogged($cache, $json->appKey, $json->username)) {
+            echo NotificationHelper::OK; exit();
+        } else {
+            $checkUser = $userRepo->checkLogin($json->username, $json->password);
+    
+            if ($checkUser instanceof User) {
+                $deviceRepo = $this->em->getRepository('NPSCoreBundle:Device');
+                $deviceRepo->createDevice($json->appKey, $checkUser);
+
+                $cache->set("device_".$json->appKey, $checkUser->getId());
+                echo NotificationHelper::OK; exit();
+            } else {
+                echo $checkUser; exit();
+            }
+        }
+    }
+
+    /**
      * Sign up an user
      * @param Request $request
      */
