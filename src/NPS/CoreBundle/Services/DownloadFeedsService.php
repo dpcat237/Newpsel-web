@@ -115,24 +115,7 @@ class DownloadFeedsService
             $rssError = $this->rss->error();
 
             if (empty($rssError)) {
-                if (!$feed->getDateSync()) {
-                    //get last 25 items
-                    $newItems = $this->getItemNew($this->rss->get_items());
-                } else {
-                    //get all items since last sync
-                    $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
-                }
-
-                if (count($newItems)) {
-                    foreach ($newItems as $newItem) {
-                        $this->itemS->addItem($newItem, $feed);
-                    }
-
-                    //update last sync data
-                    $feed->setDateSync();
-                    $this->entityManager->persist($feed);
-                    $this->entityManager->flush();
-                }
+                $this->addNewItems($feed);
             } else {
                 $error = $rssError;
             }
@@ -253,6 +236,32 @@ class DownloadFeedsService
         }
 
         return $newItems;
+    }
+
+    /**
+     * Add news items of feed
+     * @param $feed
+     */
+    private function addNewItems($feed)
+    {
+        if (!$feed->getDateSync()) {
+            //get last 25 items
+            $newItems = $this->getItemNew($this->rss->get_items());
+        } else {
+            //get all items since last sync
+            $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
+        }
+
+        if (count($newItems)) {
+            foreach ($newItems as $newItem) {
+                $this->itemS->addItem($newItem, $feed);
+            }
+
+            //update last sync data
+            $feed->setDateSync();
+            $this->entityManager->persist($feed);
+            $this->entityManager->flush();
+        }
     }
 
     /**
