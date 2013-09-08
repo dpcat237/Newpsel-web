@@ -5,7 +5,6 @@ namespace NPS\CoreBundle\Repository;
 use NPS\CoreBundle\Repository\BaseRepository;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\Device;
 
 /**
  * UserRepository
@@ -37,55 +36,6 @@ class UserRepository extends BaseRepository
             }
         } else {
             return NotificationHelper::ERROR_LOGIN_DATA;
-        }
-    }
-
-    /**
-     * Check if device is logged
-     * @param object $cache
-     * @param string $appKey
-     * @param string $username
-     *
-     * @return bool | User
-     */
-    public function checkLogged($cache, $appKey, $username = null)
-    {
-        parent::preExecute();
-        $key = $cache->get("device_".$appKey);
-        if ($key) {
-            return true;
-        }
-
-        $deviceRepo = $this->em->getRepository('NPSCoreBundle:Device');
-        $device = $deviceRepo->findOneByAppKey($appKey);
-        if ($device instanceof Device) {
-            if ($username && $username != $device->getUser()->getUsername()) {
-                return false;
-            }
-            $cache->set("device_".$appKey, $device->getUserId());
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Get device user
-     * @param object $cache  Redis client
-     * @param string $appKey device appKey
-     *
-     * @return mixed
-     */
-    public function getUserDevice($cache, $appKey)
-    {
-        if($this->checkLogged($cache, $appKey)) {
-            $userId = $cache->get("device_".$appKey);
-            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-
-            return $userRepo->find($userId);
-        } else {
-            die(NotificationHelper::ERROR_NO_LOGGED);
         }
     }
 

@@ -73,4 +73,16 @@ abstract class AbstractEmailNotificationService
     {
         return $this->translator;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getTransporter()
+    {
+        $transporter = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
+            ->setUsername('newpsel@gmail.com')
+            ->setPassword('n#06p04e2013r#s');
+
+        return $transporter;
+    }
 }

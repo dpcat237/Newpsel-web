@@ -4,6 +4,8 @@ namespace NPS\CoreBundle\Services;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use NPS\CoreBundle\Entity\Item;
+use NPS\CoreBundle\Entity\LaterItem;
+use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\UserItem;
 
 /**
@@ -82,6 +84,46 @@ class ItemService
             $this->cache->setex($linkHash, $ttl, $item->getId());
 
             $this->addItemToSubscribers($item, $feed->getUserFeeds());
+        }
+    }
+
+    /**
+     * Add page / item to selected label or if exists set as unread
+     * @param User   $user
+     * @param id     $labelId
+     * @param string $pageTitle
+     * @param string $pageUrl
+     */
+    public function addPageToLater(User $user, $labelId, $pageTitle, $pageUrl)
+    {
+        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+        $laterItem = $laterItemRepo->checkExistsLaterItemUrl($user->getId(), $labelId, $pageUrl);
+        if (!$laterItem instanceof LaterItem) {
+            $item = new Item();
+            $item->setContentHash(sha1($pageUrl));
+            $item->setLink($pageUrl);
+            $item->setTitle($pageTitle);
+            $item->setContent($pageTitle.'...');
+            $this->entityManager->persist($item);
+            $this->entityManager->flush();
+
+            $userItem = new UserItem();
+            $userItem->setItem($item);
+            $userItem->setUser($user);
+            $this->entityManager->persist($userItem);
+            $this->entityManager->flush();
+
+            $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+            $later = $laterRepo->find($labelId);
+            $laterItem = new LaterItem();
+            $laterItem->setLater($later);
+            $laterItem->setUserItem($userItem);
+            $this->entityManager->persist($laterItem);
+            $this->entityManager->flush();
+        } elseif (!$laterItem->isUnread()) {
+            $laterItem->setIsUnread(true);
+            $this->entityManager->persist($laterItem);
+            $this->entityManager->flush();
         }
     }
 

@@ -124,10 +124,11 @@ class ItemController extends BaseController
             $item = $laterItem->getUserItem()->getItem();
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
             $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
+            $title = ($item->getFeed() instanceof Feed)? $item->getFeed()->getTitle() : $laterItem->getLater()->getName();
 
             $renderData = array(
                 'item' => $item,
-                'title' => $item->getFeed()->getTitle()
+                'title' => $title
             );
 
             return $renderData;

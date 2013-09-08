@@ -57,7 +57,7 @@ class Item extends AbstractEntity
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Feed", inversedBy="items", cascade={"persist"})
-     * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=true)
      */
     protected $feed;
 

@@ -7,9 +7,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Entity\User;
 
 /**
- * FeedController
+ * LabelController
  */
 class LabelController extends BaseController
 {
@@ -26,10 +27,10 @@ class LabelController extends BaseController
         $changedLabels = $json->changedLabels;
         $lastUpdate = $json->lastUpdate;
 
-        if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-            $cache = $this->container->get('server_cache');
-            $user = $userRepo->getUserDevice($cache, $appKey);
+        $secure = $this->get('api_secure_service');
+        $user = $secure->getUserByDevice($appKey);
+
+        if ($user instanceof User) {
             $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
 
             if (count($changedLabels)) {
@@ -38,12 +39,11 @@ class LabelController extends BaseController
             } else {
                 $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
             }
-
             $response = new JsonResponse($labelCollection);
 
             return $response;
         }
-        echo NotificationHelper::ERROR_NO_APP_KEY; exit();
+        die(NotificationHelper::ERROR_NO_LOGGED);
     }
 
     /**
@@ -58,10 +58,10 @@ class LabelController extends BaseController
         $appKey = $json->appKey;
         $laterItems = $json->laterItems;
 
-        if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-            $cache = $this->container->get('server_cache');
-            $user = $userRepo->getUserDevice($cache, $appKey);
+        $secure = $this->get('api_secure_service');
+        $user = $secure->getUserByDevice($appKey);
+
+        if ($user instanceof User) {
             if (is_array($laterItems) && count($laterItems)) {
                 $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
                 $labelRepo->syncLaterItems($user->getId(), $laterItems);
@@ -71,6 +71,6 @@ class LabelController extends BaseController
                 echo NotificationHelper::ERROR_NO_DATA; exit();
             }
         }
-        echo NotificationHelper::ERROR_NO_APP_KEY; exit();
+        die(NotificationHelper::ERROR_NO_LOGGED);
     }
 }

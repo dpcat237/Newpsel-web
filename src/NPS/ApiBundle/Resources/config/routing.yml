@@ -1,13 +1,25 @@
-#User
-api_login:
-    pattern:  /login/
-    defaults: { _controller: NPSApiBundle:User:login }
+#Chrome extension
+chrome_add:
+    pattern:  /chrome/add/
+    defaults: { _controller: NPSApiBundle:Chrome:addPage }
     requirements:
       _method: POST
 
-api_sign_up:
-    pattern:  /sign_up/
-    defaults: { _controller: NPSApiBundle:User:signUp }
+chrome_labels:
+    pattern:  /chrome/labels/
+    defaults: { _controller: NPSApiBundle:Chrome:getLabels }
+    requirements:
+      _method: POST
+
+chrome_login:
+    pattern:  /chrome/login/
+    defaults: { _controller: NPSApiBundle:Chrome:login }
+    requirements:
+      _method: POST
+
+chrome_request:
+    pattern:  /chrome/request/
+    defaults: { _controller: NPSApiBundle:Chrome:requestKey }
     requirements:
       _method: POST
 
@@ -41,5 +53,18 @@ api_sync_labels:
 api_sync_later:
     pattern:  /sync_later/
     defaults: { _controller: NPSApiBundle:Label:syncLater }
+    requirements:
+      _method: POST
+
+#User
+api_login:
+    pattern:  /login/
+    defaults: { _controller: NPSApiBundle:User:login }
+    requirements:
+      _method: POST
+
+api_sign_up:
+    pattern:  /sign_up/
+    defaults: { _controller: NPSApiBundle:User:signUp }
     requirements:
       _method: POST

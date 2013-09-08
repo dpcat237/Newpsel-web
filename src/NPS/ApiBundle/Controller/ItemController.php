@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Entity\User;
 
 /**
  * FeedController
@@ -26,11 +27,11 @@ class ItemController extends BaseController
         $viewedItems = $json->viewedItems;
         $isDownload = $json->isDownload;
 
-        if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-            $cache = $this->container->get('server_cache');
+        $secure = $this->get('api_secure_service');
+        $user = $secure->getUserByDevice($appKey);
+
+        if ($user instanceof User) {
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $user = $userRepo->getUserDevice($cache, $appKey);
             if (is_array($viewedItems) && count($viewedItems)) {
                 $itemRepo->syncViewedItems($user->getId(), $viewedItems);
             }
@@ -43,7 +44,7 @@ class ItemController extends BaseController
 
             return $response;
         }
-        echo NotificationHelper::ERROR_NO_APP_KEY; exit();
+        die(NotificationHelper::ERROR_NO_LOGGED);
     }
 
 }

@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Entity\User;
 
 /**
  * FeedController
@@ -25,16 +26,16 @@ class FeedController extends BaseController
         $appKey = $json->appKey;
         $lastUpdate = $json->lastUpdate;
 
-        if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-            $cache = $this->container->get('server_cache');
-            $user = $userRepo->getUserDevice($cache, $appKey);
+        $secure = $this->get('api_secure_service');
+        $user = $secure->getUserByDevice($appKey);
+
+        if ($user instanceof User) {
             $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
             $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
 
             return new JsonResponse($feedCollection);
         }
-        echo NotificationHelper::ERROR_NO_APP_KEY; exit();
+        die(NotificationHelper::ERROR_NO_LOGGED);
     }
 
     /**
@@ -49,10 +50,10 @@ class FeedController extends BaseController
         $appKey = $json->appKey;
         $feedUrl = $json->feed_url;
 
-        if ($appKey) {
-            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-            $cache = $this->container->get('server_cache');
-            $user = $userRepo->getUserDevice($cache, $appKey);
+        $secure = $this->get('api_secure_service');
+        $user = $secure->getUserByDevice($appKey);
+
+        if ($user instanceof User) {
             $downloadFeeds = $this->get('download_feeds');
             $checkCreate = $downloadFeeds->createFeed($feedUrl, $user);
             if (!empty($checkCreate['error'])) {
@@ -65,6 +66,6 @@ class FeedController extends BaseController
 
             return new JsonResponse($unreadItems);
         }
-        echo NotificationHelper::ERROR_NO_APP_KEY; exit();
+        die(NotificationHelper::ERROR_NO_LOGGED);
     }
 }
