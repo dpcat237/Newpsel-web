@@ -22,7 +22,6 @@ class NPSApiExtension extends Extension
     {
         $configuration = new Configuration();
         $this->processConfiguration($configuration, $configs);
-
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         //load NPSApiBundle services
         $loader->load('services.yml');

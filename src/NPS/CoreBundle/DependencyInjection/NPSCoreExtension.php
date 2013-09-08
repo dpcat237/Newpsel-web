@@ -24,7 +24,7 @@ class NPSCoreExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        // load NPSCoreBundle services
+        //load NPSCoreBundle services
         $loader->load('services.yml');
     }
 }
