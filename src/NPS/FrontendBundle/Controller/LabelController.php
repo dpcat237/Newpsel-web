@@ -20,7 +20,6 @@ class LabelController extends BaseController
 {
     /**
      * List of user's labels
-     * @param Request $request
      *
      * @return array
      *
@@ -28,7 +27,7 @@ class LabelController extends BaseController
      * @Secure(roles="ROLE_USER")
      * @Template()
      */
-    public function listAction(Request $request)
+    public function listAction()
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
@@ -129,11 +128,10 @@ class LabelController extends BaseController
     public function menuAction()
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $labelRepo = $em->getRepository('NPSCoreBundle:Later');
+        $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
+        $labelsCollection = $labelRepo->getUserLabel($user->getId());
 
-        $labels = array();
-        foreach ($user->getLaters() as $lab) {
+        foreach ($labelsCollection as $lab) {
             $label['id'] = $lab->getId();
             $label['name'] = $lab->getName();
             $label['count'] = $labelRepo->getUnreadCount($label['id']);

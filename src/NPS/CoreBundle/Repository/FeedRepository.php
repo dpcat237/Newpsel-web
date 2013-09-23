@@ -69,7 +69,7 @@ class FeedRepository extends BaseRepository
             ->join('f.userFeeds', 'uf')
             ->join('uf.user', 'u')
             ->where('u.id = :userId')
-            ->orderBy('f.title', 'DESC')
+            ->orderBy('f.title', 'ASC')
             ->setParameter('userId', $userId)
             ->getQuery();
         $feedCollection = $query->getResult();
