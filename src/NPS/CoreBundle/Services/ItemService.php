@@ -63,7 +63,7 @@ class ItemService
         $item = $this->checkExistByLink($itemData->get_link());
         if ($item instanceof Item) {
             $item->setTitle($itemData->get_title());
-            $item->setContent($itemData->get_description());
+            $item->setContent($itemData->get_content());
 
             $this->entityManager->persist($item);
             $this->entityManager->flush();
