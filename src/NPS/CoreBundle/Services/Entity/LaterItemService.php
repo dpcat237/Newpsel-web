@@ -54,7 +54,7 @@ class LaterItemService
     {
         $item = $laterItem->getUserItem()->getItem();
         $user = $laterItem->getUserItem()->getUser();
-        //$this->makeLaterRead($laterItem);
+        $this->makeLaterRead($laterItem);
         $this->item->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
 
         if ($content = $this->cache->get('crawledItem_'.$item->getId())) {
