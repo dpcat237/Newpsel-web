@@ -12,6 +12,14 @@ use NPS\CoreBundle\Repository\BaseRepository;
  */
 class LaterItemRepository extends BaseRepository
 {
+    /**
+     * Check if exists later item by url
+     * @param $userId
+     * @param $labelId
+     * @param $itemUrl
+     *
+     * @return bool
+     */
     public function checkExistsLaterItemUrl($userId, $labelId, $itemUrl)
     {
         $repository = $this->getEntityManager()->getRepository('NPSCoreBundle:LaterItem');
@@ -36,5 +44,35 @@ class LaterItemRepository extends BaseRepository
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get incomplete later items
+     * @param null $userId
+     *
+     * @return array
+     */
+    public function getItemForCrawling($userId = null)
+    {
+        $repository = $this->getEntityManager()->getRepository('NPSCoreBundle:LaterItem');
+        $query = $repository->createQueryBuilder('li')
+            ->select('li', 'ui', 'i', 'f')
+            ->join('li.userItem', 'ui')
+            ->join('ui.item', 'i')
+            ->join('i.feed', 'f')
+            ->where('f.crawling = :isCrawling')
+            ->andWhere('li.isUnread = :isUnread')
+            ->orderBy('li.id', 'ASC')
+            ->setParameter('isCrawling', true)
+            ->setParameter('isUnread', true);
+        if ($userId) {
+            $query
+                ->andWhere('ui.user = :userId')
+                ->setParameter('userId', $userId);
+        }
+        $query = $query->getQuery();
+        $laterItemCollection = $query->getResult();
+
+        return $laterItemCollection;
     }
 }

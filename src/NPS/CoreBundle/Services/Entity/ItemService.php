@@ -1,12 +1,12 @@
 <?php
-namespace NPS\CoreBundle\Services;
+namespace NPS\CoreBundle\Services\Entity;
 
-use HTMLPurifier;
-use HTMLPurifier_Config;
-use NPS\CoreBundle\Entity\Item;
-use NPS\CoreBundle\Entity\LaterItem;
-use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\UserItem;
+use HTMLPurifier,
+    HTMLPurifier_Config;
+use NPS\CoreBundle\Entity\Item,
+    NPS\CoreBundle\Entity\LaterItem,
+    NPS\CoreBundle\Entity\User,
+    NPS\CoreBundle\Entity\UserItem;
 
 /**
  * ItemService
@@ -71,10 +71,10 @@ class ItemService
             $item = new Item();
             $item->setFeed($feed);
             $item->setDateAdd($itemData->get_date('U'));
-            $item->setContentHash(sha1($itemData->get_description()));
+            $item->setContentHash(sha1($itemData->get_content()));
             $item->setLink($itemData->get_link());
             $item->setTitle($this->purifier->purify($itemData->get_title()));
-            $item->setContent($this->purifier->purify($itemData->get_description()));
+            $item->setContent($this->purifier->purify($itemData->get_content()));
 
             $this->entityManager->persist($item);
             $this->entityManager->flush();
@@ -160,6 +160,65 @@ class ItemService
             $this->entityManager->persist($userItem);
         }
         $this->entityManager->flush();
+    }
+
+    /**
+     * Change item status
+     *
+     * @param User $user
+     * @param Item $item
+     * @param $statusGet
+     * @param $statusSet
+     * @param null $change
+     *
+     * @return boolean set status
+     */
+    public function changeStatus(User $user, Item $item, $statusGet, $statusSet, $change = null)
+    {
+        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        $userItem = $itemRepo->hasItem($user->getId(), $item->getId());
+
+        if ($userItem instanceof UserItem) {
+            $status = $this->getNewStatus($userItem, $change, $statusGet);
+        } else {
+            $userItem = new UserItem();
+            $userItem->setUser($user);
+            $userItem->setItem($item);
+            if ($change == 1) {
+                $status = true;
+            } else {
+                $status = false;
+            }
+        }
+        $userItem->$statusSet($status);
+        $this->entityManager->persist($userItem);
+        $this->entityManager->flush();
+
+        return $status;
+    }
+
+    /**
+     * Get new status for existing userItem
+     * @param UserItem $userItem
+     * @param $change
+     * @param $statusGet
+     *
+     * @return bool
+     */
+    private function getNewStatus(UserItem $userItem, $change, $statusGet){
+        if ($change == 1) {
+            $status = true;
+        } elseif ($change == 2)  {
+            $status = false;
+        } else {
+            if ($userItem->$statusGet()) { //change current status
+                $status = false;
+            } else {
+                $status = true;
+            }
+        }
+
+        return $status;
     }
 
     /**

@@ -125,6 +125,7 @@ class DefaultController extends BaseController
      */
     public function loginAction(Request $request)
     {
+        $errors = null;
         //if user is logged redirect to homepage
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
@@ -269,5 +270,84 @@ class DefaultController extends BaseController
         $request->getSession()->invalidate();
 
         return new RedirectResponse($this->container->get('router')->generate('welcome'));
+    }
+
+    /**
+     * Test crawler
+     *
+     * @return RedirectResponse
+     * @Route("/craw", name="craw")
+     */
+    public function tryCrawlerAction()
+    {
+        //return new RedirectResponse($this->container->get('router')->generate('homepage'));
+        $link = 'http://feeds.feedburner.com/androidcentral';
+        $artTitle = "Retailer leak reveals Archos Gamepad 2";
+        $artUrl = 'http://feedproxy.google.com/~r/androidcentral/~3/_HlrkDW0xZE/story01.htm';
+        $crawler = $this->get('try');
+
+        //$crawler->showFeedItems($link);
+        $crawler->tryCrawledItem($link, $artTitle, $artUrl);
+
+
+
+
+        //TODO
+        /* 4 ok
+        $crawler = $client->request('GET', 'http://feeds.mashable.com/~r/Mashable/~3/8k8H54amJig/');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'At this point, inviting')]]");
+        $test = $class->parents();*/
+
+        /* 6
+        $crawler = $client->request('GET', 'http://feedproxy.google.com/~r/androidcentral/~3/QE3tl_hxqYw/story01.htm');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'At an event in Beijing this mornin')]]");
+        $test = $class->parents();*/
+
+        /* 7  remove top share and video objects (notify about video)
+        $crawler = $client->request('GET', 'http://www.bbc.co.uk/news/world-asia-24201243#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'Many burials have taken place')]]");
+        $test = $class->parents();*/
+
+        // 8 http://www.eduardpunset.es/category/general/feed - review later
+
+        /* 14
+        $crawler = $client->request('GET', 'http://feeds.gawker.com/~r/lifehacker/full/~3/q4_KZFN_TqI/how-to-create-a-diet-plan-that-doesnt-suck-and-actuall-1352148537');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'probably heard of a million dietary')]]");
+        $test = $class->parents();*/
+
+        /* 15 extract related posts and remove share
+        $crawler = $client->request('GET', 'http://www.marcandangel.com/2013/09/22/8-things-you-should-not-do-to-get-ahead/');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'So make that choice today.')]]");
+        $test = $class->parents();*/
+
+        /* 17
+        $crawler = $client->request('GET', 'http://feeds.newscientist.com/c/749/f/10897/s/3199538f/sc/15/l/0L0Snewscientist0N0Carticle0Cdn242510Egps0Eantenna0Efilters0Eout0Enoise0Eto0Eboost0Eurban0Eaccuracy0Bhtml0Dcmpid0FRSS0QNSNS0Q20A120EGLOBAL0Qonline0Enews/story01.htm');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'For something we rely on so heavily')]]");
+        $test = $class->parents();
+        $tst = explode('<!-- social media btns -->', $test->html());
+        $class = $crawler->filterXPath("//p[@class='infotext']");
+        echo 'tut: '.$tst[0].$class->html(); exit();*/
+
+        /* 19 doesn't work with generic filter
+        $crawler = $client->request('GET', 'http://www.antena3.com/noticias/mundo/angela-merkel-reelegida-canciller-resiste-fuerza-embiste-crisis-europa_2013092300104.html');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'Uno a uno han ido sufriendo duras derrotas')]]");
+        $test = $class->parents();*/
+
+        /* 20 doesn't work with generic
+        $crawler = $client->request('GET', 'http://feedproxy.google.com/~r/d0od/~3/BZmODHC7dVY/valve-announce-steamos');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'being the heart of their plans for')]]");
+        $test = $class->parents();*/
+
+        /* 26 doesn't work generic
+        $crawler = $client->request('GET', 'http://mobile-review.com.feedsportal.com/c/33244/f/556830/s/318f908b/sc/5/l/0L0Smobile0Ereview0N0Carticles0C20A130Cbirulki0E2430Bshtml/story01.htm');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'Продажи новых iPhone и LTE в России')]]");
+        $test = $class->parents();
+        $tst = explode('<center>', $test->html());
+        $tst[0]*/
+
+        /* 30
+        $crawler = $client->request('GET', 'http://www.ricardclau.com/2013/08/4-meses-en-londres-experiencias/');
+        $class = $crawler->filterXPath("//*[text()[contains(., 'por lo menos no va a haber')]]");
+        $test = $class->parents();*/
     }
 }

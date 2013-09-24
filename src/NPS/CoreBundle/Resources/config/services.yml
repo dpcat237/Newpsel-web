@@ -2,6 +2,12 @@ parameters:
 #    nps_core.example.class: NPS\CoreBundle\Example
 
 services:
+    crawler:
+        class: NPS\CoreBundle\Services\CrawlerService
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @server_cache
+
     download_feeds:
         class: NPS\CoreBundle\Services\DownloadFeedsService
         arguments:
@@ -11,14 +17,29 @@ services:
             item:         @item
 
     item:
-        class: NPS\CoreBundle\Services\ItemService
+        class: NPS\CoreBundle\Services\Entity\ItemService
         arguments:
             doctrine:     @doctrine
             server_cache: @server_cache
 
+    later_item:
+        class: NPS\CoreBundle\Services\Entity\LaterItemService
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @server_cache
+            item:         @item
+
     server_cache:
         class: NPS\CoreBundle\Services\CacheService
         arguments: ['@snc_redis.default', 3600]
+
+    try:
+        class: NPS\CoreBundle\Services\TryService
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @server_cache
+            crawler:      @crawler
+            simple_pie:   @fkr_simple_pie.rss
 
     user.notifications:
         class: NPS\CoreBundle\Services\UserNotificationsService

@@ -91,8 +91,7 @@ class ItemController extends BaseController
     public function viewAction(Item $item)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-        $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
+        $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
         $renderData = array(
             'item' => $item,
             'title' => $item->getFeed()->getTitle()
@@ -117,13 +116,7 @@ class ItemController extends BaseController
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
-            $laterItem->setIsUnread(false);
-            $this->em->persist($laterItem);
-            $this->em->flush();
-
-            $item = $laterItem->getUserItem()->getItem();
-            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
+            $item = $this->get('later_item')->readItem($laterItem);
             $title = ($item->getFeed() instanceof Feed)? $item->getFeed()->getTitle() : $laterItem->getLater()->getName();
 
             $renderData = array(
@@ -151,8 +144,7 @@ class ItemController extends BaseController
     {
         $status = $request->get('status');
         $user = $this->get('security.context')->getToken()->getUser();
-        $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-        $status = $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", $status);
+        $status = $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", $status);
         $result=($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
 
         $response = array (
@@ -182,8 +174,7 @@ class ItemController extends BaseController
             $this->em->flush();
 
             $item = $laterItem->getUserItem()->getItem();
-            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $itemRepo->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
+            $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
 
             $renderData = array(
                 'result' => NotificationHelper::OK_IS_READ
@@ -207,9 +198,8 @@ class ItemController extends BaseController
     public function starAction(Item $item)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-        $status = $itemRepo->changeStatus($user, $item, "isStared", "setIsStared");
-        $result=($status)? NotificationHelper::OK_IS_NOT_STARED : NotificationHelper::OK_IS_STARED ;
+        $status = $this->get('item')->changeStatus($user, $item, "isStared", "setIsStared");
+        $result =($status)? NotificationHelper::OK_IS_NOT_STARED : NotificationHelper::OK_IS_STARED ;
 
         $response = array (
             'result' => $result

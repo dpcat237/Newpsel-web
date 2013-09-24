@@ -65,6 +65,8 @@ class LabelController extends BaseController
             if (is_array($laterItems) && count($laterItems)) {
                 $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
                 $labelRepo->syncLaterItems($user->getId(), $laterItems);
+                //get complete content for partial articles
+                $this->get('crawler')->executeCrawling($user->getId());
 
                 echo NotificationHelper::OK; exit();
             } else {

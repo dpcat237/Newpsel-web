@@ -41,7 +41,10 @@
         "twbs/bootstrap": "2.3.*",
         "jquery/jquery": "1.9.*",
         "undf/angularjsbundle" :"dev-master",
-        "ezyang/htmlpurifier": "dev-master"
+        "ezyang/htmlpurifier": "dev-master",
+        "symfony/dom-crawler": "2.*",
+        "fabpot/goutte": "1.*",
+        "symfony/process": "2.*"
     },
     "scripts": {
         "post-install-cmd": [

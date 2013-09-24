@@ -3,8 +3,6 @@
 namespace NPS\CoreBundle\Repository;
 
 use NPS\CoreBundle\Entity\Item;
-use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Repository\BaseRepository;
 
 /**
@@ -15,64 +13,6 @@ use NPS\CoreBundle\Repository\BaseRepository;
  */
 class ItemRepository extends BaseRepository
 {
-    /**
-     * Change item status
-     * @param User $user
-     * @param Item $item
-     * @param $statusGet
-     * @param $statusSet
-     * @param null $change
-     *
-     * @return boolean set status
-     */
-    public function changeStatus(User $user, Item $item, $statusGet, $statusSet, $change = null)
-    {
-        $em = $this->getEntityManager();
-        $userItem = $this->hasItem($user->getId(), $item->getId());
-
-        if ($userItem instanceof UserItem) {
-            $status = $this->getNewStatus($userItem, $change, $statusGet);
-        } else {
-            $userItem = new UserItem();
-            $userItem->setUser($user);
-            $userItem->setItem($item);
-            if ($change == 1) {
-                $status = true;
-            } else {
-                $status = false;
-            }
-        }
-        $userItem->$statusSet($status);
-        $em->persist($userItem);
-        $em->flush();
-
-        return $status;
-    }
-
-    /**
-     * Get new status for existing userItem
-     * @param UserItem $userItem
-     * @param $change
-     * @param $statusGet
-     *
-     * @return bool
-     */
-    private function getNewStatus(UserItem $userItem, $change, $statusGet){
-        if ($change == 1) {
-            $status = true;
-        } elseif ($change == 2)  {
-            $status = false;
-        } else {
-            if ($userItem->$statusGet()) { //change actual status
-                $status = false;
-            } else {
-                $status = true;
-            }
-        }
-
-        return $status;
-    }
-
     /**
      * Check if are relation between user and item.
      * @param $userId

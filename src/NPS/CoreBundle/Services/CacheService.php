@@ -101,9 +101,9 @@ class CacheService
 
     /**
      * Wrapper for setex
-	 * @param string $key   [description]
-	 * @param int    $ttl   [description]
-	 * @param string $value [description]
+	 * @param string $key   key of new registry
+	 * @param int    $ttl   key timeout (in seconds)
+	 * @param string $value value to save
 	 * 
 	 * @return array
      */

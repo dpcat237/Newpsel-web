@@ -18,14 +18,14 @@ class LaterItem extends AbstractEntity
 {
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="UserItem", inversedBy="laterUserItems")
+     * @ORM\ManyToOne(targetEntity="UserItem", inversedBy="laterItems")
      * @ORM\JoinColumn(name="user_item_id", referencedColumnName="id", nullable=false)
      */
     protected $userItem;
 
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="Later", inversedBy="laterUserItems")
+     * @ORM\ManyToOne(targetEntity="Later", inversedBy="laterItems")
      * @ORM\JoinColumn(name="later_id", referencedColumnName="id", nullable=false)
      */
     protected $later;
