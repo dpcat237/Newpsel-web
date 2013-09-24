@@ -61,6 +61,13 @@ class Feed extends AbstractEntity
     protected $favicon;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_crawling", type="boolean", nullable=true)
+     */
+    protected $crawling = false;
+
+    /**
      * @ORM\OneToMany(targetEntity="Item", mappedBy="feed")
      */
     protected $items;
@@ -228,6 +235,30 @@ class Feed extends AbstractEntity
     public function getFavicon()
     {
         return $this->favicon;
+    }
+
+    /**
+     * Set is crawling
+     *
+     * @param boolean $crawling
+     *
+     * @return Feed
+     */
+    public function setCrawling($crawling)
+    {
+        $this->crawling = $crawling;
+
+        return $this;
+    }
+
+    /**
+     * Get if feed's items must be crawled
+     *
+     * @return boolean
+     */
+    public function isCrawling()
+    {
+        return $this->crawling;
     }
 
     /**
