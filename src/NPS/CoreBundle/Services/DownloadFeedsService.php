@@ -136,10 +136,8 @@ class DownloadFeedsService
         $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
         $checkFeed = $feedRepo->checkExistFeedUrl($url);
         if (!$checkFeed instanceof Feed) {
-            $checkFeed = $this->createFeedProcess($url);
-            if ($checkFeed['feed'] instanceof Feed) {
-                $feed = $checkFeed['feed'];
-            } else {
+            $feed = $this->createFeedProcess($url);
+            if (!$feed instanceof Feed) {
                 $this->error = $checkFeed['error'];
             }
         } else {
