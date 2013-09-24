@@ -71,11 +71,11 @@ class ItemCrawlerCommand extends ContainerAwareCommand
         if (count($laterItems)) {
             foreach ($laterItems as $laterItem) {
                 $item = $laterItem->getUserItem()->getItem();
-                if (!$cache->get($cacheKey.$laterItem->getId())) {
+                if (!$cache->get($cacheKey.$item->getId())) {
                     if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent())) {
-                        $cache->setex($cacheKey.$item->getId(), 2592000, 'hahaha');
+                        $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
 
-                        echo "\ntut: oki"; echo "\n\n"; exit();
+                        //echo "\ntut: oki"; echo "\n\n"; exit();
                     }
                 }
 
@@ -83,7 +83,7 @@ class ItemCrawlerCommand extends ContainerAwareCommand
             }
         }
 
-        echo "\ntut: end"; echo "\n\n"; exit();
+        //echo "\ntut: end"; echo "\n\n"; exit();
 
         $log->info('*** Crawling finished ***');
     }
