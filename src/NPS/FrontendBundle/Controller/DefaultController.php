@@ -280,10 +280,10 @@ class DefaultController extends BaseController
      */
     public function tryCrawlerAction()
     {
-        return new RedirectResponse($this->container->get('router')->generate('homepage'));
+        //return new RedirectResponse($this->container->get('router')->generate('homepage'));
         $link = 'http://feeds.mashable.com/Mashable';
-        $artTitle = "10 Moving Quotes From Day 2 of Social Good Summit";
-        $artUrl = 'http://feeds.mashable.com/~r/Mashable/~3/yA2YmqU4WkM/';
+        $artTitle = "Thrillist: From a Simple Newsletter to a $100 Million Media Empire";
+        $artUrl = 'http://feeds.mashable.com/~r/Mashable/~3/GS4aFftVLE8/';
         $crawler = $this->get('try');
 
         //$crawler->showFeedItems($link);
