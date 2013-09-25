@@ -56,6 +56,7 @@ class ItemCrawlerCommand extends ContainerAwareCommand
         $log = $container->get('logger');
         $cache = $container->get('server_cache');
         $userId =(is_numeric($input->getArgument('user')))? $input->getArgument('user') : null;
+        $feedId = 0;
 
         $log->info('*** Start crawling un full articles ***');
 
@@ -72,10 +73,14 @@ class ItemCrawlerCommand extends ContainerAwareCommand
             foreach ($laterItems as $laterItem) {
                 $item = $laterItem->getUserItem()->getItem();
                 if (!$cache->get($cacheKey.$item->getId())) {
+                    if ($feedId == $item->getFeed()->getId()) {
+                        sleep(30);
+                    }
                     if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent())) {
                         $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
 
                         //echo "\ntut: oki"; echo "\n\n"; exit();
+                        $feedId = $item->getFeed()->getId();
                     }
                 }
 
