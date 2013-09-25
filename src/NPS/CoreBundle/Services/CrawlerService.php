@@ -112,9 +112,14 @@ class CrawlerService
     private function checkFoundBigger($filtered, $itemContent)
     {
         $content = $this->getNodeParents($filtered);
-        $origCount = round((strlen($itemContent) / 2), 0);
+        $origCount = round((strlen($itemContent) / 4), 0);
 
-        if ($content && (strlen($content) > $origCount)) {
+        //echo "\ntut: search text: ".$searchText; echo "\n\n";
+        //echo "<br>tut: count: ".strlen($content).' - '.$origCount.'<br>';
+        //similar_text($content, $itemContent, $percent);
+        //echo "<br>tut: similar: ".$percent.'<br>';
+        //if ($percent > 15 && $content && (strlen($content) > $origCount)) {
+        if ($content && (strlen($content) > $origCount) && (!strstr($content, '<meta'))) {
             return $content;
         }
 
