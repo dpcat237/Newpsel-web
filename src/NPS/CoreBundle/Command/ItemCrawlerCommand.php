@@ -76,11 +76,11 @@ class ItemCrawlerCommand extends ContainerAwareCommand
                     if ($feedId == $item->getFeed()->getId()) {
                         sleep(30);
                     }
-                    echo "\ntuta: save item: ".$item->getId(); echo "\n\n";
+                    //echo "\ntuta: save item: ".$item->getId(); echo "\n\n";
                     if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent())) {
                         $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
 
-                        echo "\ntutb: saved item: ".$item->getId(); echo "\n\n";
+                        //echo "\ntutb: saved item: ".$item->getId(); echo "\n\n";
                         //echo "\ntut: oki"; echo "\n\n"; exit();
                         $feedId = $item->getFeed()->getId();
                     }

@@ -90,9 +90,9 @@ class CrawlerService
     {
         $fullContent = null;
         $result = trim($match);
+
         if (preg_match('/\s/', $result)) {
             $searchText = $result;
-
             //echo "\ntut: search text: ".$searchText; echo "\n\n";
             $path = "//*[text()[contains(., '$searchText')]]";
             $filtered = $crawler->filterXPath($path);
@@ -111,18 +111,33 @@ class CrawlerService
      */
     private function checkFoundBigger($filtered, $itemContent)
     {
-        if (strlen($filtered->text()) > 30) {
-            //echo "\ntut: compare: ".strlen($filtered->html()); echo "\n\n";
-            $foundData = $filtered->parents();
-            $complete = $foundData->html();
-            //echo 'tutl: '.strlen($complete).' - '.strlen($itemContent).'<br>';
-            //echo "\ntut: compare: ".strlen($complete).' - '.strlen($itemContent); echo "\n\n";
-            if (strlen($complete) > strlen($itemContent)) {
-                return $complete;
-            }
+        $content = $this->getNodeParents($filtered);
+        $origCount = round((strlen($itemContent) / 2), 0);
+
+        if ($content && (strlen($content) > $origCount)) {
+            return $content;
         }
 
         return null;
+    }
+
+    /**
+     * Get content of parents if it was found
+     * @param $node
+     *
+     * @return null
+     */
+    private function getNodeParents($node)
+    {
+        $content = null;
+        try {
+            $foundData = $node->parents();
+            $content = $foundData->html();
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return $content;
     }
 
     /**
