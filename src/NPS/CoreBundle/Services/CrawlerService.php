@@ -63,7 +63,7 @@ class CrawlerService
         //echo 'tut: '.$crawler->html(); exit();
 
         preg_match_all('/[0-9a-z\s-]{12,30}/i', $itemContent, $matches);
-        echo "\ntut: found matches: ".count($matches); echo "\n\n";
+        //echo "\ntut: found matches: ".count($matches); echo "\n\n";
         //echo '<pre>tut: '; print_r($matches); echo '</pre>'; exit();
 
         $found = null;
@@ -93,7 +93,7 @@ class CrawlerService
         if (preg_match('/\s/', $result)) {
             $searchText = $result;
 
-            echo "\ntut: search text: ".$searchText; echo "\n\n";
+            //echo "\ntut: search text: ".$searchText; echo "\n\n";
             $path = "//*[text()[contains(., '$searchText')]]";
             $filtered = $crawler->filterXPath($path);
             $fullContent = $this->checkFoundBigger($filtered, $itemContent);
@@ -112,11 +112,11 @@ class CrawlerService
     private function checkFoundBigger($filtered, $itemContent)
     {
         if (strlen($filtered->text()) > 30) {
-            echo "\ntut: compare: ".strlen($filtered->html()); echo "\n\n";
+            //echo "\ntut: compare: ".strlen($filtered->html()); echo "\n\n";
             $foundData = $filtered->parents();
             $complete = $foundData->html();
             //echo 'tutl: '.strlen($complete).' - '.strlen($itemContent).'<br>';
-            echo "\ntut: compare: ".strlen($complete).' - '.strlen($itemContent); echo "\n\n";
+            //echo "\ntut: compare: ".strlen($complete).' - '.strlen($itemContent); echo "\n\n";
             if (strlen($complete) > strlen($itemContent)) {
                 return $complete;
             }
