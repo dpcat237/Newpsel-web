@@ -111,7 +111,8 @@ class CrawlerService
      */
     private function checkFoundBigger($filtered, $itemContent)
     {
-        if (strlen($filtered->text()) > 10) {
+        if (strlen($filtered->text()) > 30) {
+            echo "\ntut: compare: ".strlen($filtered->html()); echo "\n\n";
             $foundData = $filtered->parents();
             $complete = $foundData->html();
             //echo 'tutl: '.strlen($complete).' - '.strlen($itemContent).'<br>';
