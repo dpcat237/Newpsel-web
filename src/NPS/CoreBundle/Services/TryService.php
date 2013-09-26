@@ -88,11 +88,12 @@ class TryService
 
     /**
      * Show parsed specific item
-     * @param $feedUrl
-     * @param $itemTitle
-     * @param $itemUrl
+     * @param string $feedUrl
+     * @param string $itemTitle
+     * @param string $itemUrl
+     * @param int    $feedId
      */
-    public function tryCrawledItem($feedUrl, $itemTitle, $itemUrl)
+    public function tryCrawledItem($feedUrl, $itemTitle, $itemUrl, $feedId)
     {
         $completeContent = null;
         $items = $this->getFeedItems($feedUrl);
@@ -103,7 +104,7 @@ class TryService
                 echo "<br>content: ".$itemData->get_content();
                 echo "<div style='width: 100%; height: 1px; border-bottom: 1px solid 000;'></div><br><br>";
 
-                $completeContent = $this->crawler->getCompleteContent($itemUrl, $itemData->get_content());
+                $completeContent = $this->crawler->getCompleteContent($itemUrl, $itemData->get_content(), $feedId);
             } else {
                 continue;
             }
@@ -111,8 +112,21 @@ class TryService
 
         if ($completeContent) {
             echo 'tut: oki <br>'.$completeContent; exit();
-        } else {
+        }
+        echo 'tut: Ops :('; exit();
+    }
 
+    /**
+     * Show direct crawled content
+     * @param $itemUrl
+     * @param $itemContent
+     * @param $feedId
+     */
+    public function tryDirectContent($itemUrl, $itemContent, $feedId)
+    {
+        $completeContent = $this->crawler->getCompleteContent($itemUrl, $itemContent, $feedId);
+        if ($completeContent) {
+            echo 'tutaa: '.$completeContent; exit();
         }
         echo 'tut: Ops :('; exit();
     }

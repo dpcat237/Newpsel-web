@@ -6,6 +6,7 @@ use HTMLPurifier,
 use Symfony\Component\DomCrawler\Crawler,
     Goutte\Client;
 use Symfony\Component\Process\Process;
+use NPS\CoreBundle\Helper\CrawlerHelper;
 
 /**
  * CrawlerService
@@ -49,24 +50,54 @@ class CrawlerService
     }
 
     /**
+     * Check if this feed's items must be parsed
+     * @param int $feedId Feed id
+     *
+     * @return bool
+     */
+    public function checkSpecial($feedId)
+    {
+        if (in_array($feedId, CrawlerHelper::getSupportedFeeds())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Parse item's web and get full content
+     * @param string $itemUrl
+     * @param string $itemContent
+     * @param int    $feedId
+     *
+     * @return null
+     */
+    public function getCompleteContent($itemUrl, $itemContent, $feedId)
+    {
+        $complete = null;
+        if ($this->checkSpecial($feedId)) {
+            $processName = 'process'.$feedId;
+            $complete = CrawlerHelper::$processName($this, $itemUrl, $itemContent);
+        } else {
+            $complete = $this->executeGenericCrawling($itemUrl, $itemContent);
+        }
+
+        return $complete;
+    }
+
+    /**
      * @param $itemUrl
      * @param $itemContent
      *
      * @return null
      */
-    public function getCompleteContent($itemUrl, $itemContent)
+    private function executeGenericCrawling($itemUrl, $itemContent)
     {
         $complete = null;
-        $client = new Client();
-        $crawler = $client->request('GET', $itemUrl);
-        //echo 'tut: '.$crawler->html(); exit();
+        $found = null;
+        $crawler = $this->getItemPage($itemUrl);
 
         preg_match_all('/[0-9a-z\s-]{12,30}/i', $itemContent, $matches);
-        //echo "\ntut: found matches: ".count($matches); echo "\n\n";
-        //echo '<pre>tut: '; print_r($matches); echo '</pre>'; exit();
-
-        $found = null;
         foreach ($matches[0] as $match) {
             if ($complete = $this->checkFilter($crawler, $match, $itemContent)) {
                 break;
@@ -93,7 +124,6 @@ class CrawlerService
 
         if (preg_match('/\s/', $result)) {
             $searchText = $result;
-            //echo "\ntut: search text: ".$searchText; echo "\n\n";
             $path = "//*[text()[contains(., '$searchText')]]";
             $filtered = $crawler->filterXPath($path);
             $fullContent = $this->checkFoundBigger($filtered, $itemContent);
@@ -113,17 +143,25 @@ class CrawlerService
     {
         $content = $this->getNodeParents($filtered);
         $origCount = round((strlen($itemContent) / 4), 0);
-
-        //echo "\ntut: search text: ".$searchText; echo "\n\n";
-        //echo "<br>tut: count: ".strlen($content).' - '.$origCount.'<br>';
-        //similar_text($content, $itemContent, $percent);
-        //echo "<br>tut: similar: ".$percent.'<br>';
-        //if ($percent > 15 && $content && (strlen($content) > $origCount)) {
         if ($content && (strlen($content) > $origCount) && (!strstr($content, '<meta'))) {
             return $content;
         }
 
         return null;
+    }
+
+    /**
+     * Get crawler of item web page
+     * @param $itemUrl
+     *
+     * @return Crawler
+     */
+    public function getItemPage($itemUrl)
+    {
+        $client = new Client();
+        $crawler = $client->request('GET', $itemUrl);
+
+        return $crawler;
     }
 
     /**
