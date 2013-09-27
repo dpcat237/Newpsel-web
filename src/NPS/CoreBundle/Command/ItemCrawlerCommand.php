@@ -78,6 +78,7 @@ class ItemCrawlerCommand extends ContainerAwareCommand
         foreach ($laterItems as $laterItem) {
             $item = $laterItem->getUserItem()->getItem();
             if (!$cache->get($cacheKey.$item->getId())) {
+                echo "\ntut enter: item: ".$item->getId().' feed: '.$item->getFeedId(); echo "\n\n";
                 if ($feedId == $item->getFeed()->getId()) {
                     sleep(30);
                 }
