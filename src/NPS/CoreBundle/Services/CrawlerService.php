@@ -76,10 +76,29 @@ class CrawlerService
     {
         $complete = null;
         if ($this->checkSpecial($feedId)) {
-            $processName = 'process'.$feedId;
-            $complete = CrawlerHelper::$processName($this, $itemUrl, $itemContent);
+            $complete = $this->callSpecificCrawling($feedId, $itemUrl, $itemContent);
         } else {
             $complete = $this->executeGenericCrawling($itemUrl, $itemContent);
+        }
+
+        return $complete;
+    }
+
+    /**
+     * Try get content with specific crawling
+     * @param $feedId
+     * @param $itemUrl
+     * @param $itemContent
+     *
+     * @return null
+     */
+    private function callSpecificCrawling($feedId, $itemUrl, $itemContent)
+    {
+        try {
+            $processName = 'process'.$feedId;
+            $complete = CrawlerHelper::$processName($this, $itemUrl, $itemContent);
+        } catch (\Exception $e) {
+            return null;
         }
 
         return $complete;
