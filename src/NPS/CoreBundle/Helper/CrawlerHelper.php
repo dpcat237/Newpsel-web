@@ -125,6 +125,7 @@ class CrawlerHelper extends Helper
         $content =  file_get_contents($itemUrl);
         $content = explode('<div id="mainbanner">', $content);
         $content = explode('<!--main content end-->', $content[1]);
+        //$subject = base64_encode($content[0]);
 
         return $content[0];
     }
