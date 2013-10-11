@@ -29,6 +29,8 @@ class UserRepository extends BaseRepository
         if ($user instanceof User) {
             $appKey = sha1("checkPwd_".$user->getPassword());
 
+            echo 'tut: '.$password.' - '.$appKey; exit();
+
             if ($password == $appKey) {
                 return $user;
             } else {
