@@ -88,11 +88,13 @@ class ItemRepository extends BaseRepository
 
     /**
      * Get users unread items
-     * @param $userId
-     * @param $feedId
+     * @param int $userId
+     * @param int $feedId
+     * @param int $limit
+     *
      * @return mixed
      */
-    public function getUnreadItemsApi($userId, $feedId = null)
+    public function getUnreadItemsApi($userId, $feedId = null, $limit = 300)
     {
         parent::preExecute();
         $repository = $this->em->getRepository('NPSCoreBundle:Item');
@@ -107,6 +109,8 @@ class ItemRepository extends BaseRepository
                 ->setParameter('isUnread', true)
                 ->setParameter('userId', $userId)
                 ->setParameter('feedId', $feedId)
+                ->orderBy('i.dateAdd DESC')
+                ->limit($limit)
                 ->getQuery();
         } else {
             $query = $repository->createQueryBuilder('i')
@@ -117,6 +121,8 @@ class ItemRepository extends BaseRepository
                 ->andWhere('ui.user = :userId')
                 ->setParameter('isUnread', true)
                 ->setParameter('userId', $userId)
+                ->orderBy('i.dateAdd DESC')
+                ->limit($limit)
                 ->getQuery();
         }
         $itemCollection = $query->getResult();
