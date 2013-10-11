@@ -23,24 +23,13 @@ class UserController extends BaseController
      */
     public function loginAction(Request $request)
     {
-        $json = json_decode($request->getContent());
-        $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-        $cache = $this->container->get('server_cache');
+        $json = json_decode($request->getContent(), true);
+        $secure = $this->get('api_secure_service');
 
-        if ($userRepo->checkLogged($cache, $json->appKey, $json->username)) {
+        if ($secure->checkLogged($json['appKey'], $json['username'])) {
             echo NotificationHelper::OK; exit();
         } else {
-            $checkUser = $userRepo->checkLogin($json->username, $json->password);
-    
-            if ($checkUser instanceof User) {
-                $deviceRepo = $this->em->getRepository('NPSCoreBundle:Device');
-                $deviceRepo->createDevice($json->appKey, $checkUser);
-
-                $cache->set("device_".$json->appKey, $checkUser->getId());
-                echo NotificationHelper::OK; exit();
-            } else {
-                echo $checkUser; exit();
-            }
+            echo NotificationHelper::ERROR_LOGIN_DATA; exit();
         }
     }
 
@@ -52,7 +41,7 @@ class UserController extends BaseController
     {
         $json = json_decode($request->getContent());
         $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-        $cache = $this->container->get('server_cache');
+        $secure = $this->container->get('api_secure_service');
 
         $checkUser = $userRepo->checkUserExists($json->username, $json->email);
         if (empty($checkUser)) {
@@ -61,7 +50,7 @@ class UserController extends BaseController
                 $deviceRepo = $this->em->getRepository('NPSCoreBundle:Device');
                 $deviceRepo->createDevice($json->appKey, $user);
 
-                $cache->set("device_".$json->appKey, $user->getId());
+                $secure->saveTemporaryKey("device_".$json->appKey, $user->getId());
                 echo NotificationHelper::OK; exit();
             }
             echo NotificationHelper::ERROR_TRY_LATER; exit();

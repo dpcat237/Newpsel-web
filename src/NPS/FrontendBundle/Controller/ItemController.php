@@ -145,7 +145,7 @@ class ItemController extends BaseController
         $status = $request->get('status');
         $user = $this->get('security.context')->getToken()->getUser();
         $status = $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", $status);
-        $result=($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
+        $result = ($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
 
         $response = array (
             'result' => $result

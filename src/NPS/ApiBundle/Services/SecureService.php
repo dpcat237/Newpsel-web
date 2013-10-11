@@ -80,4 +80,14 @@ class SecureService
 
         return false;
     }
+
+    /**
+     * Set device to cache
+     * @param $appKey
+     * @param $userId
+     */
+    public function saveTemporaryKey($appKey, $userId)
+    {
+        $this->cache->set("device_".$appKey, $userId);
+    }
 }
