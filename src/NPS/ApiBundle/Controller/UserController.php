@@ -26,9 +26,10 @@ class UserController extends BaseController
         $json = json_decode($request->getContent(), true);
         $secure = $this->get('api_secure_service');
 
-        if ($secure->checkLogged($json['appKey'], $json['username'])) {
+        if ($secure->checkLogged($json['appKey'], $json['username'], $json['password'])) {
             echo NotificationHelper::OK; exit();
         } else {
+
             echo NotificationHelper::ERROR_LOGIN_DATA; exit();
         }
     }

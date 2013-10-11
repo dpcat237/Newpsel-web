@@ -3,6 +3,7 @@ namespace NPS\ApiBundle\Services;
 
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Entity\Device;
+use NPS\CoreBundle\Entity\User;
 
 /**
  * SecureService
@@ -57,33 +58,22 @@ class SecureService
      * Check if device is logged
      * @param string $appKey
      * @param string $username
+     * @param string $password
      *
      * @return bool | User
      */
-    public function checkLogged($appKey, $username = null)
+    public function checkLogged($appKey, $username = null, $password = null)
     {
-        echo 'tut: a1\n';
-
         $key = $this->cache->get("device_".$appKey);
         if ($key) {
-            echo 'tut: a2\n';
             return true;
         }
 
-        $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
-        $device = $deviceRepo->findOneByAppKey($appKey);
-        if ($device instanceof Device) {
-            echo 'tut: b1\n';
-            if ($username && $username != $device->getUser()->getUsername()) {
-                echo 'tut: b1\n';
-                echo 'tutb: '.$appKey.' - '.$username; exit();
-                return false;
-            }
-            $this->cache->set("device_".$appKey, $device->getUserId());
-
+        if ($this->checkLoggedCache($appKey, $username)) {
             return true;
+        } elseif ($password) {
+            return $this->checkLoggedDB($appKey, $username, $password);
         }
-        echo 'tuta: '.$appKey.' - '.$username; exit();
 
         return false;
     }
@@ -96,5 +86,50 @@ class SecureService
     public function saveTemporaryKey($appKey, $userId)
     {
         $this->cache->set("device_".$appKey, $userId);
+    }
+
+    /**
+     * Check if logged device, in cache
+     * @param $appKey
+     * @param $username
+     *
+     * @return bool
+     */
+    private function checkLoggedCache($appKey, $username)
+    {
+        $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
+        $device = $deviceRepo->findOneByAppKey($appKey);
+        if ($device instanceof Device) {
+            if ($username && $username != $device->getUser()->getUsername()) {
+                return false;
+            }
+            $this->saveTemporaryKey($appKey, $device->getUserId());
+
+            return true;
+        }
+    }
+
+    /**
+     * Check login data in data base
+     * @param $appKey
+     * @param $username
+     * @param $password
+     *
+     * @return bool
+     */
+    private function checkLoggedDB($appKey, $username, $password)
+    {
+        $userRepo = $this->entityManager->getRepository('NPSCoreBundle:User');
+        $checkUser = $userRepo->checkLogin($username, $password);
+
+        if ($checkUser instanceof User) {
+            $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
+            $deviceRepo->createDevice($appKey, $checkUser);
+            $this->saveTemporaryKey($appKey, $checkUser->getId());
+
+            return true;
+        }
+
+        return false;
     }
 }
