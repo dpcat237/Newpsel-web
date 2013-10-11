@@ -24,14 +24,13 @@ class DefaultController extends BaseController
 {
     /**
      * Welcome page with sing in and sign up
-     * @param Request $request
      *
      * @return Response
      * @Route("/", name="welcome")
      * @Template("NPSFrontendBundle:Welcome:index.html.twig")
      *
      */
-    public function welcomeAction(Request $request)
+    public function welcomeAction()
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
@@ -42,12 +41,11 @@ class DefaultController extends BaseController
 
     /**
      * Homepage
-     * @param Request $request
      *
      * @return Response
      * @Route("/home", name="homepage")
      */
-    public function homeAction(Request $request)
+    public function homeAction()
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             $viewData = array();
