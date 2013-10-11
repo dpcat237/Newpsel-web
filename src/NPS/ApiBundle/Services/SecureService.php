@@ -62,21 +62,28 @@ class SecureService
      */
     public function checkLogged($appKey, $username = null)
     {
+        echo 'tut: a1\n';
+
         $key = $this->cache->get("device_".$appKey);
         if ($key) {
+            echo 'tut: a2\n';
             return true;
         }
 
         $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
         $device = $deviceRepo->findOneByAppKey($appKey);
         if ($device instanceof Device) {
+            echo 'tut: b1\n';
             if ($username && $username != $device->getUser()->getUsername()) {
+                echo 'tut: b1\n';
+                echo 'tutb: '.$appKey.' - '.$username; exit();
                 return false;
             }
             $this->cache->set("device_".$appKey, $device->getUserId());
 
             return true;
         }
+        echo 'tuta: '.$appKey.' - '.$username; exit();
 
         return false;
     }
