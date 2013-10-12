@@ -33,7 +33,7 @@ class ItemRepository extends BaseRepository
         $itemCollection = $query->getResult();
         $item = null;
 
-        if (count($itemCollection) == 1) {
+        if (count($itemCollection) > 0) {
             foreach ($itemCollection as $value) {
                 $item = $value;
             }
