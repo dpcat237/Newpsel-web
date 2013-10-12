@@ -50,8 +50,8 @@ class Preference extends AbstractEntity
      */
     public function getSharedLaterId()
     {
-        if (is_object($this->getLater())) {
-            $sharedLaterId = $this->getLater()->getId();
+        if (is_object($this->getSharedLater())) {
+            $sharedLaterId = $this->getSharedLater()->getId();
         } else {
             $sharedLaterId = 0;
         }
