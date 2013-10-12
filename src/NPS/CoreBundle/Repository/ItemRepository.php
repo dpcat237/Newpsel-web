@@ -109,8 +109,8 @@ class ItemRepository extends BaseRepository
                 ->setParameter('isUnread', true)
                 ->setParameter('userId', $userId)
                 ->setParameter('feedId', $feedId)
-                ->orderBy('i.dateAdd DESC')
-                ->limit($limit)
+                ->orderBy('i.dateAdd', 'DESC')
+                ->setMaxResults($limit)
                 ->getQuery();
         } else {
             $query = $repository->createQueryBuilder('i')
@@ -121,8 +121,8 @@ class ItemRepository extends BaseRepository
                 ->andWhere('ui.user = :userId')
                 ->setParameter('isUnread', true)
                 ->setParameter('userId', $userId)
-                ->orderBy('i.dateAdd DESC')
-                ->limit($limit)
+                ->orderBy('i.dateAdd', 'DESC')
+                ->setMaxResults($limit)
                 ->getQuery();
         }
         $itemCollection = $query->getResult();
