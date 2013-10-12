@@ -36,7 +36,7 @@ class UserItem extends AbstractEntity
      * @var int
      * @ORM\Column(name="is_unread", type="boolean", nullable=false)
      */
-    protected $isUnread = false;
+    protected $isUnread = true;
 
     /**
      * @var int

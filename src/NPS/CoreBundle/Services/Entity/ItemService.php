@@ -156,7 +156,6 @@ class ItemService
             $userItem = new UserItem();
             $userItem->setUser($userFeed->getUser());
             $userItem->setItem($item);
-            $userItem->setIsUnread(true);
             $this->entityManager->persist($userItem);
         }
         $this->entityManager->flush();
