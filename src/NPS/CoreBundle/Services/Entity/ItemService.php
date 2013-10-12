@@ -45,6 +45,8 @@ class ItemService
 
         if (empty($this->purifier)) {
             $config = HTMLPurifier_Config::createDefault();
+            $config->set('HTML.SafeObject', true);
+            $config->set('Output.FlashCompat', true);
             $this->purifier = new HTMLPurifier($config);
         }
     }
