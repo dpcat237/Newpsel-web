@@ -130,6 +130,18 @@ class ItemService
     }
 
     /**
+     * Add shared pages from api
+     * @param User $user
+     * @param $sharedItems
+     */
+    public function addSharedItems(User $user, $sharedItems)
+    {
+        foreach ($sharedItems as $sharedItem) {
+            $this->addPageToLater($user, $user->getPreference()->getSharedLaterId(), $sharedItem['title'], $sharedItem['text']);
+        }
+    }
+
+    /**
      * Check if exist item by url
      * @param $link
      *

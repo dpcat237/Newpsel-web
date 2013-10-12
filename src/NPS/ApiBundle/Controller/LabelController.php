@@ -75,4 +75,32 @@ class LabelController extends BaseController
         }
         die(NotificationHelper::ERROR_NO_LOGGED);
     }
+
+    /**
+     * Add new pages/items to later
+     * @param Request $request the current request
+     *
+     * @return string
+     */
+    public function syncSharedAction(Request $request)
+    {
+        $json = json_decode($request->getContent(), true);
+        $appKey = $json['appKey'];
+        $sharedItems = $json['sharedItems'];
+
+        $secure = $this->get('api_secure_service');
+        $user = $secure->getUserByDevice($appKey);
+
+        if ($user instanceof User) {
+            if (is_array($sharedItems) && count($sharedItems)) {
+                $itemService = $this->get('item');
+                $itemService->addSharedItems($user, $sharedItems);
+
+                echo NotificationHelper::OK; exit();
+            } else {
+                echo NotificationHelper::ERROR_NO_DATA; exit();
+            }
+        }
+        die(NotificationHelper::ERROR_NO_LOGGED);
+    }
 }
