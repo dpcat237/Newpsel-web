@@ -5,8 +5,9 @@ namespace NPS\CoreBundle\Entity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use NPS\CoreBundle\Entity\Device;
-use NPS\CoreBundle\Entity\AbstractUserFeed;
+use NPS\CoreBundle\Entity\AbstractUserFeed,
+    NPS\CoreBundle\Entity\Device,
+    NPS\CoreBundle\Entity\Preference;
 
 /**
  * User
@@ -21,6 +22,13 @@ class User extends AbstractUserFeed
      * @ORM\OneToMany(targetEntity="Device", mappedBy="user")
      */
     protected $devices;
+
+    /**
+     * @var integer
+     * @ORM\ManyToOne(targetEntity="Preference", inversedBy="users")
+     * @ORM\JoinColumn(name="preference_id", referencedColumnName="id", nullable=true)
+     */
+    protected $preference;
 
     /**
      * @var boolean
@@ -92,5 +100,40 @@ class User extends AbstractUserFeed
     public function isRegistered()
     {
         return $this->registered;
+    }
+
+    /**
+     * Get the preference
+     *
+     * @return Preference
+     */
+    public function getPreference()
+    {
+        return $this->preference;
+    }
+
+    /**
+     * Set the preference
+     * @param Preference $preference
+     */
+    public function setPreference(Preference $preference)
+    {
+        $this->preference = $preference;
+    }
+
+    /**
+     * Get the preference id
+     *
+     * @return integer id
+     */
+    public function getPreferenceId()
+    {
+        if (is_object($this->getPreference())) {
+            $preferenceId = $this->getPreference()->getId();
+        } else {
+            $preferenceId = 0;
+        }
+
+        return $preferenceId;
     }
 }
