@@ -183,31 +183,6 @@ class DownloadFeedsService
     }
 
     /**
-     * Add first items for just subscribed user
-     * @param $feed
-     * @param $user
-     */
-    private function addFirstItems($feed, $user)
-    {
-        if (count($feed->getItems()) < 1) {
-            $this->updateFeedData($feed->getId());
-        }
-        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-        $items = $itemRepo->getLast($feed->getId());
-
-        if (count($items)) {
-            foreach ($items as $item) {
-                $userItem = new UserItem();
-                $userItem->setUser($user);
-                $userItem->setItem($item);
-                $userItem->setIsUnread(true);
-                $this->entityManager->persist($userItem);
-            }
-            $this->entityManager->flush();
-        }
-    }
-    
-    /**
      * Get last 25 items for new feed
      * @param array $items
      *
@@ -320,7 +295,7 @@ class DownloadFeedsService
                 $this->entityManager->flush();
 
                 $feed->addUserFeed($userFeed); //just to Doctrine Feed know right now about new userFeed
-                $this->addFirstItems($feed, $user);
+                $this->updateFeedData($feed->getId());
             }
         }
     }
