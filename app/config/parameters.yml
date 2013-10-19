@@ -1,5 +1,2 @@
 parameters:
     locale: en
-
-    redis_cache_server:    redis://localhost/4
-    redis_sessions_server: redis://localhost/5
