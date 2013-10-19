@@ -21,3 +21,9 @@ services:
             doctrine:           @doctrine
             api_secure_service: @api_secure_service
             download_feeds:     @download_feeds
+
+    api.item.service:
+        class: NPS\ApiBundle\Services\ItemDataService
+        arguments:
+            doctrine:           @doctrine
+            api_secure_service: @api_secure_service

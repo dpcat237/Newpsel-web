@@ -17,8 +17,8 @@ class ItemDataService
 
 
     /**
-     * @param Doctrine             $doctrine      Doctrine
-     * @param SecureService        $secure        SecureService
+     * @param Doctrine      $doctrine Doctrine
+     * @param SecureService $secure   SecureService
      */
     public function __construct($doctrine, SecureService $secure)
     {
@@ -27,13 +27,14 @@ class ItemDataService
     }
 
     /**
-     * Add feed for api
-     * @param string $appKey
-     * @param string $feedUrl
+     * Sync viewed items and download unread items if is required
+     * @param $appKey
+     * @param $viewedItems
+     * @param $download
      *
      * @return array
      */
-    public function addFeed($appKey, $feedUrl)
+    public function syncUnreadItem($appKey, $viewedItems, $download)
     {
         $error = false;
         $unreadItems = array();
@@ -43,15 +44,15 @@ class ItemDataService
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
-        $checkCreate = $this->downloadDeeds->createFeed($feedUrl, $user);
-        if (!empty($checkCreate['error'])) {
-            $error = NotificationHelper::ERROR_WRONG_FEED;
-        }
-
         if (empty($error)){
             $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-            $feed = $checkCreate['feed'];
-            $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
+            if (is_array($viewedItems) && count($viewedItems)) {
+                $itemRepo->syncViewedItems($user->getId(), $viewedItems);
+            }
+
+            if ($download) {
+                $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
+            }
         }
         $responseData = array(
             'error' => $error,

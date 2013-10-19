@@ -6,8 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use NPS\ApiBundle\Controller\BaseController;
-use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Entity\User;
 
 /**
  * FeedController
@@ -22,29 +20,10 @@ class ItemController extends BaseController
      */
     public function syncUnreadAction(Request $request)
     {
-        $json = json_decode($request->getContent());
-        $appKey = $json->appKey;
-        $viewedItems = $json->viewedItems;
-        $isDownload = $json->isDownload;
+        $json = json_decode($request->getContent(), true);
+        $itemService = $this->get('api.item.service');
+        $responseData = $itemService->addFeed($json['appKey'], $json['viewedItems'], $json['isDownload']);
 
-        $secure = $this->get('api_secure_service');
-        $user = $secure->getUserByDevice($appKey);
-
-        if ($user instanceof User) {
-            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            if (is_array($viewedItems) && count($viewedItems)) {
-                $itemRepo->syncViewedItems($user->getId(), $viewedItems);
-            }
-            $unreadItems = array();
-            if ($isDownload) {
-                $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
-            }
-
-            $response = new JsonResponse($unreadItems);
-
-            return $response;
-        }
-        die(NotificationHelper::ERROR_NO_LOGGED);
+        return new JsonResponse($responseData['unreadItems']);
     }
-
 }
