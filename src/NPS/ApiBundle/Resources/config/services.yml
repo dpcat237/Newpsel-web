@@ -7,3 +7,9 @@ services:
         arguments:
             doctrine:     @doctrine
             server_cache: @server_cache
+    chrome_data_service:
+        class: NPS\ApiBundle\Services\ChromeDataService
+        arguments:
+            doctrine:           @doctrine
+            api_secure_service: @api_secure_service
+            user.notifications: @user.notifications
