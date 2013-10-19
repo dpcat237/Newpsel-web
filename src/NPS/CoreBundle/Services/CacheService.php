@@ -118,19 +118,4 @@ class CacheService
 
         return $res;
     }
-
-    /**
-     * Implement all redis commands. This is a magical PHP method
-     *
-     * @param string $method the method that was called
-     * @param array  $args   arguments for the method
-     *
-     * @return mixed same response as the corresponding predis method
-     */
-   public function __call($method, $args)
-   {
-        $res = call_user_func_array(array($this->redis, $method), $args);
-
-        return $res;
-   }
 }
