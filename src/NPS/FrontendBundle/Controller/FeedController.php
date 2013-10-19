@@ -77,7 +77,7 @@ class FeedController extends BaseController
      * @Route("/add_feed", name="add_feed")
      * @Secure(roles="ROLE_USER")
      */
-    public function addProcess(Request $request)
+    protected function addProcess(Request $request)
     {
         if (!$request->get('feed')) {
             $result = NotificationHelper::ERROR;
@@ -106,7 +106,7 @@ class FeedController extends BaseController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editProcess(Request $request)
+    protected function editProcess(Request $request)
     {
         //depends if it's edit or creation
         $objectId = $request->get('id');

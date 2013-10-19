@@ -229,7 +229,7 @@ class DefaultController extends BaseController
      *
      * @return boolean ok if the login was successful (user was granted all roles)
      */
-    public function doLogin(UserInterface $user)
+    protected function doLogin(UserInterface $user)
     {
         //ok is true by default
         $ok = true;

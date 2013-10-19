@@ -22,7 +22,7 @@ abstract class CoreController extends Controller
     /**
      * This function will be executed before any controller action
      */
-    public function preExecute()
+    protected function preExecute()
     {
         $this->em = $this->getDoctrine()->getManager();
         $this->router = $this->container->get('router');

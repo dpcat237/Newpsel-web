@@ -2,40 +2,27 @@
 namespace NPS\ApiBundle\Services;
 
 use NPS\ApiBundle\Services\SecureService;
-use NPS\CoreBundle\Services\DownloadFeedsService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
- * FeedDataService
+ * ItemDataService
  */
-class FeedDataService
+class ItemDataService
 {
     /**
      * @var $doctrine Doctrine
      */
     private $doctrine;
 
-    /**
-     * @var $downloadDeeds DownloadFeedsService
-     */
-    private $downloadDeeds;
-
-    /**
-     * @var $secure SecureService
-     */
-    private $secure;
-
 
     /**
      * @param Doctrine             $doctrine      Doctrine
      * @param SecureService        $secure        SecureService
-     * @param DownloadFeedsService $downloadDeeds DownloadFeedsService
      */
-    public function __construct($doctrine, SecureService $secure, DownloadFeedsService $downloadDeeds)
+    public function __construct($doctrine, SecureService $secure)
     {
         $this->doctrine = $doctrine;
-        $this->downloadDeeds = $downloadDeeds;
         $this->secure = $secure;
     }
 
