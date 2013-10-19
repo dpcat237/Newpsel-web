@@ -46,26 +46,10 @@ class FeedController extends BaseController
      */
     public function addFeedAction(Request $request)
     {
-        $json = json_decode($request->getContent());
-        $appKey = $json->appKey;
-        $feedUrl = $json->feed_url;
+        $json = json_decode($request->getContent(), true);
+        $feedService = $this->get('api.feed.service');
+        $responseData = $feedService->addFeed($json['appKey'], $json['feed_url']);
 
-        $secure = $this->get('api_secure_service');
-        $user = $secure->getUserByDevice($appKey);
-
-        if ($user instanceof User) {
-            $downloadFeeds = $this->get('download_feeds');
-            $checkCreate = $downloadFeeds->createFeed($feedUrl, $user);
-            if (!empty($checkCreate['error'])) {
-                echo NotificationHelper::ERROR_WRONG_FEED; exit();
-            }
-
-            $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
-            $feed = $checkCreate['feed'];
-            $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
-
-            return new JsonResponse($unreadItems);
-        }
-        die(NotificationHelper::ERROR_NO_LOGGED);
+        return new JsonResponse($responseData['unreadItems']);
     }
 }

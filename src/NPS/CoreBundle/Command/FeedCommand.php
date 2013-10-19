@@ -53,8 +53,6 @@ class FeedCommand extends ContainerAwareCommand
             $downloadFeeds->updateFeedData($feed->getId());
         }
 
-        //$date = date('Y-m-d H:i:s');
-        //$output->writeln('*** Synchronized successfully ***');
         $log->info('*** Synchronized successfully ***');
     }
 }
