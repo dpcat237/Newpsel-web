@@ -81,7 +81,7 @@ class DefaultController extends BaseController
      *
      * @return boolean
      */
-    public function processLogin($request)
+    protected function processLogin($request)
     {
 
         //if he's not logged

@@ -10,7 +10,6 @@ vendor
 composer.phar
 composer.lock
 parameters.yml
-parameters_dev.yml
 .idea/
 .idea/*
 .travis.yml
