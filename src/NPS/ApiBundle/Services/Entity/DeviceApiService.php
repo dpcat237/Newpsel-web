@@ -52,8 +52,25 @@ class DeviceApiService
     }
 
     /**
-     * Send app key
-     * @param $username
+     * Login process for app api
+     * @param string $appKey
+     * @param string $username
+     * @param string $password
+     *
+     * @return string
+     */
+    public function loginApi($appKey, $username, $password)
+    {
+        if (!$this->secure->checkLogged($appKey, $username, $password)) {
+            return NotificationHelper::ERROR_LOGIN_DATA;
+        }
+
+        return NotificationHelper::OK;
+    }
+
+    /**
+     * Send app key for Chrome api
+     * @param string $username
      *
      * @return array
      */
@@ -78,5 +95,34 @@ class DeviceApiService
         );
 
         return $responseData;
+    }
+
+    /**
+     * Sign up for app api
+     * @param string $appKey
+     * @param string $username
+     * @param string $email
+     * @param string $password
+     *
+     * @return string
+     */
+    public function signUpApi($appKey, $username, $email, $password)
+    {
+        $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
+        $checkUser = $userRepo->checkUserExists($username, $email);
+        if ($checkUser) {
+            return $checkUser;
+        }
+
+        $user = $userRepo->createUser($username, $email, $password);
+        if (!$user instanceof User) {
+            return NotificationHelper::ERROR_TRY_LATER;
+        }
+
+        $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');
+        $deviceRepo->createDevice($appKey, $user);
+        $this->secure->saveTemporaryKey("device_".$appKey, $user->getId());
+
+        return NotificationHelper::OK;
     }
 }

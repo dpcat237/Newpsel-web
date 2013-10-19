@@ -4,13 +4,12 @@ namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\SecurityContext;
-use NPS\CoreBundle\Controller\CoreController;
+use NPS\ApiBundle\Controller\ApiController;
 
 /**
  * FeedController
  */
-class FeedController extends CoreController
+class FeedController extends ApiController
 {
     /**
      * List of feeds
@@ -23,6 +22,9 @@ class FeedController extends CoreController
         $json = json_decode($request->getContent(), true);
         $feedService = $this->get('api.feed.service');
         $responseData = $feedService->syncFeeds($json['appKey'], $json['lastUpdate']);
+        if ($responseData['error']) {
+            return $this->plainResponse($responseData['error']);
+        }
 
         return new JsonResponse($responseData['feedCollection']);
     }
@@ -38,6 +40,9 @@ class FeedController extends CoreController
         $json = json_decode($request->getContent(), true);
         $feedService = $this->get('api.feed.service');
         $responseData = $feedService->addFeed($json['appKey'], $json['feed_url']);
+        if ($responseData['error']) {
+            return $this->plainResponse($responseData['error']);
+        }
 
         return new JsonResponse($responseData['unreadItems']);
     }

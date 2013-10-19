@@ -4,13 +4,12 @@ namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\SecurityContext;
-use NPS\CoreBundle\Controller\CoreController;
+use NPS\ApiBundle\Controller\ApiController;
 
 /**
  * LabelController
  */
-class LabelController extends CoreController
+class LabelController extends ApiController
 {
     /**
      * List of labels
@@ -22,7 +21,10 @@ class LabelController extends CoreController
     {
         $json = json_decode($request->getContent(), true);
         $labelService = $this->get('api.label.service');
-        $responseData = $labelService->syncFeeds($json['appKey'], $json['changedLabels'], $json['lastUpdate']);
+        $responseData = $labelService->syncLabels($json['appKey'], $json['changedLabels'], $json['lastUpdate']);
+        if ($responseData['error']) {
+            return $this->plainResponse($responseData['error']);
+        }
 
         return new JsonResponse($responseData['feedCollection']);
     }
@@ -38,8 +40,11 @@ class LabelController extends CoreController
         $json = json_decode($request->getContent(), true);
         $labelService = $this->get('api.label.service');
         $responseData = $labelService->syncLaterItems($json['appKey'], $json['laterItems']);
+        if ($responseData['error']) {
+            return $this->plainResponse($responseData['error']);
+        }
 
-        return new JsonResponse($responseData['result']);
+        return $this->plainResponse($responseData['result']);
     }
 
     /**
@@ -53,7 +58,10 @@ class LabelController extends CoreController
         $json = json_decode($request->getContent(), true);
         $labelService = $this->get('api.item.service');
         $responseData = $labelService->syncShared($json['appKey'], $json['sharedItems']);
+        if ($responseData['error']) {
+            return $this->plainResponse($responseData['error']);
+        }
 
-        return new JsonResponse($responseData['result']);
+        return $this->plainResponse($responseData['result']);
     }
 }

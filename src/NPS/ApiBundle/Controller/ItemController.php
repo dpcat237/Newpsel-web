@@ -4,13 +4,12 @@ namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\SecurityContext;
-use NPS\CoreBundle\Controller\CoreController;
+use NPS\ApiBundle\Controller\ApiController;
 
 /**
  * FeedController
  */
-class ItemController extends CoreController
+class ItemController extends ApiController
 {
     /**
      * Sync items
@@ -23,6 +22,9 @@ class ItemController extends CoreController
         $json = json_decode($request->getContent(), true);
         $itemService = $this->get('api.item.service');
         $responseData = $itemService->syncUnreadItems($json['appKey'], $json['viewedItems'], $json['isDownload']);
+        if ($responseData['error']) {
+            return $this->plainResponse($responseData['error']);
+        }
 
         return new JsonResponse($responseData['unreadItems']);
     }

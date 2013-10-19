@@ -4,7 +4,6 @@ namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContext;
 use NPS\CoreBundle\Controller\CoreController;
 
 /**

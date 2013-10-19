@@ -4,16 +4,12 @@ namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\SecurityContext;
-use NPS\ApiBundle\Controller\BaseController;
-use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\Device;
-use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\ApiBundle\Controller\ApiController;
 
 /**
- * FeedController
+ * UserController
  */
-class UserController extends BaseController
+class UserController extends ApiController
 {
     /**
      * List of feeds
@@ -24,39 +20,24 @@ class UserController extends BaseController
     public function loginAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $secure = $this->get('api_secure_service');
+        $itemService = $this->get('api.device.service');
+        $responseData = $itemService->loginApi($json['appKey'], $json['username'], $json['password']);
 
-        if ($secure->checkLogged($json['appKey'], $json['username'], $json['password'])) {
-            echo NotificationHelper::OK; exit();
-        } else {
-
-            echo NotificationHelper::ERROR_LOGIN_DATA; exit();
-        }
+        return $this->plainResponse($responseData);
     }
 
     /**
      * Sign up an user
      * @param Request $request
+     * 
+     * @return Response
      */
     public function signUpAction(Request $request)
     {
-        $json = json_decode($request->getContent());
-        $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-        $secure = $this->container->get('api_secure_service');
+        $json = json_decode($request->getContent(), true);
+        $itemService = $this->get('api.device.service');
+        $responseData = $itemService->signUpApi($json['appKey'], $json['username'], $json['email'], $json['password']);
 
-        $checkUser = $userRepo->checkUserExists($json->username, $json->email);
-        if (empty($checkUser)) {
-            $user = $userRepo->createUser($json->username, $json->email, $json->password);
-            if ($user instanceof User) {
-                $deviceRepo = $this->em->getRepository('NPSCoreBundle:Device');
-                $deviceRepo->createDevice($json->appKey, $user);
-
-                $secure->saveTemporaryKey("device_".$json->appKey, $user->getId());
-                echo NotificationHelper::OK; exit();
-            }
-            echo NotificationHelper::ERROR_TRY_LATER; exit();
-        } else {
-            echo $checkUser; exit();
-        }
+        return $this->plainResponse($responseData);
     }
 }
