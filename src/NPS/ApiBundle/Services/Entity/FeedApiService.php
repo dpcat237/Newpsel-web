@@ -1,5 +1,5 @@
 <?php
-namespace NPS\ApiBundle\Services;
+namespace NPS\ApiBundle\Services\Entity;
 
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Services\DownloadFeedsService;
@@ -7,9 +7,9 @@ use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
- * FeedDataService
+ * FeedApiService
  */
-class FeedDataService
+class FeedApiService
 {
     /**
      * @var $doctrine Doctrine
@@ -56,7 +56,7 @@ class FeedDataService
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
-        $checkCreate = $this->downloadDeeds->createFeed($feedUrl, $user);
+        $checkCreate = $this->downloadFeeds->createFeed($feedUrl, $user);
         if (!empty($checkCreate['error'])) {
             $error = NotificationHelper::ERROR_WRONG_FEED;
         }
@@ -69,6 +69,35 @@ class FeedDataService
         $responseData = array(
             'error' => $error,
             'unreadItems' => $unreadItems,
+        );
+
+        return $responseData;
+    }
+
+    /**
+     * Get feed to sync with api
+     * @param $appKey
+     * @param $lastUpdate
+     *
+     * @return array
+     */
+    public function syncFeeds($appKey, $lastUpdate)
+    {
+        $error = false;
+        $feedCollection = array();
+
+        $user = $this->secure->getUserByDevice($appKey);
+        if ($user instanceof User) {
+            $error = NotificationHelper::ERROR_NO_LOGGED;
+        }
+
+        if (!$error){
+            $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
+            $feedCollection = $feedRepo->getUserFeedsApi($user->getId(), $lastUpdate);
+        }
+        $responseData = array(
+            'error' => $error,
+            'feedCollection' => $feedCollection,
         );
 
         return $responseData;

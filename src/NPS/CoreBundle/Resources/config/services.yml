@@ -2,6 +2,13 @@ parameters:
 #    nps_core.example.class: NPS\CoreBundle\Example
 
 services:
+    gedmo.listener.timestampable:
+          class: Gedmo\Timestampable\TimestampableListener
+          tags:
+              - { name: doctrine.event_subscriber, connection: default }
+          calls:
+              - [ setAnnotationReader, [ @annotation_reader ] ]
+
     crawler:
         class: NPS\CoreBundle\Services\CrawlerService
         arguments:

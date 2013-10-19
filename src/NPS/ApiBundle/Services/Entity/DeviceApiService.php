@@ -1,14 +1,13 @@
 <?php
-namespace NPS\ApiBundle\Services;
+namespace NPS\ApiBundle\Services\Entity;
 
 use NPS\ApiBundle\Services\SecureService;
-use NPS\CoreBundle\Services\UserNotificationsService;
 use NPS\CoreBundle\Entity\User;
 
 /**
- * ChromeDataService
+ * DeviceApiService
  */
-class ChromeDataService
+class DeviceApiService
 {
     /**
      * @var $doctrine Doctrine
@@ -20,51 +19,33 @@ class ChromeDataService
      */
     private $secure;
 
-    /**
-     * @var $userNotify UserNotificationsService
-     */
-    private $userNotify;
-
 
     /**
-     * @param Doctrine                 $doctrine   Doctrine
-     * @param SecureService            $secure     SecureService
-     * @param UserNotificationsService $userNotify UserNotificationsService
+     * @param Doctrine      $doctrine    Doctrine
+     * @param SecureService $secure      SecureService
      */
-    public function __construct($doctrine, SecureService $secure, UserNotificationsService $userNotify)
+    public function __construct($doctrine, SecureService $secure)
     {
         $this->doctrine = $doctrine;
         $this->secure = $secure;
-        $this->userNotify = $userNotify;
     }
 
     /**
-     * Get user labels from app key
+     * Do login for Chrome Api
      * @param $appKey
      *
      * @return array
      */
-    public function getUserLabels($appKey)
+    public function loginChromeApi($appKey)
     {
         $response = false;
-        $labels = array();
+
         $user = $this->secure->getUserByDevice($appKey);
         if ($user instanceof User) {
-            $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-            $orderBy = array('name' => 'ASC');
-            $labelsData = $labelRepo->findByUser($user, $orderBy);
-
-            //prepare labels for api
-            foreach ($labelsData as $lab) {
-                $label['id'] = $lab->getId();
-                $label['name'] = $lab->getName();
-                $labels[] = $label;
-            }
             $response = true;
         }
         $responseData = array(
-            'response' => $response,
-            'labels' => $labels
+            'response' => $response
         );
 
         return $responseData;

@@ -5,14 +5,12 @@ namespace NPS\ApiBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
-use NPS\ApiBundle\Controller\BaseController;
-use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Controller\CoreController;
 
 /**
  * LabelController
  */
-class LabelController extends BaseController
+class LabelController extends CoreController
 {
     /**
      * List of labels
@@ -22,28 +20,11 @@ class LabelController extends BaseController
      */
     public function syncLabelsAction(Request $request)
     {
-        $json = json_decode($request->getContent());
-        $appKey = $json->appKey;
-        $changedLabels = $json->changedLabels;
-        $lastUpdate = $json->lastUpdate;
+        $json = json_decode($request->getContent(), true);
+        $labelService = $this->get('api.label.service');
+        $responseData = $labelService->syncFeeds($json['appKey'], $json['changedLabels'], $json['lastUpdate']);
 
-        $secure = $this->get('api_secure_service');
-        $user = $secure->getUserByDevice($appKey);
-
-        if ($user instanceof User) {
-            $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
-
-            if (count($changedLabels)) {
-                $createdIds = $labelRepo->syncLabels($user, $changedLabels);
-                $labelCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels, $createdIds);
-            } else {
-                $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
-            }
-            $response = new JsonResponse($labelCollection);
-
-            return $response;
-        }
-        die(NotificationHelper::ERROR_NO_LOGGED);
+        return new JsonResponse($responseData['feedCollection']);
     }
 
     /**
@@ -54,26 +35,11 @@ class LabelController extends BaseController
      */
     public function syncLaterAction(Request $request)
     {
-        $json = json_decode($request->getContent()); //adding param true -> will be array!
-        $appKey = $json->appKey;
-        $laterItems = $json->laterItems;
+        $json = json_decode($request->getContent(), true);
+        $labelService = $this->get('api.label.service');
+        $responseData = $labelService->syncLaterItems($json['appKey'], $json['laterItems']);
 
-        $secure = $this->get('api_secure_service');
-        $user = $secure->getUserByDevice($appKey);
-
-        if ($user instanceof User) {
-            if (is_array($laterItems) && count($laterItems)) {
-                $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
-                $labelRepo->syncLaterItems($user->getId(), $laterItems);
-                //get complete content for partial articles
-                $this->get('crawler')->executeCrawling($user->getId());
-
-                echo NotificationHelper::OK; exit();
-            } else {
-                echo NotificationHelper::ERROR_NO_DATA; exit();
-            }
-        }
-        die(NotificationHelper::ERROR_NO_LOGGED);
+        return new JsonResponse($responseData['result']);
     }
 
     /**
@@ -85,22 +51,9 @@ class LabelController extends BaseController
     public function syncSharedAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $appKey = $json['appKey'];
-        $sharedItems = $json['sharedItems'];
+        $labelService = $this->get('api.item.service');
+        $responseData = $labelService->syncShared($json['appKey'], $json['sharedItems']);
 
-        $secure = $this->get('api_secure_service');
-        $user = $secure->getUserByDevice($appKey);
-
-        if ($user instanceof User) {
-            if (is_array($sharedItems) && count($sharedItems)) {
-                $itemService = $this->get('item');
-                $itemService->addSharedItems($user, $sharedItems);
-
-                echo NotificationHelper::OK; exit();
-            } else {
-                echo NotificationHelper::ERROR_NO_DATA; exit();
-            }
-        }
-        die(NotificationHelper::ERROR_NO_LOGGED);
+        return new JsonResponse($responseData['result']);
     }
 }

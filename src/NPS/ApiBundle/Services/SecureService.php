@@ -1,7 +1,6 @@
 <?php
 namespace NPS\ApiBundle\Services;
 
-use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\User;
 

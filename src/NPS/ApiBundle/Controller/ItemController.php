@@ -5,12 +5,12 @@ namespace NPS\ApiBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\SecurityContext;
-use NPS\ApiBundle\Controller\BaseController;
+use NPS\CoreBundle\Controller\CoreController;
 
 /**
  * FeedController
  */
-class ItemController extends BaseController
+class ItemController extends CoreController
 {
     /**
      * Sync items
@@ -22,7 +22,7 @@ class ItemController extends BaseController
     {
         $json = json_decode($request->getContent(), true);
         $itemService = $this->get('api.item.service');
-        $responseData = $itemService->addFeed($json['appKey'], $json['viewedItems'], $json['isDownload']);
+        $responseData = $itemService->syncUnreadItems($json['appKey'], $json['viewedItems'], $json['isDownload']);
 
         return new JsonResponse($responseData['unreadItems']);
     }

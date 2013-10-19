@@ -2,17 +2,15 @@
 
 namespace NPS\ApiBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\JsonResponse,
+    Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use NPS\ApiBundle\Controller\BaseController;
-use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Controller\CoreController;
 
 /**
  * ChromeController
  */
-class ChromeController extends BaseController
+class ChromeController extends CoreController
 {
     /**
      * Add new page/item to later
@@ -22,21 +20,9 @@ class ChromeController extends BaseController
      */
     public function addPageAction(Request $request)
     {
-        $response = false;
         $json = json_decode($request->getContent(), true);
-
-        if (isset($json['appKey']) && $json['appKey']) {
-            $secure = $this->get('api_secure_service');
-            $user = $secure->getUserByDevice($json['appKey']);
-            if ($user instanceof User) {
-                $itemService = $this->get('item');
-                $itemService->addPageToLater($user, $json['labelId'], $json['webTitle'], $json['webUrl']);
-                $response = true;
-            }
-        }
-        $responseData = array(
-            'response' => $response
-        );
+        $itemService = $this->get('api.item.service');
+        $responseData = $itemService->addPage($json['appKey'], $json['labelId'], $json['webTitle'], $json['webUrl']);
         $response = new JsonResponse($responseData);
 
         return $response;
@@ -51,8 +37,8 @@ class ChromeController extends BaseController
     public function getLabelsAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $chromeData = $this->get('chrome_data_service');
-        $responseData = $chromeData->getUserLabels($json['appKey']);
+        $labelService = $this->get('api.label.service');
+        $responseData = $labelService->getUserLabels($json['appKey']);
         $response = new JsonResponse($responseData);
 
         return $response;
@@ -66,18 +52,10 @@ class ChromeController extends BaseController
      */
     public function loginAction(Request $request)
     {
-        $response = false;
         $json = json_decode($request->getContent(), true);
-
-        if (isset($json['appKey']) && $json['appKey']) {
-            $secure = $this->get('api_secure_service');
-
-            $user = $secure->getUserByDevice($json['appKey']);
-            if ($user instanceof User) {
-                $response = true;
-            }
-        }
-        $response = new JsonResponse(array('response' => $response));
+        $deviceService = $this->get('api.device.service');
+        $responseData = $deviceService->loginChromeApi($json['appKey']);
+        $response = new JsonResponse($responseData);
 
         return $response;
     }
@@ -91,8 +69,8 @@ class ChromeController extends BaseController
     public function requestKeyAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $chromeData = $this->get('chrome_data_service');
-        $responseData = $chromeData->requestAppKey($json['username']);
+        $deviceService = $this->get('api.device.service');
+        $responseData = $deviceService->requestAppKey($json['username']);
         $response = new JsonResponse($responseData);
 
         return $response;

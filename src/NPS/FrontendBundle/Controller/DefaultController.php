@@ -128,17 +128,26 @@ class DefaultController extends BaseController
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
-
         //if login process went well redirect to homepage
         if ($request->getMethod() == 'POST' && $this->processLogin($request)) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
-
         //check for login process errors
         if ($this->checkLoginErrors($request)) {
             $errors = NotificationHelper::ERROR_LOGIN_DATA;
         }
 
+        return $this->prepareLoginViewData($errors);
+    }
+
+    /**
+     * Prepare view data for login action
+     * @param $errors
+     *
+     * @return array
+     */
+    protected function prepareLoginViewData($errors)
+    {
         $objectClass = 'NPS\CoreBundle\Entity\User';
         $objectTypeClass = 'NPS\FrontendBundle\Form\Type\SignInType';
         $form = $this->createFormEdit(null, 'User', $objectClass, $objectTypeClass);
@@ -176,8 +185,26 @@ class DefaultController extends BaseController
      *
      * @return Response
      * @Route("/sign_up", name="sign_up")
+     *
+     * @Template("NPSFrontendBundle:Default:sign_up.html.twig")
      */
     public function signupAction(Request $request)
+    {
+        $processData = $this->signUpProcess($request);
+        if (empty($processData['errors'])) {
+            return new RedirectResponse($this->container->get('router')->generate('sign_in'));
+        }
+
+        return $processData;
+    }
+
+    /**
+     * Make sign up process
+     * @param $request
+     *
+     * @return array|RedirectResponse
+     */
+    protected function  signUpProcess($request)
     {
         $errors = '';
         $objectClass = 'NPS\CoreBundle\Entity\User';
@@ -188,29 +215,20 @@ class DefaultController extends BaseController
             $form->handleRequest($request);
             $user = $form->getData();
 
-            if ($form->isValid()) {
+            if (!$form->isValid()) {
+                $this->get('system_notification')->setMessage(NotificationHelper::ALERT_FORM_DATA);
+                $errors = true;
+            }
+
+            if (empty($errors)) {
                 $userRepo = $this->em->getRepository('NPSCoreBundle:User');
                 $errors = $userRepo->checkUserExists($user->getUsername(), $user->getEmail());
-                if (empty($errors)) {
-                    $password = sha1("sc_".$user->getPassword());
-                    $user->setPassword($password);
-                    $user->setIsEnabled(true);
-                    $user->setRegistered(true);
+            }
 
-                    $this->saveObject($user);
-                    // Generate Activation Code
-                    //$ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
-                    // Set verification code key in cache
-                    //$cache = $this->container->get('redis_cache');
-                    //$cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
-                    //  Show message 'check your email to confirm registration...'
-
-                    return new RedirectResponse($this->container->get('router')->generate('sign_in'));
-                } else {
-                    $this->get('system_notification')->setMessage($errors);
-                }
+            if (empty($errors)) {
+                $this->createNewUser($user);
             } else {
-                $this->get('system_notification')->setMessage(NotificationHelper::ALERT_FORM_DATA);
+                $this->get('system_notification')->setMessage($errors);
             }
         }
 
@@ -219,7 +237,27 @@ class DefaultController extends BaseController
             'errors' => $errors
         );
 
-        return $this->render('NPSFrontendBundle:Default:sign_up.html.twig', $viewData);
+        return $viewData;
+    }
+
+    /**
+     * Create new user
+     * @param $user
+     */
+    protected function createNewUser($user)
+    {
+        $password = sha1("sc_".$user->getPassword());
+        $user->setPassword($password);
+        $user->setIsEnabled(true);
+        $user->setRegistered(true);
+
+        $this->saveObject($user);
+        // Generate Activation Code
+        //$ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
+        // Set verification code key in cache
+        //$cache = $this->container->get('redis_cache');
+        //$cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
+        //  Show message 'check your email to confirm registration...'
     }
 
     /**

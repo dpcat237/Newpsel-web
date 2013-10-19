@@ -72,20 +72,6 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
-services:
-    gedmo.listener.timestampable:
-          class: Gedmo\Timestampable\TimestampableListener
-          tags:
-              - { name: doctrine.event_subscriber, connection: default }
-          calls:
-              - [ setAnnotationReader, [ @annotation_reader ] ]
-
-    NPS.CoreBundle.listener.preexecute:
-            class: NPS\CoreBundle\Listener\PredispatchListener
-            tags:
-                - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
-            arguments: [ '@router', '@service_container' ]
-
 monolog:
     handlers:
         applog:
