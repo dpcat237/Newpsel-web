@@ -5,6 +5,7 @@ namespace NPS\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
+use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**
  * Base Web User
@@ -14,8 +15,6 @@ use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
  */
 abstract class AbstractEntity
 {
-    use DateTimeTrait;
-
     /**
      * @var integer
      *
@@ -24,6 +23,23 @@ abstract class AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="date_add", type="integer")
+     */
+    protected $dateAdd;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="date_up", type="integer")
+     */
+    protected $dateUp;
+
 
     /**
      * @param int $id
@@ -60,5 +76,61 @@ abstract class AbstractEntity
     public function getEntityName()
     {
         return get_class($this);
+    }
+
+    /**
+     * Set dateAdd
+     * @param int $dateAdd
+     *
+     * @return Feed
+     */
+    public function setDateAdd($dateAdd)
+    {
+        $this->dateAdd = $dateAdd;
+
+        return $this;
+    }
+
+    /**
+     * Get dateAdd
+     *
+     * @return int
+     */
+    public function getDateAdd()
+    {
+        return $this->dateAdd;
+    }
+
+    /**
+     * Get added date with human format
+     *
+     * @return integer
+     */
+    public function getHumanDateAdd()
+    {
+        return DisplayHelper::displayDate($this->getDateAdd());
+    }
+
+    /**
+     * Set dateUp
+     * @param \int $dateUp
+     *
+     * @return Feed
+     */
+    public function setDateUp($dateUp = null)
+    {
+        $this->dateUp = (empty($dateUp))? time() : $dateUp;
+
+        return $this;
+    }
+
+    /**
+     * Get dateUp
+     *
+     * @return \int
+     */
+    public function getDateUp()
+    {
+        return $this->dateUp;
     }
 }

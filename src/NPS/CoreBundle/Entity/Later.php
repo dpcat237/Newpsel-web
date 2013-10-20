@@ -31,7 +31,7 @@ class Later extends AbstractEntity
     protected $laterItems;
 
     /**
-     * @OneToMany(targetEntity="Preference", mappedBy="later")
+     * @ORM\OneToMany(targetEntity="Preference", mappedBy="later")
      **/
     private $preferences;
 

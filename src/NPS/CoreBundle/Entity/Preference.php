@@ -16,7 +16,7 @@ use NPS\CoreBundle\Entity\AbstractEntity,
 class Preference extends AbstractEntity
 {
     /**
-     * @OneToMany(targetEntity="User", mappedBy="preference")
+     * @ORM\OneToMany(targetEntity="User", mappedBy="preference")
      **/
     private $users;
 
