@@ -5,7 +5,6 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\UserFeed;
-use NPS\CoreBundle\Entity\UserItem;
 
 /**
  * DownloadFeedsService

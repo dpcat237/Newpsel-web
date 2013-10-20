@@ -5,7 +5,6 @@ namespace NPS\FrontendBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use NPS\CoreBundle\Entity\Later;
 
 /**
  * Type for a feed edit profile form

@@ -2,8 +2,6 @@
 namespace NPS\CoreBundle\Services;
 
 use NPS\CoreBundle\Services\CrawlerService;
-use Symfony\Component\DomCrawler\Crawler,
-    Goutte\Client;
 
 /**
  * TryService

@@ -1,12 +1,11 @@
 <?php
 
 namespace NPS\CoreBundle\Entity;
+
 use Doctrine\Common\Collections\ArrayCollection;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\LaterItem;
 use NPS\CoreBundle\Entity\AbstractEntity;
 
 /**

@@ -3,8 +3,6 @@ namespace NPS\CoreBundle\Helper;
 
 use Symfony\Component\Templating\Helper\Helper;
 use NPS\CoreBundle\Services\CrawlerService;
-use Symfony\Component\DomCrawler\Crawler,
-    Goutte\Client;
 
 /**
  * Class for time functions

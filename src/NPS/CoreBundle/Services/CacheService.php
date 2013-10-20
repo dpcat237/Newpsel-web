@@ -13,10 +13,10 @@ class CacheService
 
     /**
      * Constructor
-	 * @param object $redis      [description]
-	 * @param int    $defaultTtl [Default 0]
+	 * @param Client $redis      Client
+	 * @param int    $defaultTtl default title
      */
-    public function __construct($redis, $defaultTtl = 0)
+    public function __construct(Client $redis, $defaultTtl = 0)
     {
         $this->redis = $redis;
         $this->ttl = intval($defaultTtl);

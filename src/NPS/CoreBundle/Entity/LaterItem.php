@@ -1,7 +1,6 @@
 <?php
 
 namespace NPS\CoreBundle\Entity;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Entity\Later;
