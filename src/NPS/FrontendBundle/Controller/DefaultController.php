@@ -202,7 +202,7 @@ class DefaultController extends BaseController
      * Make sign up process
      * @param $request
      *
-     * @return array|RedirectResponse
+     * @return array
      */
     protected function  signUpProcess($request)
     {
@@ -213,23 +213,8 @@ class DefaultController extends BaseController
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
-            $user = $form->getData();
+            $errors = $this->signUpSaveData($form);
 
-            if (!$form->isValid()) {
-                $this->get('system_notification')->setMessage(NotificationHelper::ALERT_FORM_DATA);
-                $errors = true;
-            }
-
-            if (empty($errors)) {
-                $userRepo = $this->em->getRepository('NPSCoreBundle:User');
-                $errors = $userRepo->checkUserExists($user->getUsername(), $user->getEmail());
-            }
-
-            if (empty($errors)) {
-                $this->createNewUser($user);
-            } else {
-                $this->get('system_notification')->setMessage($errors);
-            }
         }
 
         $viewData = array (
@@ -238,6 +223,35 @@ class DefaultController extends BaseController
         );
 
         return $viewData;
+    }
+
+    /**
+     * Create new user if aren't errors
+     * @param $form
+     *
+     * @return bool
+     */
+    protected function signUpSaveData($form)
+    {
+        $errors = false;
+        $user = $form->getData();
+        if (!$form->isValid()) {
+            $this->get('system_notification')->setMessage(NotificationHelper::ALERT_FORM_DATA);
+            $errors = true;
+        }
+
+        if (empty($errors)) {
+            $userRepo = $this->em->getRepository('NPSCoreBundle:User');
+            $errors = $userRepo->checkUserExists($user->getUsername(), $user->getEmail());
+        }
+
+        if (empty($errors)) {
+            $this->createNewUser($user);
+        } else {
+            $this->get('system_notification')->setMessage($errors);
+        }
+
+        return $errors;
     }
 
     /**

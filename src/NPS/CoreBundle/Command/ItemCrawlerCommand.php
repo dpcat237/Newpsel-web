@@ -22,6 +22,8 @@ use Symfony\Component\Console\Input\InputArgument,
  */
 class ItemCrawlerCommand extends ContainerAwareCommand
 {
+    private $feedId = 0;
+    
     /**
      * configure of ItemCrawlerCommand
      */
@@ -57,7 +59,7 @@ class ItemCrawlerCommand extends ContainerAwareCommand
         $laterItems = $laterItemRepo->getItemForCrawling($userId);
 
         if (count($laterItems)) {
-            $this->makeProcess($container, $laterItems);
+            $this->iterateItemsForCrawling($container, $laterItems);
         }
 
         $log->info('*** Crawling finished ***');
@@ -68,25 +70,37 @@ class ItemCrawlerCommand extends ContainerAwareCommand
      * @param Container $container
      * @param array     $laterItems
      */
-    private function makeProcess($container, $laterItems)
+    private function iterateItemsForCrawling($container, $laterItems)
     {
         $crawler = $container->get('crawler');
         $cache = $container->get('server_cache');
         $cacheKey = 'crawledItem_';
-        $feedId = 0;
 
         foreach ($laterItems as $laterItem) {
             $item = $laterItem->getUserItem()->getItem();
             if (!$cache->get($cacheKey.$item->getId())) {
-                if ($feedId == $item->getFeed()->getId()) {
-                    sleep(30);
-                }
-                if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent(), $item->getFeedId())) {
-                    $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
-                    $feedId = $item->getFeed()->getId();
-                }
+                $this->makeCrawling($crawler, $cache, $cacheKey, $item);
             }
             continue;
+        }
+    }
+
+    /**
+     * Make crawling process
+     * @param $crawler
+     * @param $cache
+     * @param $cacheKey
+     * @param $item
+     */
+    private function makeCrawling($crawler, $cache, $cacheKey, $item)
+    {
+        if ($this->feedId == $item->getFeed()->getId()) {
+            sleep(30);
+        }
+
+        if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent(), $item->getFeedId())) {
+            $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
+            $this->feedId = $item->getFeed()->getId();
         }
     }
 }

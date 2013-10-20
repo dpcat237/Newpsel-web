@@ -112,14 +112,7 @@ class ItemApiService
         }
 
         if (empty($error)){
-            $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-            if (is_array($viewedItems) && count($viewedItems)) {
-                $itemRepo->syncViewedItems($user->getId(), $viewedItems);
-            }
-
-            if ($download) {
-                $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
-            }
+            $unreadItems = $this->syncUnreadItemsProcess($user, $viewedItems, $download);
         }
         $responseData = array(
             'error' => $error,
@@ -127,5 +120,28 @@ class ItemApiService
         );
 
         return $responseData;
+    }
+
+    /**
+     * If aren't errors sync unread items
+     * @param $user
+     * @param $viewedItems
+     * @param $download
+     *
+     * @return array
+     */
+    protected function syncUnreadItemsProcess($user, $viewedItems, $download)
+    {
+        $unreadItems = array();
+        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        if (is_array($viewedItems) && count($viewedItems)) {
+            $itemRepo->syncViewedItems($user->getId(), $viewedItems);
+        }
+
+        if ($download) {
+            $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
+        }
+
+        return $unreadItems;
     }
 }
