@@ -457,7 +457,7 @@ function Calendar(element, options, eventSources) {
 	}
 	
 	
-	function setSize(dateChanged) { // todo: dateChanged?
+	function setSize(dateChanged) {
 		ignoreWindowResize++;
 		currentView.setHeight(suggestedViewHeight, dateChanged);
 		if (absoluteViewElement) {
