@@ -58,10 +58,6 @@ class ItemService
      */
     public function addItem($itemData, $feed)
     {
-        //$author = $this->getOneMany($itemData->get_author(), $itemData->get_authors());
-        //$category = $this->getOneMany($itemData->get_category(), $itemData->get_categories());
-        //TODO: add author, category
-
         $item = $this->checkExistByLink($itemData->get_link());
         if ($item instanceof Item) {
             $item->setTitle($itemData->get_title());
@@ -232,32 +228,5 @@ class ItemService
         }
 
         return $status;
-    }
-
-    /**
-     * Get author
-     * @param string $one  [description]
-     * @param array  $many [description]
-     *
-     * @return string
-     */
-    private function getOneMany($one, $many)
-    {
-        if ($one && !is_numeric($one)) {
-            return $one;
-        } elseif (count($many)) {
-            $c = 0;
-            foreach ($many as $value) {
-                if (!$c) {
-                    $resultValues = $value;
-                }
-                $resultValues .= '; '.$value;
-                $c++;
-            }
-
-            return $resultValues;
-        } else {
-            return '';
-        }
     }
 }

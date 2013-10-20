@@ -83,7 +83,7 @@ class TryService
             //get_description()
             echo "<div style='width: 100%; height: 1px; border-bottom: 1px solid 000;'></div>";
         }
-        echo 'tut: '.count($items); exit();
+        //echo 'tut: '.count($items); exit();
     }
 
     /**
@@ -111,9 +111,8 @@ class TryService
         }
 
         if ($completeContent) {
-            echo 'tut: oki <br>'.$completeContent; exit();
+            //echo 'tut: oki <br>'.$completeContent;
         }
-        echo 'tut: Ops :('; exit();
     }
 
     /**
@@ -126,8 +125,8 @@ class TryService
     {
         $completeContent = $this->crawler->getCompleteContent($itemUrl, $itemContent, $feedId);
         if ($completeContent) {
-            echo 'tutaa: '.$completeContent; exit();
+            //echo 'tutaa: '.$completeContent; exit();
         }
-        echo 'tut: Ops :('; exit();
+        //echo 'tut: Ops :('; exit();
     }
 }

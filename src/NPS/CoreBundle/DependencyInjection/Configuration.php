@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('nps_core');
+        $treeBuilder->root('nps_core');
 
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for

@@ -331,7 +331,7 @@ class DefaultController extends BaseController
     public function tryCrawlerAction()
     {
         return new RedirectResponse($this->container->get('router')->generate('homepage'));
-        $feedId = 14;
+        /*$feedId = 14;
         $link = 'http://feeds.feedburner.com/MarcAndAngel';
         $artTitle = "8 Things You Should NOT Do to Get Ahead";
         $artUrl = 'http://feeds.gawker.com/~r/lifehacker/full/~3/eREZUL0Eto0/how-can-i-find-out-where-an-email-really-came-from-1190061668';
@@ -342,6 +342,6 @@ class DefaultController extends BaseController
 
         //$crawler->showFeedItems($link);
         //$crawler->tryCrawledItem($link, $artTitle, $artUrl, $feedId);
-        $crawler->tryDirectContent($artUrl, $itemContent, $feedId);
+        $crawler->tryDirectContent($artUrl, $itemContent, $feedId);*/
     }
 }

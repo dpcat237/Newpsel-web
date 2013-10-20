@@ -134,7 +134,7 @@ class LaterRepository extends BaseRepository
             ->setParameter('lastUpdate', $lastUpdate)
             ->getQuery();
         $collection = $query->getResult();
-        foreach ($collection as $key => $value) {
+        foreach (array_keys($collection) as $key) {
             $collection[$key]['id'] = 0;
         }
 

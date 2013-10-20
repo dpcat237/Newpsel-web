@@ -113,7 +113,6 @@ class CrawlerService
     private function executeGenericCrawling($itemUrl, $itemContent)
     {
         $complete = null;
-        $found = null;
         $crawler = $this->getItemPage($itemUrl);
 
         preg_match_all('/[0-9a-z\s-]{12,30}/i', $itemContent, $matches);
