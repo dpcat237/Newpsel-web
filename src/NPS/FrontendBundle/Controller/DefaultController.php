@@ -77,21 +77,24 @@ class DefaultController extends BaseController
      *
      * @return RedirectResponse
      * @Route("/craw", name="craw")
+     *
+     * to try:
+     *
+    $feedId = 14;
+    $link = 'http://feeds.feedburner.com/MarcAndAngel';
+    $artTitle = "8 Things You Should NOT Do to Get Ahead";
+    $artUrl = 'http://feeds.gawker.com/~r/lifehacker/full/~3/eREZUL0Eto0/how-can-i-find-out-where-an-email-really-came-from-1190061668';
+    $itemContent = "Content...";
+    $crawler = $this->get('try');
+
+    //print file_get_contents($artUrl); exit();
+
+    //$crawler->showFeedItems($link);
+    //$crawler->tryCrawledItem($link, $artTitle, $artUrl, $feedId);
+    $crawler->tryDirectContent($artUrl, $itemContent, $feedId);
      */
     public function tryCrawlerAction()
     {
         return new RedirectResponse($this->container->get('router')->generate('homepage'));
-        /*$feedId = 14;
-        $link = 'http://feeds.feedburner.com/MarcAndAngel';
-        $artTitle = "8 Things You Should NOT Do to Get Ahead";
-        $artUrl = 'http://feeds.gawker.com/~r/lifehacker/full/~3/eREZUL0Eto0/how-can-i-find-out-where-an-email-really-came-from-1190061668';
-        $itemContent = "Content...";
-        $crawler = $this->get('try');
-
-        //print file_get_contents($artUrl); exit();
-
-        //$crawler->showFeedItems($link);
-        //$crawler->tryCrawledItem($link, $artTitle, $artUrl, $feedId);
-        $crawler->tryDirectContent($artUrl, $itemContent, $feedId);*/
     }
 }

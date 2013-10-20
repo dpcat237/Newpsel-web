@@ -14,6 +14,14 @@ class UserService extends AbstractEntityService
     /**
      * Save form of user to data base
      * @param Form $form
+     *
+     * Add:
+     * Generate Activation Code
+     * $ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
+     * Set verification code key in cache
+     * $cache = $this->container->get('redis_cache');
+     * $cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
+     * Show message 'check your email to confirm registration...'
      */
     public function saveFormUser(Form $form)
     {
@@ -26,13 +34,6 @@ class UserService extends AbstractEntityService
             $user->setRegistered(true);
 
             $this->saveObject($user, true);
-
-            // Generate Activation Code
-            //$ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
-            // Set verification code key in cache
-            //$cache = $this->container->get('redis_cache');
-            //$cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
-            //  Show message 'check your email to confirm registration...'
         }
 
         return $check['errors'];

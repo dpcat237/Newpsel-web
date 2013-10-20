@@ -114,7 +114,7 @@ class CrawlerHelper extends Helper
     }
 
     /**
-     * Crawling process for Mobile review - #26
+     * Crawling process for Mobile review - #26  (try add $subject = base64_encode($content[0]); when will be fix twig)
      * @param CrawlerService $service
      * @param string $itemUrl
      *
@@ -125,7 +125,6 @@ class CrawlerHelper extends Helper
         $content =  file_get_contents($itemUrl);
         $content = explode('<div id="mainbanner">', $content);
         $content = explode('<!--main content end-->', $content[1]);
-        //$subject = base64_encode($content[0]);
 
         return $content[0];
     }
