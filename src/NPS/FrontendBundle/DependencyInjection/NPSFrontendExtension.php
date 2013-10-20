@@ -20,6 +20,7 @@ class NPSFrontendExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        //create configuration
         $configuration = new Configuration();
         $this->processConfiguration($configuration, $configs);
 

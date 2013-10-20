@@ -9,7 +9,6 @@ build/
 vendor
 composer.phar
 composer.lock
-parameters.yml
 .idea/
 .idea/*
 .travis.yml
