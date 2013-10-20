@@ -16,7 +16,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\MappedSuperclass
  * @UniqueEntity("email")
  */
-//TODO: when will be possible form->getErrorsAsArray (https://github.com/symfony/symfony/pull/7512 / https://github.com/symfony/symfony/issues/7205)
 //@UniqueEntity(fields="username", message="Sorry, this username is not available or allowed")
 //@UniqueEntity(fields="username", message="Sorry, this username is not available or allowed", groups={"registration"})
 //@UniqueEntity(fields="email", message="Sorry, this email is not available or allowed")

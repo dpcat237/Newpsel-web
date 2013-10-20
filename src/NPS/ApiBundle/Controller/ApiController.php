@@ -2,13 +2,13 @@
 
 namespace NPS\ApiBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use NPS\CoreBundle\Controller\CoreController;
 
 /**
  * ApiController
  */
-class ApiController extends CoreController
+class ApiController extends Controller
 {
     /**
      * Prepare plain text response

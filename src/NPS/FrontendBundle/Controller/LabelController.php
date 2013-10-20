@@ -30,7 +30,7 @@ class LabelController extends BaseController
     public function listAction()
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+        $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
         $labels = $labelRepo->getUserLabel($user->getId());
 
         $viewData = array(
@@ -53,10 +53,11 @@ class LabelController extends BaseController
     public function createAction(Request $request)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+        $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
         $labelRepo->createLabel($user, $request->get('label'));
+        $route = $this->container->get('router')->generate('labels_list');
 
-        return new RedirectResponse($this->router->generate('labels_list'));
+        return new RedirectResponse($route);
     }
 
     /**
@@ -73,12 +74,12 @@ class LabelController extends BaseController
     public function deleteAction(Later $label)
     {
         $user = $this->get('security.context')->getToken()->getUser();
+        $route = $this->container->get('router')->generate('labels_list');
         if ($label->getUserId() == $user->getId()) {
-            $this->em->remove($label);
-            $this->em->flush();
+            $this->get('label')->removeLabel($label);
         }
 
-        return new RedirectResponse($this->router->generate('labels_list'));
+        return new RedirectResponse($route);
     }
 
     /**
@@ -97,14 +98,17 @@ class LabelController extends BaseController
     public function editAction(Request $request, Later $label)
     {
         $user = $this->get('security.context')->getToken()->getUser();
+        $route = $this->container->get('router')->generate('labels_list');
+
         if ($label->getUserId() == $user->getId()) {
             $formType = new LaterEditType($label);
             $form = $this->createForm($formType, $label);
 
             if ($request->getMethod() == 'POST') {
-                $this->saveGenericForm($form->handleRequest($request));
+                $form->handleRequest($request);
+                $this->get('label')->saveFormLabel($form);
 
-                return new RedirectResponse($this->router->generate('labels_list'));
+                return new RedirectResponse($route);
             }
 
             $viewData = array(
@@ -116,7 +120,7 @@ class LabelController extends BaseController
             return $viewData;
         }
 
-        return new RedirectResponse($this->router->generate('labels_list'));
+        return new RedirectResponse($route);
     }
 
     /**
@@ -130,6 +134,7 @@ class LabelController extends BaseController
         $user = $this->get('security.context')->getToken()->getUser();
         $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
         $labelsCollection = $labelRepo->getUserLabel($user->getId());
+        $labels = array();
 
         foreach ($labelsCollection as $lab) {
             $label['id'] = $lab->getId();

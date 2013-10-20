@@ -38,4 +38,24 @@ trait EnabledTrait
     {
         return $this->enabled;
     }
+
+    /**
+     * Get if entity is enabled
+     *
+     * @return boolean
+     */
+    public function getIsEnabled()
+    {
+        return $this->isEnabled();
+    }
+
+    /**
+     * Set if entity is enabled
+     *
+     * @param boolean $enabled
+     */
+    public function setIsEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+    }
 }

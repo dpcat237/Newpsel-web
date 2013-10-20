@@ -108,7 +108,6 @@ class FeedController extends BaseController
      */
     protected function editProcess(Request $request)
     {
-        //depends if it's edit or creation
         $objectId = $request->get('id');
         $objectName = 'Feed';
         $routeName = 'feed';
@@ -116,7 +115,7 @@ class FeedController extends BaseController
         $objectClass = 'NPS\CoreBundle\Entity\Feed';
         $objectTypeClass = 'NPS\FrontendBundle\Form\Type\FeedEditType';
         $form = $this->createFormEdit($objectId, $objectName, $objectClass, $objectTypeClass);
-        $this->saveGenericForm($form->handleRequest($request));
+        $this->get('feed')->saveFormFeed($form);
 
         return $this->createFormResponse($objectName, $routeName, $routeNameMany, $form);
     }
@@ -139,7 +138,7 @@ class FeedController extends BaseController
 
     /**
      * Sync all feeds
-     * TODO: temp (later all with cron)
+     *
      * @return Response
      *
      * @Secure(roles="ROLE_USER")
@@ -147,13 +146,15 @@ class FeedController extends BaseController
     public function syncAction()
     {
         $downloadFeeds = $this->container->get('download_feeds');
-        $feedRepo = $this->em->getRepository('NPSCoreBundle:Feed');
+        $route = $this->container->get('router')->generate('feeds');
+        $feedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Feed');
+
         $feeds = $feedRepo->findAll();
         foreach ($feeds as $feed) {
             $downloadFeeds->updateFeedData($feed->getId());
         }
 
-        return new RedirectResponse($this->router->generate('feeds'));
+        return new RedirectResponse($route);
     }
 
 }

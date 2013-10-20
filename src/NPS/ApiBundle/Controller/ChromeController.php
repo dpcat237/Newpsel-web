@@ -2,14 +2,14 @@
 
 namespace NPS\ApiBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request;
-use NPS\CoreBundle\Controller\CoreController;
 
 /**
  * ChromeController
  */
-class ChromeController extends CoreController
+class ChromeController extends Controller
 {
     /**
      * Add new page/item to later

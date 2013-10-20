@@ -38,7 +38,7 @@ class ItemController extends BaseController
     public function listAction(Request $request, Feed $feed)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
+        $itemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Item');
         $itemsList = $itemRepo->getUnreadByFeedUser($user->getId(), $request->get('feed_id'));
         $viewData = array(
             'items' => $itemsList,
@@ -64,7 +64,7 @@ class ItemController extends BaseController
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($label->getUserId() == $user->getId()) {
-            $labelRepo = $this->em->getRepository('NPSCoreBundle:Later');
+            $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
             $itemsList = $labelRepo->getUnread($label->getId());
 
             $viewData = array(
@@ -169,9 +169,7 @@ class ItemController extends BaseController
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
-            $laterItem->setIsUnread(false);
-            $this->em->persist($laterItem);
-            $this->em->flush();
+            $this->get('later_item')->makeLaterRead($laterItem);
 
             $item = $laterItem->getUserItem()->getItem();
             $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", 2);

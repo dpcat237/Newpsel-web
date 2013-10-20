@@ -1,6 +1,3 @@
-parameters:
-#    nps_core.example.class: NPS\CoreBundle\Example
-
 services:
     gedmo.listener.timestampable:
           class: Gedmo\Timestampable\TimestampableListener
@@ -23,19 +20,6 @@ services:
             simple_pie:   @fkr_simple_pie.rss
             item:         @item
 
-    item:
-        class: NPS\CoreBundle\Services\Entity\ItemService
-        arguments:
-            doctrine:     @doctrine
-            server_cache: @server_cache
-
-    later_item:
-        class: NPS\CoreBundle\Services\Entity\LaterItemService
-        arguments:
-            doctrine:     @doctrine
-            server_cache: @server_cache
-            item:         @item
-
     server_cache:
         class: NPS\CoreBundle\Services\CacheService
         arguments: ['@snc_redis.default', 3600]
@@ -54,3 +38,38 @@ services:
             templating: @templating
             mailer:     @mailer
             translator: @translator
+
+#Entities
+    feed:
+        class: NPS\CoreBundle\Services\Entity\FeedService
+        arguments:
+            doctrine:            @doctrine
+            logger:              @logger
+            system_notification: @system_notification
+
+    item:
+        class: NPS\CoreBundle\Services\Entity\ItemService
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @server_cache
+
+    label:
+        class: NPS\CoreBundle\Services\Entity\LabelService
+        arguments:
+            doctrine:            @doctrine
+            logger:              @logger
+            system_notification: @system_notification
+
+    later_item:
+        class: NPS\CoreBundle\Services\Entity\LaterItemService
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @server_cache
+            item:         @item
+
+    user:
+        class: NPS\CoreBundle\Services\Entity\UserService
+        arguments:
+            doctrine:            @doctrine
+            logger:              @logger
+            system_notification: @system_notification

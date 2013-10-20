@@ -66,9 +66,9 @@ class LaterItemService
 
     /**
      * Make later item read
-     * @param $laterItem
+     * @param LaterItem $laterItem
      */
-    public function makeLaterRead($laterItem)
+    public function makeLaterRead(LaterItem $laterItem)
     {
         $laterItem->setIsUnread(false);
         $this->entityManager->persist($laterItem);

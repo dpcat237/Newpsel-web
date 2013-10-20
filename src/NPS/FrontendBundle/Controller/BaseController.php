@@ -2,17 +2,17 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContext;
-use NPS\CoreBundle\Controller\CoreController;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
  * BaseController
  */
-abstract class BaseController extends CoreController
+abstract class BaseController extends Controller
 {
     /**
      * Create form depends if it's for edit or create
@@ -53,7 +53,7 @@ abstract class BaseController extends CoreController
      */
     private function createFormExistObject($objectId, $objectName, $objectClass, $objectTypeClass, $formSets = null)
     {
-        $objectRepo = $this->em->getRepository('NPSCoreBundle:'.$objectName);
+        $objectRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:'.$objectName);
         $object = $objectRepo->find($objectId);
 
         if ($object instanceof $objectClass) {
@@ -99,29 +99,19 @@ abstract class BaseController extends CoreController
         $notification = new NotificationHelper($objectName);
 
         if (is_object($notification) && $notification->getMessageType() == 'success') { //TODO: Refactory for new notification service
-            return new RedirectResponse($this->router->generate($routeName.'_'.$template, array('id' => $this->formObject->getId())));
+            $route = $this->container->get('router')->generate($routeName.'_'.$template, array('id' => $this->formObject->getId()));
+
+            return new RedirectResponse($route);
         } else {
+            $routeEdit = $this->container->get('router')->generate($routeName.'_edit');
+            $routeMany = $this->container->get('router')->generate($routeNameMany);
+
             return $this->render('NPSFrontendBundle:'.$objectName.':'.$template.'.html.twig', array(
                 'heading' => 'Manage '.$name,
                 'form' => $form->createView(),
-                'url_create' => $this->router->generate($routeName.'_edit'),
-                'url_list' => $this->router->generate($routeNameMany)
+                'url_create' => $routeEdit,
+                'url_list' => $routeMany
             ));
-        }
-    }
-
-    /**
-     * Save generic form
-     * @param Form $form form object
-     */
-    protected function saveGenericForm($form)
-    {
-        $formObject = $form->getData();
-
-        if ($form->isValid()) {
-            $this->saveObject($formObject);
-        } else {
-            $this->get('system_notification')->setMessage(NotificationHelper::ALERT_FORM_DATA);
         }
     }
 }
