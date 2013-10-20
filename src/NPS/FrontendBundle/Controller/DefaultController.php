@@ -85,10 +85,10 @@ class DefaultController extends BaseController
     $itemContent = "Content...";
     $crawler = $this->get('try');
 
-    //print file_get_contents($artUrl); exit();
+    print file_get_contents($artUrl); exit();
 
-    //$crawler->showFeedItems($link);
-    //$crawler->tryCrawledItem($link, $artTitle, $artUrl, $feedId);
+    $crawler->showFeedItems($link);
+    $crawler->tryCrawledItem($link, $artTitle, $artUrl, $feedId);
     $crawler->tryDirectContent($artUrl, $itemContent, $feedId);
      */
     public function tryCrawlerAction()
