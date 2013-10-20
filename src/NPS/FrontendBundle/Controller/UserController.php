@@ -26,7 +26,7 @@ class UserController extends BaseController
      *
      * @return boolean
      */
-    protected function processLogin($request)
+    protected function processLogin(Request $request)
     {
 
         //if he's not logged
@@ -106,11 +106,11 @@ class UserController extends BaseController
 
     /**
      * Get the login error if there is one
-     * @param $request
+     * @param Request $request Request
      *
      * @return mixed
      */
-    private function checkLoginErrors($request)
+    private function checkLoginErrors(Request $request)
     {
         $error = null;
         $session = $request->getSession();

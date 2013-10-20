@@ -129,13 +129,13 @@ class CrawlerService
 
     /**
      * Check if filter found something
-     * @param $crawler
-     * @param $match
-     * @param $itemContent
+     * @param Crawler $crawler     Crawler
+     * @param string  $match       string
+     * @param string  $itemContent string
      *
      * @return null
      */
-    public function checkFilter($crawler, $match, $itemContent)
+    public function checkFilter(Crawler $crawler, $match, $itemContent)
     {
         $fullContent = null;
         $result = trim($match);
@@ -184,11 +184,11 @@ class CrawlerService
 
     /**
      * Get content of parents if it was found
-     * @param $node
+     * @param Crawler $node Crawler
      *
      * @return null
      */
-    private function getNodeParents($node)
+    private function getNodeParents(Crawler $node)
     {
         $content = null;
         try {

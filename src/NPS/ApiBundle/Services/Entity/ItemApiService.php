@@ -130,7 +130,7 @@ class ItemApiService
      *
      * @return array
      */
-    protected function syncUnreadItemsProcess($user, $viewedItems, $download)
+    protected function syncUnreadItemsProcess(User $user, $viewedItems, $download)
     {
         $unreadItems = array();
         $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');

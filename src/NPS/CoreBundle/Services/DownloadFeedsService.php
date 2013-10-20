@@ -225,9 +225,9 @@ class DownloadFeedsService
 
     /**
      * Add news items of feed
-     * @param $feed
+     * @param Feed $feed Feed
      */
-    private function addNewItems($feed)
+    private function addNewItems(Feed $feed)
     {
         if (!$feed->getDateSync()) {
             //get last 25 items

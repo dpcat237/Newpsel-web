@@ -18,10 +18,10 @@ class LaterRepository extends BaseRepository
 {
     /**
      * Create label
-     * @param $user
-     * @param $labelName
+     * @param User   $user      User
+     * @param string $labelName label name
      */
-    public function createLabel($user, $labelName)
+    public function createLabel(User $user, $labelName)
     {
         if (!$this->hasLabelByName($user->getId(), $labelName)) {
             $label = new Later();

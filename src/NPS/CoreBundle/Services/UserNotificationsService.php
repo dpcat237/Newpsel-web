@@ -1,6 +1,8 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
+use NPS\CoreBundle\Entity\User;
+
 /**
  * Class UserNotificationsService
  * @package NPS\CoreBundle\Services
@@ -9,10 +11,10 @@ class UserNotificationsService extends AbstractEmailNotificationService
 {
     /**
      * Send new extension key to user
-     * @param User   $user
-     * @param string $extensionKey
+     * @param User   $user         User
+     * @param string $extensionKey extension key
      */
-    public function sendChromeKey($user, $extensionKey)
+    public function sendChromeKey(User $user, $extensionKey)
     {
         $viewData = array(
             'user' => $user,

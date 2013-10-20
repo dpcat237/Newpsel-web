@@ -41,11 +41,11 @@ class UserService extends AbstractEntityService
 
     /**
      * Check user registration form
-     * @param $form
+     * @param Form $form Form
      *
      * @return array
      */
-    protected function checkFormUser($form)
+    protected function checkFormUser(Form $form)
     {
         $errors = false;
         $user = $form->getData();

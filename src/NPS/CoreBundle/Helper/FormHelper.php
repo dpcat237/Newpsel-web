@@ -1,7 +1,8 @@
 <?php
 namespace NPS\CoreBundle\Helper;
 
-use Symfony\Component\Templating\Helper\Helper;
+use Symfony\Component\Form\Form,
+    Symfony\Component\Templating\Helper\Helper;
 
 /**
  * Class for time functions
@@ -12,11 +13,12 @@ class FormHelper extends Helper
 
     /**
      * Return array of form errors
-     * @param mixed $form
+     *
+     * @param Form $form Form
      *
      * @return array
      */
-    public static function getErrorList($form)
+    public static function getErrorList(Form $form)
     {
         $errors = array();
         $errors['hasErrors'] = false;

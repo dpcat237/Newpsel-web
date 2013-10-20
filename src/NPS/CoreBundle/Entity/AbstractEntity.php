@@ -4,7 +4,6 @@ namespace NPS\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use NPS\CoreBundle\Entity\Traits\DateTimeTrait;
 use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**

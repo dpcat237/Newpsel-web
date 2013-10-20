@@ -3,7 +3,8 @@ namespace NPS\CoreBundle\Services\Entity;
 
 use HTMLPurifier,
     HTMLPurifier_Config;
-use NPS\CoreBundle\Entity\Item,
+use NPS\CoreBundle\Entity\Feed,
+    NPS\CoreBundle\Entity\Item,
     NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserItem;
@@ -53,10 +54,10 @@ class ItemService
 
     /**
      * Add item
-     * @param object $itemData
-     * @param Feed   $feed
+     * @param Item $itemData Item
+     * @param Feed $feed     Feed
      */
-    public function addItem($itemData, $feed)
+    public function addItem(Item $itemData, Feed $feed)
     {
         $item = $this->checkExistByLink($itemData->get_link());
         if ($item instanceof Item) {

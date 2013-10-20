@@ -13,6 +13,10 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use NPS\CoreBundle\Services\CrawlerService,
+    NPS\CoreBundle\Services\CacheService;
+use NPS\CoreBundle\Entity\Item;
 
 /**
  * Class ItemCrawlerCommand
@@ -66,10 +70,10 @@ class ItemCrawlerCommand extends ContainerAwareCommand
 
     /**
      * Make command process
-     * @param Container $container
-     * @param array     $laterItems
+     * @param ContainerInterface $container  ContainerInterface
+     * @param array              $laterItems array of later items
      */
-    private function iterateItemsForCrawling($container, $laterItems)
+    private function iterateItemsForCrawling(ContainerInterface $container, $laterItems)
     {
         $crawler = $container->get('crawler');
         $cache = $container->get('server_cache');
@@ -86,12 +90,12 @@ class ItemCrawlerCommand extends ContainerAwareCommand
 
     /**
      * Make crawling process
-     * @param $crawler
-     * @param $cache
-     * @param $cacheKey
-     * @param $item
+     * @param CrawlerService $crawler  CrawlerService
+     * @param CacheService   $cache    CacheService
+     * @param string         $cacheKey cache key
+     * @param Item           $item     Item
      */
-    private function makeCrawling($crawler, $cache, $cacheKey, $item)
+    private function makeCrawling(CrawlerService $crawler, CacheService $cache, $cacheKey, Item $item)
     {
         if ($this->feedId == $item->getFeed()->getId()) {
             sleep(30);
