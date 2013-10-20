@@ -14,7 +14,5 @@ parameters:
     mailer_user:       newpsel
     mailer_password:   n#06p04e2013r#s
 
-    secret:            newpsel_key201306
-
     redis_cache_server:    redis://localhost/4
     redis_sessions_server: redis://localhost/5
