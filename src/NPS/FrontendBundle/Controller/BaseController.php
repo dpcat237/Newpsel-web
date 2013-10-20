@@ -98,7 +98,7 @@ abstract class BaseController extends Controller
         //render template or redirect to edit page
         $notification = new NotificationHelper($objectName);
 
-        if (is_object($notification) && $notification->getMessageType() == 'success') { //TODO: Refactory for new notification service
+        if (is_object($notification) && $notification->getMessageType() == 'success') {
             $route = $this->container->get('router')->generate($routeName.'_'.$template, array('id' => $this->formObject->getId()));
 
             return new RedirectResponse($route);
