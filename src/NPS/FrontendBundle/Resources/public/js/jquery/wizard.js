@@ -345,7 +345,7 @@ $.widget("bootstrap.bwizard", {
 				}
 				o.activeIndex = o.activeIndex || (this.panels.length ? 0 : -1);
 			} else if (o.activeIndex === null) {
-				// usage of null is deprecated, TODO remove in next release
+				// usage of null is deprecated,  remove in next release
 				o.activeIndex = -1;
 			}
 

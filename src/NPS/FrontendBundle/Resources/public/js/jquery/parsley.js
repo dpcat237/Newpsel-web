@@ -848,7 +848,7 @@
         this.manageErrorContainer();
       }
 
-      // TODO: refacto error name w/ proper & readable function
+      //  refacto error name w/ proper & readable function
       var constraintName = constraint.name
         , liClass = false !== this.options.errorMessage ? 'custom-error-message' : constraintName
         , liError = {}
