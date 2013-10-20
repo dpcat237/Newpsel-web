@@ -5031,7 +5031,7 @@ wysihtml5.dom.parse = (function() {
   
   /**
    * Check whether the given node is a proper loaded image
-   * FIXME: Returns undefined when unknown (Chrome, Safari)
+   * Returns undefined when unknown (Chrome, Safari)
    */
   function _isLoadedImage(node) {
     try {
@@ -6188,7 +6188,7 @@ wysihtml5.quirks.cleanPastedHTML = (function() {
 
     /**
      * Scroll the current caret position into the view
-     * FIXME: This is a bit hacky, there might be a smarter way of doing this
+     * This is a bit hacky, there might be a smarter way of doing this
      *
      * @example
      *    selection.scrollIntoView();

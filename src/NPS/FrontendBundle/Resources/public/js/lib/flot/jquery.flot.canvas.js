@@ -279,7 +279,7 @@ browser, but needs to redraw with canvas text when exporting as an image.
 				y = Math.round(y);
 			}
 
-			// FIXME: LEGACY BROWSER FIX
+			//  LEGACY BROWSER FIX
 			// AFFECTS: Opera < 12.00
 
 			// Offset the y coordinate, since Opera is off pretty
