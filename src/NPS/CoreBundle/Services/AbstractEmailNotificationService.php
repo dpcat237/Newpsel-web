@@ -29,17 +29,6 @@ abstract class AbstractEmailNotificationService
     }
 
     /**
-     * This service also needs the entityManager
-     *
-     * @param EntityManager $entityManager
-     */
-    public function setEntityManager(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-
-    /**
      * @return EntityManager
      */
     public function getEntityManager()
