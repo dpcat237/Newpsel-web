@@ -44,7 +44,7 @@ class UserItem extends AbstractEntity
     protected $isStared = false;
 
     /**
-     * @ORM\OneToMany(targetEntity="LaterItem", mappedBy="userItems")
+     * @ORM\OneToMany(targetEntity="LaterItem", mappedBy="userItem")
      */
     protected $laterItems;
 

@@ -16,6 +16,11 @@ use NPS\CoreBundle\Entity\AbstractEntity,
 class Preference extends AbstractEntity
 {
     /**
+     * @OneToMany(targetEntity="User", mappedBy="preference")
+     **/
+    private $users;
+
+    /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Later", inversedBy="preferences")
      * @ORM\JoinColumn(name="shared_later_id", referencedColumnName="id", nullable=true)

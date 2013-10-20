@@ -31,6 +31,11 @@ class Later extends AbstractEntity
     protected $laterItems;
 
     /**
+     * @OneToMany(targetEntity="Preference", mappedBy="later")
+     **/
+    private $preferences;
+
+    /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="User", inversedBy="laters")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
