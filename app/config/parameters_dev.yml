@@ -1,7 +1,7 @@
-imports:
-    - { resource: parameters.yml }
-
 parameters:
+    locale: en
+    secret: newpsel_key201306
+
     database_driver:   pdo_mysql
     database_host:     127.0.0.1
     database_port:     ~
