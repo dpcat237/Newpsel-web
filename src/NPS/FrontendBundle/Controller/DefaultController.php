@@ -10,9 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
-use Symfony\Component\DomCrawler\Crawler,
-    Goutte\Client;
-
 /**
  * Class DefaultController
  *
