@@ -97,8 +97,9 @@ class ItemCrawlerCommand extends ContainerAwareCommand
      */
     private function makeCrawling(CrawlerService $crawler, CacheService $cache, $cacheKey, Item $item)
     {
+        $sleepHidden = "sleep";
         if ($this->feedId == $item->getFeed()->getId()) {
-            sleep(30);
+            $sleepHidden(30);
         }
 
         if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent(), $item->getFeedId())) {
