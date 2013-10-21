@@ -13,7 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use NPS\CoreBundle\Services\CrawlerService,
     NPS\CoreBundle\Services\CacheService;
 use NPS\CoreBundle\Entity\Item;
@@ -52,6 +51,8 @@ class ItemCrawlerCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
+        $cache = $container->get('server_cache');
+        $crawler = $container->get('crawler');
         $doctrine = $container->get('doctrine');
         $log = $container->get('logger');
         $userId =(is_numeric($input->getArgument('user')))? $input->getArgument('user') : null;
@@ -62,7 +63,7 @@ class ItemCrawlerCommand extends ContainerAwareCommand
         $laterItems = $laterItemRepo->getItemForCrawling($userId);
 
         if (count($laterItems)) {
-            $this->iterateItemsForCrawling($container, $laterItems);
+            $this->iterateItemsForCrawling($crawler, $cache, $laterItems);
         }
 
         $log->info('*** Crawling finished ***');
@@ -70,13 +71,12 @@ class ItemCrawlerCommand extends ContainerAwareCommand
 
     /**
      * Make command process
-     * @param ContainerInterface $container  ContainerInterface
-     * @param array              $laterItems array of later items
+     * @param CrawlerService $crawler    CrawlerService
+     * @param CacheService   $cache      CacheService
+     * @param array          $laterItems array of later items
      */
-    private function iterateItemsForCrawling(ContainerInterface $container, $laterItems)
+    private function iterateItemsForCrawling(CrawlerService $crawler, CacheService $cache, $laterItems)
     {
-        $crawler = $container->get('crawler');
-        $cache = $container->get('server_cache');
         $cacheKey = 'crawledItem_';
 
         foreach ($laterItems as $laterItem) {
