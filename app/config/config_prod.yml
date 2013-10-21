@@ -8,7 +8,7 @@ imports:
 # enhanced performance with strict_requirements = null.
 framework:
     router:
-        strict_requirements: null
+        strict_requirements: true
 
 doctrine:
     orm:
@@ -16,8 +16,8 @@ doctrine:
         result_cache_driver: apc
         query_cache_driver: apc
 
-#monolog:
-#    handlers:
+monolog:
+    handlers: []
 #        main:
 #            type:         fingers_crossed
 #            action_level: error
