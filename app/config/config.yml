@@ -73,12 +73,6 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
-monolog:
-    handlers:
-        applog:
-            type: stream
-            path: /var/www/nps/app/logs/symfony.log
-
 #SimplePie RSS
 fkr_simple_pie:
     cache_enabled: false
