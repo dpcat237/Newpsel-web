@@ -8,7 +8,7 @@ imports:
 # enhanced performance with strict_requirements = null.
 framework:
     router:
-        strict_requirements: true
+        strict_requirements: null
 
 doctrine:
     orm:

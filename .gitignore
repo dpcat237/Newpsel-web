@@ -1,7 +1,4 @@
 app/SymfonyRequirements.php
-app/config/config_dev.yml
-app/config/parameters_dev.yml
-web/app_dev.php
 web/bundles/
 web/css/
 web/js/
