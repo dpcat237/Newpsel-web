@@ -29,3 +29,9 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+
+mattsches_version_eye:
+    api_key: 8776614d65fcf1ed308c
+    # These two are optional
+    base_url: "https://www.versioneye.com/api/v1"
+    filesystem_cache_path: "%kernel.cache_dir%/versioneye"
