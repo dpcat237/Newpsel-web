@@ -104,10 +104,15 @@ class LaterRepository extends BaseRepository
         $repository = $this->em->getRepository('NPSCoreBundle:LaterItem');
 
         $query = $repository->createQueryBuilder('li')
+            ->select('li', 'ui', 'i')
+            ->leftJoin('li.userItem', 'ui')
+            ->leftJoin('ui.item', 'i')
             ->where('li.later = :laterId')
             ->andWhere('li.unread = :unread')
+            ->andWhere('i.id >= :idMin')
             ->setParameter('laterId', $labelId)
             ->setParameter('unread', true)
+            ->setParameter('idMin', 1)
             ->getQuery();
 
         return $query->getResult();
