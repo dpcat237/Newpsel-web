@@ -141,13 +141,26 @@ class UserItem extends AbstractEntity
     }
 
     /**
-     * Get isUnread
+     * Get unread
      *
      * @return \int
      */
     public function isUnread()
     {
         return $this->unread;
+    }
+
+    /**
+     * Set stared
+     * @param \boolean $stared
+     *
+     * @return UserItem
+     */
+    public function setStared($stared)
+    {
+        $this->stared = $stared;
+
+        return $this;
     }
 
     /**
