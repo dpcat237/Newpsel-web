@@ -1,6 +1,7 @@
 <?php
 namespace NPS\ApiBundle\Services\Entity;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Services\DownloadFeedsService;
 use NPS\CoreBundle\Entity\User;
@@ -12,27 +13,27 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class FeedApiService
 {
     /**
-     * @var $doctrine Doctrine
+     * @var Doctrine
      */
     private $doctrine;
 
     /**
-     * @var $downloadDeeds DownloadFeedsService
+     * @var DownloadFeedsService
      */
     private $downloadDeeds;
 
     /**
-     * @var $secure SecureService
+     * @var SecureService
      */
     private $secure;
 
 
     /**
-     * @param Doctrine             $doctrine      Doctrine
+     * @param Registry             $doctrine      Doctrine Registry
      * @param SecureService        $secure        SecureService
      * @param DownloadFeedsService $downloadDeeds DownloadFeedsService
      */
-    public function __construct($doctrine, SecureService $secure, DownloadFeedsService $downloadDeeds)
+    public function __construct(Registry $doctrine, SecureService $secure, DownloadFeedsService $downloadDeeds)
     {
         $this->doctrine = $doctrine;
         $this->downloadDeeds = $downloadDeeds;

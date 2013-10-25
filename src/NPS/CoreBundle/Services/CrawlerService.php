@@ -1,6 +1,7 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use HTMLPurifier,
     HTMLPurifier_Config;
 use Symfony\Component\DomCrawler\Crawler,
@@ -13,11 +14,6 @@ use NPS\CoreBundle\Helper\CrawlerHelper;
  */
 class CrawlerService
 {
-    /**
-     * @var $cache Redis
-     */
-    private $cache;
-
     /**
      * @var $doctrine Doctrine
      */
@@ -34,12 +30,10 @@ class CrawlerService
     private $purifier;
 
     /**
-     * @param Doctrine     $doctrine
-     * @param CacheService $cache
+     * @param Registry     $doctrine Doctrine Registry
      */
-    public function __construct($doctrine, $cache)
+    public function __construct(Registry $doctrine)
     {
-        $this->cache = $cache;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
 

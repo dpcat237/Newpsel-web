@@ -1,6 +1,7 @@
 <?php
 namespace NPS\ApiBundle\Services\Entity;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Services\CrawlerService;
 use NPS\CoreBundle\Entity\User;
@@ -12,27 +13,27 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class LabelApiService
 {
     /**
-     * @var $crawler CrawlerService
+     * @var CrawlerService
      */
     private $crawler;
 
     /**
-     * @var $doctrine Doctrine
+     * @var Doctrine Registry
      */
     private $doctrine;
 
     /**
-     * @var $secure SecureService
+     * @var SecureService
      */
     private $secure;
 
 
     /**
      * @param CrawlerService $crawler  CrawlerService
-     * @param Doctrine       $doctrine Doctrine
+     * @param Registry       $doctrine Doctrine Registry
      * @param SecureService  $secure   SecureService
      */
-    public function __construct(CrawlerService $crawler, $doctrine, SecureService $secure)
+    public function __construct(CrawlerService $crawler, Registry $doctrine, SecureService $secure)
     {
         $this->crawler = $crawler;
         $this->doctrine = $doctrine;

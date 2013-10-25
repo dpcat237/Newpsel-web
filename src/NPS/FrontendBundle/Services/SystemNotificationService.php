@@ -1,16 +1,23 @@
 <?php
 namespace NPS\FrontendBundle\Services;
 
+use Symfony\Component\HttpFoundation\Session\Session;
+
 /**
  * SystemNotificationService
  */
 class SystemNotificationService
 {
     /**
-     * Constructor
-	 * @param object $session
+     * @var Session
      */
-    public function __construct($session)
+    private $session;
+
+    /**
+     * Constructor
+	 * @param Session $session Session
+     */
+    public function __construct(Session $session)
     {
         $this->session = $session;
     }
@@ -29,7 +36,7 @@ class SystemNotificationService
 
     /**
      * Set type of message
-     * @param $code
+     * @param string $code
      *
      * @return string
      */

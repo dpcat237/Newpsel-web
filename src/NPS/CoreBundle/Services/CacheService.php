@@ -1,5 +1,6 @@
 <?php
 namespace NPS\CoreBundle\Services;
+
 use Predis\Client;
 
 /**

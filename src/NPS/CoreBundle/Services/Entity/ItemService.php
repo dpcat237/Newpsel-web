@@ -1,6 +1,8 @@
 <?php
 namespace NPS\CoreBundle\Services\Entity;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use \SimplePie_Item;
 use HTMLPurifier,
     HTMLPurifier_Config;
 use NPS\CoreBundle\Entity\Feed,
@@ -8,6 +10,7 @@ use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserItem;
+use NPS\CoreBundle\Services\CacheService;
 
 /**
  * ItemService
@@ -15,30 +18,30 @@ use NPS\CoreBundle\Entity\Feed,
 class ItemService
 {
     /**
-     * @var $cache Redis
+     * @var Redis
      */
     private $cache;
 
     /**
-     * @var $doctrine Doctrine
+     * @var Doctrine
      */
     private $doctrine;
 
     /**
-     * @var $entityManager Entity Manager
+     * @var Entity Manager
      */
     private $entityManager;
 
     /**
-     * @var $purifier HTMLPurifier
+     * @var HTMLPurifier
      */
     private $purifier;
 
     /**
-     * @param Doctrine     $doctrine
-     * @param CacheService $cache
+     * @param Registry     $doctrine Doctrine Registry
+     * @param CacheService $cache    CacheService
      */
-    public function __construct($doctrine, $cache)
+    public function __construct(Registry $doctrine, CacheService $cache)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;
@@ -54,10 +57,10 @@ class ItemService
 
     /**
      * Add item
-     * @param Item $itemData Item
-     * @param Feed $feed     Feed
+     * @param SimplePie_Item $itemData SimplePie_Item
+     * @param Feed           $feed     Feed
      */
-    public function addItem(Item $itemData, Feed $feed)
+    public function addItem(SimplePie_Item $itemData, Feed $feed)
     {
         $item = $this->checkExistByLink($itemData->get_link());
         if ($item instanceof Item) {
@@ -120,7 +123,7 @@ class ItemService
             $this->entityManager->persist($laterItem);
             $this->entityManager->flush();
         } elseif (!$laterItem->isUnread()) {
-            $laterItem->setIsUnread(true);
+            $laterItem->setUnread(true);
             $this->entityManager->persist($laterItem);
             $this->entityManager->flush();
         }

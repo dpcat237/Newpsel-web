@@ -1,8 +1,10 @@
 <?php
 namespace NPS\ApiBundle\Services;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Services\CacheService;
 
 /**
  * SecureService
@@ -25,10 +27,10 @@ class SecureService
     private $entityManager;
 
     /**
-     * @param Doctrine     $doctrine
-     * @param CacheService $cache
+     * @param Registry     $doctrine Doctrine Registry
+     * @param CacheService $cache    CacheService
      */
-    public function __construct($doctrine, $cache)
+    public function __construct(Registry $doctrine, CacheService $cache)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;

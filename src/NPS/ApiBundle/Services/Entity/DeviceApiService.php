@@ -1,6 +1,7 @@
 <?php
 namespace NPS\ApiBundle\Services\Entity;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\User;
 
@@ -21,10 +22,10 @@ class DeviceApiService
 
 
     /**
-     * @param Doctrine      $doctrine    Doctrine
-     * @param SecureService $secure      SecureService
+     * @param Registry     $doctrine Doctrine Registry
+     * @param SecureService $secure  SecureService
      */
-    public function __construct($doctrine, SecureService $secure)
+    public function __construct(Registry $doctrine, SecureService $secure)
     {
         $this->doctrine = $doctrine;
         $this->secure = $secure;

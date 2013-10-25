@@ -1,21 +1,19 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use \SimplePie;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\UserFeed;
+use NPS\CoreBundle\Services\Entity\ItemService;
 
 /**
  * DownloadFeedsService
  */
 class DownloadFeedsService
 {
-    /**
-     * @var $cache Redis
-     */
-    private $cache;
-
     /**
      * @var $doctrine Doctrine
      */
@@ -42,14 +40,12 @@ class DownloadFeedsService
     private $error = null;
 
     /**
-     * @param Doctrine $doctrine
-     * @param CacheService $cache
-     * @param SimplePie $rss
-     * @param ItemService $itemS
+     * @param Registry     $doctrine Doctrine Registry
+     * @param SimplePie    $rss      SimplePie
+     * @param ItemService  $itemS    ItemService
      */
-    public function __construct($doctrine, $cache, $rss, $itemS)
+    public function __construct(Registry $doctrine, SimplePie $rss, ItemService $itemS)
     {
-        $this->cache = $cache;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->itemS = $itemS;

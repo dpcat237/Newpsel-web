@@ -10,13 +10,11 @@ services:
         class: NPS\CoreBundle\Services\CrawlerService
         arguments:
             doctrine:     @doctrine
-            server_cache: @server_cache
 
     download_feeds:
         class: NPS\CoreBundle\Services\DownloadFeedsService
         arguments:
             doctrine:     @doctrine
-            server_cache: @server_cache
             simple_pie:   @fkr_simple_pie.rss
             item:         @item
 

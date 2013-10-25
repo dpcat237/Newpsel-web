@@ -1,6 +1,7 @@
 <?php
 namespace NPS\ApiBundle\Services\Entity;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Services\Entity\ItemService;
 use NPS\CoreBundle\Entity\User;
@@ -12,27 +13,27 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class ItemApiService
 {
     /**
-     * @var $doctrine Doctrine
+     * @var Doctrine Registry
      */
     private $doctrine;
 
     /**
-     * @var $itemService ItemService
+     * @var ItemService
      */
     private $itemService;
 
     /**
-     * @var $secure SecureService
+     * @var SecureService
      */
     private $secure;
 
 
     /**
-     * @param Doctrine      $doctrine    Doctrine
+     * @param Registry      $doctrine    Doctrine Registry
      * @param ItemService   $itemService ItemService
      * @param SecureService $secure      SecureService
      */
-    public function __construct($doctrine, ItemService $itemService, SecureService $secure)
+    public function __construct(Registry $doctrine, ItemService $itemService, SecureService $secure)
     {
         $this->doctrine = $doctrine;
         $this->itemService = $itemService;
