@@ -33,15 +33,15 @@ class UserItem extends AbstractEntity
 
     /**
      * @var int
-     * @ORM\Column(name="is_unread", type="boolean", nullable=false)
+     * @ORM\Column(name="unread", type="boolean", nullable=false)
      */
-    protected $isUnread = true;
+    protected $unread = true;
 
     /**
      * @var int
-     * @ORM\Column(name="is_stared", type="boolean", nullable=false)
+     * @ORM\Column(name="stared", type="boolean", nullable=false)
      */
-    protected $isStared = false;
+    protected $stared = false;
 
     /**
      * @ORM\OneToMany(targetEntity="LaterItem", mappedBy="userItem")
@@ -129,13 +129,13 @@ class UserItem extends AbstractEntity
 
     /**
      * Set isUnread
-     * @param \boolean $isUnread
+     * @param \boolean $unread
      *
      * @return UserItem
      */
-    public function setIsUnread($isUnread)
+    public function setUnread($unread)
     {
-        $this->isUnread = $isUnread;
+        $this->unread = $unread;
 
         return $this;
     }
@@ -147,30 +147,7 @@ class UserItem extends AbstractEntity
      */
     public function isUnread()
     {
-        return $this->isUnread;
-    }
-
-    /**
-     * Get isUnread
-     *
-     * @return \int
-     */
-    public function getIsUnread()
-    {
-        return $this->isUnread;
-    }
-
-    /**
-     * Set isStared
-     * @param \boolean $isStared
-     *
-     * @return UserItem
-     */
-    public function setIsStared($isStared)
-    {
-        $this->isStared = $isStared;
-
-        return $this;
+        return $this->unread;
     }
 
     /**
@@ -180,6 +157,6 @@ class UserItem extends AbstractEntity
      */
     public function isStared()
     {
-        return $this->isStared;
+        return $this->stared;
     }
 }

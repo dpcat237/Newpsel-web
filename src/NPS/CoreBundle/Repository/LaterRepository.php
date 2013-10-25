@@ -105,9 +105,9 @@ class LaterRepository extends BaseRepository
 
         $query = $repository->createQueryBuilder('li')
             ->where('li.later = :laterId')
-            ->andWhere('li.isUnread = :isUnread')
+            ->andWhere('li.unread = :unread')
             ->setParameter('laterId', $labelId)
-            ->setParameter('isUnread', true)
+            ->setParameter('unread', true)
             ->getQuery();
 
         return $query->getResult();
@@ -212,7 +212,7 @@ class LaterRepository extends BaseRepository
             if ($userItem instanceof UserItem) {
                 $laterItem = $this->laterExists($labelId, $userItem->getId());
                 if ($laterItem instanceof LaterItem) {
-                    $laterItem->setIsUnread(true);
+                    $laterItem->setUnread(true);
                     $this->em->persist($laterItem);
                 } else {
                     $laterItem = new LaterItem();

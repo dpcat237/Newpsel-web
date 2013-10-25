@@ -88,7 +88,7 @@ class ItemController extends BaseController
     public function viewAction(Item $item)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
+        $this->get('item')->changeStatus($user, $item, "isUnread", "setUnread", 2);
         $renderData = array(
             'item' => $item,
             'title' => $item->getFeed()->getTitle()
@@ -141,7 +141,7 @@ class ItemController extends BaseController
     {
         $status = $request->get('status');
         $user = $this->get('security.context')->getToken()->getUser();
-        $status = $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", $status);
+        $status = $this->get('item')->changeStatus($user, $item, "isUnread", "setUnread", $status);
         $result = ($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
 
         $response = array (
@@ -169,7 +169,7 @@ class ItemController extends BaseController
             $this->get('later_item')->makeLaterRead($laterItem);
 
             $item = $laterItem->getUserItem()->getItem();
-            $this->get('item')->changeStatus($user, $item, "isUnread", "setIsUnread", 2);
+            $this->get('item')->changeStatus($user, $item, "isUnread", "setUnread", 2);
 
             $renderData = array(
                 'result' => NotificationHelper::OK_IS_READ
@@ -193,7 +193,7 @@ class ItemController extends BaseController
     public function starAction(Item $item)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $status = $this->get('item')->changeStatus($user, $item, "isStared", "setIsStared");
+        $status = $this->get('item')->changeStatus($user, $item, "isStared", "setStared");
         $result =($status)? NotificationHelper::OK_IS_NOT_STARED : NotificationHelper::OK_IS_STARED ;
 
         $response = array (

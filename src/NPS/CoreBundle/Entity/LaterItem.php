@@ -30,10 +30,10 @@ class LaterItem extends AbstractEntity
     protected $later;
 
     /**
-     * @var int
-     * @ORM\Column(name="is_unread", type="boolean", nullable=false)
+     * @var boolean
+     * @ORM\Column(name="unread", type="boolean", nullable=false)
      */
-    protected $isUnread = true;
+    protected $unread = true;
 
 
     /**
@@ -108,13 +108,13 @@ class LaterItem extends AbstractEntity
 
     /**
      * Set isUnread
-     * @param \boolean $isUnread
+     * @param \boolean $unread
      *
      * @return LaterItem
      */
-    public function setIsUnread($isUnread)
+    public function setUnread($unread)
     {
-        $this->isUnread = $isUnread;
+        $this->unread = $unread;
 
         return $this;
     }
@@ -126,6 +126,6 @@ class LaterItem extends AbstractEntity
      */
     public function isUnread()
     {
-        return $this->isUnread;
+        return $this->unread;
     }
 }

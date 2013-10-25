@@ -61,10 +61,10 @@ class LaterItemRepository extends BaseRepository
             ->join('ui.item', 'i')
             ->join('i.feed', 'f')
             ->where('f.crawling = :isCrawling')
-            ->andWhere('li.isUnread = :isUnread')
+            ->andWhere('li.unread = :unread')
             ->orderBy('li.id', 'ASC')
             ->setParameter('isCrawling', true)
-            ->setParameter('isUnread', true);
+            ->setParameter('unread', true);
         if ($userId) {
             $query
                 ->andWhere('ui.user = :userId')

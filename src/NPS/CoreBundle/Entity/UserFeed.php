@@ -107,9 +107,9 @@ class UserFeed extends AbstractEntity
      *
      * @return UserFeed
      */
-    public function setIsUnread($isUnread)
+    public function setUnread($isUnread)
     {
-        $this->isUnread = $isUnread;
+        $this->unread = $isUnread;
 
         return $this;
     }
@@ -119,20 +119,20 @@ class UserFeed extends AbstractEntity
      *
      * @return \int
      */
-    public function getIsUnread()
+    public function isUnread()
     {
-        return $this->isUnread;
+        return $this->unread;
     }
 
     /**
      * Set isStared
-     * @param \boolean $isStared
+     * @param \boolean $stared
      *
      * @return UserFeed
      */
-    public function setIsStared($isStared)
+    public function setStared($stared)
     {
-        $this->isStared = $isStared;
+        $this->stared = $stared;
 
         return $this;
     }
@@ -142,8 +142,8 @@ class UserFeed extends AbstractEntity
      *
      * @return \int
      */
-    public function getIsStared()
+    public function isStared()
     {
-        return $this->isStared;
+        return $this->stared;
     }
 }

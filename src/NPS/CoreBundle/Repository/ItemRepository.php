@@ -79,8 +79,8 @@ class ItemRepository extends BaseRepository
         parent::preExecute();
         foreach ($items as $itemData) {
             $userItem = $this->hasItem($userId, $itemData->id);
-            $userItem->setIsUnread($itemData->is_unread);
-            $userItem->setIsStared($itemData->is_stared);
+            $userItem->setUnread($itemData->is_unread);
+            $userItem->setStared($itemData->is_stared);
             $this->em->persist($userItem);
         }
         $this->em->flush();
@@ -100,13 +100,13 @@ class ItemRepository extends BaseRepository
         $repository = $this->em->getRepository('NPSCoreBundle:Item');
         if ($feedId) {
             $query = $repository->createQueryBuilder('i')
-                ->select('i.id AS api_id, f.id AS feed_id, i.title, i.link, i.content, ui.isStared AS is_stared, ui.isUnread AS is_unread, i.dateAdd AS date_add')
+                ->select('i.id AS api_id, f.id AS feed_id, i.title, i.link, i.content, ui.isStared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add')
                 ->leftJoin('i.userItems', 'ui')
                 ->leftJoin('i.feed', 'f')
-                ->where('ui.isUnread = :isUnread')
+                ->where('ui.unread = :unread')
                 ->andWhere('ui.user = :userId')
                 ->andWhere('f.id = :feedId')
-                ->setParameter('isUnread', true)
+                ->setParameter('unread', true)
                 ->setParameter('userId', $userId)
                 ->setParameter('feedId', $feedId)
                 ->orderBy('i.dateAdd', 'DESC')
@@ -114,12 +114,12 @@ class ItemRepository extends BaseRepository
                 ->getQuery();
         } else {
             $query = $repository->createQueryBuilder('i')
-                ->select('i.id AS api_id, f.id AS feed_id, i.title, i.link, i.content, ui.isStared AS is_stared, ui.isUnread AS is_unread, i.dateAdd AS date_add')
+                ->select('i.id AS api_id, f.id AS feed_id, i.title, i.link, i.content, ui.isStared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add')
                 ->leftJoin('i.userItems', 'ui')
                 ->leftJoin('i.feed', 'f')
-                ->where('ui.isUnread = :isUnread')
+                ->where('ui.unread = :unread')
                 ->andWhere('ui.user = :userId')
-                ->setParameter('isUnread', true)
+                ->setParameter('unread', true)
                 ->setParameter('userId', $userId)
                 ->orderBy('i.dateAdd', 'DESC')
                 ->setMaxResults($limit)
@@ -183,10 +183,10 @@ class ItemRepository extends BaseRepository
             ->join('ui.user', 'u')
             ->where('u.id = :userId')
             ->andWhere('i.feed = :feedId')
-            ->andWhere('ui.isUnread = :isUnread')
+            ->andWhere('ui.unread = :unread')
             ->setParameter('userId', $userId)
             ->setParameter('feedId', $feedId)
-            ->setParameter('isUnread', true)
+            ->setParameter('unread', true)
             ->getQuery();
         $itemCollection = $query->getResult();
 
