@@ -30,7 +30,7 @@ class UserService extends AbstractEntityService
             $user = $check['user'];
             $password = sha1("sc_".$user->getPassword());
             $user->setPassword($password);
-            $user->setIsEnabled(true);
+            $user->setEnabled(true);
             $user->setRegistered(true);
 
             $this->saveObject($user, true);

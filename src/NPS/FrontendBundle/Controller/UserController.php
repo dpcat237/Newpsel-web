@@ -2,16 +2,17 @@
 
 namespace NPS\FrontendBundle\Controller;
 
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\SecurityContext;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use NPS\CoreBundle\Helper\NotificationHelper;
+use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\RedirectResponse,
+    Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken,
+    Symfony\Component\Security\Core\SecurityContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
+    Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\FrontendBundle\Form\Type\SignInType,
+    NPS\FrontendBundle\Form\Type\SignUpType;
 
 /**
  * Class UserController
@@ -93,9 +94,9 @@ class UserController extends BaseController
      */
     protected function prepareLoginViewData($errors)
     {
-        $objectClass = 'NPS\CoreBundle\Entity\User';
-        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\SignInType';
-        $form = $this->createFormEdit(null, 'User', $objectClass, $objectTypeClass);
+        $user = new User();
+        $formType = new SignInType($user);
+        $form = $this->createForm($formType, $user);
         $viewData = array(
             'errors' => $errors,
             'form' => $form->createView()
@@ -136,9 +137,9 @@ class UserController extends BaseController
     public function signupAction(Request $request)
     {
         $errors = false;
-        $objectClass = 'NPS\CoreBundle\Entity\User';
-        $objectTypeClass = 'NPS\FrontendBundle\Form\Type\SignUpType';
-        $form = $this->createFormEdit(null, 'User', $objectClass, $objectTypeClass);
+        $user = new User();
+        $formType = new SignUpType($user);
+        $form = $this->createForm($formType, $user);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
@@ -159,11 +160,11 @@ class UserController extends BaseController
     /**
      * Tries to put a user in the security context
      *
-     * @param UserInterface $user The user to log in
+     * @param User $user The user to log in
      *
      * @return boolean ok if the login was successful (user was granted all roles)
      */
-    protected function doLogin(UserInterface $user)
+    protected function doLogin(User $user)
     {
         //ok is true by default
         $ok = true;

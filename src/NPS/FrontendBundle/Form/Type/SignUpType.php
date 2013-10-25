@@ -39,7 +39,7 @@ class SignUpType extends AbstractType
                 'first_options'  => array('label' => 'Password'),
                 'second_options' => array('label' => 'Confirm password'),
             ))
-            ->add('isEnabled', 'hidden', array('data' => 1));
+            ->add('enabled', 'hidden', array('data' => 1));
     }
 
     /**
