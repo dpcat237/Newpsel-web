@@ -9,6 +9,7 @@ build/
 vendor
 composer.phar
 composer.lock
+npm-debug.log
 .idea/
 .idea/*
 .travis.yml
