@@ -3,6 +3,7 @@
 use Symfony\Component\HttpFoundation\Request;
 
 mb_internal_encoding('UTF-8');
+date_default_timezone_set('Europe/London');
 
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
 

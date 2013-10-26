@@ -3,6 +3,7 @@
 use Symfony\Component\HttpFoundation\Request;
 
 mb_internal_encoding('UTF-8');
+date_default_timezone_set('Europe/London');
 
 // If you don't want to setup permissions the proper way, just uncomment the following PHP line
 // read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information
