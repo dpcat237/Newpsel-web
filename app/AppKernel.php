@@ -25,7 +25,8 @@ class AppKernel extends Kernel
             new NPS\FrontendBundle\NPSFrontendBundle(),
             new NPS\ApiBundle\NPSApiBundle(),
             new Undf\AngularJsBundle\UndfAngularJsBundle(),
-            new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
+            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
+            //new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),
             //new JMS\SerializerBundle\JMSSerializerBundle()
         );

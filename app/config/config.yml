@@ -27,8 +27,8 @@ twig:
     strict_variables: %kernel.debug%
 
 # braincrafted twitter bootstrap bundle
-bc_bootstrap:
-    less_filter: lessphp
+#bc_bootstrap:
+#    less_filter: lessphp
 
 # Assetic Configuration
 assetic:
