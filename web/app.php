@@ -2,6 +2,8 @@
 
 use Symfony\Component\HttpFoundation\Request;
 
+mb_internal_encoding('UTF-8');
+
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
 
 // Use APC for autoloading to improve performance.
