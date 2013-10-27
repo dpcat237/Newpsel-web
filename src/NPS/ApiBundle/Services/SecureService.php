@@ -96,7 +96,7 @@ class SecureService
      *
      * @return bool
      */
-    private function checkLoggedCache($appKey, $username)
+    private function checkLoggedCache($appKey, $username = null)
     {
         $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
         $device = $deviceRepo->findOneByAppKey($appKey);
