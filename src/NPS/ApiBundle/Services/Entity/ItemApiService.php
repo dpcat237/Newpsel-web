@@ -18,6 +18,11 @@ class ItemApiService
     private $doctrine;
 
     /**
+     * @var $entityManager Entity Manager
+     */
+    protected $entityManager;
+
+    /**
      * @var ItemService
      */
     private $itemService;
@@ -36,6 +41,7 @@ class ItemApiService
     public function __construct(Registry $doctrine, ItemService $itemService, SecureService $secure)
     {
         $this->doctrine = $doctrine;
+        $this->entityManager = $this->doctrine->getManager();
         $this->itemService = $itemService;
         $this->secure = $secure;
     }
@@ -125,6 +131,7 @@ class ItemApiService
 
     /**
      * If aren't errors sync unread items
+     *
      * @param $user
      * @param $viewedItems
      * @param $download
@@ -144,5 +151,23 @@ class ItemApiService
         }
 
         return $unreadItems;
+    }
+
+    /**
+     * Keep en data base changes of items status
+     *
+     * @param integer $userId user id
+     * @param array   $items  array of items data from api
+     */
+    protected function syncViewedItems($userId, $items)
+    {
+        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        foreach ($items as $itemData) {
+            $userItem = $itemRepo->hasItem($userId, $itemData['id']);
+            $userItem->setUnread($itemData['is_unread']);
+            $userItem->setStared($itemData['is_stared']);
+            $this->entityManager->persist($userItem);
+        }
+        $this->entityManager->flush();
     }
 }

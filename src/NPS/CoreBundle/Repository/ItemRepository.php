@@ -71,22 +71,6 @@ class ItemRepository extends BaseRepository
     }
 
     /**
-     * @param integer $userId
-     * @param array   $items
-     */
-    public function syncViewedItems($userId, $items)
-    {
-        parent::preExecute();
-        foreach ($items as $itemData) {
-            $userItem = $this->hasItem($userId, $itemData->id);
-            $userItem->setUnread($itemData->is_unread);
-            $userItem->setStared($itemData->is_stared);
-            $this->em->persist($userItem);
-        }
-        $this->em->flush();
-    }
-
-    /**
      * Get users unread items
      * @param int $userId
      * @param int $feedId
