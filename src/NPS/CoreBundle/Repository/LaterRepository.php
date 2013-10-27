@@ -160,7 +160,7 @@ class LaterRepository extends BaseRepository
         parent::preExecute();
         $repository = $this->em->getRepository('NPSCoreBundle:Later');
         foreach ($changedLabels as $changedLabel) {
-            $changedIds[] = $changedLabel->id;
+            $changedIds[] = $changedLabel['id'];
         }
         $changedIds = implode(',', $changedIds);
 
@@ -271,22 +271,22 @@ class LaterRepository extends BaseRepository
         $laterRepo = $this->em->getRepository('NPSCoreBundle:Later');
         $createdIds = null;
         foreach ($changedLabels as $changedLabel) {
-            if ($changedLabel->id) {
-                $label = $laterRepo->find($changedLabel->id);
-                $label->setName($changedLabel->name);
+            if ($changedLabel['id']) {
+                $label = $laterRepo->find($changedLabel['id']);
+                $label->setName($changedLabel['name']);
                 $this->em->persist($label);
                 $this->em->flush();
             } else {
-                $label = $this->hasLabelByName($user->getId(), $changedLabel->name);
+                $label = $this->hasLabelByName($user->getId(), $changedLabel['name']);
                 if (!$label instanceof Later) {
                     $label = new Later();
                     $label->setUser($user);
                 }
-                $label->setName($changedLabel->name);
+                $label->setName($changedLabel['name']);
                 $this->em->persist($label);
                 $this->em->flush();
 
-                $createdIds[$changedLabel->api_id] = $label->getId();
+                $createdIds[$changedLabel['api_id']] = $label->getId();
             }
         }
 
