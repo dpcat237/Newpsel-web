@@ -88,7 +88,7 @@ class FeedApiService
         $feedCollection = array();
 
         $user = $this->secure->getUserByDevice($appKey);
-        if ($user instanceof User) {
+        if (!$user instanceof User) {
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
