@@ -209,8 +209,8 @@ class LaterRepository extends BaseRepository
     {
         parent::preExecute();
         foreach ($items as $itemData) {
-            $itemId = $itemData->item_id;
-            $labelId = $itemData->label_id;
+            $itemId = $itemData['item_id'];
+            $labelId = $itemData['label_id'];
             $itemRepo = $this->em->getRepository('NPSCoreBundle:Item');
             $laterRepo = $this->em->getRepository('NPSCoreBundle:Later');
             $userItem = $itemRepo->hasItem($userId, $itemId);
