@@ -59,7 +59,7 @@ class ItemApiService
     {
         $response = false;
         $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
+        if ($user instanceof User) {
             $this->itemService->addPageToLater($user, $labelId, $webTitle, $webUrl);
             $response = true;
         }

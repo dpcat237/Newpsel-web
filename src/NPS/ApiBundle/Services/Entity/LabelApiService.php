@@ -52,7 +52,7 @@ class LabelApiService
         $labels = array();
 
         $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
+        if ($user instanceof User) {
             $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
             $orderBy = array('name' => 'ASC');
             $labelsData = $labelRepo->findByUser($user, $orderBy);
