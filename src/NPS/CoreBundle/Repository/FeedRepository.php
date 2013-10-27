@@ -93,7 +93,7 @@ class FeedRepository extends BaseRepository
             ->join('f.userFeeds', 'uf')
             ->join('uf.user', 'u')
             ->where('u.id = :userId')
-            ->andWhere('f.dateUp > :lastUpdate')
+            ->andWhere('f.dateChange > :lastUpdate')
             ->orderBy('f.dateUp', 'ASC')
             ->setParameter('userId', $userId)
             ->setParameter('lastUpdate', $lastUpdate)
