@@ -4,6 +4,7 @@ namespace NPS\ApiBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
  * DeviceApiService
