@@ -26,11 +26,11 @@ class LabelController extends ApiController
             return $this->plainResponse($responseData['error']);
         }
 
-        return new JsonResponse($responseData['feedCollection']);
+        return new JsonResponse($responseData['labelCollection']);
     }
 
     /**
-     * List of feeds
+     * Sync later items
      * @param Request $request the current request
      *
      * @return string
