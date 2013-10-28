@@ -143,7 +143,7 @@ class ItemApiService
         $unreadItems = array();
         $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
         if (is_array($viewedItems) && count($viewedItems)) {
-            $itemRepo->syncViewedItems($user->getId(), $viewedItems);
+            $this->syncViewedItems($user->getId(), $viewedItems);
         }
 
         if ($download) {
