@@ -132,3 +132,8 @@ undf_angular_js:
     mycustomset:
       vendors: '*'
       undf: [uFileUpload]
+
+rs_queue:
+    queues:
+        crawler: "queues:crawler"
+    serializer: ~

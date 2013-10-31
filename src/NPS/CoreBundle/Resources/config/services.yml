@@ -9,7 +9,8 @@ services:
     crawler:
         class: NPS\CoreBundle\Services\CrawlerService
         arguments:
-            doctrine:     @doctrine
+            doctrine:          @doctrine
+            rs_queue.producer: @rs_queue.producer
 
     download_feeds:
         class: NPS\CoreBundle\Services\DownloadFeedsService

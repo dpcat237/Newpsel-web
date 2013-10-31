@@ -46,7 +46,8 @@
         "symfony/dom-crawler": "2.*",
         "fabpot/goutte": "1.*",
         "symfony/process": "2.*",
-        "mattsches/version-eye-bundle": "0.4.*"
+        "mattsches/version-eye-bundle": "0.4.*",
+        "mmoreram/rsqueue-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

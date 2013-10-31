@@ -8,6 +8,7 @@ use Symfony\Component\DomCrawler\Crawler,
     Goutte\Client;
 use Symfony\Component\Process\Process;
 use NPS\CoreBundle\Helper\CrawlerHelper;
+use Mmoreram\RSQueueBundle\Services\Producer;
 
 /**
  * CrawlerService
@@ -15,27 +16,35 @@ use NPS\CoreBundle\Helper\CrawlerHelper;
 class CrawlerService
 {
     /**
-     * @var $doctrine Doctrine
+     * @var Doctrine
      */
     private $doctrine;
 
     /**
-     * @var $entityManager Entity Manager
+     * @var Entity Manager
      */
     private $entityManager;
 
     /**
-     * @var $purifier HTMLPurifier
+     * @var HTMLPurifier
      */
     private $purifier;
 
     /**
-     * @param Registry     $doctrine Doctrine Registry
+     * @var Producer
      */
-    public function __construct(Registry $doctrine)
+    private $rsqueue;
+
+
+    /**
+     * @param Registry $doctrine Doctrine Registry
+     * @param Producer $rsqueue  RQ queue producer
+     */
+    public function __construct(Registry $doctrine, Producer $rsqueue)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
+        $this->rsqueue = $rsqueue;
 
         if (empty($this->purifier)) {
             $config = HTMLPurifier_Config::createDefault();
@@ -196,13 +205,12 @@ class CrawlerService
     }
 
     /**
-     * Run crawling process
+     * Add crawling process to queue
+     *
      * @param string $userId
      */
-    public function executeCrawling($userId = '')
+    public function executeCrawling($userId = null)
     {
-        $path = "php /var/www/nps/app/console item:crawling $userId > /dev/null &";
-        $process = new Process($path);
-        $process->run();
+        $this->rsqueue->produce($userId, "crawler");
     }
 }

@@ -16,13 +16,14 @@ use Symfony\Component\Console\Input\InputArgument,
 use NPS\CoreBundle\Services\CrawlerService,
     NPS\CoreBundle\Services\CacheService;
 use NPS\CoreBundle\Entity\Item;
+use Mmoreram\RSQueueBundle\Command\ConsumerCommand;
 
 /**
  * Class ItemCrawlerCommand
  *
  * @package NPS\CoreBundle\Command
  */
-class ItemCrawlerCommand extends ContainerAwareCommand
+class ItemCrawlerCommand extends ConsumerCommand
 {
     private $feedId = 0;
     
@@ -33,29 +34,35 @@ class ItemCrawlerCommand extends ContainerAwareCommand
     {
         $this
             ->setName('item:crawling')
-            ->setDescription('Crawling web for incomplete articles')
-            ->addArgument(
-                'user',
-                InputArgument::OPTIONAL,
-                'Specify user id'
-            );
+            ->setDescription('Crawling web for incomplete articles');
+
+        parent::configure();
+    }
+
+    /**
+     * Relates queue name with appropiated method
+     */
+    public function define()
+    {
+        $this->addQueue('crawler', 'executeCrawling');
     }
 
     /**
      * Synchronize all feeds
      * @param InputInterface  $input  Input Interface
      * @param OutputInterface $output Output Interface
+     * @param int             $userId User id, in case of null will get all users
      *
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function executeCrawling(InputInterface $input, OutputInterface $output, $userId)
     {
         $container = $this->getContainer();
         $cache = $container->get('server_cache');
         $crawler = $container->get('crawler');
         $doctrine = $container->get('doctrine');
         $log = $container->get('logger');
-        $userId =(is_numeric($input->getArgument('user')))? $input->getArgument('user') : null;
+        $userId =(is_numeric($userId))? : null;
 
         $log->info('*** Start crawling uncompleted articles ***');
 
