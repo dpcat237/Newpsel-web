@@ -40,7 +40,7 @@ class ItemCrawlerCommand extends ConsumerCommand
     }
 
     /**
-     * Relates queue name with appropiated method
+     * Relates queue name with appropriate method
      */
     public function define()
     {
