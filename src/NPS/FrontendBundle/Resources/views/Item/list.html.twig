@@ -40,7 +40,7 @@
                             <td class="inbox-message">
                                 <a id="itemText-id-{{ item.id }}" class="list-item{% if userItem.unread %} bold{% endif %}" href="{{ url('item_view', {'feed_id': item.feedId, 'item_id': item.id}) }}">{{ item.title|raw }}</a>
                             </td>
-                            <td class="center">{{ item.humanDateAdd }}</td>
+                            <td class="center dateColumn">{{ item.humanDateAdd }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
