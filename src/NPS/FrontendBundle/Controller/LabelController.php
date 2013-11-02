@@ -14,6 +14,8 @@ use NPS\FrontendBundle\Form\Type\LaterEditType;
 
 /**
  * ItemController
+ *
+ * @Route("/label")
  */
 class LabelController extends BaseController
 {
@@ -22,7 +24,7 @@ class LabelController extends BaseController
      *
      * @return array
      *
-     * @Route("/label/list", name="labels_list")
+     * @Route("/list", name="labels_list")
      * @Secure(roles="ROLE_USER")
      * @Template()
      */
@@ -46,7 +48,7 @@ class LabelController extends BaseController
      *
      * @return Response
      *
-     * @Route("/label/new", name="label_create")
+     * @Route("/new", name="label_create")
      * @Secure(roles="ROLE_USER")
      */
     public function createAction(Request $request)
@@ -65,7 +67,7 @@ class LabelController extends BaseController
      *
      * @return Response
      *
-     * @Route("/label/{label_id}/delete", name="label_delete")
+     * @Route("/{label_id}/delete", name="label_delete")
      * @Secure(roles="ROLE_USER")
      *
      * @ParamConverter("label", class="NPSCoreBundle:Later", options={"id": "label_id"})
@@ -82,13 +84,13 @@ class LabelController extends BaseController
     }
 
     /**
-     * Create label
+     * Create and edit label
      * @param Request $request
      * @param Later $label
      *
      * @return Response
      *
-     * @Route("/label/{id}/edit", name="label_edit")
+     * @Route("/{id}/edit", name="label_edit")
      * @Secure(roles="ROLE_USER")
      * @Template()
      *
