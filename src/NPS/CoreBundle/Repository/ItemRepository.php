@@ -168,6 +168,7 @@ class ItemRepository extends BaseRepository
             ->where('u.id = :userId')
             ->andWhere('i.feed = :feedId')
             ->andWhere('ui.unread = :unread')
+            ->orderBy('i.dateAdd', 'DESC')
             ->setParameter('userId', $userId)
             ->setParameter('feedId', $feedId)
             ->setParameter('unread', true)

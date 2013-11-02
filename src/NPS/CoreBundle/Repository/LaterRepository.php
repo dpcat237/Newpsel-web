@@ -110,6 +110,7 @@ class LaterRepository extends BaseRepository
             ->where('li.later = :laterId')
             ->andWhere('li.unread = :unread')
             ->andWhere('i.id >= :idMin')
+            ->orderBy('i.dateAdd', 'DESC')
             ->setParameter('laterId', $labelId)
             ->setParameter('unread', true)
             ->setParameter('idMin', 1)
