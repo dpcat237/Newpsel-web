@@ -12,4 +12,47 @@ use NPS\CoreBundle\Repository\BaseRepository;
  */
 class UserFeedRepository extends BaseRepository
 {
+    /**
+     * Count active subscribers
+     *
+     * @param $feedId
+     *
+     * @return int
+     */
+    public function countActiveSubscribers($feedId)
+    {
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSCoreBundle:UserFeed');
+        $query = $repository->createQueryBuilder('uf')
+            ->select('count(uf.id)')
+            ->where('uf.feed = :feedId')
+            ->andWhere('uf.deleted = :deleted')
+            ->setParameter('feedId', $feedId)
+            ->setParameter('deleted', false)
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    /**
+     * Get user's feeds list for menu
+     * @param $userId
+     *
+     * @return mixed
+     */
+    public function getUserFeeds($userId)
+    {
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSCoreBundle:UserFeed');
+        $query = $repository->createQueryBuilder('uf')
+            ->where('uf.user = :userId')
+            ->andWhere('uf.deleted = :deleted')
+            ->orderBy('uf.title', 'ASC')
+            ->setParameter('userId', $userId)
+            ->setParameter('deleted', false)
+            ->getQuery();
+        $feedCollection = $query->getResult();
+
+        return $feedCollection;
+    }
 }

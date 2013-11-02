@@ -20,9 +20,9 @@
 
                 <ul class="dropdown-menu block-dark account">
                     {#<li class="first"><a tabindex="-1" href="#"><i class="icon-user"></i> {% trans %}Your profile{% endtrans %}</a></li>
-                    <li class="first"><a tabindex="-1" href="#"><i class="icon-cogs"></i> {% trans %}Settings{% endtrans %}</a></li>
-                    <li class=""><a tabindex="-1" href="{{ url("labels_list") }}"><i class="icon-rss"></i> {% trans %}Manage feeds{% endtrans %}</a></li>#}
-                    <li class="first"><a tabindex="-1" href="{{ url("labels_list") }}"><i class="icon-tags"></i> {% trans %}Manage labels{% endtrans %}</a></li>
+                    <li class="first"><a tabindex="-1" href="#"><i class="icon-cogs"></i> {% trans %}Settings{% endtrans %}</a></li>#}
+                    <li class="first"><a tabindex="-1" href="{{ url("feeds_list") }}"><i class="icon-rss"></i> {% trans %}Manage feeds{% endtrans %}</a></li>
+                    <li class=""><a tabindex="-1" href="{{ url("labels_list") }}"><i class="icon-tags"></i> {% trans %}Manage labels{% endtrans %}</a></li>
                     <li class="last notify-disabled"><a tabindex="-1" href="{{ url("logout") }}"><i class="icon-signout"></i> {% trans %}Logout{% endtrans %}</a></li>
                 </ul>
             </li>

@@ -1,54 +1,23 @@
-{% extends 'NPSFrontendBundle::Default/layout.html.twig' %}
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
 
 {% block content %}
-    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-        <tr valign="top">
-            <td>
-                <!-- step-holder -->
-                {% include "NPSFrontendBundle:Default:step_holder.html.twig" %}
+    <div class="row-fluid">
+        <div class="block span12">
+            <div class="block-body">
+                <div>
+                    <form id="editLater" method="post" action="{{ url('feed_edit', {'feed_id': userFeed.id}) }}" class="wizard" {{ form_enctype(form) }}>
+                        <div class="input-prepend">
+                            <span class="add"><i class="icon-edit"></i></span>
+                            {{ form_widget(form.title, { 'attr' : {'placeholder':'Title', 'class':'input-long' }} ) }}
+                        </div>
 
-                <!-- start id-form -->
-                <form method="post" id="FeedEditForm" {{ form_enctype(form) }}>
-                    <table border="0" cellpadding="0" cellspacing="0"  id="id-form">
-                        <tr>
-                            <th valign="top">{{ form_label(form.title,'Feed title', {'attr' : {'class':''} }) }}</th>
-                            <td>
-                                {% if form_errors(form.title) %}
-                                    {% set name_class = 'inp-form-error' %}
-                                {% else %}
-                                    {% set name_class = 'inp-form' %}
-                                {% endif %}
-                                {{ form_widget(form.title, { 'attr' : {'class':name_class, 'placeholder':'write a title' }} ) }}
-                            </td>
-                            <td>
-                                {% if form_errors(form.title) %}
-                                    <div class="error-left"></div>
-                                    <div class="error-inner">{{ form_errors(form.title) }}</div>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <td valign="top">
+                            <span id="validate-basic-form-valid">
                                 {{ form_row(form._token) }}
-                                <input type="submit" value="" class="form-submit" id="form-submit" />
-                                <input type="reset" value="" class="form-reset" />
-                            </td>
-                            <td></td>
-                        </tr>
-                    </table>
-                </form>
-                <!-- end id-form  -->
-
-            </td>
-            <td>
-                <!--  related-activities -->
-                {% include "NPSFrontendBundle:Default:related_activities.html.twig" %}
-            </td>
-        </tr>
-        <tr>
-            <td><img src="images/shared/blank.gif" width="695" height="1" alt="blank" /></td>
-            <td></td>
-        </tr>
-    </table>
+                                <input type="submit" class="btn  btn-primary" value="{% trans %}Submit{% endtrans %}">
+                            </span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

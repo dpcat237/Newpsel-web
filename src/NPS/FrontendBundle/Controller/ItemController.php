@@ -113,18 +113,19 @@ class ItemController extends BaseController
      *
      * @return array
      *
-     * @Route("/label/{label_id}/item/{user_item_id}", name="item_later_view")
+     * @Route("/label/{label_id}/item/{later_item_id}", name="item_later_view")
      * @Secure(roles="ROLE_USER")
      * @Template()
      *
-     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"item_id": "id", "label_id": "later"}})
+     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"later_item_id": "id", "label_id": "later"}})
      */
     public function viewLaterAction(LaterItem $laterItem)
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
-            $item = $this->get('later_item')->readItem($laterItem);
-            $title = ($item->getFeed() instanceof Feed)? $item->getFeed()->getTitle() : $laterItem->getLater()->getName();
+            $laterItemService = $this->get('later_item');
+            $item = $laterItemService->readItem($laterItem);
+            $title = $laterItemService->getViewTitle($laterItem, $user);
 
             $renderData = array(
                 'item' => $item,
@@ -172,10 +173,10 @@ class ItemController extends BaseController
      *
      * @return JsonResponse
      *
-     * @Route("/label/{label_id}/item/{user_item_id}/mark_read", name="mark_later_read")
+     * @Route("/label/{label_id}/item/{later_item_id}/mark_read", name="mark_later_read")
      * @Secure(roles="ROLE_USER")
      *
-     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"item_id": "id", "label_id": "later"}})
+     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"later_item_id": "id", "label_id": "later"}})
      */
     public function readLaterAction(LaterItem $laterItem)
     {

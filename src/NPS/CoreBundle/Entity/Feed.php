@@ -82,12 +82,6 @@ class Feed extends AbstractEntity
      */
      protected $dateSync;
 
-    /**
-     * @var integer
-     * @ORM\Column(name="date_change", type="integer", nullable=true)
-     */
-    protected $dateChange;
-
 
     /**
      * Constructor
@@ -346,29 +340,6 @@ class Feed extends AbstractEntity
     public function getDateSync()
     {
         return $this->dateSync;
-    }
-
-    /**
-     * Set dateChange
-     * @param \int $dateChange
-     *
-     * @return Feed
-     */
-    public function setDateChange($dateChange = null)
-    {
-        $this->dateChange = (empty($dateChange))? time() : $dateChange;
-
-        return $this;
-    }
-
-    /**
-     * Get dateChange
-     *
-     * @return \int
-     */
-    public function getDateChange()
-    {
-        return $this->dateChange;
     }
 
     /**

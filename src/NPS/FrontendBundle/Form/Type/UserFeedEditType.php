@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 /**
  * Type for a feed edit profile form
  */
-class FeedEditType extends AbstractType
+class UserFeedEditType extends AbstractType
 {
     /**
      * @param OptionsResolverInterface $resolver
@@ -17,7 +17,7 @@ class FeedEditType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'NPS\CoreBundle\Entity\Feed',
+            'data_class' => 'NPS\CoreBundle\Entity\UserFeed',
         ));
     }
 
@@ -39,6 +39,6 @@ class FeedEditType extends AbstractType
      */
     public function getName()
     {
-        return 'editFeed';
+        return 'editUserFeed';
     }
 }

@@ -3,9 +3,10 @@
 namespace NPS\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use NPS\CoreBundle\Entity\Feed;
-use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\AbstractEntity;
+use NPS\CoreBundle\Entity\AbstractEntity,
+    NPS\CoreBundle\Entity\Feed,
+    NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\Traits\DeletedTrait;
 
 /**
  * UserFeed
@@ -16,12 +17,20 @@ use NPS\CoreBundle\Entity\AbstractEntity;
  */
 class UserFeed extends AbstractEntity
 {
+    use DeletedTrait;
+
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Feed", inversedBy="userFeeds")
      * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
      */
     protected $feed;
+
+    /**
+     * @var string
+     * @ORM\Column(name="title", type="string", length=255, nullable=false)
+     */
+    protected $title;
 
     /**
      * @var integer
@@ -64,6 +73,29 @@ class UserFeed extends AbstractEntity
         }
 
         return $feedId;
+    }
+
+    /**
+     * Set title
+     * @param string $title
+     *
+     * @return UserFeed
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     /**

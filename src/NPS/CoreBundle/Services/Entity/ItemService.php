@@ -85,7 +85,14 @@ class ItemService
             $ttl = 86400;
             $this->cache->setex($linkHash, $ttl, $item->getId());
 
-            $this->addItemToSubscribers($item, $feed->getUserFeeds());
+            $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
+            $whereUsersFeeds = array(
+                'feed' => $feed->getId(),
+                'deleted' => false
+            );
+            $usersFeeds = $userFeedRepo->findBy($whereUsersFeeds);
+
+            $this->addItemToSubscribers($item, $usersFeeds);
         }
     }
 

@@ -72,7 +72,7 @@ class DownloadFeedsService
 
         $feed = $this->getFeedByUrl($url);
 
-        if (empty($this->error)) {
+        if (empty($this->error) && $user instanceof User) {
             $this->subscribeUser($user, $feed);
             $this->entityManager->flush();
         }
@@ -137,6 +137,7 @@ class DownloadFeedsService
             }
         } else {
             $feed = $checkFeed;
+            $feed->setEnabled(true);
         }
 
         return $feed;
@@ -274,24 +275,36 @@ class DownloadFeedsService
 
     /**
      * Subscribe user to feed
-     * @param User $user
-     * @param Feed $feed
+     *
+     * @param User $user User
+     * @param Feed $feed Feed
      */
     private function subscribeUser(User $user, Feed $feed)
     {
         if ($user instanceof User) {
             $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
             $feedSubscribed = $feedRepo->checkUserSubscribed($user->getId(), $feed->getId());
-            if (!$feedSubscribed) {
+            if ($feedSubscribed) {
+                $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
+                $whereUserFeed = array(
+                    'feed' => $feed->getId(),
+                    'user' => $user->getId()
+                );
+                $userFeed = $userFeedRepo->findOneBy($whereUserFeed);
+                $userFeed->setDeleted(false);
+                $this->entityManager->persist($userFeed);
+                $this->entityManager->flush();
+            } else {
                 $userFeed = new UserFeed();
                 $userFeed->setUser($user);
                 $userFeed->setFeed($feed);
+                $userFeed->setTitle($feed->getTitle());
                 $this->entityManager->persist($userFeed);
                 $this->entityManager->flush();
 
                 $feed->addUserFeed($userFeed); //just to Doctrine Feed know right now about new userFeed
-                $this->updateFeedData($feed->getId());
             }
+            $this->updateFeedData($feed->getId());
         }
     }
 

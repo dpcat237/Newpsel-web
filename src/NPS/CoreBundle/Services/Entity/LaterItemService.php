@@ -2,7 +2,9 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use NPS\CoreBundle\Entity\LaterItem;
+use NPS\CoreBundle\Entity\LaterItem,
+    NPS\CoreBundle\Entity\User,
+    NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Services\CacheService,
     NPS\CoreBundle\Services\Entity\ItemService;
 
@@ -43,6 +45,27 @@ class LaterItemService
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->item = $item;
+    }
+
+    /**
+     * Get page title for later view
+     *
+     * @param LaterItem $laterItem
+     * @param User $user
+     *
+     * @return string
+     */
+    public function getViewTitle(LaterItem $laterItem, User $user)
+    {
+        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
+        $whereUserFeed = array(
+            'feed' => $laterItem->getUserItem()->getItem()->getFeedId(),
+            'user' => $user->getId()
+        );
+        $userFeed = $userFeedRepo->findOneBy($whereUserFeed);
+        $title = ($userFeed instanceof UserFeed)? $userFeed->getTitle() : $laterItem->getLater()->getName();
+
+        return $title;
     }
 
     /**

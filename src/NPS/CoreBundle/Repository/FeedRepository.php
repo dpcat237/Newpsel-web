@@ -15,8 +15,8 @@ class FeedRepository extends BaseRepository
 {
     /**
      * Check if user is subscribed
-     * @param $userId
-     * @param $feedId
+     * @param int $userId user id
+     * @param int $feedId feed id
      *
      * @return bool
      */
@@ -89,14 +89,14 @@ class FeedRepository extends BaseRepository
         parent::preExecute();
         $repository = $this->em->getRepository('NPSCoreBundle:Feed');
         $query = $repository->createQueryBuilder('f')
-            ->select('f.id AS api_id, f.title, f.website, f.favicon, f.dateChange AS lastUpdate')
+            ->select('f.id AS api_id, uf.title, f.website, f.favicon, uf.dateUp AS lastUpdate')
             ->join('f.userFeeds', 'uf')
-            ->join('uf.user', 'u')
-            ->where('u.id = :userId')
-            ->andWhere('f.dateChange > :lastUpdate')
-            ->orderBy('f.dateUp', 'ASC')
+            ->where('uf.user = :userId')
+            ->andWhere('uf.dateUp > :lastUpdate')
+            ->andWhere('uf.deleted = :deleted')
             ->setParameter('userId', $userId)
             ->setParameter('lastUpdate', $lastUpdate)
+            ->setParameter('deleted', false)
             ->getQuery();
         $feedCollection = $query->getResult();
 

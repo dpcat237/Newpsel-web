@@ -1,26 +1,30 @@
-{% extends 'NPSFrontendBundle::Default/layout.html.twig' %}
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
 
 {% block content %}
-    <!--  start product-table ..................................................................................... -->
-    <form id="mainform" action="">
-        <a href="{{ url('feeds_sync') }}">{% trans %}Sync all{% endtrans %}</a>
-        <table border="0" width="100%" cellpadding="0" cellspacing="0" id="product-table">
-            <tr>
-                <th class="table-header-repeat line-left minwidth-1"><a href="">{% trans %}Title{% endtrans %}</a></th>
-                <th class="table-header-repeat line-left minwidth-1"><a href="">{% trans %}Last sync{% endtrans %}</a></th>
-                <th class="table-header-options line-left"><a href="">{% trans %}Options{% endtrans %}</a></th>
-            </tr>
+    <div class="row-fluid">
+        <div class="block span12 inbox">
+            <div class="block-body">
 
-            {% for feed in feeds %}
-                <tr>
-                    <td><a href="{{ url('items', {'id': feed.id}) }}">{{ feed.title }}<a/></td>
-                    <td>{{ feed.humanDateSync }}</td>
-                    <td class="options-width">
-                        <a href="{{ url('feed_edit', {'id': feed.id}) }}" title="Edit" class="icon-1 info-tooltip"></a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <!-- end product-table................................... -->
-    </form>
+                {% if (userFeeds | length) > 0 %}
+                    <table class="table">
+                        <tbody>
+                        {% for userFeed in userFeeds %}
+                            <tr>
+                                <td class="td-star" style="padding-left: 14px">
+                                    <a href="{{ url('feed_edit', {'feed_id': userFeed.id}) }}" class="no-link icon-pencil" ></a>
+                                </td>
+                                <td class="td-star">
+                                    <a href="{{ url('feed_delete', {'feed_id': userFeed.id}) }}" class="no-link icon-trash" ></a>
+                                </td>
+                                <td class="inbox-message">
+                                    <a class="list-item" href="{{ url('feed_edit', {'feed_id': userFeed.id}) }}" >{{ userFeed.title }}</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
