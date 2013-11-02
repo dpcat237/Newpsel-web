@@ -141,4 +141,14 @@ class Later extends AbstractEntity
     {
         return $this->laterItems;
     }
+
+    /**
+     * Return Later to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
 }

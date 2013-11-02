@@ -12,3 +12,11 @@ notification_401: Review the errors to save your data
 notification_501: Try again after several minutes
 notification_502: Feed's url is wrong
 notification_503: Feed doesn't exists
+
+#*** Menu ***
+_Preference: Settings
+_Manage_feeds: Manage feeds
+_Manage_labels: Manage labels
+_Logout: Logout
+
+_Edit_shared_later: Select label (in it will be saved shared links from mobile device)

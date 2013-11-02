@@ -1,0 +1,23 @@
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="block span12">
+            <div class="block-body">
+                    <div>
+                        <form id="editUserPreferences" method="post" action="{{ url('user_preferences') }}" class="wizard" {{ form_enctype(form) }}>
+                            <div class="input-prepend">
+                                {{ form_label(form.sharedLater ) }}
+                                {{ form_widget(form.sharedLater ) }}
+                            </div>
+
+                            <span id="validate-basic-form-valid">
+                                {{ form_row(form._token) }}
+                                <input type="submit" class="btn  btn-primary" value="{% trans %}Submit{% endtrans %}">
+                            </span>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

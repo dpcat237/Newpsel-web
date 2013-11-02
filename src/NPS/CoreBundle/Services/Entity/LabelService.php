@@ -21,7 +21,7 @@ class LabelService extends AbstractEntityService
     }
 
     /**
-     * Save form of feed to data base
+     * Save form of user label to data base
      * @param Form $form
      */
     public function saveFormLabel(Form $form)

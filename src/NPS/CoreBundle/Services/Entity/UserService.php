@@ -2,7 +2,8 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Symfony\Component\Form\Form;
-use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\User,
+    NPS\CoreBundle\Entity\Preference;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Services\Entity\AbstractEntityService;
 
@@ -11,6 +12,20 @@ use NPS\CoreBundle\Services\Entity\AbstractEntityService;
  */
 class UserService extends AbstractEntityService
 {
+    /**
+     * Save form of user preferences to data base
+     * @param Form $form
+     */
+    public function saveFormPreferences(Form $form)
+    {
+        $formObject = $form->getData();
+        if ($form->isValid() && $formObject instanceof Preference) {
+            $this->saveObject($formObject, true);
+        } else {
+            $this->systemNotification->setMessage(NotificationHelper::ALERT_FORM_DATA);
+        }
+    }
+
     /**
      * Save form of user to data base
      * @param Form $form
@@ -34,6 +49,7 @@ class UserService extends AbstractEntityService
             $user->setRegistered(true);
 
             $this->saveObject($user, true);
+            $this->setPreferenceNewUser($user);
         }
 
         return $check['errors'];
@@ -65,5 +81,25 @@ class UserService extends AbstractEntityService
         );
 
         return $response;
+    }
+
+    /**
+     * Set preference for new user
+     *
+     * @param User $user
+     */
+    protected function setPreferenceNewUser(User $user)
+    {
+        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+        $laterRepo->createLabel($user, 'Read later');
+        $laterRepo->createLabel($user, 'Watch later');
+        $sharedLater = $laterRepo->createLabel($user, 'Shared');
+
+        $preference = new Preference();
+        $preference->setSharedLater($sharedLater);
+        $this->entityManager->persist($preference);
+
+        $user->setPreference($preference);
+        $this->entityManager->flush();
     }
 }

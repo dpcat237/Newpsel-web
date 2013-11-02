@@ -18,7 +18,7 @@ class Preference extends AbstractEntity
     /**
      * @ORM\OneToMany(targetEntity="User", mappedBy="preference")
      **/
-    protected $users;
+    protected $user;
 
     /**
      * @var integer

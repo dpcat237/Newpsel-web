@@ -11,7 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\FrontendBundle\Form\Type\SignInType,
+use NPS\FrontendBundle\Form\Type\PreferenceEditType,
+    NPS\FrontendBundle\Form\Type\SignInType,
     NPS\FrontendBundle\Form\Type\SignUpType;
 
 /**
@@ -21,6 +22,44 @@ use NPS\FrontendBundle\Form\Type\SignInType,
  */
 class UserController extends BaseController
 {
+    /**
+     * Edit user's preferences
+     *
+     * @param Request $request the current request
+     *
+     * @return Response
+     *
+     * @Route("/user/preference", name="user_preferences")
+     * @Template()
+     */
+    public function editPreferencesAction(Request $request)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        $route = $this->container->get('router')->generate('user_preferences');
+        $preference = $user->getPreference();
+        $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
+        $labels = $labelRepo->getUserLabelsQuery($user->getId());
+
+        $formType = new PreferenceEditType($labels);
+        $form = $this->createForm($formType, $preference);
+
+        if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
+            $this->get('user')->saveFormPreferences($form);
+
+            return new RedirectResponse($route);
+        }
+
+        $viewData = array(
+            'title' => 'Edit user settings',
+            'form' => $form->createView(),
+            'label' => $preference,
+        );
+
+        return $viewData;
+    }
+
+
     /**
      * Process a POST for a login
      * @param Request $request

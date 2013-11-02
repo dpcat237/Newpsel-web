@@ -20,6 +20,8 @@ class LaterRepository extends BaseRepository
      * Create label
      * @param User   $user      User
      * @param string $labelName label name
+     *
+     * @return Later | null
      */
     public function createLabel(User $user, $labelName)
     {
@@ -27,9 +29,14 @@ class LaterRepository extends BaseRepository
             $label = new Later();
             $label->setName($labelName);
             $label->setUser($user);
+
             $this->em->persist($label);
             $this->em->flush();
+
+            return $label;
         }
+
+        return null;
     }
 
     /**
@@ -79,6 +86,25 @@ class LaterRepository extends BaseRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * Get query of list of labels of user
+     * @param $userId
+     *
+     * @return string
+     */
+    public function getUserLabelsQuery($userId)
+    {
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSCoreBundle:Later');
+
+        $query = $repository->createQueryBuilder('l')
+            ->where('l.user = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('l.name', 'ASC');
+
+        return $query;
     }
 
     /**
