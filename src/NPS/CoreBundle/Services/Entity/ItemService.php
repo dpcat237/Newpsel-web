@@ -192,17 +192,40 @@ class ItemService
         $userItem = $itemRepo->hasItem($user->getId(), $item->getId());
 
         if ($userItem instanceof UserItem) {
-            $status = $this->getNewStatus($userItem, $change, $statusGet);
-        } else {
-            $userItem = new UserItem();
-            $userItem->setUser($user);
-            $userItem->setItem($item);
-            if ($change == 1) {
-                $status = true;
-            } else {
-                $status = false;
-            }
+            $status = $this->changeUserItemStatus($userItem, $statusGet, $statusSet, $change);
+
+            return $status;
         }
+
+        $userItem = new UserItem();
+        $userItem->setUser($user);
+        $userItem->setItem($item);
+        if ($change == 1) {
+            $status = true;
+        } else {
+            $status = false;
+        }
+
+        $userItem->$statusSet($status);
+        $this->entityManager->persist($userItem);
+        $this->entityManager->flush();
+
+        return $status;
+    }
+
+    /**
+     * Set new user's item status
+     *
+     * @param UserItem $userItem  user's item
+     * @param string   $statusGet status get method name
+     * @param string   $statusSet status set method name
+     * @param int      $change    new status
+     *
+     * @return bool
+     */
+    public function changeUserItemStatus(UserItem $userItem, $statusGet, $statusSet, $change = null)
+    {
+        $status = $this->getNewStatus($userItem, $change, $statusGet);
         $userItem->$statusSet($status);
         $this->entityManager->persist($userItem);
         $this->entityManager->flush();

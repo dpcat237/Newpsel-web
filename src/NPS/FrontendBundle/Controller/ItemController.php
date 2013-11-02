@@ -2,17 +2,19 @@
 
 namespace NPS\FrontendBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use JMS\SecurityExtraBundle\Annotation\Secure;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\JsonResponse,
+    Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
+    Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
+    Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use NPS\CoreBundle\Entity\Feed,
+    NPS\CoreBundle\Entity\Item,
+    NPS\CoreBundle\Entity\Later,
+    NPS\CoreBundle\Entity\LaterItem,
+    NPS\CoreBundle\Entity\UserFeed,
+    NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Entity\Item;
-use NPS\CoreBundle\Entity\Feed;
-use NPS\CoreBundle\Entity\Later;
-use NPS\CoreBundle\Entity\LaterItem;
 
 /**
  * ItemController
@@ -21,25 +23,26 @@ class ItemController extends BaseController
 {
     /**
      * List of items
-     * @param Request $request
-     * @param Feed    $feed
+     * @param Request  $request
+     * @param UserFeed $userFeed
      *
      * @return array
      *
-     * @Route("/feed/{feed_id}/items_list", name="items_list")
+     * @Route("/feed/{user_feed_id}/items_list", name="items_list")
      * @Secure(roles="ROLE_USER")
      * @Template()
      *
-     * @ParamConverter("feed", class="NPSCoreBundle:Feed", options={"id": "feed_id"})
+     * @ParamConverter("userFeed", class="NPSCoreBundle:UserFeed", options={"id": "user_feed_id"})
      */
-    public function listAction(Request $request, Feed $feed)
+    public function listAction(Request $request, UserFeed $userFeed)
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $itemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Item');
-        $itemsList = $itemRepo->getUnreadByFeedUser($user->getId(), $request->get('feed_id'));
+        $userItems = $itemRepo->getUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
         $viewData = array(
-            'items' => $itemsList,
-            'title' => $feed->getTitle()
+            'userItems' => $userItems,
+            'title' => $userFeed->getTitle(),
+            'userFeedId' => $userFeed->getId()
         );
 
         return $viewData;
@@ -75,23 +78,30 @@ class ItemController extends BaseController
 
     /**
      * Show item
-     * @param Item    $item
+     * @param UserItem $userItem user's item
+     * @param UserFeed $userFeed user's feed
      *
      * @return array
      *
-     * @Route("/feed/{feed_id}/item/{item_id}", name="item_view")
+     * @Route("/feed/{user_feed_id}/item/{user_item_id}", name="item_view")
      * @Secure(roles="ROLE_USER")
      * @Template()
      *
-     * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
+     * @ParamConverter("userFeed", class="NPSCoreBundle:UserFeed", options={"id": "user_feed_id"})
      */
-    public function viewAction(Item $item)
+    public function viewAction(UserItem $userItem, UserFeed $userFeed)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $this->get('item')->changeStatus($user, $item, "isUnread", "setUnread", 2);
+        if ($user->getId() != $userItem->getUserId()) {
+            $route = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()));
+            return new RedirectResponse($route);
+        }
+
+        $this->get('item')->changeUserItemStatus($userItem, "isUnread", "setUnread", 2);
         $renderData = array(
-            'item' => $item,
-            'title' => $item->getFeed()->getTitle()
+            'userItem' => $userItem,
+            'title' => $userFeed->getTitle()
         );
 
         return $renderData;
@@ -103,7 +113,7 @@ class ItemController extends BaseController
      *
      * @return array
      *
-     * @Route("/label/{label_id}/item/{item_id}", name="item_later_view")
+     * @Route("/label/{label_id}/item/{user_item_id}", name="item_later_view")
      * @Secure(roles="ROLE_USER")
      * @Template()
      *
@@ -127,21 +137,26 @@ class ItemController extends BaseController
 
     /**
      * Change stat of item to read/unread
-     * @param Request $request
-     * @param Item    $item
+     * @param Request  $request  Request
+     * @param UserItem $userItem user's item
      *
      * @return JsonResponse
      *
-     * @Route("/feed/{feed_id}/item/{item_id}/mark_read/{status}", name="mark_read", defaults={"status" = null})
+     * @Route("/feed/{user_feed_id}/item/{user_item_id}/mark_read/{status}", name="mark_read", defaults={"status" = null})
      * @Secure(roles="ROLE_USER")
      *
-     * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
      */
-    public function readAction(Request $request, Item $item)
+    public function readAction(Request $request, UserItem $userItem)
     {
         $status = $request->get('status');
         $user = $this->get('security.context')->getToken()->getUser();
-        $status = $this->get('item')->changeStatus($user, $item, "isUnread", "setUnread", $status);
+        if ($user->getId() != $userItem->getUserId()) {
+
+            return new JsonResponse(false);
+        }
+
+        $status = $this->get('item')->changeUserItemStatus($userItem, "isUnread", "setUnread", $status);
         $result = ($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
 
         $response = array (
@@ -157,7 +172,7 @@ class ItemController extends BaseController
      *
      * @return JsonResponse
      *
-     * @Route("/label/{label_id}/item/{item_id}/mark_read", name="mark_later_read")
+     * @Route("/label/{label_id}/item/{user_item_id}/mark_read", name="mark_later_read")
      * @Secure(roles="ROLE_USER")
      *
      * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"item_id": "id", "label_id": "later"}})
@@ -181,19 +196,24 @@ class ItemController extends BaseController
 
     /**
      * Add/remove star to item
-     * @param Item    $item
+     * @param UserItem $userItem user's item
      *
      * @return JsonResponse
      *
-     * @Route("/feed/{feed_id}/item/{item_id}/mark_star", name="mark_star")
+     * @Route("/feed/{user_feed_id}/item/{user_item_id}/mark_star", name="mark_star")
      * @Secure(roles="ROLE_USER")
      *
-     * @ParamConverter("item", class="NPSCoreBundle:Item", options={"mapping": {"item_id": "id", "feed_id": "feed"}})
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
      */
-    public function starAction(Item $item)
+    public function starAction(UserItem $userItem)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $status = $this->get('item')->changeStatus($user, $item, "isStared", "setStared");
+        if ($user->getId() != $userItem->getUserId()) {
+
+            return new JsonResponse(false);
+        }
+
+        $status = $this->get('item')->changeUserItemStatus($userItem, "isStared", "setStared");
         $result =($status)? NotificationHelper::OK_IS_NOT_STARED : NotificationHelper::OK_IS_STARED ;
 
         $response = array (

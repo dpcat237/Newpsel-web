@@ -1,6 +1,7 @@
 {% extends 'NPSFrontendBundle::layout.html.twig' %}
 
 {% block content %}
+    {% set item = userItem.item %}
     <div class="row-fluid">
         <div class="block span12">
             <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>

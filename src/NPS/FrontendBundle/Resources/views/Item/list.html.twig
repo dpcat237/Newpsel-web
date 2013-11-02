@@ -28,17 +28,18 @@
 
                 <table class="table">
                     <tbody>
-                    {% for userItem in items %}
+                    {% for userItem in userItems %}
                         {% set item = userItem.item %}
                         <tr>
                             <td class="td-star" style="padding-left: 7px">
-                                <i class="readAction{% if userItem.unread %} icon-check-empty{% else %} icon-check{% endif %}" data-url="{{ url('mark_read', {'feed_id': item.feedId, 'item_id': item.id}) }}" data-id="{{ item.id }}" ></i>
+                                <i class="readAction{% if userItem.unread %} icon-check-empty{% else %} icon-check{% endif %}" data-url="{{ url('mark_read', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}"
+                                   data-id="{{ userItem.id }}" ></i>
                             </td>
                             <td class="td-star">
-                                <i class="starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}" data-url="{{ url('mark_star', {'feed_id': item.feedId, 'item_id': item.id}) }}" ></i>
+                                <i class="starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}" data-url="{{ url('mark_star', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}" ></i>
                             </td>
                             <td class="inbox-message">
-                                <a id="itemText-id-{{ item.id }}" class="list-item{% if userItem.unread %} bold{% endif %}" href="{{ url('item_view', {'feed_id': item.feedId, 'item_id': item.id}) }}">{{ item.title|raw }}</a>
+                                <a id="itemText-id-{{ userItem.id }}" class="list-item{% if userItem.unread %} bold{% endif %}" href="{{ url('item_view', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}">{{ item.title|raw }}</a>
                             </td>
                             <td class="center dateColumn">{{ item.humanDateAdd }}</td>
                         </tr>
