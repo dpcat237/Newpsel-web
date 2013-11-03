@@ -8,6 +8,7 @@ use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Services\Entity\FeedService,
+    NPS\CoreBundle\Services\Entity\FeedHistoryService,
     NPS\CoreBundle\Services\Entity\ItemService;
 
 /**
@@ -33,6 +34,11 @@ class DownloadFeedsService
     private $feedS;
 
     /**
+     * @var FeedHistoryService
+     */
+    private $feedHistoryS;
+
+    /**
      * @var ItemService
      */
     private $itemS;
@@ -53,13 +59,14 @@ class DownloadFeedsService
     private $error = null;
 
     /**
-     * @param Registry    $doctrine Doctrine Registry
-     * @param SimplePie   $rss      SimplePie
-     * @param Client      $redis    Redis Client
-     * @param FeedService $feed     FeedService
-     * @param ItemService $itemS    ItemService
+     * @param Registry           $doctrine     Doctrine Registry
+     * @param SimplePie          $rss          SimplePie
+     * @param Client             $redis        Redis Client
+     * @param FeedService        $feed         FeedService
+     * @param ItemService        $itemS        ItemService
+     * @param FeedHistoryService $feedHistoryS FeedHistoryService
      */
-    public function __construct(Registry $doctrine, SimplePie $rss, Client $redis, FeedService $feed, ItemService $itemS)
+    public function __construct(Registry $doctrine, SimplePie $rss, Client $redis, FeedService $feed, ItemService $itemS, FeedHistoryService $feedHistoryS)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
@@ -67,6 +74,7 @@ class DownloadFeedsService
         $this->redis = $redis;
         $this->feedS = $feed;
         $this->itemS = $itemS;
+        $this->feedHistoryS = $feedHistoryS;
     }
 
     /**
@@ -152,18 +160,20 @@ class DownloadFeedsService
     /**
      * Check if feed content is changed
      *
-     * @param $feedId
-     * @param $url
+     * @param Feed $feed Feed
      *
      * @return bool
      */
-    protected function checkDataChanged($feedId, $url)
+    protected function checkDataChanged(Feed $feed)
     {
-        $currentHash = sha1_file($url);
-        if ($currentHash == $this->redis->hget(self::REDIS_KEY, "feed_".$feedId."_data_hash")) {
+        $currentHash = sha1_file($feed->getUrl());
+        if ($currentHash == $this->redis->hget(self::REDIS_KEY, "feed_".$feed->getId()."_data_hash")) {
+            $this->feedHistoryS->dataIsSame($feed);
+
             return false;
         }
-        $this->redis->hset(self::REDIS_KEY, "feed_".$feedId."_data_hash", $currentHash);
+        $this->redis->hset(self::REDIS_KEY, "feed_".$feed->getId()."_data_hash", $currentHash);
+        $this->feedHistoryS->dataChanged($feed);
 
         return true;
     }
@@ -181,7 +191,7 @@ class DownloadFeedsService
         $feed = $this->createFeedProcess($url);
         if (empty($this->error)) {
             $this->feedS->subscribeUser($user, $feed);
-            $this->updateFeedData($feed->getId());
+            $this->updateFeedData($feed);
             $this->entityManager->flush();
 
             return $feed;
@@ -355,17 +365,16 @@ class DownloadFeedsService
 
     /**
      * Update feed's data
-     * @param integer $feedId
+     *
+     * @param Feed $feed Feed
      *
      * @return array
      */
-    public function updateFeedData($feedId)
+    public function updateFeedData(Feed $feed)
     {
         $error = null;
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-        $feed = $feedRepo->find($feedId);
 
-        if ($feed instanceof Feed && $this->checkDataChanged($feed->getId(), $feed->getUrl())) {
+        if ($this->checkDataChanged($feed)) {
             $error = $this->beginUpdateFeedData($feed);
         } else {
             $error = NotificationHelper::ALERT_FEED_UPDATE_NOT_NEEDED;

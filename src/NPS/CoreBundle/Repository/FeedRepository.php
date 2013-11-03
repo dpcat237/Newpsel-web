@@ -56,6 +56,27 @@ class FeedRepository extends BaseRepository
     }
 
     /**
+     * Get feeds to updated data
+     *
+     * @return mixed
+     */
+    public function getFeedsToUpdateData()
+    {
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSCoreBundle:Feed');
+        $query = $repository->createQueryBuilder('f')
+            ->where('f.enabled = :enabled')
+            ->andWhere('(f.dateSync + f.syncInterval) <= :currentTime')
+            ->orderBy('f.syncInterval', 'ASC')
+            ->setParameter('enabled', true)
+            ->setParameter('currentTime', time())
+            ->getQuery();
+        $feedCollection = $query->getResult();
+
+        return $feedCollection;
+    }
+
+    /**
      * Get user's feeds list
      * @param $userId
      *

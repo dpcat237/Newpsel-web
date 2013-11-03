@@ -5,11 +5,12 @@ namespace NPS\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-use NPS\CoreBundle\Entity\Item;
-use NPS\CoreBundle\Entity\UserFeed;
+use NPS\CoreBundle\Entity\AbstractEntity,
+    NPS\CoreBundle\Entity\FeedHistory,
+    NPS\CoreBundle\Entity\Item,
+    NPS\CoreBundle\Entity\UserFeed,
+    NPS\CoreBundle\Entity\Traits\EnabledTrait;
 use NPS\CoreBundle\Helper\DisplayHelper;
-use NPS\CoreBundle\Entity\AbstractEntity;
-use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 
 /**
  * Feed
@@ -82,12 +83,25 @@ class Feed extends AbstractEntity
      */
      protected $dateSync;
 
+    /**
+     * @var integer
+     * @ORM\Column(name="sync_interval", type="integer")
+     */
+    protected $syncInterval = 1800;
+
+    /**
+     * @var integer
+     * @ORM\OneToMany(targetEntity="FeedHistory", mappedBy="feed")
+     */
+    protected $history;
+
 
     /**
      * Constructor
      */
     public function __construct()
     {
+        $this->history = new ArrayCollection();
         $this->items = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
     }
@@ -343,6 +357,29 @@ class Feed extends AbstractEntity
     }
 
     /**
+     * Set syncInterval
+     * @param \int $syncInterval
+     *
+     * @return Feed
+     */
+    public function setSyncInterval($syncInterval)
+    {
+        $this->syncInterval = $syncInterval;
+
+        return $this;
+    }
+
+    /**
+     * Get syncInterval
+     *
+     * @return \int
+     */
+    public function getSyncInterval()
+    {
+        return $this->syncInterval;
+    }
+
+    /**
      * Get added date with human format
      *
      * @return integer
@@ -352,4 +389,26 @@ class Feed extends AbstractEntity
         return DisplayHelper::displayDate($this->dateSync);
     }
 
+    /**
+     * Add history
+     * @param FeedHistory $history
+     *
+     * @return Feed
+     */
+    public function addHistory(FeedHistory $history)
+    {
+        $this->history[] = $history;
+
+        return $this;
+    }
+
+    /**
+     * Get history
+     *
+     * @return Collection
+     */
+    public function getHistory()
+    {
+        return $this->history;
+    }
 }

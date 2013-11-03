@@ -45,10 +45,10 @@ class FeedCommand extends ContainerAwareCommand
 
         $log->info('*** Start feeds sync ***');
         $feedRepo = $container->get('doctrine')->getRepository('NPSCoreBundle:Feed');
-        $feeds = $feedRepo->findBy(array('enabled' => true));
+        $feeds = $feedRepo->getFeedsToUpdateData();
 
         foreach ($feeds as $feed) {
-            $downloadFeeds->updateFeedData($feed->getId());
+            $downloadFeeds->updateFeedData($feed);
         }
 
         $log->info('*** Synchronized successfully ***');

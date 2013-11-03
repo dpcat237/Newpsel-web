@@ -15,11 +15,12 @@ services:
     download_feeds:
         class: NPS\CoreBundle\Services\DownloadFeedsService
         arguments:
-            doctrine:   @doctrine
-            simple_pie: @fkr_simple_pie.rss
-            redis:      @snc_redis.default
-            feed:       @feed
-            item:       @item
+            doctrine:     @doctrine
+            simple_pie:   @fkr_simple_pie.rss
+            redis:        @snc_redis.default
+            feed:         @feed
+            item:         @item
+            feed_history: @feed_history
 
     server_cache:
         class: NPS\CoreBundle\Services\CacheService
@@ -43,6 +44,13 @@ services:
 #Entities
     feed:
         class: NPS\CoreBundle\Services\Entity\FeedService
+        arguments:
+            doctrine:            @doctrine
+            logger:              @logger
+            system_notification: @system_notification
+
+    feed_history:
+        class: NPS\CoreBundle\Services\Entity\FeedHistoryService
         arguments:
             doctrine:            @doctrine
             logger:              @logger
