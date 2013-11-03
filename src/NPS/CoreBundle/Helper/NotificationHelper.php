@@ -37,6 +37,7 @@ class NotificationHelper extends Helper
     /*Notice*/
     /*Alert*/
     CONST ALERT_FORM_DATA = 401;
+    CONST ALERT_FEED_UPDATE_NOT_NEEDED = 402;
     /*Error*/
     CONST ERROR_TRY_AGAIN = 501;
 

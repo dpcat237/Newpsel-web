@@ -2,79 +2,97 @@
 namespace NPS\CoreBundle\Services;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Predis\Client;
 use \SimplePie;
+use NPS\CoreBundle\Entity\Feed,
+    NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Entity\Feed;
-use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Entity\UserFeed;
-use NPS\CoreBundle\Services\Entity\ItemService;
+use NPS\CoreBundle\Services\Entity\FeedService,
+    NPS\CoreBundle\Services\Entity\ItemService;
 
 /**
  * DownloadFeedsService
  */
 class DownloadFeedsService
 {
+    CONST REDIS_KEY = 'feed';
+
     /**
-     * @var $doctrine Doctrine
+     * @var Doctrine
      */
     private $doctrine;
 
     /**
-     * @var $entityManager Entity Manager
+     * @var Entity Manager
      */
     private $entityManager;
-    
+
     /**
-     * @var $itemS ItemService
+     * @var FeedService
+     */
+    private $feedS;
+
+    /**
+     * @var ItemService
      */
     private $itemS;
 
     /**
-     * @var $rss SimplePie RSS
+     * @var SimplePie RSS
      */
     private $rss;
 
     /**
-     * @var $error Last process error
+     * @var Redis Client
+     */
+    private $redis;
+
+    /**
+     * @var Last process error
      */
     private $error = null;
 
     /**
-     * @param Registry     $doctrine Doctrine Registry
-     * @param SimplePie    $rss      SimplePie
-     * @param ItemService  $itemS    ItemService
+     * @param Registry    $doctrine Doctrine Registry
+     * @param SimplePie   $rss      SimplePie
+     * @param Client      $redis    Redis Client
+     * @param FeedService $feed     FeedService
+     * @param ItemService $itemS    ItemService
      */
-    public function __construct(Registry $doctrine, SimplePie $rss, ItemService $itemS)
+    public function __construct(Registry $doctrine, SimplePie $rss, Client $redis, FeedService $feed, ItemService $itemS)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
-        $this->itemS = $itemS;
         $this->rss = $rss;
+        $this->redis = $redis;
+        $this->feedS = $feed;
+        $this->itemS = $itemS;
     }
 
     /**
-     * Subscribe to feed
+     * Create feed if necessary and subscribe to it
      * @param string $url
      * @param User   $user
      *
      * @throws Exception it's necessary set $rss
      * @return array
      */
-    public function createFeed($url, $user = null)
+    public function addFeed($url, User $user)
     {
-        $feed = null;
-        $url = $this->fixUrl($url);
-        $url = $this->removeUnnecessaryCharactersUrl($url);
+        $url = $this->checkUrl($url);
+        if (!$url) {
+            $result['feed'] = null;
+            $result['error'] = $this->error;
 
-        if (!$url || !$this->validateFeedUrl($url)) {
-            $this->error = 302;
+            return $result;
         }
 
-        $feed = $this->getFeedByUrl($url);
-
-        if (empty($this->error) && $user instanceof User) {
-            $this->subscribeUser($user, $feed);
-            $this->entityManager->flush();
+        $feed = $this->feedS->checkFeedByUrl($url);
+        if ($feed instanceof Feed) {
+            $this->feedS->subscribeUser($user, $feed);
+            $this->itemS->addLastItemsNewUser($user, $feed);
+        } else {
+            $feed = $this->createFeed($url, $user);
         }
 
         $result['feed'] = $feed;
@@ -84,63 +102,113 @@ class DownloadFeedsService
     }
 
     /**
-     * Update feed's data
-     * @param integer $feedId
-     *
-     * @return array
+     * Add news items of feed
+     * @param Feed $feed Feed
      */
-    public function updateFeedData($feedId)
+    private function addNewItems(Feed $feed)
     {
-        $error = null;
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-        $feed = $feedRepo->find($feedId);
-
-        if ($feed instanceof Feed) {
-            $this->rss->set_feed_url($feed->getUrl());
-            $this->rss->set_parser_class();
-            $this->rss->get_raw_data();
-            $this->rss->init();
-            $rssError = $this->rss->error();
-
-            if (empty($rssError)) {
-                $this->addNewItems($feed);
-            } else {
-                $error = $rssError;
-            }
+        if (!$feed->getDateSync()) {
+            //get last 25 items
+            $newItems = $this->getItemNew($this->rss->get_items());
         } else {
-            $error = 303;
+            //get all items since last sync
+            $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
         }
-        $result['error'] = $error;
 
-        return $result;
+        if (count($newItems)) {
+            foreach ($newItems as $newItem) {
+                $this->itemS->addItem($newItem, $feed);
+            }
+
+            //update last sync data
+            $feed->setDateSync();
+            $this->entityManager->persist($feed);
+            $this->entityManager->flush();
+        }
     }
 
-
     /**
-     * Private functions
-     */
-
-    /**
-     * Get Feed by url or create new one
-     * @param $url
+     * Begin update process of feed's data
      *
-     * @return Feed
+     * @param Feed $feed
+     *
+     * @return array|null|string
      */
-    private function getFeedByUrl($url)
+    protected function beginUpdateFeedData(Feed $feed)
     {
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-        $checkFeed = $feedRepo->checkExistFeedUrl($url);
-        if (!$checkFeed instanceof Feed) {
-            $feed = $this->createFeedProcess($url);
-            if (!$feed instanceof Feed) {
-                $this->error = $checkFeed['error'];
-            }
+        $error = null;
+        $this->initRss($feed->getUrl());
+        $rssError = $this->rss->error();
+
+        if (empty($rssError)) {
+            $this->addNewItems($feed);
         } else {
-            $feed = $checkFeed;
-            $feed->setEnabled(true);
+            $error = $rssError;
         }
 
-        return $feed;
+        return $error;
+    }
+
+    /**
+     * Check if feed content is changed
+     *
+     * @param $feedId
+     * @param $url
+     *
+     * @return bool
+     */
+    protected function checkDataChanged($feedId, $url)
+    {
+        $currentHash = sha1_file($url);
+        if ($currentHash == $this->redis->hget(self::REDIS_KEY, "feed_".$feedId."_data_hash")) {
+            return false;
+        }
+        $this->redis->hset(self::REDIS_KEY, "feed_".$feedId."_data_hash", $currentHash);
+
+        return true;
+    }
+
+    /**
+     * Create new feed, subscribe an user and update feed's data
+     *
+     * @param $url
+     * @param User $user
+     *
+     * @return Feed|null
+     */
+    protected function createFeed($url, User $user)
+    {
+        $feed = $this->createFeedProcess($url);
+        if (empty($this->error)) {
+            $this->feedS->subscribeUser($user, $feed);
+            $this->updateFeedData($feed->getId());
+            $this->entityManager->flush();
+
+            return $feed;
+        }
+
+        return null;
+    }
+
+    /**
+     * Fix and check url
+     *
+     * @param $url
+     *
+     * @return null|string
+     */
+    protected function checkUrl($url)
+    {
+        $url = $this->fixUrl($url);
+        $url = $this->removeUnnecessaryCharactersUrl($url);
+
+        if (!$url || !$this->validateFeedUrl($url)) {
+            $this->error = NotificationHelper::ERROR_WRONG_FEED;
+
+            return null;
+        }
+
+        return $url;
     }
 
     /**
@@ -153,11 +221,7 @@ class DownloadFeedsService
         $feed = null;
 
         try {
-            $this->rss->set_feed_url($url);
-            $this->rss->set_parser_class();
-            $this->rss->get_raw_data();
-            $this->rss->init();
-
+            $this->initRss($url);
             if ($this->rss->get_title()) {
                 $feed = new Feed();
                 $feed->setUrl($url);
@@ -221,32 +285,6 @@ class DownloadFeedsService
     }
 
     /**
-     * Add news items of feed
-     * @param Feed $feed Feed
-     */
-    private function addNewItems(Feed $feed)
-    {
-        if (!$feed->getDateSync()) {
-            //get last 25 items
-            $newItems = $this->getItemNew($this->rss->get_items());
-        } else {
-            //get all items since last sync
-            $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
-        }
-
-        if (count($newItems)) {
-            foreach ($newItems as $newItem) {
-                $this->itemS->addItem($newItem, $feed);
-            }
-
-            //update last sync data
-            $feed->setDateSync();
-            $this->entityManager->persist($feed);
-            $this->entityManager->flush();
-        }
-    }
-
-    /**
      * Fix url
      * @param string $url
      *
@@ -274,38 +312,16 @@ class DownloadFeedsService
     }
 
     /**
-     * Subscribe user to feed
+     * Init RSS
      *
-     * @param User $user User
-     * @param Feed $feed Feed
+     * @param $url
      */
-    private function subscribeUser(User $user, Feed $feed)
+    protected function initRss($url)
     {
-        if ($user instanceof User) {
-            $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-            $feedSubscribed = $feedRepo->checkUserSubscribed($user->getId(), $feed->getId());
-            if ($feedSubscribed) {
-                $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
-                $whereUserFeed = array(
-                    'feed' => $feed->getId(),
-                    'user' => $user->getId()
-                );
-                $userFeed = $userFeedRepo->findOneBy($whereUserFeed);
-                $userFeed->setDeleted(false);
-                $this->entityManager->persist($userFeed);
-                $this->entityManager->flush();
-            } else {
-                $userFeed = new UserFeed();
-                $userFeed->setUser($user);
-                $userFeed->setFeed($feed);
-                $userFeed->setTitle($feed->getTitle());
-                $this->entityManager->persist($userFeed);
-                $this->entityManager->flush();
-
-                $feed->addUserFeed($userFeed); //just to Doctrine Feed know right now about new userFeed
-            }
-            $this->updateFeedData($feed->getId());
-        }
+        $this->rss->set_feed_url($url);
+        $this->rss->set_parser_class();
+        $this->rss->get_raw_data();
+        $this->rss->init();
     }
 
     /**
@@ -335,5 +351,27 @@ class DownloadFeedsService
         $parts = parse_url($url);
 
         return ($parts['scheme'] == 'http' || $parts['scheme'] == 'feed' || $parts['scheme'] == 'https');
+    }
+
+    /**
+     * Update feed's data
+     * @param integer $feedId
+     *
+     * @return array
+     */
+    public function updateFeedData($feedId)
+    {
+        $error = null;
+        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
+        $feed = $feedRepo->find($feedId);
+
+        if ($feed instanceof Feed && $this->checkDataChanged($feed->getId(), $feed->getUrl())) {
+            $error = $this->beginUpdateFeedData($feed);
+        } else {
+            $error = NotificationHelper::ALERT_FEED_UPDATE_NOT_NEEDED;
+        }
+        $result['error'] = $error;
+
+        return $result;
     }
 }

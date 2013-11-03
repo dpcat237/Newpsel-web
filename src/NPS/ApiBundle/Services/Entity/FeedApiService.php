@@ -53,11 +53,13 @@ class FeedApiService
         $unreadItems = array();
 
         $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
+        if ($user instanceof User) {
+            $checkCreate = $this->downloadFeeds->addFeed($feedUrl, $user);
+        } else {
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
-        $checkCreate = $this->downloadFeeds->createFeed($feedUrl, $user);
+
         if (!empty($checkCreate['error'])) {
             $error = NotificationHelper::ERROR_WRONG_FEED;
         }

@@ -116,6 +116,7 @@ class ItemRepository extends BaseRepository
 
     /**
      * Get last feed items
+     *
      * @param $feedId
      * @param int $limit
      *
@@ -127,7 +128,7 @@ class ItemRepository extends BaseRepository
         $repository = $this->em->getRepository('NPSCoreBundle:Item');
         $query = $repository->createQueryBuilder('i')
             ->where('i.feed = :feedId')
-            ->orderBy('i.feed', 'DESC')
+            ->orderBy('i.dateAdd', 'DESC')
             ->setMaxResults($limit)
             ->setParameter('feedId', $feedId)
             ->getQuery();

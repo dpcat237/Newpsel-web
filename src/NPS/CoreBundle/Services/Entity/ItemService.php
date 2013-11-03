@@ -97,6 +97,26 @@ class ItemService
     }
 
     /**
+     * Add last items to new user
+     *
+     * @param User $user
+     * @param Feed $feed
+     */
+    public function addLastItemsNewUser(User $user, Feed $feed)
+    {
+        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        $items = $itemRepo->getLast($feed->getId());
+
+        foreach ($items as $item) {
+            if (!$itemRepo->hasItem($user->getId(), $item->getId())) {
+                $userItem = $this->addUserItem($user, $item);
+                $this->entityManager->persist($userItem);
+            }
+        }
+        $this->entityManager->flush();
+    }
+
+    /**
      * Add page / item to selected label or if exists set as unread
      * @param User   $user
      * @param id     $labelId
@@ -149,6 +169,38 @@ class ItemService
     }
 
     /**
+     * Add item to subscribers
+     *
+     * @param Item  $item      Item
+     * @param array $feedUsers feed users
+     */
+    private function addItemToSubscribers($item, $feedUsers)
+    {
+        foreach ($feedUsers as $feedUser) {
+            $userItem = $this->addUserItem($feedUser->getUser(), $item);
+            $this->entityManager->persist($userItem);
+        }
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Add new user item
+     *
+     * @param User $user
+     * @param Item $item
+     *
+     * @return UserItem
+     */
+    protected function addUserItem(User $user, Item $item)
+    {
+        $userItem = new UserItem();
+        $userItem->setUser($user);
+        $userItem->setItem($item);
+
+        return $userItem;
+    }
+
+    /**
      * Check if exist item by url
      * @param $link
      *
@@ -164,22 +216,6 @@ class ItemService
         } else {
             return null;
         }
-    }
-
-    /**
-     * Add item to subscribers
-     * @param Item  $item
-     * @param array $userFeeds
-     */
-    private function addItemToSubscribers($item, $userFeeds)
-    {
-        foreach ($userFeeds as $userFeed) {
-            $userItem = new UserItem();
-            $userItem->setUser($userFeed->getUser());
-            $userItem->setItem($item);
-            $this->entityManager->persist($userItem);
-        }
-        $this->entityManager->flush();
     }
 
     /**

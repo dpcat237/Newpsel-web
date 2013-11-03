@@ -63,7 +63,7 @@ class FeedController extends BaseController
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
             $downloadFeeds = $this->get('download_feeds');
-            $checkCreate = $downloadFeeds->createFeed($request->get('feed'), $user);
+            $checkCreate = $downloadFeeds->addFeed($request->get('feed'), $user);
 
             if ($checkCreate['error']) {
                 $this->get('system_notification')->setMessage($checkCreate['error']);
