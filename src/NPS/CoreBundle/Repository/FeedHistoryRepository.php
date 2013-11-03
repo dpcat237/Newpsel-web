@@ -29,8 +29,11 @@ class FeedHistoryRepository extends BaseRepository
             ->setMaxResults(1)
             ->setParameter('feedId', $feedId)
             ->getQuery();
-        $feedCollection = $query->getSingleResult();
+        $collection = $query->getResult();
+        foreach ($collection as $value) {
+            return $value;
+        }
 
-        return $feedCollection;
+        return null;
     }
 }
