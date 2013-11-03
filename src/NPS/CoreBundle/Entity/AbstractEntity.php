@@ -9,7 +9,6 @@ use NPS\CoreBundle\Helper\DisplayHelper;
 /**
  * Base Web User
  *
- * @ORM\HasLifecycleCallbacks
  * @ORM\MappedSuperclass
  */
 abstract class AbstractEntity
