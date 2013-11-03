@@ -166,26 +166,4 @@ class FeedController extends BaseController
 
         return $viewData;
     }
-
-    /**
-     * Sync all feeds
-     *
-     * @return Response
-     *
-     * @Secure(roles="ROLE_USER")
-     */
-    public function syncAction()
-    {
-        $downloadFeeds = $this->container->get('download_feeds');
-        $route = $this->container->get('router')->generate('feeds');
-        $feedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Feed');
-
-        $feeds = $feedRepo->findAll();
-        foreach ($feeds as $feed) {
-            $downloadFeeds->updateFeedData($feed->getId());
-        }
-
-        return new RedirectResponse($route);
-    }
-
 }
