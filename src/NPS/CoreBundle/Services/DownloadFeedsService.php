@@ -256,7 +256,6 @@ class DownloadFeedsService
                 $feed->setTitle($this->rss->get_title());
                 $feed->setWebsite($this->rss->get_link());
                 $feed->setLanguage($this->rss->get_language());
-                $feed->setDateChange();
                 $this->entityManager->persist($feed);
             } else {
                 $this->error = NotificationHelper::ERROR_WRONG_FEED;
