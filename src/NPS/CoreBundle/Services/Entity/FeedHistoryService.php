@@ -10,6 +10,9 @@ use NPS\CoreBundle\Services\Entity\AbstractEntityService;
  */
 class FeedHistoryService extends AbstractEntityService
 {
+    CONST MIN_INTERVAL = 900;   //60*15    = 900 seconds   = 15 minutes
+    CONST MAX_INTERVAL = 86400; //60*60*24 = 86400 seconds = 24 hours
+
     /**
      * Add new feed's history and put counter to one
      *
@@ -20,6 +23,63 @@ class FeedHistoryService extends AbstractEntityService
         $feedHistory = new FeedHistory();
         $feedHistory->setFeed($feed);
         $this->entityManager->persist($feedHistory);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Check if it's necessary decrease sync interval
+     *
+     * @param Feed  $feed        feed object
+     * @param array $historyData feed sync history
+     */
+    protected function checkDecreaseInterval(Feed $feed, $historyData)
+    {
+        if ($historyData['countAvg'] < 2 && $historyData['countMin'] == 1 && $feed->getSyncInterval() != self::MIN_INTERVAL) {
+            $newSyncInterval =(($feed->getSyncInterval()-self::MIN_INTERVAL) < self::MIN_INTERVAL)? self::MIN_INTERVAL : $feed->getSyncInterval()-self::MIN_INTERVAL;
+            $this->changeSyncInterval($feed, $newSyncInterval);
+        }
+    }
+
+    /**
+     * Check if is necessary increase sync interval
+     *
+     * @param Feed  $feed        feed object
+     * @param array $historyData feed sync history
+     */
+    protected function checkIncreaseInterval(Feed $feed, $historyData)
+    {
+        //increase one hour
+        if ($historyData['countMin'] > 50) {
+            $newSyncInterval =(($feed->getSyncInterval() + (60*60)) > self::MAX_INTERVAL)? self::MAX_INTERVAL : $feed->getSyncInterval() + (60*60);
+            $this->changeSyncInterval($feed, $newSyncInterval);
+
+            return;
+        }
+
+        //increase half hour
+        if ($historyData['countMin'] > 20) {
+            $newSyncInterval =(($feed->getSyncInterval() + (60*30)) > self::MAX_INTERVAL)? self::MAX_INTERVAL : $feed->getSyncInterval() + (60*30);
+            $this->changeSyncInterval($feed, $newSyncInterval);
+
+            return;
+        }
+        //increase 15 minutes
+        if ($historyData['countMin'] > 1 && $historyData['countAvg'] > 2) {
+            $newSyncInterval =(($feed->getSyncInterval() + (60*15)) > self::MAX_INTERVAL)? self::MAX_INTERVAL : $feed->getSyncInterval() + (60*15);
+            $this->changeSyncInterval($feed, $newSyncInterval);
+        }
+    }
+
+    /**
+     * Change feed's sync interval
+     *
+     * @param Feed $feed            feed object
+     * @param int  $newSyncInterval new sync interval in seconds
+     */
+    protected function changeSyncInterval(Feed $feed, $newSyncInterval)
+    {
+        $feed->setSyncInterval($newSyncInterval);
+        $this->entityManager->persist($feed);
         $this->entityManager->flush();
     }
 
@@ -56,7 +116,8 @@ class FeedHistoryService extends AbstractEntityService
             return;
         }
 
-        if ($feedHistory->isFinished()) {
+        $historyLimit = time() - (60*60*24);
+        if ($feedHistory->isFinished() || $feedHistory->getDateAdd() < $historyLimit) {
             $this->addNewHistory($feed);
         } else {
             $this->plusCounter($feedHistory);
@@ -90,8 +151,8 @@ class FeedHistoryService extends AbstractEntityService
     /**
      * Update feed's sync history
      *
-     * @param Feed $feed
-     * @param $countNewItems
+     * @param Feed $feed          feed object
+     * @param int  $countNewItems count of new items added from source to data base
      */
     public function updateFeedSyncHistory(Feed $feed, $countNewItems)
     {
@@ -99,6 +160,28 @@ class FeedHistoryService extends AbstractEntityService
             $this->dataChanged($feed);
         } else {
             $this->dataIsSame($feed);
+        }
+    }
+
+    /**
+     * If is necessary update feed sync interval
+     *
+     * @param Feed $feed
+     */
+    public function updateSyncInterval(Feed $feed)
+    {
+        $feedHistoryRepo = $this->doctrine->getRepository('NPSCoreBundle:FeedHistory');
+        $feedDayHistory = $feedHistoryRepo->getDayHistory($feed->getId());
+        if (!is_array($feedDayHistory) || !$feedDayHistory['id']) {
+            return;
+        }
+
+        if ($feedDayHistory['countAvg'] < 2 && $feedDayHistory['countMin'] == 1 && $feed->getSyncInterval() > self::MIN_INTERVAL) {
+            $this->checkDecreaseInterval($feed, $feedDayHistory);
+        }
+
+        if ($feedDayHistory['countMin'] > 1 && $feed->getSyncInterval() < self::MAX_INTERVAL){
+            $this->checkIncreaseInterval($feed, $feedDayHistory);
         }
     }
 }

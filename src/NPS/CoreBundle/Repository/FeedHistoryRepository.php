@@ -13,6 +13,35 @@ use NPS\CoreBundle\Repository\BaseRepository;
 class FeedHistoryRepository extends BaseRepository
 {
     /**
+     * Get daily history of feed
+     *
+     * @param $feedId
+     *
+     * @return mixed
+     */
+    public function getDayHistory($feedId)
+    {
+        parent::preExecute();
+        $repository = $this->em->getRepository('NPSCoreBundle:FeedHistory');
+        $lastDay = time() - (60 * 60 * 24);
+
+        $query = $repository->createQueryBuilder('fh')
+            ->select('fh.id, MIN(fh.countWaiting) AS countMin, AVG(fh.countWaiting) AS countAvg, MAX(fh.countWaiting) AS countMax')
+            ->where('fh.feed = :feedId')
+            ->andWhere('fh.dateUp > :lastDay')
+            ->orderBy('fh.id', 'DESC')
+            ->setParameter('feedId', $feedId)
+            ->setParameter('lastDay', $lastDay)
+            ->getQuery();
+        $collection = $query->getResult();
+        foreach ($collection as $value) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
      * Get last feed history
      *
      * @param $feedId
@@ -35,5 +64,21 @@ class FeedHistoryRepository extends BaseRepository
         }
 
         return null;
+    }
+
+    /**
+     * Remove history older than one month
+     */
+    public function removeOldHistory()
+    {
+        parent::preExecute();
+        $lastDay = time() - (60 * 60 * 24 * 30);
+        $repository = $this->em->getRepository('NPSCoreBundle:FeedHistory');
+        $query = $repository->createQueryBuilder('fh')
+            ->delete()
+            ->where('fh.dateAdd < :lastDay')
+            ->setParameter('lastDay', $lastDay)
+            ->getQuery();
+        $query->execute();
     }
 }

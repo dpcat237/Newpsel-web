@@ -1,10 +1,8 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: denys
+ * Created by Denys Pasishnyi.
  * Date: 4/12/13
  * Time: 9:39 PM
- * To change this template use File | Settings | File Templates.
  */
 
 namespace NPS\CoreBundle\Command;
@@ -14,14 +12,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class FeedCommand
+ * Class FeedSyncCommand
  *
  * @package NPS\CoreBundle\Command
  */
-class FeedCommand extends ContainerAwareCommand
+class FeedSyncCommand extends ContainerAwareCommand
 {
     /**
-     * configure of FeedCommand
+     * configure of FeedSyncCommand
      */
     protected function configure()
     {
