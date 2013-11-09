@@ -86,4 +86,19 @@ class FeedHistoryService extends AbstractEntityService
         $this->entityManager->persist($feedHistory);
         $this->entityManager->flush();
     }
+
+    /**
+     * Update feed's sync history
+     *
+     * @param Feed $feed
+     * @param $countNewItems
+     */
+    public function updateFeedSyncHistory(Feed $feed, $countNewItems)
+    {
+        if ($countNewItems > 0) {
+            $this->dataChanged($feed);
+        } else {
+            $this->dataIsSame($feed);
+        }
+    }
 }

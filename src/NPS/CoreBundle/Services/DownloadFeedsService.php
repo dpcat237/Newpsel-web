@@ -3,8 +3,10 @@ namespace NPS\CoreBundle\Services;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Predis\Client;
-use \SimplePie;
+use \SimplePie,
+    \SimplePie_Item;
 use NPS\CoreBundle\Entity\Feed,
+    NPS\CoreBundle\Entity\Item,
     NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Services\Entity\FeedService,
@@ -19,6 +21,11 @@ class DownloadFeedsService
     CONST REDIS_KEY = 'feed';
 
     /**
+     * @var int
+     */
+    private $countNewItems;
+
+    /**
      * @var Doctrine
      */
     private $doctrine;
@@ -27,6 +34,11 @@ class DownloadFeedsService
      * @var Entity Manager
      */
     private $entityManager;
+
+    /**
+     * @var Last process error
+     */
+    private $error = null;
 
     /**
      * @var FeedService
@@ -53,10 +65,6 @@ class DownloadFeedsService
      */
     private $redis;
 
-    /**
-     * @var Last process error
-     */
-    private $error = null;
 
     /**
      * @param Registry           $doctrine     Doctrine Registry
@@ -111,27 +119,34 @@ class DownloadFeedsService
 
     /**
      * Add news items of feed
-     * @param Feed $feed Feed
+     *
+     * @param Feed  $feed     Feed
+     * @param array $newItems array of new items to sync
      */
-    private function addNewItems(Feed $feed)
+    private function addNewItems(Feed $feed, $newItems)
     {
-        if (!$feed->getDateSync()) {
-            //get last 25 items
-            $newItems = $this->getItemNew($this->rss->get_items());
-        } else {
-            //get all items since last sync
-            $newItems = $this->getItemSync($this->rss->get_items(), $feed->getDateSync());
+        $this->countNewItems = 0;
+        foreach ($newItems as $newItem) {
+            $this->addUpdateItem($newItem, $feed);
         }
 
-        if (count($newItems)) {
-            foreach ($newItems as $newItem) {
-                $this->itemS->addItem($newItem, $feed);
-            }
+        //update last sync data
+        $feed->setDateSync();
+        $this->entityManager->persist($feed);
+        $this->entityManager->flush();
 
-            //update last sync data
-            $feed->setDateSync();
-            $this->entityManager->persist($feed);
-            $this->entityManager->flush();
+        //update feed sync history
+        $this->feedHistoryS->updateFeedSyncHistory($feed, $this->countNewItems);
+    }
+
+    protected function addUpdateItem(SimplePie_Item $itemData, Feed $feed)
+    {
+        $item = $this->itemS->checkExistByLink($itemData->get_link());
+        if ($item instanceof Item) {
+            $this->itemS->updateItemContent($item, $itemData);
+        } else {
+            $this->itemS->addNewItem($itemData, $feed);
+            $this->countNewItems++;
         }
     }
 
@@ -140,7 +155,7 @@ class DownloadFeedsService
      *
      * @param Feed $feed
      *
-     * @return array|null|string
+     * @return null|string
      */
     protected function beginUpdateFeedData(Feed $feed)
     {
@@ -148,10 +163,13 @@ class DownloadFeedsService
         $this->initRss($feed->getUrl());
         $rssError = $this->rss->error();
 
-        if (empty($rssError)) {
-            $this->addNewItems($feed);
-        } else {
-            $error = $rssError;
+        if ($rssError) {
+            return $rssError;
+        }
+
+        $newItems = $this->getItemToSync($feed);
+        if(count($newItems)) {
+            $this->addNewItems($feed, $newItems);
         }
 
         return $error;
@@ -173,7 +191,6 @@ class DownloadFeedsService
             return false;
         }
         $this->redis->hset(self::REDIS_KEY, "feed_".$feed->getId()."_data_hash", $currentHash);
-        $this->feedHistoryS->dataChanged($feed);
 
         return true;
     }
@@ -253,19 +270,19 @@ class DownloadFeedsService
     }
 
     /**
-     * Get last 25 items for new feed
-     * @param array $items
+     * Get new items since last sync of feed
+     * @param array   $items
+     * @param integer $dateSync
      *
      * @return array
      */
-    private function getItemNew($items)
+    private function getAllItemsSync($items, $dateSync)
     {
-        $c = 0;
         $newItems = array();
         foreach ($items as $item) {
-            $newItems[] = $item;
-            $c++;
-            if ($c >= 25) {
+            if ($item->get_date('U') > $dateSync) {
+                $newItems[] = $item;
+            } else {
                 break;
             }
         }
@@ -274,19 +291,39 @@ class DownloadFeedsService
     }
 
     /**
-     * Get new items since last sync of feed
-     * @param array   $items
-     * @param integer $dateSync
+     * Get necessary items to sync
+     *
+     * @param Feed $feed
      *
      * @return array
      */
-    private function getItemSync($items, $dateSync)
+    protected function getItemToSync(Feed $feed)
     {
+        if (!$feed->getDateSync()) {
+            //get last 25 items
+            $newItems = $this->getLasItemsSync($this->rss->get_items());
+        } else {
+            //get all items since last sync
+            $newItems = $this->getAllItemsSync($this->rss->get_items(), $feed->getDateSync());
+        }
+
+        return $newItems;
+    }
+
+    /**
+     * Get last 25 items for new feed
+     * @param array $items
+     *
+     * @return array
+     */
+    private function getLasItemsSync($items)
+    {
+        $c = 0;
         $newItems = array();
         foreach ($items as $item) {
-            if ($item->get_date('U') > $dateSync) {
-                $newItems[] = $item;
-            } else {
+            $newItems[] = $item;
+            $c++;
+            if ($c >= 25) {
                 break;
             }
         }

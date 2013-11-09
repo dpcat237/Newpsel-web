@@ -56,47 +56,6 @@ class ItemService
     }
 
     /**
-     * Add item
-     * @param SimplePie_Item $itemData SimplePie_Item
-     * @param Feed           $feed     Feed
-     */
-    public function addItem(SimplePie_Item $itemData, Feed $feed)
-    {
-        $item = $this->checkExistByLink($itemData->get_link());
-        if ($item instanceof Item) {
-            $item->setTitle($itemData->get_title());
-            $item->setContent($itemData->get_content());
-
-            $this->entityManager->persist($item);
-            $this->entityManager->flush();
-        } else {
-            $item = new Item();
-            $item->setFeed($feed);
-            $item->setDateAdd($itemData->get_date('U'));
-            $item->setContentHash(sha1($itemData->get_content()));
-            $item->setLink($itemData->get_link());
-            $item->setTitle($this->purifier->purify($itemData->get_title()));
-            $item->setContent($this->purifier->purify($itemData->get_content()));
-
-            $this->entityManager->persist($item);
-            $this->entityManager->flush();
-
-            $linkHash = "item_url_hash_".sha1($itemData->get_link());
-            $ttl = 86400;
-            $this->cache->setex($linkHash, $ttl, $item->getId());
-
-            $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
-            $whereUsersFeeds = array(
-                'feed' => $feed->getId(),
-                'deleted' => false
-            );
-            $usersFeeds = $userFeedRepo->findBy($whereUsersFeeds);
-
-            $this->addItemToSubscribers($item, $usersFeeds);
-        }
-    }
-
-    /**
      * Add last items to new user
      *
      * @param User $user
@@ -114,6 +73,39 @@ class ItemService
             }
         }
         $this->entityManager->flush();
+    }
+
+    /**
+     * Add new item
+     *
+     * @param SimplePie_Item $itemData
+     * @param Feed $feed
+     */
+    public function addNewItem(SimplePie_Item $itemData, Feed $feed)
+    {
+        $item = new Item();
+        $item->setFeed($feed);
+        $item->setDateAdd($itemData->get_date('U'));
+        $item->setContentHash(sha1($itemData->get_content()));
+        $item->setLink($itemData->get_link());
+        $item->setTitle($this->purifier->purify($itemData->get_title()));
+        $item->setContent($this->purifier->purify($itemData->get_content()));
+
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
+
+        $linkHash = "item_url_hash_".sha1($itemData->get_link());
+        $ttl = 86400;
+        $this->cache->setex($linkHash, $ttl, $item->getId());
+
+        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
+        $whereUsersFeeds = array(
+            'feed' => $feed->getId(),
+            'deleted' => false
+        );
+        $usersFeeds = $userFeedRepo->findBy($whereUsersFeeds);
+
+        $this->addItemToSubscribers($item, $usersFeeds);
     }
 
     /**
@@ -298,5 +290,20 @@ class ItemService
         }
 
         return $status;
+    }
+
+    /**
+     * Update content of exists item
+     *
+     * @param Item $item
+     * @param SimplePie_Item $itemData
+     */
+    public function updateItemContent(Item $item , SimplePie_Item $itemData)
+    {
+        $item->setTitle($itemData->get_title());
+        $item->setContent($itemData->get_content());
+
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
     }
 }
