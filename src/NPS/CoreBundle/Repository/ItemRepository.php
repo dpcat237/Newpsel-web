@@ -100,7 +100,7 @@ class ItemRepository extends BaseRepository
             $query = $repository->createQueryBuilder('i')
                 ->select('i.id AS api_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add')
                 ->leftJoin('i.userItems', 'ui')
-                ->leftJoin('i.feed', 'f')
+                ->rightJoin('i.feed', 'f')
                 ->where('ui.unread = :unread')
                 ->andWhere('ui.user = :userId')
                 ->setParameter('unread', true)

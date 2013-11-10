@@ -139,6 +139,12 @@ class DownloadFeedsService
         $this->feedHistoryS->updateFeedSyncHistory($feed, $this->countNewItems);
     }
 
+    /**
+     * Add or update existing item
+     *
+     * @param SimplePie_Item $itemData
+     * @param Feed $feed
+     */
     protected function addUpdateItem(SimplePie_Item $itemData, Feed $feed)
     {
         $item = $this->itemS->checkExistByLink($itemData->get_link());
