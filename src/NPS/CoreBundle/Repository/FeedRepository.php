@@ -113,7 +113,7 @@ class FeedRepository extends BaseRepository
             ->select('f.id AS api_id, uf.title, f.website, f.favicon, uf.dateUp AS lastUpdate')
             ->join('f.userFeeds', 'uf')
             ->where('uf.user = :userId')
-            ->andWhere('uf.dateUp > :lastUpdate')
+            ->andWhere('uf.dateUp >= :lastUpdate')
             ->andWhere('uf.deleted = :deleted')
             ->setParameter('userId', $userId)
             ->setParameter('lastUpdate', $lastUpdate)
