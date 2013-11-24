@@ -32,14 +32,14 @@ class FeedController extends BaseController
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserFeed');
-        $itemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Item');
+        $userItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
         $userFeeds = $userFeedRepo->getUserFeeds($user->getId());
 
         $feedsList = array();
         foreach ($userFeeds as $userFeed) {
             $addFeed['id'] = $userFeed->getId();
             $addFeed['title'] = $userFeed->getTitle();
-            $addFeed['count'] = $itemRepo->countUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
+            $addFeed['count'] = $userItemRepo->countUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
             $feedsList[] = $addFeed;
             $addFeed = null;
         }

@@ -23,7 +23,6 @@ class ItemController extends BaseController
 {
     /**
      * List of items
-     * @param Request  $request
      * @param UserFeed $userFeed
      *
      * @return array
@@ -34,11 +33,11 @@ class ItemController extends BaseController
      *
      * @ParamConverter("userFeed", class="NPSCoreBundle:UserFeed", options={"id": "user_feed_id"})
      */
-    public function listAction(Request $request, UserFeed $userFeed)
+    public function listAction(UserFeed $userFeed)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $itemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Item');
-        $userItems = $itemRepo->getUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
+        $userItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
+        $userItems = $userItemRepo->getUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
         $viewData = array(
             'userItems' => $userItems,
             'title' => $userFeed->getTitle(),

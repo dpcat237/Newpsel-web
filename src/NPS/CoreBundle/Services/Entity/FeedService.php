@@ -95,8 +95,8 @@ class FeedService extends AbstractEntityService
      */
     public function subscribeUser(User $user, Feed $feed)
     {
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-        $feedSubscribed = $feedRepo->checkUserSubscribed($user->getId(), $feed->getId());
+        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
+        $feedSubscribed = $userFeedRepo->checkUserSubscribed($user->getId(), $feed->getId());
         if ($feedSubscribed) {
             $this->activateSubscribedUser($user, $feed);
         } else {

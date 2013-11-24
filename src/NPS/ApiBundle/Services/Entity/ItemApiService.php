@@ -161,9 +161,9 @@ class ItemApiService
      */
     protected function syncViewedItems($userId, $items)
     {
-        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
         foreach ($items as $itemData) {
-            $userItem = $itemRepo->hasItem($userId, $itemData['id']);
+            $userItem = $userItemRepo->hasItem($userId, $itemData['id']);
             $userItem->setUnread($itemData['is_unread']);
             $userItem->setStared($itemData['is_stared']);
             $this->entityManager->persist($userItem);

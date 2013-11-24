@@ -64,10 +64,11 @@ class ItemService
     public function addLastItemsNewUser(User $user, Feed $feed)
     {
         $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
         $items = $itemRepo->getLast($feed->getId());
 
         foreach ($items as $item) {
-            if (!$itemRepo->hasItem($user->getId(), $item->getId())) {
+            if (!$userItemRepo->hasItem($user->getId(), $item->getId())) {
                 $userItem = $this->addUserItem($user, $item);
                 $this->entityManager->persist($userItem);
             }
@@ -223,8 +224,8 @@ class ItemService
      */
     public function changeStatus(User $user, Item $item, $statusGet, $statusSet, $change = null)
     {
-        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-        $userItem = $itemRepo->hasItem($user->getId(), $item->getId());
+        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
+        $userItem = $userItemRepo->hasItem($user->getId(), $item->getId());
 
         if ($userItem instanceof UserItem) {
             $status = $this->changeUserItemStatus($userItem, $statusGet, $statusSet, $change);
