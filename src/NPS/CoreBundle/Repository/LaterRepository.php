@@ -18,6 +18,7 @@ class LaterRepository extends EntityRepository
 {
     /**
      * Create label
+     *
      * @param User   $user      User
      * @param string $labelName label name
      *
@@ -101,8 +102,9 @@ class LaterRepository extends EntityRepository
 
     /**
      * Get user's labels list for api
-     * @param int   $userId
-     * @param int   $lastUpdate
+     *
+     * @param int $userId
+     * @param int $lastUpdate
      *
      * @return array
      */
@@ -126,6 +128,7 @@ class LaterRepository extends EntityRepository
 
     /**
      * Get user's labels list for api
+     *
      * @param int   $userId
      * @param int   $lastUpdate
      * @param array $changedLabels
@@ -152,92 +155,6 @@ class LaterRepository extends EntityRepository
             ->getQuery();
         $collection = $query->getResult();
 
-        return $this->addLabelsApiIds($collection, $createdIds);
-    }
-
-    /**
-     * Extract user labels data for api
-     * @param $collection
-     * @param $createdIds
-     *
-     * @return array
-     */
-    private function addLabelsApiIds($collection, $createdIds){
-        foreach ($collection as $key => $value) {
-            $collection[$key]['id'] = 0;
-            if (count($createdIds)) {
-                foreach ($createdIds as $apiId => $webId) {
-                    if ($value['api_id'] == $webId) {
-                        $collection[$key]['id'] = $apiId;
-                    }
-                }
-            }
-        }
-
         return $collection;
-    }
-
-    /**
-     * @param integer $userId
-     * @param array   $items
-     */
-    public function syncLaterItems($userId, $items)
-    {
-        $entityManager = $this->getEntityManager();
-        $userItemRepo = $entityManager->getRepository('NPSCoreBundle:UserItem');
-        $laterItemRepo = $entityManager->getRepository('NPSCoreBundle:LaterItem');
-
-        foreach ($items as $itemData) {
-            $itemId = $itemData['item_id'];
-            $labelId = $itemData['label_id'];
-            $userItem = $userItemRepo->hasItem($userId, $itemId);
-            if ($userItem instanceof UserItem) {
-                $laterItem = $laterItemRepo->laterExists($labelId, $userItem->getId());
-                if ($laterItem instanceof LaterItem) {
-                    $laterItem->setUnread(true);
-                    $entityManager->persist($laterItem);
-                } else {
-                    $laterItem = new LaterItem();
-                    $laterItem->setLater($this->find($labelId));
-                    $laterItem->setUserItem($userItem);
-                    $entityManager->persist($laterItem);
-                }
-            }
-        }
-        $entityManager->flush();
-    }
-
-    /**
-     * Sync labels from device
-     * @param User $user
-     * @param $changedLabels
-     *
-     * @return array
-     */
-    public function syncLabels(User $user, $changedLabels)
-    {
-        $createdIds = null;
-        $entityManager = $this->getEntityManager();
-        foreach ($changedLabels as $changedLabel) {
-            if ($changedLabel['id']) {
-                $label = $this->find($changedLabel['id']);
-                $label->setName($changedLabel['name']);
-                $entityManager->persist($label);
-                $entityManager->flush();
-            } else {
-                $label = $this->hasLabelByName($user->getId(), $changedLabel['name']);
-                if (!$label instanceof Later) {
-                    $label = new Later();
-                    $label->setUser($user);
-                }
-                $label->setName($changedLabel['name']);
-                $entityManager->persist($label);
-                $entityManager->flush();
-
-                $createdIds[$changedLabel['api_id']] = $label->getId();
-            }
-        }
-
-        return $createdIds;
     }
 }

@@ -3,7 +3,8 @@ namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
-use NPS\CoreBundle\Services\CrawlerService;
+use NPS\CoreBundle\Services\CrawlerService,
+    NPS\CoreBundle\Services\Entity\LabelService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
@@ -23,20 +24,27 @@ class LabelApiService
     private $doctrine;
 
     /**
+     * @var LabelService
+     */
+    private $labelService;
+
+    /**
      * @var SecureService
      */
     private $secure;
 
 
     /**
-     * @param CrawlerService $crawler  CrawlerService
-     * @param Registry       $doctrine Doctrine Registry
-     * @param SecureService  $secure   SecureService
+     * @param CrawlerService $crawler      CrawlerService
+     * @param Registry       $doctrine     Doctrine Registry
+     * @param SecureService  $secure       SecureService
+     * @param LabelService   $labelService LabelService
      */
-    public function __construct(CrawlerService $crawler, Registry $doctrine, SecureService $secure)
+    public function __construct(CrawlerService $crawler, Registry $doctrine, SecureService $secure, LabelService $labelService)
     {
         $this->crawler = $crawler;
         $this->doctrine = $doctrine;
+        $this->labelService = $labelService;
         $this->secure = $secure;
     }
 
@@ -92,13 +100,7 @@ class LabelApiService
         }
 
         if (empty($error)){
-            $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-            if (count($changedLabels)) {
-                $createdIds = $labelRepo->syncLabels($user, $changedLabels);
-                $labelCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels, $createdIds);
-            } else {
-                $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
-            }
+            $this->labelService->syncLabelsApi($user, $changedLabels, $lastUpdate);
         }
         $responseData = array(
             'error' => $error,
@@ -109,13 +111,14 @@ class LabelApiService
     }
 
     /**
-     * Sync later items and execute crawler
+     * Sync later item from API to database
+     *
      * @param $appKey
      * @param $laterItems
      *
      * @return array
      */
-    public function syncLaterItems($appKey, $laterItems)
+    public function syncLaterItemsApi($appKey, $laterItems)
     {
         $error = false;
         $result = false;
@@ -127,8 +130,7 @@ class LabelApiService
         }
 
         if (empty($error) && is_array($laterItems) && count($laterItems)){
-            $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-            $labelRepo->syncLaterItems($user->getId(), $laterItems);
+            $this->labelService->syncLaterItems($user->getId(), $laterItems);
             //get complete content for partial articles
             $this->crawler->executeCrawling($user->getId());
 

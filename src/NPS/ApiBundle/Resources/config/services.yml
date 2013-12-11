@@ -16,7 +16,7 @@ services:
         class: NPS\ApiBundle\Services\Entity\FeedApiService
         arguments:
             doctrine:           @doctrine
-            api.secure.service: @api.secure.service
+            api.secure.service: @api.secure.servicew
             download_feeds:     @download_feeds
 
     api.item.service:
@@ -32,3 +32,4 @@ services:
             crawler:            @crawler
             doctrine:           @doctrine
             api.secure.service: @api.secure.service
+            label:              @label
