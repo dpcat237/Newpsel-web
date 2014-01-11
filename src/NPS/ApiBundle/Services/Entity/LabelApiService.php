@@ -100,7 +100,7 @@ class LabelApiService
         }
 
         if (empty($error)){
-            $this->labelService->syncLabelsApi($user, $changedLabels, $lastUpdate);
+            $labelCollection = $this->labelService->syncLabelsApi($user, $changedLabels, $lastUpdate);
         }
         $responseData = array(
             'error' => $error,
