@@ -16,7 +16,7 @@ services:
         class: NPS\ApiBundle\Services\Entity\FeedApiService
         arguments:
             doctrine:           @doctrine
-            api.secure.service: @api.secure.servicew
+            api.secure.service: @api.secure.service
             download_feeds:     @download_feeds
 
     api.item.service:
