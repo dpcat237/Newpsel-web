@@ -158,7 +158,7 @@ class ItemService
     public function addSharedItems(User $user, $sharedItems)
     {
         foreach ($sharedItems as $sharedItem) {
-            $this->addPageToLater($user, $user->getPreference()->getSharedLaterId(), $sharedItem['title'], $sharedItem['text']);
+            $this->addPageToLater($user, $sharedItem['label_api_id'], $sharedItem['title'], $sharedItem['text']);
         }
     }
 
