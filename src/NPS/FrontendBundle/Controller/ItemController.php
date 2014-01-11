@@ -63,8 +63,8 @@ class ItemController extends BaseController
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($label->getUserId() == $user->getId()) {
-            $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
-            $itemsList = $labelRepo->getUnread($label->getId());
+            $labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
+            $itemsList = $labelItemRepo->getUnread($label->getId());
 
             $viewData = array(
                 'items' => $itemsList,
