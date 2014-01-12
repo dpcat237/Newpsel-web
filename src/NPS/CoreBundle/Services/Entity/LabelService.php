@@ -118,6 +118,7 @@ class LabelService extends AbstractEntityService
     {
         $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
 
         foreach ($items as $itemData) {
             $itemId = $itemData['item_id'];
@@ -130,7 +131,7 @@ class LabelService extends AbstractEntityService
                     $this->entityManager->persist($laterItem);
                 } else {
                     $laterItem = new LaterItem();
-                    $laterItem->setLater($this->find($labelId));
+                    $laterItem->setLater($laterRepo->find($labelId));
                     $laterItem->setUserItem($userItem);
                     $this->entityManager->persist($laterItem);
                 }
