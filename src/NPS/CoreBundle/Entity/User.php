@@ -24,7 +24,7 @@ class User extends AbstractUserFeed
 
     /**
      * @var integer
-     * @ORM\OneToOne(targetEntity="Preference")
+     * @ORM\OneToOne(targetEntity="Preference", inversedBy="user")
      * @ORM\JoinColumn(name="preference_id", referencedColumnName="id")
      */
     protected $preference;
