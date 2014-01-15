@@ -75,4 +75,30 @@ class UserFeedRepository extends EntityRepository
 
         return $feedCollection;
     }
+
+    /**
+     * Get user's feeds with count of user's items
+     *
+     * @param integer $userId
+     *
+     * @return array
+     */
+    public function getUserFeedsForMenu($userId)
+    {
+        $itemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
+        $userFeedTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserFeed')->getTableName();
+        $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
+        $query = "SELECT uf.feed_id AS id, uf.title, (
+            SELECT COUNT(ui.id) count
+            FROM ".$userItemTable." ui
+            INNER JOIN ".$itemTable." i ON i.id=ui.item_id
+            WHERE ui.user_id=uf.user_id AND ui.unread=1 AND i.feed_id=uf.feed_id) AS count
+            FROM ".$userFeedTable." uf
+            WHERE uf.user_id=".$userId." AND uf.deleted=0
+            GROUP BY uf.feed_id
+            ORDER BY uf.title ASC;";
+        $result = $this->getEntityManager()->getConnection()->executeQuery($query)->fetchAll();
+
+        return $result;
+    }
 }

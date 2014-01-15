@@ -134,17 +134,18 @@ class LabelController extends BaseController
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
-        $labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
+        $labels = $labelRepo->getLabelsForMenu($user->getId());
+
+        /*$labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
         $labelsCollection = $labelRepo->getUserLabel($user->getId());
         $labels = array();
-
 
         foreach ($labelsCollection as $lab) {
             $label['id'] = $lab->getId();
             $label['name'] = $lab->getName();
             $label['count'] = count($labelItemRepo->getUnread($label['id']));
             $labels[] = $label;
-        }
+        }*/
 
         $viewData = array(
             'labels' => $labels
