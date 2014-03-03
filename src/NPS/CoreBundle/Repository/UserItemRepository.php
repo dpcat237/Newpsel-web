@@ -79,4 +79,22 @@ class UserItemRepository extends EntityRepository
 
         return $itemCollection;
     }
+
+    /**
+     * Update user items status
+     *
+     * @param array $userItems
+     */
+    public function syncViewedItems($userItems)
+    {
+        $query = "START TRANSACTION; ";
+        $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
+
+        foreach ($userItems as $itemData) {
+            $query.= "UPDATE ".$userItemTable." SET stared=".$itemData['is_stared'].", unread=".$itemData['is_unread']." WHERE id=".$itemData['ui_id']."; ";
+        }
+        $query .= "COMMIT;";
+
+        $this->getEntityManager()->getConnection()->executeQuery($query);
+    }
 }

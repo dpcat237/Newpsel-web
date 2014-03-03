@@ -143,7 +143,7 @@ class ItemApiService
         $unreadItems = array();
         $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
         if (is_array($viewedItems) && count($viewedItems)) {
-            $this->syncViewedItems($user->getId(), $viewedItems);
+            $this->doctrine->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($viewedItems);
         }
 
         if ($download) {
@@ -151,23 +151,5 @@ class ItemApiService
         }
 
         return $unreadItems;
-    }
-
-    /**
-     * Keep en data base changes of items status
-     *
-     * @param integer $userId user id
-     * @param array   $items  array of items data from api
-     */
-    protected function syncViewedItems($userId, $items)
-    {
-        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
-        foreach ($items as $itemData) {
-            $userItem = $userItemRepo->hasItem($userId, $itemData['id']);
-            $userItem->setUnread($itemData['is_unread']);
-            $userItem->setStared($itemData['is_stared']);
-            $this->entityManager->persist($userItem);
-        }
-        $this->entityManager->flush();
     }
 }
