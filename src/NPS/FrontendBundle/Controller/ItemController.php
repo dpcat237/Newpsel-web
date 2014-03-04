@@ -38,6 +38,7 @@ class ItemController extends BaseController
         $user = $this->get('security.context')->getToken()->getUser();
         $userItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
         $userItems = $userItemRepo->getUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
+
         $viewData = array(
             'userItems' => $userItems,
             'title' => $userFeed->getTitle(),
@@ -93,7 +94,7 @@ class ItemController extends BaseController
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($user->getId() != $userItem->getUserId()) {
-            $route = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()));
+            $route = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getFeedId()));
             return new RedirectResponse($route);
         }
 

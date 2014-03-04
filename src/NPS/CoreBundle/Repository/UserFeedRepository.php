@@ -88,7 +88,7 @@ class UserFeedRepository extends EntityRepository
         $itemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
         $userFeedTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserFeed')->getTableName();
         $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
-        $query = "SELECT uf.feed_id AS id, uf.title, (
+        $query = "SELECT uf.id AS id, uf.title, (
             SELECT COUNT(ui.id) count
             FROM ".$userItemTable." ui
             INNER JOIN ".$itemTable." i ON i.id=ui.item_id

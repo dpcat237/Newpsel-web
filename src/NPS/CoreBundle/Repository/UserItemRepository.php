@@ -65,9 +65,8 @@ class UserItemRepository extends EntityRepository
     public function getUnreadByFeedUser($userId, $feedId)
     {
         $query = $this->createQueryBuilder('ui')
-            ->join('ui.item', 'i')
-            ->join('ui.user', 'u')
-            ->where('u.id = :userId')
+            ->leftJoin('ui.item', 'i')
+            ->where('ui.user = :userId')
             ->andWhere('i.feed = :feedId')
             ->andWhere('ui.unread = :unread')
             ->orderBy('i.dateAdd', 'DESC')
