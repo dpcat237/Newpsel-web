@@ -25,7 +25,7 @@ class ItemRepository extends EntityRepository
     {
         if ($feedId) {
             $query = $this->createQueryBuilder('i')
-                ->select('i.id AS api_id, f.id AS feed_id, ui.id AS ui_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add')
+                ->select('i.id AS api_id, ui.id AS ui_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add')
                 ->leftJoin('i.userItems', 'ui')
                 ->innerJoin('i.feed', 'f')
                 ->where('ui.unread = :unread')
@@ -39,7 +39,7 @@ class ItemRepository extends EntityRepository
                 ->getQuery();
         } else {
             $query = $this->createQueryBuilder('i')
-                ->select('i.id AS api_id, f.id AS feed_id, ui.id AS ui_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add')
+                ->select('i.id AS api_id, ui.id AS ui_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add')
                 ->leftJoin('i.userItems', 'ui')
                 ->innerJoin('i.feed', 'f')
                 ->where('ui.unread = :unread')
