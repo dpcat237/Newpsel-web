@@ -34,19 +34,6 @@ class FeedController extends BaseController
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserFeed');
         $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId());
 
-
-        /*$userItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
-        $userFeeds = $userFeedRepo->getUserFeeds($user->getId());
-
-        $feedsList = array();
-        foreach ($userFeeds as $userFeed) {
-            $addFeed['id'] = $userFeed->getId();
-            $addFeed['title'] = $userFeed->getTitle();
-            $addFeed['count'] = $userItemRepo->countUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
-            $feedsList[] = $addFeed;
-            $addFeed = null;
-        }*/
-
         return array('userFeeds' =>  $feedsList);
     }
 

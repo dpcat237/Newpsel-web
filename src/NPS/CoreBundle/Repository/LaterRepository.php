@@ -109,12 +109,13 @@ class LaterRepository extends EntityRepository
     {
         $laterTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Later')->getTableName();
         $laterItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:LaterItem')->getTableName();
-        $query = "SELECT l.id, l.name, COUNT(li.id) AS count
+        $query = "SELECT l.id, l.name, (
+                SELECT COUNT(li.id) AS count
+                FROM ".$laterItemTable." li
+                WHERE li.unread=1 AND li.later_id=l.id
+            ) AS count
             FROM ".$laterTable." l
-            INNER JOIN ".$laterItemTable." li ON li.later_id=l.id
-            WHERE l.user_id='".$userId."' AND li.unread=1
-            GROUP BY l.id
-            ORDER BY l.name ASC;";
+            WHERE l.user_id='".$userId."' GROUP BY l.id ORDER BY l.name ASC;";
         $result = $this->getEntityManager()->getConnection()->executeQuery($query)->fetchAll();
 
         return $result;
