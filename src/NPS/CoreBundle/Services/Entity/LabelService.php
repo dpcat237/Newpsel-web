@@ -85,9 +85,10 @@ class LabelService extends AbstractEntityService
     public function syncLabelsProcess(User $user, $changedLabels)
     {
         $createdIds = null;
+        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
         foreach ($changedLabels as $changedLabel) {
             if ($changedLabel['id']) {
-                $label = $this->find($changedLabel['id']);
+                $label = $laterRepo->find($changedLabel['id']);
                 $label->setName($changedLabel['name']);
                 $this->entityManager->persist($label);
                 $this->entityManager->flush();
