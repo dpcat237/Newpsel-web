@@ -211,6 +211,6 @@ class CrawlerService
      */
     public function executeCrawling($userId = null)
     {
-        $this->rsqueue->produce($userId, "crawler");
+        $this->rsqueue->produce("crawler", $userId);
     }
 }
