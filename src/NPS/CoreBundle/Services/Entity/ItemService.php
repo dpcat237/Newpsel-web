@@ -89,7 +89,8 @@ class ItemService
         $item->setDateAdd($itemData->get_date('U'));
         $item->setContentHash(sha1($itemData->get_content()));
         $item->setLink($itemData->get_link());
-        $item->setTitle($this->purifier->purify($itemData->get_title()));
+        $title = $this->purifier->purify($itemData->get_title());
+        $item->setTitle(html_entity_decode($title));
         $item->setContent($this->purifier->purify($itemData->get_content()));
 
         $this->entityManager->persist($item);
