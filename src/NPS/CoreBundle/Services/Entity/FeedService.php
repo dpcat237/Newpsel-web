@@ -21,12 +21,7 @@ class FeedService extends AbstractEntityService
      */
     protected function activateSubscribedUser(User $user, Feed $feed)
     {
-        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
-        $whereUserFeed = array(
-            'feed' => $feed->getId(),
-            'user' => $user->getId()
-        );
-        $userFeed = $userFeedRepo->findOneBy($whereUserFeed);
+        $userFeed = $this->getUserFeed($user->getId(), $feed->getId());
         $userFeed->setDeleted(false);
         $this->entityManager->persist($userFeed);
         $this->entityManager->flush();
@@ -45,6 +40,26 @@ class FeedService extends AbstractEntityService
         $feed = $feedRepo->checkExistFeedUrl($url);
 
         return $feed;
+    }
+
+    /**
+     * Get UserFeed object
+     *
+     * @param int $userId
+     * @param int $feedId
+     *
+     * @return UserFeed
+     */
+    public function getUserFeed($userId, $feedId)
+    {
+        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
+        $whereUserFeed = array(
+            'feed' => $feedId,
+            'user' => $userId
+        );
+        $userFeed = $userFeedRepo->findOneBy($whereUserFeed);
+
+        return $userFeed;
     }
 
     /**

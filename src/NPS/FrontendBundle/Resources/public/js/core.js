@@ -59,6 +59,8 @@ var subscribeFeed = function () {
                     dataType: 'json',
                     success: function (result) {
                         if (result['result'] == "100") {
+                            window.location = result['url'];
+                        } else {
                             window.location = jsUrl.URL_HOMEPAGE;
                         }
                     }

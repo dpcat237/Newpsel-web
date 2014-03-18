@@ -50,6 +50,7 @@ class FeedController extends BaseController
     {
         if (!$request->get('feed')) {
             $result = NotificationHelper::ERROR;
+            $itemListUrl = '';
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
             $downloadFeeds = $this->get('download_feeds');
@@ -58,12 +59,16 @@ class FeedController extends BaseController
             if ($checkCreate['error']) {
                 $this->get('system_notification')->setMessage($checkCreate['error']);
             }
-
-            $result = NotificationHelper::OK;
         }
 
+        if (!$checkCreate['error']) {
+            $result = NotificationHelper::OK;
+            $userFeed = $this->get('feed')->getUserFeed($user->getId(), $checkCreate['feed']->getId());
+            $itemListUrl = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()), true);
+        }
         $response = array (
-            'result' => $result
+            'result' => $result,
+            'url'    => $itemListUrl
         );
 
         return new JsonResponse($response);

@@ -3,4 +3,4 @@ var myApp = angular.module('npsApp', [], function($interpolateProvider) {
     $interpolateProvider.endSymbol(']]');
 });
 
-myApp();
+myApp;

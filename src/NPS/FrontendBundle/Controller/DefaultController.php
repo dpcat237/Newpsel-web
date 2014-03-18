@@ -23,7 +23,6 @@ class DefaultController extends BaseController
      * @return Response
      * @Route("/", name="welcome")
      * @Template("NPSFrontendBundle:Welcome:index.html.twig")
-     *
      */
     public function welcomeAction()
     {
