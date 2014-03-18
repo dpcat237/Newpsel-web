@@ -90,7 +90,7 @@ class ItemService
         $item->setContentHash(sha1($itemData->get_content()));
         $item->setLink($itemData->get_link());
         $title = $this->purifier->purify($itemData->get_title());
-        $item->setTitle(html_entity_decode($title));
+        $item->setTitle(html_entity_decode($title, ENT_QUOTES, 'UTF-8'));
         $item->setContent($this->purifier->purify($itemData->get_content()));
 
         $this->entityManager->persist($item);
