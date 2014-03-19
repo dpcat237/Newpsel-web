@@ -1,15 +1,13 @@
 #!/bin/sh
 
 modsecs=0
-modesecsadmin=0
 
 if [ -f /var/www/nps/app/logs/prod.log ]; then
-    modsecsadmin=$(date --utc --reference=/var/www/nps/app/logs/prod.log +%s)
+    modsecs=$(date --utc --reference=/var/www/nps/app/logs/prod.log +%s)
 fi
 
 nowsecs=$(date +%s)
 delta=$(($nowsecs-$modsecs))
-deltaadmin=$(($nowsecs-$modsecsadmin))
 
 if [ $delta -lt 280 ]; then
   # do something
