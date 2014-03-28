@@ -25,7 +25,7 @@ use Mmoreram\RSQueueBundle\Command\ConsumerCommand;
  */
 class ItemCrawlerCommand extends ConsumerCommand
 {
-    private $feedId = 0;
+    private $feedTime = array();
     
     /**
      * configure of ItemCrawlerCommand
@@ -85,33 +85,60 @@ class ItemCrawlerCommand extends ConsumerCommand
     private function iterateItemsForCrawling(CrawlerService $crawler, CacheService $cache, $laterItems)
     {
         $cacheKey = 'crawledItem_';
+        $notFoundKey = 'crawledNotFoundItem_';
 
         foreach ($laterItems as $laterItem) {
             $item = $laterItem->getUserItem()->getItem();
-            if (!$cache->get($cacheKey.$item->getId())) {
-                $this->makeCrawling($crawler, $cache, $cacheKey, $item);
+            if ($cache->get($cacheKey.$item->getId()) || $cache->get($notFoundKey.$item->getId())) {
+                continue;
             }
-            continue;
+            $this->makeCrawling($crawler, $cache, $item, $cacheKey, $notFoundKey);
         }
     }
 
     /**
      * Make crawling process
-     * @param CrawlerService $crawler  CrawlerService
-     * @param CacheService   $cache    CacheService
-     * @param string         $cacheKey cache key
-     * @param Item           $item     Item
+     * @param CrawlerService $crawler     CrawlerService
+     * @param CacheService   $cache       CacheService
+     * @param Item           $item        Item
+     * @param string         $cacheKey    cache key
+     * @param string         $notFoundKey key of not found
      */
-    private function makeCrawling(CrawlerService $crawler, CacheService $cache, $cacheKey, Item $item)
+    private function makeCrawling(CrawlerService $crawler, CacheService $cache, Item $item, $cacheKey, $notFoundKey)
     {
         $sleepHidden = "sleep";
-        if ($this->feedId == $item->getFeed()->getId()) {
+        if ($this->checkWaitForCrawling($item->getFeed()->getId())) {
             $sleepHidden(30);
         }
 
         if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent(), $item->getFeedId())) {
             $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
-            $this->feedId = $item->getFeed()->getId();
+        } else {
+            $cache->setex($notFoundKey.$item->getId(), 1296000, $item->getLink());
         }
+    }
+
+    /**
+     * Check if have to wait to make crawling
+     *
+     * @param int $feedId
+     *
+     * @return bool
+     */
+    private function checkWaitForCrawling($feedId)
+    {
+        if (!array_key_exists($feedId, $this->feedTime)) {
+            $this->feedTime[$feedId] = time();
+
+            return false;
+        }
+
+        $currentTime = time();
+        $crawledTime = $this->feedTime[$feedId] + 30;
+        if ($currentTime > $crawledTime) {
+            return false;
+        }
+
+        return true;
     }
 }
