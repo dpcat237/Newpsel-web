@@ -1,17 +1,8 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: denys
- * Date: 4/12/13
- * Time: 9:39 PM
- * To change this template use File | Settings | File Templates.
- */
-
 namespace NPS\CoreBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument,
-    Symfony\Component\Console\Input\InputInterface,
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Output\OutputInterface;
 use NPS\CoreBundle\Services\CrawlerService,
     NPS\CoreBundle\Services\CacheService;
@@ -111,7 +102,13 @@ class ItemCrawlerCommand extends ConsumerCommand
             $sleepHidden(30);
         }
 
-        if ($completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent(), $item->getFeedId())) {
+        try {
+            $completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent(), $item->getFeedId());
+        } catch (Exception $e) {
+            $completeContent = null;
+        }
+
+        if ($completeContent) {
             $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
         } else {
             $cache->setex($notFoundKey.$item->getId(), 1296000, $item->getLink());
