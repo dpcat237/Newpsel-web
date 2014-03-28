@@ -13,7 +13,7 @@ use NPS\CoreBundle\Entity\Later;
 use NPS\FrontendBundle\Form\Type\LaterEditType;
 
 /**
- * ItemController
+ * LabelController
  *
  * @Route("/label")
  */

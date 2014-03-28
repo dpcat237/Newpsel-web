@@ -12,34 +12,34 @@ class NotificationHelper extends Helper
 
     /**API NOTIFICATIONS**/
     /*Success*/
-    CONST OK = 100;
-    CONST OK_IS_READ = 110;
-    CONST OK_IS_UNREAD = 111;
-    CONST OK_IS_STARED = 112;
-    CONST OK_IS_NOT_STARED = 113;
+    const OK = 100;
+    const OK_IS_READ = 110;
+    const OK_IS_UNREAD = 111;
+    const OK_IS_STARED = 112;
+    const OK_IS_NOT_STARED = 113;
     /*Warning*/
-    CONST WARNING = 200;
+    const WARNING = 200;
     /*Error*/
-    CONST ERROR = 300;
-    CONST ERROR_LOGIN_DATA = 301;
-    CONST ERROR_NO_APP_KEY = 302;
-    CONST ERROR_NO_LOGGED = 303;
-    CONST ERROR_USERNAME_EXISTS = 304;
-    CONST ERROR_EMAIL_EXISTS = 305;
-    CONST ERROR_WRONG_FEED = 306;
-    CONST ERROR_NO_DATA = 307;
-    CONST ERROR_TRY_LATER = 310;
+    const ERROR = 300;
+    const ERROR_LOGIN_DATA = 301;
+    const ERROR_NO_APP_KEY = 302;
+    const ERROR_NO_LOGGED = 303;
+    const ERROR_USERNAME_EXISTS = 304;
+    const ERROR_EMAIL_EXISTS = 305;
+    const ERROR_WRONG_FEED = 306;
+    const ERROR_NO_DATA = 307;
+    const ERROR_TRY_LATER = 310;
 
     /**FRONTEND NOTIFICATIONS**/
     /*Success*/
-    CONST SAVED_OK = 101;
+    const SAVED_OK = 101;
     /*Notification*/
     /*Notice*/
     /*Alert*/
-    CONST ALERT_FORM_DATA = 401;
-    CONST ALERT_FEED_UPDATE_NOT_NEEDED = 402;
+    const ALERT_FORM_DATA = 401;
+    const ALERT_FEED_UPDATE_NOT_NEEDED = 402;
     /*Error*/
-    CONST ERROR_TRY_AGAIN = 501;
+    const ERROR_TRY_AGAIN = 501;
 
     /**
      * Returns the canonical name of this helper.

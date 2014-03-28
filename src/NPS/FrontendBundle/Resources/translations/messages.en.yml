@@ -14,9 +14,14 @@ notification_502: Feed's url is wrong
 notification_503: Feed doesn't exists
 
 #*** Menu ***
-_Preference: Settings
+_Settings: Settings
 _Manage_feeds: Manage feeds
+_Manage_filters: Manage filters
 _Manage_labels: Manage labels
 _Logout: Logout
 
 _Edit_shared_later: Select label (in it will be saved shared links from mobile device)
+
+#*** Entities ***
+#Filter
+_Save_to_label: Save to label

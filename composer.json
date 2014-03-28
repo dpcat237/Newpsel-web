@@ -47,7 +47,8 @@
         "fabpot/goutte": "1.*",
         "symfony/process": "2.*",
         "mattsches/version-eye-bundle": "0.4.*",
-        "mmoreram/rsqueue-bundle": "dev-master"
+        "mmoreram/rsqueue-bundle": "dev-master",
+        "friendsofsymfony/elastica-bundle": "3.0.*@dev"
     },
     "scripts": {
         "post-install-cmd": [

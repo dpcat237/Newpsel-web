@@ -1,0 +1,35 @@
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="block span12 inbox">
+            <div class="block-body">
+                <div class="inbox-filter">
+                    <a href="{{ url('filter_create') }}" class="btn">
+                        <i class="icon-plus"></i>
+                    </a>
+                </div>
+
+                {% if (filters | length) > 0 %}
+                    <table class="table">
+                        <tbody>
+                        {% for filter in filters %}
+                            <tr>
+                                <td class="td-star" style="padding-left: 14px">
+                                    <a href="#" class="no-link icon-pencil" ></a>
+                                </td>
+                                <td class="td-star">
+                                    <a href="#" class="no-link icon-trash" ></a>
+                                </td>
+                                <td class="inbox-message">
+                                    <a class="list-item" href="#" >{{ filter.name }}</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

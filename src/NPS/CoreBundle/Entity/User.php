@@ -35,6 +35,11 @@ class User extends AbstractUserFeed
      */
     protected $registered = false;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Filter", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $filters;
+
 
     /**
      * Constructor
