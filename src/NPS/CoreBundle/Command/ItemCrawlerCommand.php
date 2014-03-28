@@ -132,6 +132,7 @@ class ItemCrawlerCommand extends ConsumerCommand
 
         $currentTime = time();
         $crawledTime = $this->feedTime[$feedId] + 30;
+        $this->feedTime[$feedId] = time();
         if ($currentTime > $crawledTime) {
             return false;
         }
