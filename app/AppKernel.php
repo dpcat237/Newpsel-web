@@ -27,7 +27,7 @@ class AppKernel extends Kernel
             new NPS\CoreBundle\NPSCoreBundle(),
             new NPS\FrontendBundle\NPSFrontendBundle(),
             new NPS\ApiBundle\NPSApiBundle(),
-            new FOS\ElasticaBundle\FOSElasticaBundle(),
+            //new FOS\ElasticaBundle\FOSElasticaBundle(),
             //new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),
             //new JMS\SerializerBundle\JMSSerializerBundle()
