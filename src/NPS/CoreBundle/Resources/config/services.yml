@@ -1,11 +1,4 @@
 services:
-    gedmo.listener.timestampable:
-          class: Gedmo\Timestampable\TimestampableListener
-          tags:
-              - { name: doctrine.event_subscriber, connection: default }
-          calls:
-              - [ setAnnotationReader, [ @annotation_reader ] ]
-
     crawler:
         class: NPS\CoreBundle\Services\CrawlerService
         arguments:
@@ -18,19 +11,15 @@ services:
             doctrine:     @doctrine
             simple_pie:   @fkr_simple_pie.rss
             redis:        @snc_redis.default
-            feed:         @feed
+            feed:         @nps.entity.feed
             item:         @item
             feed_history: @feed_history
-
-    server_cache:
-        class: NPS\CoreBundle\Services\CacheService
-        arguments: ['@snc_redis.default', 3600]
 
     try:
         class: NPS\CoreBundle\Services\TryService
         arguments:
             doctrine:     @doctrine
-            server_cache: @server_cache
+            server_cache: @snc_redis.default
             crawler:      @crawler
             simple_pie:   @fkr_simple_pie.rss
 
@@ -41,44 +30,17 @@ services:
             mailer:     @mailer
             translator: @translator
 
-#Entities
-    feed:
-        class: NPS\CoreBundle\Services\Entity\FeedService
+    nps.wrapper.user:
+        class: NPS\CoreBundle\Services\UserWrapper
         arguments:
-            doctrine:            @doctrine
-            logger:              @logger
-            system_notification: @system_notification
+            security: @security.context
+        calls:
+            - [ setCurrentUser ]
 
-    feed_history:
-        class: NPS\CoreBundle\Services\Entity\FeedHistoryService
-        arguments:
-            doctrine:            @doctrine
-            logger:              @logger
-            system_notification: @system_notification
-
-    item:
-        class: NPS\CoreBundle\Services\Entity\ItemService
-        arguments:
-            doctrine:     @doctrine
-            server_cache: @server_cache
-
-    label:
-        class: NPS\CoreBundle\Services\Entity\LabelService
-        arguments:
-            doctrine:            @doctrine
-            logger:              @logger
-            system_notification: @system_notification
-
-    later_item:
-        class: NPS\CoreBundle\Services\Entity\LaterItemService
-        arguments:
-            doctrine:     @doctrine
-            server_cache: @server_cache
-            item:         @item
-
-    user:
-        class: NPS\CoreBundle\Services\Entity\UserService
-        arguments:
-            doctrine:            @doctrine
-            logger:              @logger
-            system_notification: @system_notification
+#**External services **
+    gedmo.listener.timestampable:
+          class: Gedmo\Timestampable\TimestampableListener
+          tags:
+              - { name: doctrine.event_subscriber, connection: default }
+          calls:
+              - [ setAnnotationReader, [ @annotation_reader ] ]

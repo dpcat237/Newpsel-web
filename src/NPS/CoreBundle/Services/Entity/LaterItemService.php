@@ -2,11 +2,10 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Predis\Client;
 use NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserFeed;
-use NPS\CoreBundle\Services\CacheService,
-    NPS\CoreBundle\Services\Entity\ItemService;
 
 /**
  * LaterItemService
@@ -14,7 +13,7 @@ use NPS\CoreBundle\Services\CacheService,
 class LaterItemService
 {
     /**
-     * @var Redis
+     * @var Client
      */
     private $cache;
 
@@ -36,10 +35,10 @@ class LaterItemService
 
     /**
      * @param Registry     $doctrine Doctrine Registry
-     * @param CacheService $cache    CacheService
+     * @param Client       $cache    Client
      * @param ItemService  $item     Item service
      */
-    public function __construct(Registry $doctrine, CacheService $cache, ItemService $item)
+    public function __construct(Registry $doctrine, Client $cache, ItemService $item)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;

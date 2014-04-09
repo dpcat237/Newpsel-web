@@ -47,6 +47,27 @@ class FeedRepository extends EntityRepository
     }
 
     /**
+     * Get query of list of user active feeds
+     *
+     * @param $userId
+     *
+     * @return string
+     */
+    public function getUserFeedsQuery($userId)
+    {
+        $query = $this->createQueryBuilder('f')
+            ->join('f.userFeeds', 'uf')
+            ->join('uf.user', 'u')
+            ->where('u.id = :userId')
+            ->andWhere('uf.deleted = :deleted')
+            ->orderBy('f.title', 'ASC')
+            ->setParameter('userId', $userId)
+            ->setParameter('deleted', false);
+
+        return $query;
+    }
+
+    /**
      * Get user's feeds list
      * @param $userId
      *

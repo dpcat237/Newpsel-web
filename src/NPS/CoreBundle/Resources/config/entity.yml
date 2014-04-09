@@ -1,0 +1,41 @@
+services:
+    nps.abstract.entity:
+        class: NPS\CoreBundle\Services\Entity\AbstractEntityService
+        arguments:
+            doctrine:            @doctrine
+            logger:              @logger
+            system_notification: @system_notification
+            user_wrapper:        @nps.wrapper.user
+
+    nps.entity.feed:
+        class: NPS\CoreBundle\Services\Entity\FeedService
+        parent: nps.abstract.entity
+
+    feed_history:
+        class: NPS\CoreBundle\Services\Entity\FeedHistoryService
+        parent: nps.abstract.entity
+
+    nps.entity.filter:
+        class: NPS\CoreBundle\Services\Entity\FilterService
+        arguments:
+            doctrine:            @doctrine
+            logger:              @logger
+            system_notification: @system_notification
+            user_wrapper:        @nps.wrapper.user
+            translator:          @translator
+
+    item:
+        class: NPS\CoreBundle\Services\Entity\ItemService
+        parent: nps.abstract.entity
+
+    nps.entity.later:
+        class: NPS\CoreBundle\Services\Entity\LaterService
+        parent: nps.abstract.entity
+
+    later_item:
+        class: NPS\CoreBundle\Services\Entity\LaterItemService
+        parent: nps.abstract.entity
+
+    user:
+        class: NPS\CoreBundle\Services\Entity\UserService
+        parent: nps.abstract.entity

@@ -5,11 +5,7 @@ namespace NPS\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-use NPS\CoreBundle\Entity\AbstractEntity,
-    NPS\CoreBundle\Entity\FeedHistory,
-    NPS\CoreBundle\Entity\Item,
-    NPS\CoreBundle\Entity\UserFeed,
-    NPS\CoreBundle\Entity\Traits\EnabledTrait;
+use NPS\CoreBundle\Entity\Traits\EnabledTrait;
 use NPS\CoreBundle\Helper\DisplayHelper;
 
 /**
@@ -95,12 +91,18 @@ class Feed extends AbstractEntity
      */
     protected $history;
 
+    /**
+     * @ORM\OneToMany(targetEntity="FilterFeed", mappedBy="feed", cascade={"persist"})
+     */
+    protected $filterFeeds;
+
 
     /**
      * Constructor
      */
     public function __construct()
     {
+        $this->filterfeeds = new ArrayCollection();
         $this->history = new ArrayCollection();
         $this->items = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
@@ -410,5 +412,48 @@ class Feed extends AbstractEntity
     public function getHistory()
     {
         return $this->history;
+    }
+
+    /**
+     * Return Feed to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Add filterFeed
+     *
+     * @param FilterFeed $filterFeed
+     *
+     * @return Filter
+     */
+    public function addFilterFeed(FilterFeed $filterFeed)
+    {
+        $this->filterFeeds[] = $filterFeed;
+
+        return $this;
+    }
+
+    /**
+     * Get feeds
+     *
+     * @return ArrayCollection of FilterFeed
+     */
+    public function getFilterFeeds()
+    {
+        return $this->filterFeeds;
+    }
+
+    /**
+     * Remove FilterFeed
+     *
+     */
+    public function removeFilterFeed(FilterFeed $filterFeed)
+    {
+        $this->filterFeeds->removeElement($filterFeed);
     }
 }

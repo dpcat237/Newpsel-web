@@ -63,7 +63,7 @@ class FeedController extends BaseController
 
         if (!$checkCreate['error']) {
             $result = NotificationHelper::OK;
-            $userFeed = $this->get('feed')->getUserFeed($user->getId(), $checkCreate['feed']->getId());
+            $userFeed = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $checkCreate['feed']->getId());
             $itemListUrl = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()), true);
         }
         $response = array (
@@ -100,7 +100,7 @@ class FeedController extends BaseController
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
-            $this->get('feed')->saveFormUserFeed($form);
+            $this->get('nps.entity.feed')->saveFormUserFeed($form);
 
             return new RedirectResponse($route);
         }
@@ -116,7 +116,7 @@ class FeedController extends BaseController
     }
 
     /**
-     * Create feed
+     * Delete feed
      * @param UserFeed $userFeed
      *
      * @return Response
@@ -134,7 +134,7 @@ class FeedController extends BaseController
             return new RedirectResponse($route);
         }
 
-        $this->get('feed')->removeUserFeed($userFeed);
+        $this->get('nps.entity.feed')->removeUserFeed($userFeed);
 
         return new RedirectResponse($route);
     }

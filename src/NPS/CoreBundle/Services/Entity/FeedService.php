@@ -63,6 +63,19 @@ class FeedService extends AbstractEntityService
     }
 
     /**
+     * Get query of user active feeds
+     *
+     * @return string
+     */
+    public function getUserActiveFeedsQuery()
+    {
+        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
+        $query = $feedRepo->getUserFeedsQuery($this->userWrapper->getCurrentUser()->getId());
+
+        return $query;
+    }
+
+    /**
      * Soft remove user's feed
      * @param UserFeed $userFeed
      */

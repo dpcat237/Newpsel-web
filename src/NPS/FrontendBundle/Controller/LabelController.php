@@ -77,7 +77,7 @@ class LabelController extends BaseController
         $user = $this->get('security.context')->getToken()->getUser();
         $route = $this->container->get('router')->generate('labels_list');
         if ($label->getUserId() == $user->getId()) {
-            $this->get('label')->removeLabel($label);
+            $this->get('nps.entity.later')->removeLabel($label);
         }
 
         return new RedirectResponse($route);
@@ -107,7 +107,7 @@ class LabelController extends BaseController
 
             if ($request->getMethod() == 'POST') {
                 $form->handleRequest($request);
-                $this->get('label')->saveFormLabel($form);
+                $this->get('nps.entity.later')->saveFormLabel($form);
 
                 return new RedirectResponse($route);
             }

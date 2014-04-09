@@ -58,6 +58,7 @@ class UserFeedRepository extends EntityRepository
 
     /**
      * Get user's feeds list for menu
+     *
      * @param $userId
      *
      * @return mixed
@@ -71,9 +72,8 @@ class UserFeedRepository extends EntityRepository
             ->setParameter('userId', $userId)
             ->setParameter('deleted', false)
             ->getQuery();
-        $feedCollection = $query->getResult();
 
-        return $feedCollection;
+        return $query->getResult();
     }
 
     /**

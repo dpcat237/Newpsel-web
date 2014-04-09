@@ -7,12 +7,11 @@ use NPS\CoreBundle\Entity\Later,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Services\Entity\AbstractEntityService;
 
 /**
- * LabelService
+ * LaterService
  */
-class LabelService extends AbstractEntityService
+class LaterService extends AbstractEntityService
 {
     /**
      * Extract user labels data for api
@@ -35,6 +34,19 @@ class LabelService extends AbstractEntityService
         }
 
         return $collection;
+    }
+
+    /**
+     * Get query of user labels
+     *
+     * @return string
+     */
+    public function getUserLabelsQuery()
+    {
+        $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+        $query = $labelRepo->getUserLabelsQuery($this->userWrapper->getCurrentUser()->getId());
+
+        return $query;
     }
 
     /**

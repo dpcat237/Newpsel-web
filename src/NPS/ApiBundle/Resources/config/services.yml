@@ -3,7 +3,7 @@ services:
         class: NPS\ApiBundle\Services\SecureService
         arguments:
             doctrine:     @doctrine
-            server_cache: @server_cache
+            server_cache: @snc_redis.default
 
 #Entities
     api.device.service:
@@ -32,4 +32,4 @@ services:
             crawler:            @crawler
             doctrine:           @doctrine
             api.secure.service: @api.secure.service
-            label:              @label
+            label:              @nps.entity.later

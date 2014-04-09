@@ -43,4 +43,14 @@ trait DeletedTrait
     {
         return $this->setDeleted(true);
     }
+
+    /**
+     * Return is object is soft deleted
+     *
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
 }

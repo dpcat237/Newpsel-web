@@ -42,12 +42,18 @@ class Later extends AbstractEntity
      */
     protected $user;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Filter", mappedBy="later")
+     */
+    protected $filters;
+
 
     /**
      * Constructor
      */
     public function __construct()
     {
+        $this->filters = new ArrayCollection();
         $this->laterItems = new ArrayCollection();
     }
 
@@ -138,6 +144,40 @@ class Later extends AbstractEntity
      * @return Collection
      */
     public function getLaterItems()
+    {
+        return $this->laterItems;
+    }
+
+    /**
+     * Add filter
+     *
+     * @param Filter $filter
+     *
+     * @return Feed
+     */
+    public function addFilter(Filter $filter)
+    {
+        $this->filters[] = $filter;
+
+        return $this;
+    }
+
+    /**
+     * Remove filter
+     *
+     * @param Filter $filter
+     */
+    public function removeFilter(Filter $filter)
+    {
+        $this->laterItems->removeElement($filter);
+    }
+
+    /**
+     * Get items
+     *
+     * @return Collection
+     */
+    public function getFilters()
     {
         return $this->laterItems;
     }

@@ -24,7 +24,9 @@ class NPSCoreExtension extends Extension
         $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        //load NPSCoreBundle services
+        $loader->load('formType.yml');
+        $loader->load('entity.yml');
+        $loader->load('parameters.yml');
         $loader->load('services.yml');
     }
 }

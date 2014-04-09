@@ -35,7 +35,7 @@ class TryService
 
     /**
      * @param Doctrine       $doctrine Doctrine
-     * @param CacheService   $cache    Redis service
+     * @param Client         $cache    Redis service
      * @param CrawlerService $crawler  Crawler service
      * @param SimplePie      $rss      Simple Pie object
      */

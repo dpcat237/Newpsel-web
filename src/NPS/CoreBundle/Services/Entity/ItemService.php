@@ -2,7 +2,8 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use \SimplePie_Item;
+use Predis\Client;
+use SimplePie_Item;
 use HTMLPurifier,
     HTMLPurifier_Config;
 use NPS\CoreBundle\Entity\Feed,
@@ -10,7 +11,6 @@ use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserItem;
-use NPS\CoreBundle\Services\CacheService;
 
 /**
  * ItemService
@@ -18,7 +18,7 @@ use NPS\CoreBundle\Services\CacheService;
 class ItemService
 {
     /**
-     * @var Redis
+     * @var Client
      */
     private $cache;
 
@@ -38,10 +38,10 @@ class ItemService
     private $purifier;
 
     /**
-     * @param Registry     $doctrine Doctrine Registry
-     * @param CacheService $cache    CacheService
+     * @param Registry $doctrine Doctrine Registry
+     * @param Client   $cache    Client
      */
-    public function __construct(Registry $doctrine, CacheService $cache)
+    public function __construct(Registry $doctrine, Client $cache)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;

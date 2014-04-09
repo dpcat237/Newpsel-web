@@ -4,7 +4,7 @@ namespace NPS\ApiBundle\Services;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Services\CacheService;
+use Predis\Client;
 
 /**
  * SecureService
@@ -12,25 +12,25 @@ use NPS\CoreBundle\Services\CacheService;
 class SecureService
 {
     /**
-     * @var $cache Redis
+     * @var Client
      */
     private $cache;
 
     /**
-     * @var $doctrine Doctrine
+     * @var Doctrine
      */
     private $doctrine;
 
     /**
-     * @var $entityManager Entity Manager
+     * @var Entity Manager
      */
     private $entityManager;
 
     /**
-     * @param Registry     $doctrine Doctrine Registry
-     * @param CacheService $cache    CacheService
+     * @param Registry $doctrine Doctrine Registry
+     * @param Client   $cache    Client
      */
-    public function __construct(Registry $doctrine, CacheService $cache)
+    public function __construct(Registry $doctrine, Client $cache)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;

@@ -5,7 +5,7 @@
         <div class="block span12">
             <div class="block-body">
                 <div>
-                    <form id="editLater" method="post" action="#" class="wizard" {{ form_enctype(form) }}>
+                    <form id="editLater" method="post" action="{{ action_url }}" class="wizard" {{ form_enctype(form) }}>
                         <div class="input-prepend">
                             <span class="add"><i class="icon-edit"></i></span>
                             {{ form_widget(form.name, { 'attr' : {'placeholder':'Name' }} ) }}
@@ -13,6 +13,16 @@
                         <div class="input-prepend">
                             <span class="add"><i class="icon-edit"></i></span>
                             {{ form_widget(form.type, { 'attr' : {}} ) }}
+                        </div>
+                        <div class="input-prepend">
+                            <span class="add"><i class="icon-edit"></i></span>
+                            {{ form_widget(form.feeds) }}
+                            {{ form_errors(form.feeds) }}
+                        </div>
+                        <div class="input-prepend">
+                            <span class="add"><i class="icon-edit"></i></span>
+                            {{ form_widget(form.later) }}
+                            {{ form_errors(form.later) }}
                         </div>
 
                         <span id="validate-basic-form-valid">

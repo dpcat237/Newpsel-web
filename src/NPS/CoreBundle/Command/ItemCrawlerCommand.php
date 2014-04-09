@@ -1,11 +1,11 @@
 <?php
 namespace NPS\CoreBundle\Command;
 
+use Predis\Client;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Output\OutputInterface;
-use NPS\CoreBundle\Services\CrawlerService,
-    NPS\CoreBundle\Services\CacheService;
+use NPS\CoreBundle\Services\CrawlerService;
 use NPS\CoreBundle\Entity\Item;
 use Mmoreram\RSQueueBundle\Command\ConsumerCommand;
 
@@ -49,7 +49,7 @@ class ItemCrawlerCommand extends ConsumerCommand
     protected function executeCrawling(InputInterface $input, OutputInterface $output, $userId)
     {
         $container = $this->getContainer();
-        $cache = $container->get('server_cache');
+        $cache = $container->get('snc_redis.default');
         $crawler = $container->get('crawler');
         $doctrine = $container->get('doctrine');
         $log = $container->get('logger');
@@ -70,10 +70,10 @@ class ItemCrawlerCommand extends ConsumerCommand
     /**
      * Make command process
      * @param CrawlerService $crawler    CrawlerService
-     * @param CacheService   $cache      CacheService
+     * @param Client   $cache      Client
      * @param array          $laterItems array of later items
      */
-    private function iterateItemsForCrawling(CrawlerService $crawler, CacheService $cache, $laterItems)
+    private function iterateItemsForCrawling(CrawlerService $crawler, Client $cache, $laterItems)
     {
         $cacheKey = 'crawledItem_';
         $notFoundKey = 'crawledNotFoundItem_';
@@ -90,12 +90,12 @@ class ItemCrawlerCommand extends ConsumerCommand
     /**
      * Make crawling process
      * @param CrawlerService $crawler     CrawlerService
-     * @param CacheService   $cache       CacheService
+     * @param Client   $cache       Client
      * @param Item           $item        Item
      * @param string         $cacheKey    cache key
      * @param string         $notFoundKey key of not found
      */
-    private function makeCrawling(CrawlerService $crawler, CacheService $cache, Item $item, $cacheKey, $notFoundKey)
+    private function makeCrawling(CrawlerService $crawler, Client $cache, Item $item, $cacheKey, $notFoundKey)
     {
         $sleepHidden = "sleep";
         if ($this->checkWaitForCrawling($item->getFeed()->getId())) {

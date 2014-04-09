@@ -2,6 +2,7 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\RedirectResponse,
     Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,7 @@ class UserController extends BaseController
      * @return Response
      *
      * @Route("/user/preference", name="user_preferences")
+     * @Secure(roles="ROLE_USER")
      * @Template()
      */
     public function editPreferencesAction(Request $request)
@@ -37,10 +39,8 @@ class UserController extends BaseController
         $user = $this->get('security.context')->getToken()->getUser();
         $route = $this->container->get('router')->generate('user_preferences');
         $preference = $user->getPreference();
-        $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
-        $labels = $labelRepo->getUserLabelsQuery($user->getId());
-
-        $formType = new PreferenceEditType($labels);
+        $labelsQuery = $this->get('nps.entity.later')->getUserLabelsQuery();
+        $formType = new PreferenceEditType($labelsQuery);
         $form = $this->createForm($formType, $preference);
 
         if ($request->getMethod() == 'POST') {

@@ -14,16 +14,18 @@ use NPS\CoreBundle\Entity\Traits\DeletedTrait;
  */
 class FilterFeed extends AbstractEntity
 {
+    use DeletedTrait;
+
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="Feed", inversedBy="filterFeeds")
+     * @ORM\ManyToOne(targetEntity="Feed", inversedBy="filterFeeds", cascade={"persist"})
      * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
      */
     protected $feed;
 
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="Filter", inversedBy="filterFeeds")
+     * @ORM\ManyToOne(targetEntity="Filter", inversedBy="filterFeeds", cascade={"persist"})
      * @ORM\JoinColumn(name="filter_id", referencedColumnName="id", nullable=false)
      */
     protected $filter;
@@ -49,76 +51,25 @@ class FilterFeed extends AbstractEntity
     }
 
     /**
-     * Get the feed id
+     * Get filter
      *
-     * @return integer id
+     * @return Filter
      */
-    public function getFeedId()
+    public function getFilter()
     {
-        if (is_object($this->getFeed())) {
-            $feedId = $this->getFeed()->getId();
-        } else {
-            $feedId = 0;
-        }
-
-        return $feedId;
+        return $this->filter;
     }
 
     /**
-     * Set title
-     * @param string $title
+     * Set filter
+     * @param Filter $filter
      *
      * @return FilterFeed
      */
-    public function setTitle($title)
+    public function setFilter(Filter $filter)
     {
-        $this->title = $title;
+        $this->filter = $filter;
 
         return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Get the user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * Set the user
-     * @param User $user
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * Get the user id
-     *
-     * @return integer id
-     */
-    public function getUserId()
-    {
-        if (is_object($this->getUser())) {
-            $userId = $this->getUser()->getId();
-        } else {
-            $userId = 0;
-        }
-
-        return $userId;
     }
 }

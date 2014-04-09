@@ -4,7 +4,7 @@ namespace NPS\ApiBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Services\CrawlerService,
-    NPS\CoreBundle\Services\Entity\LabelService;
+    NPS\CoreBundle\Services\Entity\LaterService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
@@ -24,7 +24,7 @@ class LabelApiService
     private $doctrine;
 
     /**
-     * @var LabelService
+     * @var LaterService
      */
     private $labelService;
 
@@ -38,9 +38,9 @@ class LabelApiService
      * @param CrawlerService $crawler      CrawlerService
      * @param Registry       $doctrine     Doctrine Registry
      * @param SecureService  $secure       SecureService
-     * @param LabelService   $labelService LabelService
+     * @param LaterService   $labelService LaterService
      */
-    public function __construct(CrawlerService $crawler, Registry $doctrine, SecureService $secure, LabelService $labelService)
+    public function __construct(CrawlerService $crawler, Registry $doctrine, SecureService $secure, LaterService $labelService)
     {
         $this->crawler = $crawler;
         $this->doctrine = $doctrine;

@@ -18,11 +18,6 @@ class Filter extends AbstractEntity
     use EnabledTrait;
 
     /**
-     * Types of filters
-     */
-    const TO_LABEL = 'to.label';
-
-    /**
      * @var string
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
      */
@@ -43,10 +38,20 @@ class Filter extends AbstractEntity
 
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="Later")
+     * @ORM\ManyToOne(targetEntity="Later", inversedBy="filters", cascade={"persist"})
      * @ORM\JoinColumn(name="later_id", referencedColumnName="id", nullable=false)
      */
     protected $later;
+
+    /**
+     * @var ArrayCollection of Feed
+     */
+    protected $feeds;
+
+    /**
+     * @ORM\OneToMany(targetEntity="FilterFeed", mappedBy="filter", cascade={"persist"})
+     */
+    protected $filterFeeds;
 
 
     /**
@@ -54,7 +59,8 @@ class Filter extends AbstractEntity
      */
     public function __construct()
     {
-        $this->filterItems = new ArrayCollection();
+        $this->feeds = new ArrayCollection();
+        $this->filterFeeds = new ArrayCollection();
     }
 
     /**
@@ -117,11 +123,16 @@ class Filter extends AbstractEntity
 
     /**
      * Set the user
+     *
      * @param User $user
+     *
+     * @return Filter
      */
     public function setUser(User $user)
     {
         $this->user = $user;
+
+        return $this;
     }
 
     /**
@@ -141,6 +152,30 @@ class Filter extends AbstractEntity
     }
 
     /**
+     * Get the later
+     *
+     * @return Later
+     */
+    public function getLater()
+    {
+        return $this->later;
+    }
+
+    /**
+     * Set the later
+     *
+     * @param Later $later
+     *
+     * @return Filter
+     */
+    public function setLater(Later $later = null)
+    {
+        $this->later = $later;
+
+        return $this;
+    }
+
+    /**
      * Return Filter to string
      *
      * @return string
@@ -148,5 +183,106 @@ class Filter extends AbstractEntity
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * Add feed
+     *
+     * @param Feed $feed
+     *
+     * @return Filter
+     */
+    public function addFeed(Feed $feed)
+    {
+        $found = false;
+        foreach ($this->getFilterFeeds() as $filterFeed) {
+            if (!$filterFeed->isDeleted() && $filterFeed->getFeed()->getId() == $feed->getId()) {
+                $found = true;
+                break;
+            }
+        }
+
+        if ($found) {
+            return $this;
+        }
+
+        $filterFeed = new FilterFeed();
+        $filterFeed->setFeed($feed);
+        $filterFeed->setFilter($this);
+        $this->addFilterFeed($filterFeed);
+        $this->feeds[] = $feed;
+
+        return $this;
+    }
+
+    /**
+     * Add feed just for form
+     *
+     * @param Feed $feed
+     *
+     * @return Filter
+     */
+    public function addFeedForm(Feed $feed)
+    {
+        $this->feeds[] = $feed;
+
+        return $this;
+    }
+
+    /**
+     * Get feeds
+     *
+     * @return ArrayCollection of Feed
+     */
+    public function getFeeds()
+    {
+        return $this->feeds;
+    }
+
+    /**
+     * Remove feed
+     */
+    public function removeFeed(Feed $feed)
+    {
+        foreach ($this->getFilterFeeds() as $filterFeed) {
+            if ($filterFeed->getFeed()->getId() == $feed->getId()) {
+                $this->filterFeeds->removeElement($filterFeed);
+                $filterFeed->delete();
+            }
+        }
+    }
+
+    /**
+     * Add filterFeed
+     *
+     * @param FilterFeed $filterFeed
+     *
+     * @return Filter
+     */
+    public function addFilterFeed(FilterFeed $filterFeed)
+    {
+        $this->filterFeeds[] = $filterFeed;
+
+        return $this;
+    }
+
+    /**
+     * Get filter feeds
+     *
+     * @return ArrayCollection of FilterFeed
+     */
+    public function getFilterFeeds()
+    {
+        return $this->filterFeeds;
+    }
+
+    /**
+     * Empty filter feeds
+     *
+     * @return ArrayCollection of FilterFeed
+     */
+    public function emptyFilterFeeds()
+    {
+        $this->filterFeeds = new ArrayCollection();
     }
 }

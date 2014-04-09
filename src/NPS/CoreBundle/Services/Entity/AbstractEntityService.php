@@ -4,7 +4,8 @@ namespace NPS\CoreBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Bridge\Monolog\Logger;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\FrontendBundle\Services\SystemNotificationService;
+use NPS\FrontendBundle\Services\SystemNotificationService,
+    NPS\CoreBundle\Services\UserWrapper;
 
 /**
  * AbstractEntityService
@@ -12,37 +13,44 @@ use NPS\FrontendBundle\Services\SystemNotificationService;
 abstract class AbstractEntityService
 {
     /**
-     * @var $doctrine Registry
+     * @var Registry
      */
     protected  $doctrine;
 
     /**
-     * @var $entityManager Entity Manager
+     * @var Entity Manager
      */
     protected $entityManager;
 
     /**
-     * @var $doctrine Registry
+     * @var Logger
      */
     protected $logger;
 
     /**
-     * @var $doctrine Registry
+     * @var SystemNotificationService
      */
     protected $systemNotification;
+
+    /**
+     * @var UserWrapper
+     */
+    protected $userWrapper;
 
 
     /**
      * @param Registry                  $doctrine           Registry
      * @param Logger                    $logger             Logger
      * @param SystemNotificationService $systemNotification SystemNotificationService
+     * @param UserWrapper               $userWrapper        UserWrapper
      */
-    public function __construct(Registry $doctrine, Logger $logger, SystemNotificationService $systemNotification)
+    public function __construct(Registry $doctrine, Logger $logger, SystemNotificationService $systemNotification, UserWrapper $userWrapper)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->logger = $logger;
         $this->systemNotification = $systemNotification;
+        $this->userWrapper = $userWrapper;
     }
 
     /**
