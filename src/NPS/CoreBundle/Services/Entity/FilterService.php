@@ -17,7 +17,7 @@ use NPS\CoreBundle\Entity\Later;
 /**
  * FilterService
  */
-class FilterService extends AbstractEntityService
+class FilterService
 {
     /**
      * @var Filter
@@ -54,7 +54,11 @@ class FilterService extends AbstractEntityService
     public function __construct(Registry $doctrine, Logger $logger, SystemNotificationService $systemNotification, UserWrapper $userWrapper, Translator $translator)
     {
 
-        parent::__construct($doctrine, $logger, $systemNotification, $userWrapper);
+        $this->doctrine = $doctrine;
+        $this->entityManager = $this->doctrine->getManager();
+        $this->logger = $logger;
+        $this->systemNotification = $systemNotification;
+        $this->userWrapper = $userWrapper;
         $this->translator = $translator;
     }
 

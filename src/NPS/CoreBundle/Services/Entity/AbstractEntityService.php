@@ -42,15 +42,13 @@ abstract class AbstractEntityService
      * @param Registry                  $doctrine           Registry
      * @param Logger                    $logger             Logger
      * @param SystemNotificationService $systemNotification SystemNotificationService
-     * @param UserWrapper               $userWrapper        UserWrapper
      */
-    public function __construct(Registry $doctrine, Logger $logger, SystemNotificationService $systemNotification, UserWrapper $userWrapper)
+    public function __construct(Registry $doctrine, Logger $logger, SystemNotificationService $systemNotification)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->logger = $logger;
         $this->systemNotification = $systemNotification;
-        $this->userWrapper = $userWrapper;
     }
 
     /**
