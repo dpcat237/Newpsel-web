@@ -40,6 +40,8 @@ class FeedSyncCommand extends ContainerAwareCommand
         $container = $this->getContainer();
         $log = $container->get('logger');
         $downloadFeeds = $container->get('download_feeds');
+        $filter = $container->get('nps.manager.filter');
+        $filter->updateFilterCache();
 
         $log->info('*** Start feeds sync ***');
         $feedRepo = $container->get('doctrine')->getRepository('NPSCoreBundle:Feed');
