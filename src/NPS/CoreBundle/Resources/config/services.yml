@@ -23,6 +23,13 @@ services:
             crawler:      @crawler
             simple_pie:   @fkr_simple_pie.rss
 
+    nps.manager.filter:
+        class: NPS\CoreBundle\Services\FilteringManager
+        arguments:
+            doctrine: @doctrine
+            redis:    @snc_redis.default
+            logger:   @logger
+
     user.notifications:
         class: NPS\CoreBundle\Services\UserNotificationsService
         arguments:

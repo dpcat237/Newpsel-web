@@ -3,8 +3,8 @@ namespace NPS\CoreBundle\Services;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Predis\Client;
-use \SimplePie,
-    \SimplePie_Item;
+use SimplePie,
+    SimplePie_Item;
 use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\Item,
     NPS\CoreBundle\Entity\User;

@@ -28,6 +28,8 @@ services:
         arguments:
             doctrine:     @doctrine
             server_cache: @snc_redis.default
+            filter:       @nps.manager.filter
+            later:        @nps.entity.later
 
     nps.entity.later:
         class: NPS\CoreBundle\Services\Entity\LaterService

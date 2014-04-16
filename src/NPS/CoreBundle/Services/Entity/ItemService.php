@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Services\FilteringManager;
 use Predis\Client;
 use SimplePie_Item;
 use HTMLPurifier,
@@ -33,19 +34,33 @@ class ItemService
     private $entityManager;
 
     /**
+     * @var FilteringManager
+     */
+    private $filter;
+
+    /**
+     * @var LaterService
+     */
+    private $later;
+
+    /**
      * @var HTMLPurifier
      */
     private $purifier;
 
     /**
-     * @param Registry $doctrine Doctrine Registry
-     * @param Client   $cache    Client
+     * @param Registry         $doctrine Doctrine Registry
+     * @param Client           $cache    Client
+     * @param FilteringManager $filter   FilteringManager
+     * @param LaterService     $later    LaterService
      */
-    public function __construct(Registry $doctrine, Client $cache)
+    public function __construct(Registry $doctrine, Client $cache, FilteringManager $filter, LaterService $later)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
+        $this->filter = $filter;
+        $this->later = $later;
 
         if (empty($this->purifier)) {
             $config = HTMLPurifier_Config::createDefault();
@@ -69,8 +84,7 @@ class ItemService
 
         foreach ($items as $item) {
             if (!$userItemRepo->hasItem($user->getId(), $item->getId())) {
-                $userItem = $this->addUserItem($user, $item);
-                $this->entityManager->persist($userItem);
+                $this->addUserItem($user, $item);
             }
         }
         $this->entityManager->flush();
@@ -172,8 +186,12 @@ class ItemService
     private function addItemToSubscribers($item, $feedUsers)
     {
         foreach ($feedUsers as $feedUser) {
-            $userItem = $this->addUserItem($feedUser->getUser(), $item);
-            $this->entityManager->persist($userItem);
+            $laterId = $this->filter->checkUserFeedFilter($feedUser->getUser()->getId(), $feedUser->getFeed()->getId(), 'to.label');
+            $unread =($laterId)? false : true;
+            $userItem = $this->addUserItem($feedUser->getUser(), $item, $unread);
+            if ($laterId) {
+                $this->later->addLaterItem($userItem, $laterId);
+            }
         }
         $this->entityManager->flush();
     }
@@ -186,11 +204,31 @@ class ItemService
      *
      * @return UserItem
      */
-    protected function addUserItem(User $user, Item $item)
+    protected function addLaterItem(User $user, Item $item)
     {
         $userItem = new UserItem();
         $userItem->setUser($user);
         $userItem->setItem($item);
+
+        return $userItem;
+    }
+
+    /**
+     * Add new user item
+     *
+     * @param User    $user
+     * @param Item    $item
+     * @param boolean $unread
+     *
+     * @return UserItem
+     */
+    protected function addUserItem(User $user, Item $item, $unread = true)
+    {
+        $userItem = new UserItem();
+        $userItem->setUser($user);
+        $userItem->setItem($item);
+        $userItem->setUnread($unread);
+        $this->entityManager->persist($userItem);
 
         return $userItem;
     }
@@ -298,7 +336,7 @@ class ItemService
     /**
      * Update content of exists item
      *
-     * @param Item $item
+     * @param Item           $item
      * @param SimplePie_Item $itemData
      */
     public function updateItemContent(Item $item , SimplePie_Item $itemData)

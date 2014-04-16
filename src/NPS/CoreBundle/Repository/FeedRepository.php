@@ -110,4 +110,34 @@ class FeedRepository extends EntityRepository
 
         return $feedCollection;
     }
+
+    /**
+     * Get filters for cache
+     *
+     * @return array
+     */
+    public function getFeedsFiltersForCache($type = null)
+    {
+        $query = $this->createQueryBuilder('f')
+            ->select('f', 'ff', 'fi', 'u', 'l')
+            //->select('f.id feedId, fi.id filterId, u.id userId')
+            ->join('f.filterFeeds', 'ff')
+            ->join('ff.filter', 'fi')
+            ->join('fi.user', 'u')
+            ->join('fi.later', 'l')
+            ->where('f.enabled = :enabled')
+            ->andWhere('ff.deleted = :deleted')
+            ->orderBy('f.id', 'ASC')
+            ->setParameter('enabled', true)
+            ->setParameter('deleted', false);
+
+        if ($type) {
+            $query->andWhere('fi.type = :type')
+                ->setParameter('type', $type);
+        }
+
+        $collection = $query->getQuery()->getArrayResult();
+
+        return $collection;
+    }
 }

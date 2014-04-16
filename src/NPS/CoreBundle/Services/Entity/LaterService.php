@@ -37,6 +37,22 @@ class LaterService extends AbstractEntityService
     }
 
     /**
+     * Add new later item
+     *
+     * @param UserItem $userItem
+     * @param int      $labelId
+     */
+    public function addLaterItem(UserItem $userItem, $labelId)
+    {
+        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+
+        $laterItem = new LaterItem();
+        $laterItem->setLater($laterRepo->find($labelId));
+        $laterItem->setUserItem($userItem);
+        $this->entityManager->persist($laterItem);
+    }
+
+    /**
      * Get query of user labels
      *
      * @return string
@@ -131,24 +147,24 @@ class LaterService extends AbstractEntityService
     {
         $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
 
         foreach ($items as $itemData) {
             $itemId = $itemData['item_id'];
             $labelId = $itemData['label_id'];
             $userItem = $userItemRepo->hasItem($userId, $itemId);
-            if ($userItem instanceof UserItem) {
-                $laterItem = $laterItemRepo->laterExists($labelId, $userItem->getId());
-                if ($laterItem instanceof LaterItem) {
-                    $laterItem->setUnread(true);
-                    $this->entityManager->persist($laterItem);
-                } else {
-                    $laterItem = new LaterItem();
-                    $laterItem->setLater($laterRepo->find($labelId));
-                    $laterItem->setUserItem($userItem);
-                    $this->entityManager->persist($laterItem);
-                }
+            if (!$userItem instanceof UserItem) {
+                continue;
             }
+
+            $laterItem = $laterItemRepo->laterExists($labelId, $userItem->getId());
+            if ($laterItem instanceof LaterItem) {
+                $laterItem->setUnread(true);
+                $this->entityManager->persist($laterItem);
+
+                continue;
+            }
+
+            $this->addLaterItem($userItem, $labelId);
         }
         $this->entityManager->flush();
     }
