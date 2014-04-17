@@ -3,6 +3,7 @@ namespace NPS\CoreBundle\Services;
 
 use NPS\CoreBundle\Entity\User;
 use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * UserWrapper
@@ -29,6 +30,16 @@ class UserWrapper
     }
 
     /**
+     * Set logged user
+     */
+    public function setCurrentUser()
+    {
+        if (!$this->user instanceof User && $this->security->getToken() instanceof UsernamePasswordToken) {
+            $this->user = $this->security->getToken()->getUser();
+        }
+    }
+
+    /**
      * Get current user
      *
      * @return User
@@ -36,15 +47,5 @@ class UserWrapper
     public function getCurrentUser()
     {
         return $this->user;
-    }
-
-    /**
-     * Set logged user
-     */
-    public function setCurrentUser()
-    {
-        if (!$this->user instanceof User) {
-            $this->user = $this->security->getToken()->getUser();
-        }
     }
 }

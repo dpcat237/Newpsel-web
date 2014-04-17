@@ -5,6 +5,7 @@ services:
             doctrine:            @doctrine
             logger:              @logger
             system_notification: @system_notification
+            user_wrapper:        @nps.wrapper.user
 
     nps.entity.feed:
         class: NPS\CoreBundle\Services\Entity\FeedService
