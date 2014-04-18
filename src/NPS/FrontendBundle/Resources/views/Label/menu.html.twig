@@ -4,11 +4,7 @@
             <li>
                 <a href="{{ url("items_later_list", {'label_id':label.id}) }}">
                     <span class="badge">
-                        {% if label.count > 0 %}
-                            {{ label.count }}
-                        {% else %}
-                            0
-                        {% endif %}
+                        {{ label.total }}
                     </span>
                     {% if (label.name | length) > 22 %}
                         {{ label.name | slice(0, 22) }}...

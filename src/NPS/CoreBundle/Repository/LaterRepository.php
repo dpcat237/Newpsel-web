@@ -83,6 +83,32 @@ class LaterRepository extends EntityRepository
     }
 
     /**
+     * Get labels of user with count of later items
+     *
+     * @param integer $userId
+     *
+     * @return array
+     */
+    public function getLabelsForMenu($userId)
+    {
+        $laterItemRepository = $this->getEntityManager()->getRepository('NPSCoreBundle:LaterItem');
+        $query = $laterItemRepository->createQueryBuilder('li')
+            ->select('l.id, l.name, COUNT(li.id) total')
+            ->innerJoin('li.later', 'l')
+            ->where('l.user = :userId')
+            ->andWhere('li.unread = :unread')
+            ->andWhere('l.enabled = :enabled')
+            ->groupBy('l.id')
+            ->orderBy('l.name', 'ASC')
+            ->setParameter('userId', $userId)
+            ->setParameter('unread', true)
+            ->setParameter('enabled', true)
+            ->getQuery();
+
+        return $query->getArrayResult();
+    }
+
+    /**
      * Get query of list of labels of user
      * @param $userId
      *
@@ -96,29 +122,6 @@ class LaterRepository extends EntityRepository
             ->orderBy('l.name', 'ASC');
 
         return $query;
-    }
-
-    /**
-     * Get labels of user with count of later items
-     *
-     * @param integer $userId
-     *
-     * @return array
-     */
-    public function getLabelsForMenu($userId)
-    {
-        $laterTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Later')->getTableName();
-        $laterItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:LaterItem')->getTableName();
-        $query = "SELECT l.id, l.name, (
-                SELECT COUNT(li.id) AS count
-                FROM ".$laterItemTable." li
-                WHERE li.unread=1 AND li.later_id=l.id
-            ) AS count
-            FROM ".$laterTable." l
-            WHERE l.user_id='".$userId."' GROUP BY l.id ORDER BY l.name ASC;";
-        $result = $this->getEntityManager()->getConnection()->executeQuery($query)->fetchAll();
-
-        return $result;
     }
 
     /**
