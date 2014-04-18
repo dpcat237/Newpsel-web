@@ -2,6 +2,7 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,17 +38,14 @@ class DefaultController extends BaseController
      * Homepage
      *
      * @return Response
+     *
      * @Route("/home", name="homepage")
+     * @Secure(roles="ROLE_USER")
+     * @Template("NPSFrontendBundle:Default:index.html.twig")
      */
     public function homeAction()
     {
-        if ($this->get('security.context')->isGranted('ROLE_USER')) {
-            $viewData = array();
-
-            return $this->render('NPSFrontendBundle:Default:index.html.twig', $viewData);
-        }
-
-        return new RedirectResponse($this->container->get('router')->generate('welcome'));
+        return array();
     }
 
     /**
