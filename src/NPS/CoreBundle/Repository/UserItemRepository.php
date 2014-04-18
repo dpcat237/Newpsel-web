@@ -96,4 +96,32 @@ class UserItemRepository extends EntityRepository
 
         $this->getEntityManager()->getConnection()->executeQuery($query);
     }
+
+    /**
+     * Get user's feeds with count of user's items
+     *
+     * @param integer $userId
+     *
+     * @return array
+     */
+    public function getUserFeedsForMenu($userId)
+    {
+        $query = $this->createQueryBuilder('ui')
+            ->select('uf.id, uf.title, COUNT(ui.id) total')
+            ->innerJoin('ui.item', 'i')
+            ->innerJoin('i.feed', 'f')
+            ->innerJoin('f.userFeeds', 'uf')
+            ->where('ui.user = :userId')
+            ->andWhere('uf.user = :userId')
+            ->andWhere('ui.unread = :unread')
+            ->andWhere('uf.deleted = :deleted')
+            ->groupBy('f.id')
+            ->orderBy('uf.title', 'ASC')
+            ->setParameter('userId', $userId)
+            ->setParameter('unread', true)
+            ->setParameter('deleted', false)
+            ->getQuery();
+
+        return $query->getArrayResult();
+    }
 }

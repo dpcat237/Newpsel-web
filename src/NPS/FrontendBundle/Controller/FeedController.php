@@ -31,7 +31,7 @@ class FeedController extends BaseController
     public function menuAction()
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserFeed');
+        $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
         $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId());
 
         return array('userFeeds' =>  $feedsList);
