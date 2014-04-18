@@ -19,7 +19,7 @@ class ItemRepository extends EntityRepository
      * @param int $feedId
      * @param int $limit
      *
-     * @return mixed
+     * @return array
      */
     public function getUnreadItemsApi($userId, $feedId = null, $limit = 300)
     {
@@ -50,8 +50,7 @@ class ItemRepository extends EntityRepository
                 ->setMaxResults($limit)
                 ->getQuery();
         }
-
-        $itemCollection = $query->getResult();
+        $itemCollection = $query->getArrayResult();
 
         return $itemCollection;
     }
