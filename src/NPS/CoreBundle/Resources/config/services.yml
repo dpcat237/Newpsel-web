@@ -1,3 +1,6 @@
+parameters:
+#    nps_frontend.example.class: NPS\FrontendBundle\Example
+
 services:
     crawler:
         class: NPS\CoreBundle\Services\CrawlerService
@@ -29,6 +32,13 @@ services:
             doctrine: @doctrine
             redis:    @snc_redis.default
             logger:   @logger
+
+    nps.manager.notification:
+        class: NPS\CoreBundle\Services\NotificationManager
+        arguments:
+            logger:     @logger
+            session:    @session
+            translator: @translator
 
     user.notifications:
         class: NPS\CoreBundle\Services\UserNotificationsService

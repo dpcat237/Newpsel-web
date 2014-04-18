@@ -4,7 +4,7 @@ namespace NPS\CoreBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Bridge\Monolog\Logger;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\FrontendBundle\Services\SystemNotificationService,
+use NPS\CoreBundle\Services\NotificationManager,
     NPS\CoreBundle\Services\UserWrapper;
 
 /**
@@ -23,34 +23,22 @@ abstract class AbstractEntityService
     protected $entityManager;
 
     /**
-     * @var Logger
+     * @var NotificationManager
      */
-    protected $logger;
-
-    /**
-     * @var SystemNotificationService
-     */
-    protected $systemNotification;
-
-    /**
-     * @var UserWrapper
-     */
-    protected $userWrapper;
+    protected $notification;
 
 
     /**
-     * @param Registry                  $doctrine           Registry
-     * @param Logger                    $logger             Logger
-     * @param SystemNotificationService $systemNotification SystemNotificationService
-     * @param UserWrapper               $userWrapper        UserWrapper
+     * @param Registry            $doctrine     Registry
+     * @param UserWrapper         $userWrapper  UserWrapper
+     * @param NotificationManager $notification NotificationManager
      */
-    public function __construct(Registry $doctrine, Logger $logger, SystemNotificationService $systemNotification, UserWrapper $userWrapper)
+    public function __construct(Registry $doctrine, UserWrapper $userWrapper, NotificationManager $notification)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
-        $this->logger = $logger;
-        $this->systemNotification = $systemNotification;
         $this->userWrapper = $userWrapper;
+        $this->notification = $notification;
     }
 
     /**
@@ -74,12 +62,12 @@ abstract class AbstractEntityService
             $this->entityManager->persist($object);
             $this->entityManager->flush();
             if ($notify) {
-                $this->systemNotification->setMessage(NotificationHelper::SAVED_OK);
+                $this->notification->setFlashMessage(NotificationHelper::SAVED_OK);
             }
         } catch (\Exception $e) {
-            $this->logger->err(__METHOD__.' '.$e->getMessage());
+            $this->notification->setLog(__METHOD__.' '.$e->getMessage(), 'err');
             if ($notify) {
-                $this->systemNotification->setMessage(NotificationHelper::ERROR_TRY_AGAIN);
+                $this->notification->setFlashMessage(NotificationHelper::ERROR_TRY_AGAIN);
             }
         }
     }

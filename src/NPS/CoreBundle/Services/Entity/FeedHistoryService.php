@@ -3,7 +3,6 @@ namespace NPS\CoreBundle\Services\Entity;
 
 use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\FeedHistory;
-use NPS\CoreBundle\Services\Entity\AbstractEntityService;
 
 /**
  * FeedHistoryService

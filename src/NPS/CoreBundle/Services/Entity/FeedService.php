@@ -6,7 +6,6 @@ use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Services\Entity\AbstractEntityService;
 
 /**
  * FeedService
@@ -97,7 +96,7 @@ class FeedService extends AbstractEntityService
         if ($form->isValid() && $formObject instanceof Feed) {
             $this->saveObject($formObject, true);
         } else {
-            $this->systemNotification->setMessage(NotificationHelper::ALERT_FORM_DATA);
+            $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
         }
     }
 
@@ -111,7 +110,7 @@ class FeedService extends AbstractEntityService
         if ($form->isValid() && $formObject instanceof UserFeed) {
             $this->saveObject($formObject, true);
         } else {
-            $this->systemNotification->setMessage(NotificationHelper::ALERT_FORM_DATA);
+            $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
         }
     }
 

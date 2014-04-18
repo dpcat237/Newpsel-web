@@ -1,8 +1,0 @@
-parameters:
-#    nps_frontend.example.class: NPS\FrontendBundle\Example
-
-services:
-    system_notification:
-        class: NPS\FrontendBundle\Services\SystemNotificationService
-        arguments:
-            session: @session

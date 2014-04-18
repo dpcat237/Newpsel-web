@@ -1,23 +1,16 @@
 <?php
 namespace NPS\CoreBundle\Services\Entity;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Collections\ArrayCollection;
-use NPS\CoreBundle\Entity\Feed;
-use NPS\CoreBundle\Entity\Filter;
-use NPS\CoreBundle\Entity\FilterFeed;
+use NPS\CoreBundle\Entity\Filter,
+    NPS\CoreBundle\Entity\Later;
 use Symfony\Bridge\Monolog\Logger;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormError;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
-use NPS\FrontendBundle\Services\SystemNotificationService,
-    NPS\CoreBundle\Services\UserWrapper;
-use NPS\CoreBundle\Entity\Later;
+use Symfony\Component\Form\Form,
+    Symfony\Component\Form\FormError;
 
 /**
  * FilterService
  */
-class FilterService
+class FilterService extends AbstractEntityService
 {
     /**
      * @var Filter
@@ -39,28 +32,6 @@ class FilterService
      */
     private $form;
 
-    /**
-     * @var Translator
-     */
-    private $translator;
-
-    /**
-     * @param Registry                  $doctrine           Registry
-     * @param Logger                    $logger             Logger
-     * @param SystemNotificationService $systemNotification SystemNotificationService
-     * @param UserWrapper               $userWrapper        UserWrapper
-     * @param Translator                $translator         Translator
-     */
-    public function __construct(Registry $doctrine, Logger $logger, SystemNotificationService $systemNotification, UserWrapper $userWrapper, Translator $translator)
-    {
-
-        $this->doctrine = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
-        $this->logger = $logger;
-        $this->systemNotification = $systemNotification;
-        $this->userWrapper = $userWrapper;
-        $this->translator = $translator;
-    }
 
     /**
      * Process to validate filter form and create it
@@ -119,7 +90,7 @@ class FilterService
     private function checkFormToLabel()
     {
         if (!$this->formData->getLater() instanceof Later) {
-            $error = new FormError($this->translator->trans('_Error_select_label'));
+            $error = new FormError($this->notification->trans('_Error_select_label'));
             $this->form->get('later')->addError($error);
             $this->formError = true;
         }

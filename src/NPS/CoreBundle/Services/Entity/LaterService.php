@@ -84,7 +84,7 @@ class LaterService extends AbstractEntityService
         if ($form->isValid() && $formObject instanceof Later) {
             $this->saveObject($formObject, true);
         } else {
-            $this->systemNotification->setMessage(NotificationHelper::ALERT_FORM_DATA);
+            $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
         }
     }
 
