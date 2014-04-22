@@ -33,6 +33,7 @@ class CrawlerHelper extends Helper
     {
         $feeds = array(
             7,  //BBC news
+            12, //Engadget en español
             17, //Science news
             19, //Antena 3
             20, //OMG!
@@ -55,6 +56,23 @@ class CrawlerHelper extends Helper
         $crawler = $service->getItemPage($itemUrl);
         $content = $crawler->filter('.layout-block-a');
         $content = explode('<!--Related hypers and stories -->', $content->html());
+
+        return $content[0];
+    }
+
+    /**
+     * Crawling process for Engadget en español - #12
+     *
+     * @param CrawlerService $service
+     * @param string $itemUrl
+     *
+     * @return string
+     */
+    static public function process12(CrawlerService $service, $itemUrl)
+    {
+        $crawler = $service->getItemPage($itemUrl);
+        $content = $crawler->filter('div.post');
+        $content = explode('<div class="postmeta">', $content->html());
 
         return $content[0];
     }
