@@ -75,7 +75,7 @@ class DefaultController extends BaseController
      *
      * to try:
      *
-    $feedId = 14;
+    $feedId = 1;
     $link = 'http://feeds.feedburner.com/MarcAndAngel';
     $artTitle = "8 Things You Should NOT Do to Get Ahead";
     $artUrl = 'http://feeds.gawker.com/~r/lifehacker/full/~3/eREZUL0Eto0/how-can-i-find-out-where-an-email-really-came-from-1190061668';
