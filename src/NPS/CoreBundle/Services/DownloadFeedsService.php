@@ -260,7 +260,8 @@ class DownloadFeedsService
                 $feed->setUrl($url);
                 $feed->setUrlHash(sha1($url));
                 $feed->setTitle($this->rss->get_title());
-                $feed->setWebsite($this->rss->get_link());
+                $web = ($this->rss->get_link())? $this->rss->get_link() : $this->rss->feed_url;
+                $feed->setWebsite($web);
                 $feed->setLanguage($this->rss->get_language());
                 $this->entityManager->persist($feed);
             } else {
