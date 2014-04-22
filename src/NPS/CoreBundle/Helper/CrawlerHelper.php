@@ -37,6 +37,7 @@ class CrawlerHelper extends Helper
             19, //Antena 3
             20, //OMG!
             26, //Mobile review
+            48, //Últimas noticias sobre Symfony | symfony.es
         );
 
         return $feeds;
@@ -123,6 +124,23 @@ class CrawlerHelper extends Helper
         $content =  file_get_contents($itemUrl);
         $content = explode('<div id="mainbanner">', $content);
         $content = explode('<!--main content end-->', $content[1]);
+
+        return $content[0];
+    }
+
+    /**
+     * Crawling process for symfony.es - #48
+     *
+     * @param CrawlerService $service
+     * @param string $itemUrl
+     *
+     * @return string
+     */
+    static public function process48(CrawlerService $service, $itemUrl)
+    {
+        $crawler = $service->getItemPage($itemUrl);
+        $content = $crawler->filter('div.span9');
+        $content = explode('<div class="comments">', $content->html());
 
         return $content[0];
     }
