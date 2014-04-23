@@ -47,31 +47,36 @@ class LaterItemRepository extends EntityRepository
 
     /**
      * Get incomplete later items
-     * @param null $userId
+     *
+     * @param int $userId
      *
      * @return array
      */
     public function getItemForCrawling($userId = null)
     {
-        $query = $this->createQueryBuilder('li')
-            ->select('li', 'ui', 'i', 'f')
+        $query = $this->createQueryBuilder('li');
+        $query
+            ->select('li.id laterItem_id, i.id item_id, i.link, i.content, f.id feed_id')
             ->join('li.userItem', 'ui')
             ->join('ui.item', 'i')
-            ->join('i.feed', 'f')
-            ->where('f.crawling = :isCrawling')
-            ->andWhere('li.unread = :unread')
+            ->leftJoin('i.feed', 'f')
+            ->where('li.unread = :unread')
+            ->andWhere(
+                $query->expr()->orX(
+                    'f.crawling = :isCrawling', $query->expr()->isNull('i.feed')
+                )
+            )
             ->orderBy('li.id', 'ASC')
-            ->setParameter('isCrawling', true)
-            ->setParameter('unread', true);
+            ->setParameter('unread', true)
+            ->setParameter('isCrawling', true);
         if ($userId) {
             $query
                 ->andWhere('ui.user = :userId')
                 ->setParameter('userId', $userId);
         }
         $query = $query->getQuery();
-        $laterItemCollection = $query->getResult();
 
-        return $laterItemCollection;
+        return $query->getArrayResult();
     }
 
     /**

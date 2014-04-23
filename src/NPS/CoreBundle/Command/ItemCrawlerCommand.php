@@ -79,39 +79,38 @@ class ItemCrawlerCommand extends ConsumerCommand
         $notFoundKey = 'crawledNotFoundItem_';
 
         foreach ($laterItems as $laterItem) {
-            $item = $laterItem->getUserItem()->getItem();
-            if ($cache->get($cacheKey.$item->getId()) || $cache->get($notFoundKey.$item->getId())) {
+            if ($cache->get($cacheKey.$laterItem['item_id']) || $cache->get($notFoundKey.$laterItem['item_id'])) {
                 continue;
             }
-            $this->makeCrawling($crawler, $cache, $item, $cacheKey, $notFoundKey);
+            $this->makeCrawling($crawler, $cache, $laterItem, $cacheKey, $notFoundKey);
         }
     }
 
     /**
      * Make crawling process
      * @param CrawlerService $crawler     CrawlerService
-     * @param Client   $cache       Client
-     * @param Item           $item        Item
+     * @param Client         $cache       Client
+     * @param array          $laterItem   array
      * @param string         $cacheKey    cache key
      * @param string         $notFoundKey key of not found
      */
-    private function makeCrawling(CrawlerService $crawler, Client $cache, Item $item, $cacheKey, $notFoundKey)
+    private function makeCrawling(CrawlerService $crawler, Client $cache, $laterItem, $cacheKey, $notFoundKey)
     {
         $sleepHidden = "sleep";
-        if ($this->checkWaitForCrawling($item->getFeed()->getId())) {
+        if ($laterItem['feed_id'] && $this->checkWaitForCrawling($laterItem['feed_id'])) {
             $sleepHidden(30);
         }
 
         try {
-            $completeContent = $crawler->getCompleteContent($item->getLink(), $item->getContent(), $item->getFeedId());
+            $completeContent = $crawler->getCompleteContent($laterItem['link'], $laterItem['content'], $laterItem['feed_id']);
         } catch (Exception $e) {
             $completeContent = null;
         }
 
         if ($completeContent) {
-            $cache->setex($cacheKey.$item->getId(), 2592000, $completeContent);
+            $cache->setex($cacheKey.$laterItem['item_id'], 2592000, $completeContent);
         } else {
-            $cache->setex($notFoundKey.$item->getId(), 1296000, $item->getLink());
+            $cache->setex($notFoundKey.$laterItem['item_id'], 1296000, $laterItem['item_id']);
         }
     }
 

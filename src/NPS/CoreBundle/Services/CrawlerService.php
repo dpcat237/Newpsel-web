@@ -69,6 +69,7 @@ class CrawlerService
 
     /**
      * Parse item's web and get full content
+     *
      * @param string $itemUrl
      * @param string $itemContent
      * @param int    $feedId
@@ -78,7 +79,7 @@ class CrawlerService
     public function getCompleteContent($itemUrl, $itemContent, $feedId)
     {
         $complete = null;
-        if ($this->checkSpecial($feedId)) {
+        if ($feedId && $this->checkSpecial($feedId)) {
             $complete = $this->callSpecificCrawling($feedId, $itemUrl, $itemContent);
         } else {
             $complete = $this->executeGenericCrawling($itemUrl, $itemContent);
@@ -89,9 +90,10 @@ class CrawlerService
 
     /**
      * Try get content with specific crawling
-     * @param $feedId
-     * @param $itemUrl
-     * @param $itemContent
+     *
+     * @param int    $feedId
+     * @param string $itemUrl
+     * @param string $itemContent
      *
      * @return null
      */
