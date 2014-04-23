@@ -39,6 +39,7 @@ class CrawlerHelper extends Helper
             20, //OMG!
             26, //Mobile review
             48, //Últimas noticias sobre Symfony | symfony.es
+            55, //Java Code Geeks
         );
 
         return $feeds;
@@ -53,11 +54,7 @@ class CrawlerHelper extends Helper
      */
     static public function process7(CrawlerService $service, $itemUrl)
     {
-        $crawler = $service->getItemPage($itemUrl);
-        $content = $crawler->filter('.layout-block-a');
-        $content = explode('<!--Related hypers and stories -->', $content->html());
-
-        return $content[0];
+        return CrawlerHelper::contentRemoveEnd($service, $itemUrl, '.layout-block-a', '<!--Related hypers and stories -->');
     }
 
     /**
@@ -70,11 +67,7 @@ class CrawlerHelper extends Helper
      */
     static public function process12(CrawlerService $service, $itemUrl)
     {
-        $crawler = $service->getItemPage($itemUrl);
-        $content = $crawler->filter('div.post');
-        $content = explode('<div class="postmeta">', $content->html());
-
-        return $content[0];
+        return CrawlerHelper::contentRemoveEnd($service, $itemUrl, 'div.post', '<div class="postmeta">');
     }
 
     /**
@@ -150,15 +143,43 @@ class CrawlerHelper extends Helper
      * Crawling process for symfony.es - #48
      *
      * @param CrawlerService $service
-     * @param string $itemUrl
+     * @param string         $itemUrl
      *
      * @return string
      */
     static public function process48(CrawlerService $service, $itemUrl)
     {
+        return CrawlerHelper::contentRemoveEnd($service, $itemUrl, 'div.span9', '<div class="comments">');
+    }
+
+    /**
+     * Crawling process for Java Code Geeks - #48
+     *
+     * @param CrawlerService $service
+     * @param string         $itemUrl
+     *
+     * @return string
+     */
+    static public function process55(CrawlerService $service, $itemUrl)
+    {
+        return CrawlerHelper::contentRemoveEnd($service, $itemUrl, 'div.entry-content', '<div class="yarpp-related">');
+    }
+
+    /**
+     * Generic method to take article content and remove content at the end
+     *
+     * @param CrawlerService $service
+     * @param string         $itemUrl
+     * @param string         $contentTag
+     * @param string         $removeEnd
+     *
+     * @return string
+     */
+    static public function contentRemoveEnd(CrawlerService $service, $itemUrl, $contentTag, $removeEnd)
+    {
         $crawler = $service->getItemPage($itemUrl);
-        $content = $crawler->filter('div.span9');
-        $content = explode('<div class="comments">', $content->html());
+        $content = $crawler->filter($contentTag);
+        $content = explode($removeEnd, $content->html());
 
         return $content[0];
     }
