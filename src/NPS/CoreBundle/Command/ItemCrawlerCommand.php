@@ -1,6 +1,7 @@
 <?php
 namespace NPS\CoreBundle\Command;
 
+use Guzzle\Http\Exception\CurlException;
 use Predis\Client;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Input\InputInterface,
@@ -17,6 +18,11 @@ use Mmoreram\RSQueueBundle\Command\ConsumerCommand;
 class ItemCrawlerCommand extends ConsumerCommand
 {
     private $feedTime = array();
+
+    /**
+     * @var Logger
+     */
+    private $logger;
     
     /**
      * configure of ItemCrawlerCommand
@@ -52,10 +58,10 @@ class ItemCrawlerCommand extends ConsumerCommand
         $cache = $container->get('snc_redis.default');
         $crawler = $container->get('crawler');
         $doctrine = $container->get('doctrine');
-        $log = $container->get('logger');
+        $this->logger = $container->get('logger');
         $userId =(is_numeric($userId))? : null;
 
-        $log->info('*** Start crawling uncompleted articles ***');
+        $this->logger->info('*** Start crawling uncompleted articles ***');
 
         $laterItemRepo = $doctrine->getRepository('NPSCoreBundle:LaterItem');
         $laterItems = $laterItemRepo->getItemForCrawling($userId);
@@ -64,7 +70,7 @@ class ItemCrawlerCommand extends ConsumerCommand
             $this->iterateItemsForCrawling($crawler, $cache, $laterItems);
         }
 
-        $log->info('*** Crawling finished ***');
+        $this->logger->info('*** Crawling finished ***');
     }
 
     /**
@@ -104,6 +110,10 @@ class ItemCrawlerCommand extends ConsumerCommand
         try {
             $completeContent = $crawler->getCompleteContent($laterItem['link'], $laterItem['content'], $laterItem['feed_id']);
         } catch (Exception $e) {
+            $completeContent = null;
+            $this->logger->err("makeCrawling item id: ".$laterItem['item_id']." Error: ".$e->getMessage());
+        } catch (CurlException $e) {
+            $this->logger->err("makeCrawling item id: ".$laterItem['item_id']." Error: ".$e->getMessage());
             $completeContent = null;
         }
 
