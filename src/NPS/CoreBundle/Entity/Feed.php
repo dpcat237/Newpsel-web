@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use NPS\CoreBundle\Entity\Traits\EnabledTrait;
-use NPS\CoreBundle\Helper\DisplayHelper;
+use NPS\CoreBundle\Helper\FormatHelper;
 
 /**
  * Feed
@@ -388,7 +388,7 @@ class Feed extends AbstractEntity
      */
     public function getHumanDateSync()
     {
-        return DisplayHelper::displayDate($this->dateSync);
+        return FormatHelper::displayDate($this->dateSync);
     }
 
     /**

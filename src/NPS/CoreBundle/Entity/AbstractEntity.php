@@ -4,7 +4,7 @@ namespace NPS\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use NPS\CoreBundle\Helper\DisplayHelper;
+use NPS\CoreBundle\Helper\FormatHelper;
 
 /**
  * Base Web User
@@ -106,7 +106,7 @@ abstract class AbstractEntity
      */
     public function getHumanDateAdd()
     {
-        return DisplayHelper::displayDate($this->getDateAdd());
+        return FormatHelper::displayDate($this->getDateAdd());
     }
 
     /**

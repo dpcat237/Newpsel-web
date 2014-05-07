@@ -1,7 +1,9 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
+use Exception;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Helper\FormatHelper;
 use Predis\Client;
 use SimplePie,
     SimplePie_Item;
@@ -262,14 +264,14 @@ class DownloadFeedsService
                 $feed->setTitle($this->rss->get_title());
                 $web = ($this->rss->get_link())? $this->rss->get_link() : $this->rss->feed_url;
                 $feed->setWebsite($web);
-                $feed->setLanguage($this->rss->get_language());
+                $languageCode = FormatHelper::getLanguageCode($this->rss->get_language());
+                $feed->setLanguage($languageCode);
                 $this->entityManager->persist($feed);
             } else {
                 $this->error = NotificationHelper::ERROR_WRONG_FEED;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error = $e->getMessage();
-
         }
 
         return $feed;
