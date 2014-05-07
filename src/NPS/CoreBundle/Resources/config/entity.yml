@@ -37,6 +37,6 @@ services:
             server_cache: @snc_redis.default
             item:         @item
 
-    user:
+    nps.entity.user:
         class: NPS\CoreBundle\Services\Entity\UserService
         parent: nps.abstract.entity

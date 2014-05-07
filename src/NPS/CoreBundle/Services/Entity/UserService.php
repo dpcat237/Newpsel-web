@@ -47,12 +47,12 @@ class UserService extends AbstractEntityService
             $user->setPassword($password);
             $user->setEnabled(true);
             $user->setRegistered(true);
-
             $this->saveObject($user, true);
-            $this->setPreferenceNewUser($user);
         }
+        $response[] = $check['errors'];
+        $response[] = $user;
 
-        return $check['errors'];
+        return $response;
     }
 
     /**
@@ -88,7 +88,7 @@ class UserService extends AbstractEntityService
      *
      * @param User $user
      */
-    protected function setPreferenceNewUser(User $user)
+    public function setPreferenceNewUser(User $user)
     {
         $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
         $laterRepo->createLabel($user, 'Read later');

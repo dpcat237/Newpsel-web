@@ -26,6 +26,7 @@ class NPSCoreExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('formType.yml');
         $loader->load('entity.yml');
+        $loader->load('eventListeners.yml');
         $loader->load('parameters.yml');
         $loader->load('services.yml');
     }

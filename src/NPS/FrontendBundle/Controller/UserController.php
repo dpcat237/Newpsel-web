@@ -3,6 +3,8 @@
 namespace NPS\FrontendBundle\Controller;
 
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use NPS\CoreBundle\Event\UserSignUpEvent;
+use NPS\CoreBundle\NPSCoreEvents;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\RedirectResponse,
     Symfony\Component\HttpFoundation\Response;
@@ -45,7 +47,7 @@ class UserController extends BaseController
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
-            $this->get('user')->saveFormPreferences($form);
+            $this->get('nps.entity.user')->saveFormPreferences($form);
 
             return new RedirectResponse($route);
         }
@@ -180,18 +182,24 @@ class UserController extends BaseController
         $formType = new SignUpType($user);
         $form = $this->createForm($formType, $user);
 
-        if ($request->getMethod() == 'POST') {
-            $form->handleRequest($request);
-            $errors = $this->get('user')->saveFormUser($form);
-            if (!$errors) {
-                return new RedirectResponse($this->container->get('router')->generate('sign_in'));
-            }
-        }
-
         $viewData = array (
             'form' => $form->createView(),
             'errors' => $errors
         );
+
+        if ($request->getMethod() != 'POST') {
+            return $viewData;
+        }
+
+        $form->handleRequest($request);
+        list($errors, $user) = $this->get('nps.entity.user')->saveFormUser($form);
+        if (!$errors) {
+            $newUserSignUpEvent = new UserSignUpEvent($user);
+            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::USER_SIGN_UP, $newUserSignUpEvent);
+
+            return new RedirectResponse($this->container->get('router')->generate('sign_in'));
+        }
+        $viewData['errors'] = $errors;
 
         return $viewData;
     }
