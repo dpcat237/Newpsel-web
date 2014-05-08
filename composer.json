@@ -48,7 +48,8 @@
         "symfony/process": "2.*",
         "mattsches/version-eye-bundle": "0.4.*",
         "mmoreram/rsqueue-bundle": "dev-master",
-        "friendsofsymfony/elastica-bundle": "3.0.*@dev"
+        "friendsofsymfony/elastica-bundle": "3.0.*@dev",
+        "eko/googletranslatebundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

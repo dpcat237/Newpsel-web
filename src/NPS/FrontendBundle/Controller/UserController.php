@@ -192,10 +192,10 @@ class UserController extends BaseController
         }
 
         $form->handleRequest($request);
-        list($errors, $user) = $this->get('nps.entity.user')->saveFormUser($form);
+        list($user, $errors) = $this->get('nps.entity.user')->saveFormUser($form);
         if (!$errors) {
-            $newUserSignUpEvent = new UserSignUpEvent($user);
-            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::USER_SIGN_UP, $newUserSignUpEvent);
+            $userSignUpEvent = new UserSignUpEvent($user);
+            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::USER_SIGN_UP, $userSignUpEvent);
 
             return new RedirectResponse($this->container->get('router')->generate('sign_in'));
         }

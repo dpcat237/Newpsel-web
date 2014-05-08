@@ -3,6 +3,8 @@
 namespace NPS\FrontendBundle\Controller;
 
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use NPS\CoreBundle\Event\FeedCreatedEvent;
+use NPS\CoreBundle\NPSCoreEvents;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -48,23 +50,24 @@ class FeedController extends BaseController
      */
     public function addAction(Request $request)
     {
+        $error = false;
         if (!$request->get('feed')) {
             $result = NotificationHelper::ERROR;
             $itemListUrl = '';
         } else {
             $user = $this->get('security.context')->getToken()->getUser();
             $downloadFeeds = $this->get('download_feeds');
-            $checkCreate = $downloadFeeds->addFeed($request->get('feed'), $user);
-
-            if ($checkCreate['error']) {
-                $this->get('system_notification')->setMessage($checkCreate['error']);
-            }
+            list($feed, $error) = $downloadFeeds->addFeed($request->get('feed'), $user);
         }
 
-        if (!$checkCreate['error']) {
+        if ($error) {
+            $this->get('system_notification')->setMessage($checkCreate['error']);
+        } else {
             $result = NotificationHelper::OK;
-            $userFeed = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $checkCreate['feed']->getId());
+            $userFeed = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $feed->getId());
             $itemListUrl = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()), true);
+            $newFeedEvent = new FeedCreatedEvent($feed);
+            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_CREATED, $newFeedEvent);
         }
         $response = array (
             'result' => $result,

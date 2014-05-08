@@ -6,6 +6,13 @@ namespace NPS\CoreBundle;
  */
 class NPSCoreEvents
 {
+/** Feed **/
+    /**
+     * Event to fire when was created new feed
+     */
+    const FEED_CREATED = 'nps.feed.created';
+
+/** User **/
     /**
      * Event to fire when a user signs upt
      */

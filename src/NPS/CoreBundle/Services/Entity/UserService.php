@@ -49,8 +49,8 @@ class UserService extends AbstractEntityService
             $user->setRegistered(true);
             $this->saveObject($user, true);
         }
-        $response[] = $check['errors'];
         $response[] = $user;
+        $response[] = $check['errors'];
 
         return $response;
     }

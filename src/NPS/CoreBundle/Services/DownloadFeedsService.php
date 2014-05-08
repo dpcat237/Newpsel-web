@@ -99,8 +99,8 @@ class DownloadFeedsService
     {
         $url = $this->checkUrl($url);
         if (!$url) {
-            $result['feed'] = null;
-            $result['error'] = $this->error;
+            $result[] = null;
+            $result[] = $this->error;
 
             return $result;
         }
@@ -112,9 +112,8 @@ class DownloadFeedsService
         } else {
             $feed = $this->createFeed($url, $user);
         }
-
-        $result['feed'] = $feed;
-        $result['error'] = $this->error;
+        $result[] = $feed;
+        $result[] = $this->error;
 
         return $result;
     }
@@ -264,8 +263,6 @@ class DownloadFeedsService
                 $feed->setTitle($this->rss->get_title());
                 $web = ($this->rss->get_link())? $this->rss->get_link() : $this->rss->feed_url;
                 $feed->setWebsite($web);
-                $languageCode = FormatHelper::getLanguageCode($this->rss->get_language());
-                $feed->setLanguage($languageCode);
                 $this->entityManager->persist($feed);
             } else {
                 $this->error = NotificationHelper::ERROR_WRONG_FEED;
