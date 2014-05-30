@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{{ '_Title'|trans }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="{% trans %}Newpsel - News Personal Selector. RSS feeds reader.{% endtrans %}">
+    <meta name="author" content="Denys Pasishnyi">
+    {% stylesheets debug=false filter='lessphp' output='bundles/npsfrontend/css/*.css'
+        '@NPSFrontendBundle/Resources/public/less/404.less'
+    %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+    {% endstylesheets %}
+
+</head>
+<body id="top">
+
+<div class="wrapper row2">
+    <div id="container" class="clear">
+        <div id="fof" class="clear">
+            <div class="hgroup clear">
+                <img src="{{ asset('bundles/npsfrontend/images/logo_web.png') }}" alt="{{ '_Title'|trans }}" />
+                <br><br><br><br>
+                <h1>404</h1>
+                <h2>{{ '_ERROR'|trans }}<span>{{ '_Page_Not_Found'|trans }}</span></h2>
+            </div>
+            <p>{{ '_Not_found_text'|trans }}</p>
+            <p><a href="{{ url('homepage') }}">{{ '_Go_Homepage'|trans }}</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

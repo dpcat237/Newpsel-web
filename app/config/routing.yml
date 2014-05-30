@@ -6,3 +6,10 @@ chicplace_web:
 nps_api:
     resource: "@NPSApiBundle/Resources/config/routing.yml"
     prefix:   /api
+
+
+page_not_found:
+    path:  "/{notfounduri}"
+    requirements:
+        notfounduri: .*
+    defaults: { _controller: "NPSFrontendBundle:PageNotFound:view"}

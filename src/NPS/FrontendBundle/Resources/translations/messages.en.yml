@@ -1,4 +1,5 @@
 # *** Global layout ***
+_Title: Newpsel
 
 #*** Notifications ***
 #success
@@ -23,6 +24,13 @@ _Logout: Logout
 _Edit_shared_later: Select label (in it will be saved shared links from mobile device)
 
 #*** Entities ***
+
+#*** Error page ***
+_ERROR: ERROR !
+_Page_Not_Found: Page Not Found
+_Go_Homepage: Go Home page
+_Not_found_text: For Some Reason The Page You Requested Could Not Be Found On Our Server
+
 #Filter
 _Save_to_label: Save to label
 _Error_select_label: Select a label
