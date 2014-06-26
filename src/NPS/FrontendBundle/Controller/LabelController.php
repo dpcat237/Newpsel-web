@@ -2,6 +2,7 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ use NPS\FrontendBundle\Form\Type\LaterEditType;
  *
  * @Route("/label")
  */
-class LabelController extends BaseController
+class LabelController extends Controller
 {
     /**
      * List of user's labels

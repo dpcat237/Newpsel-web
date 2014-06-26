@@ -2,6 +2,7 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,7 +17,7 @@ use NPS\CoreBundle\Helper\NotificationHelper;
  *
  * @package NPS\FrontendBundle\Controller
  */
-class DefaultController extends BaseController
+class DefaultController extends Controller
 {
     /**
      * Welcome page with sing in and sign up

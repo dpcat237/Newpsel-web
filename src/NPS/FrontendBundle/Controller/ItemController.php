@@ -3,6 +3,7 @@
 namespace NPS\FrontendBundle\Controller;
 
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
@@ -19,7 +20,7 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 /**
  * ItemController
  */
-class ItemController extends BaseController
+class ItemController extends Controller
 {
     /**
      * List of items

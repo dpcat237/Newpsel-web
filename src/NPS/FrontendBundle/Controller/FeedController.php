@@ -5,6 +5,7 @@ namespace NPS\FrontendBundle\Controller;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -22,7 +23,7 @@ use NPS\FrontendBundle\Form\Type\UserFeedEditType;
  *
  * @Route("/feed")
  */
-class FeedController extends BaseController
+class FeedController extends Controller
 {
     /**
      * Menu build

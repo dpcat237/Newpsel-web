@@ -5,6 +5,7 @@ namespace NPS\FrontendBundle\Controller;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use NPS\CoreBundle\Event\UserSignUpEvent;
 use NPS\CoreBundle\NPSCoreEvents;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\RedirectResponse,
     Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ use NPS\FrontendBundle\Form\Type\PreferenceEditType,
  *
  * @package NPS\FrontendBundle\Controller
  */
-class UserController extends BaseController
+class UserController extends Controller
 {
     /**
      * Edit user's preferences

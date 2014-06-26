@@ -3,6 +3,7 @@
 namespace NPS\FrontendBundle\Controller;
 
 use NPS\CoreBundle\Entity\Filter;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
  *
  * @Route("/filter")
  */
-class FilterController extends BaseController
+class FilterController extends Controller
 {
     /**
      * List of user's filters
