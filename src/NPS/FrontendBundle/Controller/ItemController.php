@@ -183,7 +183,7 @@ class ItemController extends Controller
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
-            $this->get('later_item')->makeLaterRead($laterItem);
+            $this->get('nps.entity.later_item')->makeLaterRead($laterItem);
 
             $item = $laterItem->getUserItem()->getItem();
             $this->get('item')->changeStatus($user, $item, "isUnread", "setUnread", 2);
