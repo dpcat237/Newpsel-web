@@ -56,6 +56,12 @@ api_sync_later:
     requirements:
       _method: POST
 
+api_sync_later_items:
+    pattern:  /sync_later_items/
+    defaults: { _controller: NPSApiBundle:Label:syncLaterItems }
+    requirements:
+      _method: POST
+
 api_sync_shared:
     pattern:  /sync_shared/
     defaults: { _controller: NPSApiBundle:Label:syncShared }

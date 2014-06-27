@@ -72,7 +72,7 @@ class LaterItemService
      *
      * @param LaterItem $laterItem
      *
-     * @return \NPS\CoreBundle\Entity\Item
+     * @return Item
      */
     public function readItem(LaterItem $laterItem)
     {
@@ -98,4 +98,59 @@ class LaterItemService
         $this->entityManager->persist($laterItem);
         $this->entityManager->flush();
     }
+
+    /**
+     * Get unread later items for API
+     *
+     * @param int $labelId
+     *
+     * @return array
+     */
+    public function getUnreadItemsApi($labelId) {
+        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+        $laterItems = $laterItemRepo->getUnreadForApi($labelId);
+        $laterItems = $this->addCompleteContent($laterItems);
+        $laterItems = $this->removeShortContent($laterItems);
+
+        return $laterItems;
+    }
+
+    /**
+     * Add complete content for later items, if exists
+     *
+     * @param array $laterItems
+     *
+     * @return mixed
+     */
+    private function addCompleteContent($laterItems)
+    {
+        foreach ($laterItems as $key => $laterItem) {
+            if ($content = $this->cache->get('crawledItem_'.$laterItem['item_id'])) {
+                $laterItems[$key]['content'] = $content;
+            }
+        }
+
+        return $laterItems;
+    }
+
+    /**
+     * Remove items with short content
+     *
+     * @param $laterItems
+     *
+     * @return array
+     */
+    private function removeShortContent($laterItems) {
+        $collection = array();
+        foreach ($laterItems as $laterItem) {
+            $text = strip_tags($laterItem['content']);
+            if (strlen($text) > 1000) {
+                $laterItem['text'] = $text;
+                $collection[] = $laterItem;
+            }
+        }
+
+        return $collection;
+    }
+
 }

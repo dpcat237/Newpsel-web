@@ -30,7 +30,8 @@ class LabelController extends ApiController
     }
 
     /**
-     * Sync later items
+     * Sync later items to save in web selected item to read later
+     *
      * @param Request $request the current request
      *
      * @return string
@@ -49,6 +50,7 @@ class LabelController extends ApiController
 
     /**
      * Add new pages/items to later
+     *
      * @param Request $request the current request
      *
      * @return string
@@ -58,6 +60,25 @@ class LabelController extends ApiController
         $json = json_decode($request->getContent(), true);
         $labelService = $this->get('api.item.service');
         $responseData = $labelService->syncShared($json['appKey'], $json['sharedItems']);
+        if ($responseData['error']) {
+            return $this->plainResponse($responseData['error']);
+        }
+
+        return $this->plainResponse($responseData['result']);
+    }
+
+    /**
+     * Sync later articles to device and update which were reviewed
+     *
+     * @param Request $request the current request
+     *
+     * @return string
+     */
+    public function syncLaterItemsAction(Request $request)
+    {
+        $json = json_decode($request->getContent(), true);
+        $labelService = $this->get('api.label.service');
+        $responseData = $labelService->syncLaterArticles($json['appKey'], $json['readItems'], $json['laterId']);
         if ($responseData['error']) {
             return $this->plainResponse($responseData['error']);
         }

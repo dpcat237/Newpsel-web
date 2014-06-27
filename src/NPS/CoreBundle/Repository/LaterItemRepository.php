@@ -105,6 +105,32 @@ class LaterItemRepository extends EntityRepository
     }
 
     /**
+     * Get unread items for api
+     *
+     * @param int $laterId
+     *
+     * @return array
+     */
+    public function getUnreadForApi($laterId)
+    {
+        $query = $this->createQueryBuilder('li');
+        $query
+            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id, li.unread AS is_unread, i.link, i.content')
+            ->join('li.userItem', 'ui')
+            ->join('ui.item', 'i')
+            ->leftJoin('i.feed', 'f')
+            ->leftJoin('li.later', 'l')
+            ->where('li.unread = :unread')
+            ->andWhere('li.later = :laterId')
+            ->orderBy('li.id', 'ASC')
+            ->setParameter('unread', true)
+            ->setParameter('laterId', $laterId);
+        $query = $query->getQuery();
+
+        return $query->getArrayResult();
+    }
+
+    /**
      * Check if later item already set to label
      * @param $labelId
      * @param $userItemId
@@ -128,5 +154,23 @@ class LaterItemRepository extends EntityRepository
         } else {
             return false;
         }
+    }
+
+    /**
+     * Update later items status
+     *
+     * @param $laterItems
+     */
+    public function syncViewedLaterItems($laterItems)
+    {
+        $query = "START TRANSACTION; ";
+        $laterItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:LaterItem')->getTableName();
+
+        foreach ($laterItems as $itemData) {
+            $query.= "UPDATE ".$laterItemTable." SET unread=".$itemData['unread']." WHERE id=".$itemData['api_id']."; ";
+        }
+        $query .= "COMMIT;";
+
+        $this->getEntityManager()->getConnection()->executeQuery($query);
     }
 }
