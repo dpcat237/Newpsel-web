@@ -30,7 +30,7 @@ services:
         class: NPS\CoreBundle\Services\Entity\LaterService
         parent: nps.abstract.entity
 
-    later_item:
+    nps.entity.later_item:
         class: NPS\CoreBundle\Services\Entity\LaterItemService
         arguments:
             doctrine:     @doctrine

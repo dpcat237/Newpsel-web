@@ -124,7 +124,7 @@ class ItemController extends Controller
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
-            $laterItemService = $this->get('later_item');
+            $laterItemService = $this->get('nps.entity.later_item');
             $item = $laterItemService->readItem($laterItem);
             $title = $laterItemService->getViewTitle($laterItem, $user);
 
