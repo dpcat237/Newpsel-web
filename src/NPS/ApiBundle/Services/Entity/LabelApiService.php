@@ -3,6 +3,7 @@ namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
+use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Services\CrawlerService,
     NPS\CoreBundle\Services\Entity\LaterService,
     NPS\CoreBundle\Services\Entity\LaterItemService;
@@ -155,13 +156,14 @@ class LabelApiService
     /**
      * Sync later item to API and update the reviewed items
      *
-     * @param array $appKey    login key
-     * @param array $readItems reviewed later items
-     * @param int   $labelId   label id
+     * @param array $appKey       login key
+     * @param array $dictateItems items for dictation
+     * @param int   $labelId      label id
+     * @param int   $limit        limit of dictations to sync
      *
      * @return array
      */
-    public function syncLaterArticles($appKey, $readItems, $labelId)
+    public function syncDictateItems($appKey, $dictateItems, $labelId, $limit)
     {
         $error = false;
         $result = array();
@@ -172,11 +174,12 @@ class LabelApiService
             $result = NotificationHelper::ERROR_NO_LOGGED;
         }
 
+        list($readItems, $unreadItems) = ArrayHelper::separateUnreadArray($dictateItems);
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
         }
         if (empty($error)) {
-            $result = $this->labelItemService->getUnreadItemsApi($labelId);
+            $result = $this->labelItemService->getUnreadItemsApi($labelId, $unreadItems, $limit);
         }
         $responseData = array(
             'error' => $error,
@@ -185,4 +188,5 @@ class LabelApiService
 
         return $responseData;
     }
+
 }

@@ -68,17 +68,17 @@ class LabelController extends ApiController
     }
 
     /**
-     * Sync later articles to device and update which were reviewed
+     * Sync later articles to be dictated
      *
      * @param Request $request the current request
      *
      * @return string
      */
-    public function syncLaterItemsAction(Request $request)
+    public function syncDictateItemsAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
         $labelService = $this->get('api.label.service');
-        $responseData = $labelService->syncLaterArticles($json['appKey'], $json['readItems'], $json['laterId']);
+        $responseData = $labelService->syncDictateItems($json['appKey'], $json['items'], $json['laterId'], $json['limit']);
         if ($responseData['error']) {
             return $this->plainResponse($responseData['error']);
         }

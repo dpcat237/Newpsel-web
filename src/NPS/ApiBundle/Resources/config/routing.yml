@@ -56,9 +56,9 @@ api_sync_later:
     requirements:
       _method: POST
 
-api_sync_later_items:
-    pattern:  /sync_later_items/
-    defaults: { _controller: NPSApiBundle:Label:syncLaterItems }
+api_sync_dictate_items:
+    pattern:  /sync_dictate_items/
+    defaults: { _controller: NPSApiBundle:Label:syncDictateItems }
     requirements:
       _method: POST
 

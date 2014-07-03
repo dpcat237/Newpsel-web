@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Helper\ArrayHelper;
 use Predis\Client;
 use NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
@@ -102,15 +103,41 @@ class LaterItemService
     /**
      * Get unread later items for API
      *
-     * @param int $labelId
+     * @param int   $labelId
+     * @param array $unreadItems of unread items
+     * @param int   $limit       limit of dictations to sync
      *
      * @return array
      */
-    public function getUnreadItemsApi($labelId) {
+    public function getUnreadItemsApi($labelId, $unreadItems, $limit) {
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-        $laterItems = $laterItemRepo->getUnreadForApi($labelId);
+        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $limit);
+
+        //filters and add content
+        $laterItems = $this->removeUnreadDictations($laterItems, $unreadItems);
         $laterItems = $this->addCompleteContent($laterItems);
         $laterItems = $this->removeShortContent($laterItems);
+
+        return $laterItems;
+    }
+
+    /**
+     * Remove items which still unread
+     *
+     * @param array $laterItems
+     * @param array $unreadItems
+     *
+     * @return mixed
+     */
+    private function removeUnreadDictations($laterItems, $unreadItems)
+    {
+        foreach ($unreadItems as $unreadItem) {
+            foreach ($laterItems as $key => $laterItem) {
+                if ($unreadItem['api_id'] == $laterItem['api_id']) {
+                    unset($laterItems[$key]);
+                }
+            }
+        }
 
         return $laterItems;
     }
