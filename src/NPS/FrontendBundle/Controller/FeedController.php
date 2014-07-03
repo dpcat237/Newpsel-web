@@ -62,7 +62,7 @@ class FeedController extends Controller
         }
 
         if ($error) {
-            $this->get('system_notification')->setMessage($checkCreate['error']);
+            $this->get('system_notification')->setMessage($error);
         } else {
             $result = NotificationHelper::OK;
             $userFeed = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $feed->getId());
