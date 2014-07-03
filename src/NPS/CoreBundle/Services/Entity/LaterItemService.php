@@ -114,7 +114,9 @@ class LaterItemService
         $laterItems = $laterItemRepo->getUnreadForApi($labelId, $limit);
 
         //filters and add content
-        $laterItems = $this->removeUnreadDictations($laterItems, $unreadItems);
+        if (count($unreadItems)) {
+            $laterItems = $this->removeUnreadDictations($laterItems, $unreadItems);
+        }
         $laterItems = $this->addCompleteContent($laterItems);
         $laterItems = $this->removeShortContent($laterItems);
 
