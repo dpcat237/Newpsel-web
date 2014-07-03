@@ -83,6 +83,6 @@ class LabelController extends ApiController
             return $this->plainResponse($responseData['error']);
         }
 
-        return $this->plainResponse($responseData['result']);
+        return new JsonResponse($responseData['result']);
     }
 }

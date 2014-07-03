@@ -169,7 +169,7 @@ class LaterItemRepository extends EntityRepository
         $laterItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:LaterItem')->getTableName();
 
         foreach ($laterItems as $itemData) {
-            $query.= "UPDATE ".$laterItemTable." SET unread=".$itemData['unread']." WHERE id=".$itemData['api_id']."; ";
+            $query.= "UPDATE ".$laterItemTable." SET unread=".$itemData['is_unread']." WHERE id=".$itemData['api_id']."; ";
         }
         $query .= "COMMIT;";
 
