@@ -175,4 +175,26 @@ class LaterItemRepository extends EntityRepository
 
         $this->getEntityManager()->getConnection()->executeQuery($query);
     }
+
+
+    /**
+     * Get read items to check that unread items from api were read
+     *
+     * @param array $itemsIds ids of unread items
+     *
+     * @return array
+     */
+    public function getReadUnread($itemsIds)
+    {
+        $query = $this->createQueryBuilder('li');
+        $query
+            ->select('li.id AS api_id')
+            ->add('where', $query->expr()->in('li.id', $itemsIds))
+            ->andWhere('li.unread = :unread')
+            ->orderBy('li.id', 'ASC')
+            ->setParameter('unread', false);
+        $query = $query->getQuery();
+
+        return $query->getArrayResult();
+    }
 }

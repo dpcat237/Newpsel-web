@@ -110,15 +110,22 @@ class LaterItemService
      * @return array
      */
     public function getUnreadItemsApi($labelId, $unreadItems, $limit) {
+        $readItems = array();
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+        $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
         $laterItems = $laterItemRepo->getUnreadForApi($labelId, $limit);
 
         //filters and add content
         if (count($unreadItems)) {
             $laterItems = $this->removeUnreadDictations($laterItems, $unreadItems);
+            $readItems = $laterItemRepo->getReadUnread($unreadIds);
         }
+
         $laterItems = $this->addCompleteContent($laterItems);
         $laterItems = $this->removeShortContent($laterItems);
+        if (count($readItems)) {
+            $laterItems = $this->addReadItems($laterItems, $readItems);
+        }
 
         return $laterItems;
     }
@@ -182,4 +189,32 @@ class LaterItemService
         return $collection;
     }
 
+    /**
+     * Add read items which came as unread from api
+     *
+     * @param array $laterItems
+     * @param array $readItems
+     *
+     * @return array
+     */
+    private function addReadItems($laterItems, $readItems) {
+        foreach ($readItems as $unreadItem) {
+            $item = array(
+                'api_id' => $unreadItem['api_id'],
+                'item_id' => 0,
+                'feed_id' => 0,
+                'later_id' => 0,
+                'is_unread' => false,
+                'date_add' => 0,
+                'language' => "",
+                'link' => "",
+                'title' => "",
+                'content' => "",
+                'text' => ""
+            );
+            $laterItems[] = $item;
+        }
+
+        return $laterItems;
+    }
 }
