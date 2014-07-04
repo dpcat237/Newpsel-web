@@ -123,7 +123,7 @@ class LaterItemRepository extends EntityRepository
             ->leftJoin('li.later', 'l')
             ->where('li.unread = :unread')
             ->andWhere('li.later = :laterId')
-            ->orderBy('li.id', 'ASC')
+            ->orderBy('li.id', 'DESC')
             ->setMaxResults($limit)
             ->setParameter('unread', true)
             ->setParameter('laterId', $laterId);
