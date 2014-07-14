@@ -110,7 +110,7 @@ class LaterItemService
      *
      * @return array
      */
-    public function getUnreadItemsApi($labelId, $dictateItems, $unreadItems, $limit) {
+    public function getUnreadItemsApi($labelId, array $dictateItems, array $unreadItems, $limit) {
         $readItems = array();
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
@@ -138,7 +138,7 @@ class LaterItemService
      *
      * @return mixed
      */
-    private function addCompleteContent($laterItems)
+    private function addCompleteContent(array $laterItems)
     {
         foreach ($laterItems as $key => $laterItem) {
             if ($content = $this->cache->get('crawledItem_'.$laterItem['item_id'])) {
@@ -156,7 +156,7 @@ class LaterItemService
      *
      * @return array
      */
-    private function removeShortContent($laterItems) {
+    private function removeShortContent(array $laterItems) {
         $collection = array();
         foreach ($laterItems as $laterItem) {
             $text = strip_tags($laterItem['content']);
@@ -201,12 +201,12 @@ class LaterItemService
     /**
      * Get unread and read items from array
      *
-     * @param $dictateItems
-     * @param $unreadItems
+     * @param array $dictateItems
+     * @param array $unreadItems
      *
      * @return array
      */
-    private function getDictationsIdsToFilter($dictateItems, $unreadItems)
+    private function getDictationsIdsToFilter(array $dictateItems, array $unreadItems)
     {
         list($hasErrorItems, $noErrorItems) = ArrayHelper::separateBooleanArray($dictateItems, 'has_tts_error');
         $hasErrorIds = ArrayHelper::getIdsFromArray($hasErrorItems, 'api_id');
@@ -222,7 +222,7 @@ class LaterItemService
 
         $toFilterIds = array();
         foreach ($unreadItems as $key => $item) {
-            if (!in_array($hasErrorIds, $item['api_id'])) {
+            if (!in_array($item['api_id'], $hasErrorIds)) {
                 $toFilterIds[] = $item['api_id'];
             }
         }
