@@ -214,7 +214,7 @@ class LaterItemService
         if (!count($unreadItems)) {
             return array();
         }
-        if (!count($hasErrorIds)) {
+        if (!is_array($hasErrorIds) || !count($hasErrorIds)) {
             $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
 
             return $unreadIds;

@@ -33,7 +33,7 @@ class ArrayHelper extends Helper
      *
      * @return array: true, false
      */
-    static public function separateBooleanArray($collection, $boolean)
+    static public function separateBooleanArray(array $collection, $boolean)
     {
         $trueItems = array();
         $falseItems = array();
@@ -57,9 +57,9 @@ class ArrayHelper extends Helper
      *
      * @return array
      */
-    static public function getIdsFromArray($collection, $key = 'id')
+    static public function getIdsFromArray(array $collection, $key = 'id')
     {
-        $ids = array();
+        $ids = $hasErrorIds();
         foreach ($collection as $value) {
             $ids[] = $value[$key];
         }
