@@ -113,8 +113,9 @@ class LaterItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getUnreadForApi($laterId, array $toFilterIds = array(0), $limit = 50)
+    public function getUnreadForApi($laterId, array $toFilterIds, $limit = 50)
     {
+        $toFilterIds =(count($toFilterIds) < 1)? array(0) : $toFilterIds;
         $query = $this->createQueryBuilder('li');
         $query
             ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.link, i.title, i.content')
