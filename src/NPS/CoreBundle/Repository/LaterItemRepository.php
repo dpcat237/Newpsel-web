@@ -113,7 +113,7 @@ class LaterItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getUnreadForApi($laterId, array $toFilterIds, $limit = 50)
+    public function getUnreadForApi($laterId, array $toFilterIds = array(0), $limit = 50)
     {
         $query = $this->createQueryBuilder('li');
         $query
