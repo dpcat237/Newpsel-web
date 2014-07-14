@@ -104,19 +104,17 @@ class LaterItemService
      * Get unread later items for API
      *
      * @param int   $labelId
-     * @param array $dictateItems of unread and read items
      * @param array $unreadItems  of unread items
      * @param int   $limit        limit of dictations to sync
      *
      * @return array
      */
-    public function getUnreadItemsApi($labelId, array $dictateItems, array $unreadItems, $limit) {
+    public function getUnreadItemsApi($labelId, array $unreadItems, $limit) {
         $readItems = array();
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
-        $toFilterIds = $this->getDictationsIdsToFilter($dictateItems, $unreadItems);
 
-        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $toFilterIds, $limit);
+        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $unreadIds, $limit);
         //filters and add content
         if (count($unreadIds)) {
             $readItems = $laterItemRepo->getReadDictations($unreadIds);
@@ -196,37 +194,5 @@ class LaterItemService
         }
 
         return $laterItems;
-    }
-
-    /**
-     * Get unread and read items from array
-     *
-     * @param array $dictateItems
-     * @param array $unreadItems
-     *
-     * @return array
-     */
-    private function getDictationsIdsToFilter(array $dictateItems, array $unreadItems)
-    {
-        list($hasErrorItems, $noErrorItems) = ArrayHelper::separateBooleanArray($dictateItems, 'has_tts_error');
-        $hasErrorIds = ArrayHelper::getIdsFromArray($hasErrorItems, 'api_id');
-
-        if (!count($unreadItems)) {
-            return array();
-        }
-        if (!is_array($hasErrorIds) || !count($hasErrorIds)) {
-            $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
-
-            return $unreadIds;
-        }
-
-        $toFilterIds = array();
-        foreach ($unreadItems as $key => $item) {
-            if (!in_array($item['api_id'], $hasErrorIds)) {
-                $toFilterIds[] = $item['api_id'];
-            }
-        }
-
-        return $toFilterIds;
     }
 }

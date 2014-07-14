@@ -179,7 +179,7 @@ class LabelApiService
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
         }
         if (empty($error)) {
-            $result = $this->labelItemService->getUnreadItemsApi($labelId, $dictateItems, $unreadItems, $limit);
+            $result = $this->labelItemService->getUnreadItemsApi($labelId, $unreadItems, $limit);
         }
         $responseData = array(
             'error' => $error,
