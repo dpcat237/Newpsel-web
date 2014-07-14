@@ -174,12 +174,12 @@ class LabelApiService
             $result = NotificationHelper::ERROR_NO_LOGGED;
         }
 
-        list($unreadItems, $readItems) = $this->getUnreadDictateItems($dictateItems);
+        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
         }
         if (empty($error)) {
-            $result = $this->labelItemService->getUnreadItemsApi($labelId, $unreadItems, $limit);
+            $result = $this->labelItemService->getUnreadItemsApi($labelId, $dictateItems, $unreadItems, $limit);
         }
         $responseData = array(
             'error' => $error,
@@ -187,30 +187,5 @@ class LabelApiService
         );
 
         return $responseData;
-    }
-
-    /**
-     * Get unread and read items from array
-     *
-     * @param $dictateItems
-     *
-     * @return array
-     */
-    private function getUnreadDictateItems($dictateItems)
-    {
-        list($unreadItems, $readDictations) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
-        list($hasErrorItems, $noErrorItems) = ArrayHelper::separateBooleanArray($dictateItems, 'has_tts_error');
-        $hasErrorIds = ArrayHelper::getIdsFromArray($hasErrorItems, 'api_id');
-
-        if (!count($unreadItems) || !count($hasErrorIds)) {
-            return array($unreadItems, $readDictations);
-        }
-        foreach ($unreadItems as $key => $item) {
-            if (in_array($hasErrorIds, $item['api_id'])) {
-                unset($unreadItems[$key]);
-            }
-        }
-
-        return array($unreadItems, $readDictations);
     }
 }

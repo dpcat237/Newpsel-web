@@ -107,12 +107,13 @@ class LaterItemRepository extends EntityRepository
     /**
      * Get unread items for api
      *
-     * @param int $laterId
-     * @param int $limit
+     * @param int   $laterId
+     * @param array $toFilterIds
+     * @param int   $limit
      *
      * @return array
      */
-    public function getUnreadForApi($laterId, $limit = 50)
+    public function getUnreadForApi($laterId, $toFilterIds, $limit = 50)
     {
         $query = $this->createQueryBuilder('li');
         $query
@@ -127,6 +128,9 @@ class LaterItemRepository extends EntityRepository
             ->setMaxResults($limit)
             ->setParameter('unread', true)
             ->setParameter('laterId', $laterId);
+        if (count($toFilterIds)) {
+            $query->add('where', $query->expr()->notIn('li.id', $toFilterIds));
+        }
         $query = $query->getQuery();
 
         return $query->getArrayResult();
@@ -184,7 +188,7 @@ class LaterItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getReadUnread($itemsIds)
+    public function getReadDictations($itemsIds)
     {
         $query = $this->createQueryBuilder('li');
         $query

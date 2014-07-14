@@ -104,48 +104,28 @@ class LaterItemService
      * Get unread later items for API
      *
      * @param int   $labelId
-     * @param array $unreadItems of unread items
-     * @param int   $limit       limit of dictations to sync
+     * @param array $dictateItems of unread and read items
+     * @param array $unreadItems  of unread items
+     * @param int   $limit        limit of dictations to sync
      *
      * @return array
      */
-    public function getUnreadItemsApi($labelId, $unreadItems, $limit) {
+    public function getUnreadItemsApi($labelId, $dictateItems, $unreadItems, $limit) {
         $readItems = array();
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
-        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $limit);
+        $toFilterIds = $this->getDictationsIdsToFilter($dictateItems, $unreadItems);
 
+        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $toFilterIds, $limit);
         //filters and add content
-        if (count($unreadItems)) {
-            $laterItems = $this->removeUnreadDictations($laterItems, $unreadItems);
-            $readItems = $laterItemRepo->getReadUnread($unreadIds);
+        if (count($unreadIds)) {
+            $readItems = $laterItemRepo->getReadDictations($unreadIds);
         }
 
         $laterItems = $this->addCompleteContent($laterItems);
         $laterItems = $this->removeShortContent($laterItems);
         if (count($readItems)) {
             $laterItems = $this->addReadItems($laterItems, $readItems);
-        }
-
-        return $laterItems;
-    }
-
-    /**
-     * Remove items which still unread
-     *
-     * @param array $laterItems
-     * @param array $unreadItems
-     *
-     * @return mixed
-     */
-    private function removeUnreadDictations($laterItems, $unreadItems)
-    {
-        foreach ($unreadItems as $unreadItem) {
-            foreach ($laterItems as $key => $laterItem) {
-                if ($unreadItem['api_id'] == $laterItem['api_id']) {
-                    unset($laterItems[$key]);
-                }
-            }
         }
 
         return $laterItems;
@@ -216,5 +196,37 @@ class LaterItemService
         }
 
         return $laterItems;
+    }
+
+    /**
+     * Get unread and read items from array
+     *
+     * @param $dictateItems
+     * @param $unreadItems
+     *
+     * @return array
+     */
+    private function getDictationsIdsToFilter($dictateItems, $unreadItems)
+    {
+        list($hasErrorItems, $noErrorItems) = ArrayHelper::separateBooleanArray($dictateItems, 'has_tts_error');
+        $hasErrorIds = ArrayHelper::getIdsFromArray($hasErrorItems, 'api_id');
+
+        if (!count($unreadItems)) {
+            return array();
+        }
+        if (!count($hasErrorIds)) {
+            $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
+
+            return $unreadIds;
+        }
+
+        $toFilterIds = array();
+        foreach ($unreadItems as $key => $item) {
+            if (!in_array($hasErrorIds, $item['api_id'])) {
+                $toFilterIds[] = $item['api_id'];
+            }
+        }
+
+        return $toFilterIds;
     }
 }
