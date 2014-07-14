@@ -26,26 +26,27 @@ class ArrayHelper extends Helper
     }
 
     /**
-     * Separate read and unread items
+     * Separate collection items in two array by boolean
      *
-     * @param array $items of read and unread items
+     * @param array  $collection
+     * @param string $boolean
      *
-     * @return array two arrays
+     * @return array: true, false
      */
-    static public function separateUnreadArray($items)
+    static public function separateBooleanArray($collection, $boolean)
     {
-        $readItems = array();
-        $unreadItems = array();
+        $trueItems = array();
+        $falseItems = array();
 
-        foreach ($items as $item) {
-            if ($item['is_unread']) {
-                $unreadItems[] = $item;
+        foreach ($collection as $item) {
+            if ($item[$boolean]) {
+                $trueItems[] = $item;
             } else {
-                $readItems[] = $item;
+                $falseItems[] = $item;
             }
         }
 
-        return array($readItems, $unreadItems);
+        return array($trueItems, $falseItems);
     }
 
     /**
