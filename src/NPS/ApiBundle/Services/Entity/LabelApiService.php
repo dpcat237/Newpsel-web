@@ -201,17 +201,16 @@ class LabelApiService
         list($unreadItems, $readDictations) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
         list($hasErrorItems, $noErrorItems) = ArrayHelper::separateBooleanArray($dictateItems, 'has_tts_error');
         $hasErrorIds = ArrayHelper::getIdsFromArray($hasErrorItems, 'api_id');
-        $unreadDictations = array();
 
-        if (count($unreadItems) < 1) {
-            return array(array(), $readDictations);
+        if (!count($unreadItems) || !count($hasErrorIds)) {
+            return array($unreadItems, $readDictations);
         }
-        foreach ($unreadItems as $item) {
-            if (!in_array($hasErrorIds, $item['api_id'])) {
-                $unreadDictations[] = $item;
+        foreach ($unreadItems as $key => $item) {
+            if (in_array($hasErrorIds, $item['api_id'])) {
+                unset($unreadItems[$key]);
             }
         }
 
-        return array($unreadDictations, $readDictations);
+        return array($unreadItems, $readDictations);
     }
 }
