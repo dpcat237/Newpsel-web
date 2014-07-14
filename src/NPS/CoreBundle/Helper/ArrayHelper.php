@@ -59,7 +59,7 @@ class ArrayHelper extends Helper
      */
     static public function getIdsFromArray(array $collection, $key = 'id')
     {
-        $ids = $hasErrorIds();
+        $ids = array();
         foreach ($collection as $value) {
             $ids[] = $value[$key];
         }
