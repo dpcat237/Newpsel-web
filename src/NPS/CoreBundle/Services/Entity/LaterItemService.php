@@ -157,7 +157,7 @@ class LaterItemService
     private function removeShortContent(array $laterItems) {
         $collection = array();
         foreach ($laterItems as $laterItem) {
-            $text = strip_tags($laterItem['content']);
+            $text = $this->removeUnreadContentFromText($laterItem['content']);
             if (strlen($text) > 1000) {
                 $laterItem['text'] = $text;
                 $collection[] = $laterItem;
@@ -165,6 +165,24 @@ class LaterItemService
         }
 
         return $collection;
+    }
+
+    /**
+     * Remove from text to be readable:
+     * - html tags
+     * - urls
+     * 
+     * @param string $text
+     *
+     * @return string
+     */
+    private function removeUnreadContentFromText($text)
+    {
+        $text = strip_tags($text);
+        $pattern = "#[-a-zA-Z0-9@:%_\+.~\#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~\#?&//=]*)?#si";
+        $text = preg_replace($pattern, "", $text);
+
+        return $text;
     }
 
     /**
