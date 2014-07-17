@@ -171,7 +171,7 @@ class LaterItemService
      * Remove from text to be readable:
      * - html tags
      * - urls
-     * 
+     *
      * @param string $text
      *
      * @return string

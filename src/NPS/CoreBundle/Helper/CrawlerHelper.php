@@ -33,13 +33,13 @@ class CrawlerHelper extends Helper
     {
         $feeds = array(
             7,  //BBC news
-            12, //Engadget en español
             17, //Science news
             19, //Antena 3
             20, //OMG!
             26, //Mobile review
             48, //Últimas noticias sobre Symfony | symfony.es
             55, //Java Code Geeks
+            58, //Rafapal Periodismo para Mentes Galacticas
         );
 
         return $feeds;
@@ -55,19 +55,6 @@ class CrawlerHelper extends Helper
     static public function process7(CrawlerService $service, $itemUrl)
     {
         return CrawlerHelper::contentRemoveEnd($service, $itemUrl, '.layout-block-a', '<!--Related hypers and stories -->');
-    }
-
-    /**
-     * Crawling process for Engadget en español - #12
-     *
-     * @param CrawlerService $service
-     * @param string $itemUrl
-     *
-     * @return string
-     */
-    static public function process12(CrawlerService $service, $itemUrl)
-    {
-        return CrawlerHelper::contentRemoveEnd($service, $itemUrl, 'div.post', '<div class="postmeta">');
     }
 
     /**
@@ -163,6 +150,23 @@ class CrawlerHelper extends Helper
     static public function process55(CrawlerService $service, $itemUrl)
     {
         return CrawlerHelper::contentRemoveEnd($service, $itemUrl, 'div.entry-content', '<div class="yarpp-related">');
+    }
+
+    /**
+     * Crawling process for "Rafapal Periodismo para Mentes Galacticas" - #58
+     *
+     * @param CrawlerService $service
+     * @param string         $itemUrl
+     *
+     * @return string
+     */
+    static public function process58(CrawlerService $service, $itemUrl)
+    {
+        $crawler = $service->getItemPage($itemUrl);
+        $cont = explode('<div class="itemtext">', $crawler->html());
+        $cont = explode('<div class="kouguu_fb_like_button">', $cont[1]);
+
+        return $cont[0];
     }
 
     /**
