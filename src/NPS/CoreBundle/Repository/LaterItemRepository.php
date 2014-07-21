@@ -56,7 +56,7 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('li');
         $query
-            ->select('li.id laterItem_id, i.id item_id, i.link, i.content, f.id feed_id')
+            ->select('li.id laterItem_id, i.id item_id, i.link, f.id feed_id')
             ->join('li.userItem', 'ui')
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')

@@ -4,11 +4,11 @@ namespace NPS\ApiBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Helper\ArrayHelper;
-use NPS\CoreBundle\Services\CrawlerService,
-    NPS\CoreBundle\Services\Entity\LaterService,
+use NPS\CoreBundle\Services\Entity\LaterService,
     NPS\CoreBundle\Services\Entity\LaterItemService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Services\QueueLauncherService;
 
 /**
  * LabelApiService
@@ -16,9 +16,9 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class LabelApiService
 {
     /**
-     * @var CrawlerService
+     * @var QueueLauncherService
      */
-    private $crawler;
+    private $queueLauncher;
 
     /**
      * @var Doctrine Registry
@@ -42,15 +42,15 @@ class LabelApiService
 
 
     /**
-     * @param CrawlerService   $crawler          CrawlerService
+     * @param QueueLauncherService   $queueLauncher          QueueLauncherService
      * @param Registry         $doctrine         Doctrine Registry
      * @param SecureService    $secure           SecureService
      * @param LaterService     $labelService     LaterService
      * @param LaterItemService $labelItemService LaterItemService
      */
-    public function __construct(CrawlerService $crawler, Registry $doctrine, SecureService $secure, LaterService $labelService, LaterItemService $labelItemService)
+    public function __construct(QueueLauncherService $queueLauncher, Registry $doctrine, SecureService $secure, LaterService $labelService, LaterItemService $labelItemService)
     {
-        $this->crawler = $crawler;
+        $this->queueLauncher = $queueLauncher;
         $this->doctrine = $doctrine;
         $this->labelService = $labelService;
         $this->labelItemService = $labelItemService;
@@ -141,7 +141,7 @@ class LabelApiService
         if (empty($error) && is_array($laterItems) && count($laterItems)){
             $this->labelService->syncLaterItems($user->getId(), $laterItems);
             //get complete content for partial articles
-            $this->crawler->executeCrawling($user->getId());
+            $this->queueLauncher->executeCrawling($user->getId());
 
             $result = NotificationHelper::OK;
         }

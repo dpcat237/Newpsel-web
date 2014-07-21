@@ -2,7 +2,6 @@
 namespace NPS\CoreBundle\Helper;
 
 use Symfony\Component\Templating\Helper\Helper;
-use NPS\CoreBundle\Services\CrawlerService;
 
 /**
  * Class for generic methods with array

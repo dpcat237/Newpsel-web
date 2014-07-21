@@ -2,12 +2,11 @@
 namespace NPS\CoreBundle\Command;
 
 use Guzzle\Http\Exception\CurlException;
+use NPS\CoreBundle\Services\CrawlerManager;
 use Predis\Client;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Output\OutputInterface;
-use NPS\CoreBundle\Services\CrawlerService;
-use NPS\CoreBundle\Entity\Item;
 use Mmoreram\RSQueueBundle\Command\ConsumerCommand;
 
 /**
@@ -56,7 +55,7 @@ class ItemCrawlerCommand extends ConsumerCommand
     {
         $container = $this->getContainer();
         $cache = $container->get('snc_redis.default');
-        $crawler = $container->get('crawler');
+        $crawler = $container->get('nps.manager.crawler');
         $doctrine = $container->get('doctrine');
         $this->logger = $container->get('logger');
         $userId =(is_numeric($userId))? : null;
@@ -75,11 +74,12 @@ class ItemCrawlerCommand extends ConsumerCommand
 
     /**
      * Make command process
-     * @param CrawlerService $crawler    CrawlerService
-     * @param Client   $cache      Client
+     *
+     * @param CrawlerManager $crawler    CrawlerManager
+     * @param Client         $cache      Client
      * @param array          $laterItems array of later items
      */
-    private function iterateItemsForCrawling(CrawlerService $crawler, Client $cache, $laterItems)
+    private function iterateItemsForCrawling(CrawlerManager $crawler, Client $cache, $laterItems)
     {
         $cacheKey = 'crawledItem_';
         $notFoundKey = 'crawledNotFoundItem_';
@@ -94,13 +94,13 @@ class ItemCrawlerCommand extends ConsumerCommand
 
     /**
      * Make crawling process
-     * @param CrawlerService $crawler     CrawlerService
+     * @param CrawlerManager $crawler     CrawlerManager
      * @param Client         $cache       Client
      * @param array          $laterItem   array
      * @param string         $cacheKey    cache key
      * @param string         $notFoundKey key of not found
      */
-    private function makeCrawling(CrawlerService $crawler, Client $cache, $laterItem, $cacheKey, $notFoundKey)
+    private function makeCrawling(CrawlerManager $crawler, Client $cache, $laterItem, $cacheKey, $notFoundKey)
     {
         $sleepHidden = "sleep";
         if ($laterItem['feed_id'] && $this->checkWaitForCrawling($laterItem['feed_id'])) {
@@ -108,7 +108,7 @@ class ItemCrawlerCommand extends ConsumerCommand
         }
 
         try {
-            $completeContent = $crawler->getCompleteContent($laterItem['link'], $laterItem['content'], $laterItem['feed_id']);
+            $completeContent = $crawler->getFullArticle($laterItem['link']);
         } catch (Exception $e) {
             $completeContent = null;
             $this->logger->err("makeCrawling item id: ".$laterItem['item_id']." Error: ".$e->getMessage());
@@ -117,7 +117,7 @@ class ItemCrawlerCommand extends ConsumerCommand
             $completeContent = null;
         }
 
-        if ($completeContent) {
+        if (strlen($completeContent) > 10) {
             $cache->setex($cacheKey.$laterItem['item_id'], 2592000, $completeContent);
         } else {
             $cache->setex($notFoundKey.$laterItem['item_id'], 1296000, $laterItem['item_id']);

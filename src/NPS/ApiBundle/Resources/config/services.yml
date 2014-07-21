@@ -29,7 +29,7 @@ services:
     api.label.service:
         class: NPS\ApiBundle\Services\Entity\LabelApiService
         arguments:
-            crawler:            @crawler
+            nps.launcher.queue: @nps.launcher.queue
             doctrine:           @doctrine
             api.secure.service: @api.secure.service
             label:              @nps.entity.later

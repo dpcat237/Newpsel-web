@@ -2,10 +2,12 @@ parameters:
 #    nps_frontend.example.class: NPS\FrontendBundle\Example
 
 services:
-    crawler:
-        class: NPS\CoreBundle\Services\CrawlerService
+    nps.manager.crawler:
+        class: NPS\CoreBundle\Services\CrawlerManager
+
+    nps.launcher.queue:
+        class: NPS\CoreBundle\Services\QueueLauncherService
         arguments:
-            doctrine:          @doctrine
             rs_queue.producer: @rs_queue.producer
 
     download_feeds:
@@ -17,14 +19,6 @@ services:
             feed:         @nps.entity.feed
             item:         @item
             feed_history: @feed_history
-
-    try:
-        class: NPS\CoreBundle\Services\TryService
-        arguments:
-            doctrine:     @doctrine
-            server_cache: @snc_redis.default
-            crawler:      @crawler
-            simple_pie:   @fkr_simple_pie.rss
 
     nps.manager.filter:
         class: NPS\CoreBundle\Services\FilteringManager
