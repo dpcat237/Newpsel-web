@@ -65,6 +65,12 @@ class Item extends AbstractEntity
      */
     protected $userItems;
 
+    /**
+     * @var string
+     * @ORM\Column(name="language", type="string", length=2, nullable=true)
+     */
+    protected $language;
+
 
     /**
      * Constructor
@@ -277,5 +283,28 @@ class Item extends AbstractEntity
     public function getUserItems()
     {
         return $this->userItems;
+    }
+
+    /**
+     * Set language
+     * @param string $language
+     *
+     * @return Feed
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    /**
+     * Get website
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
     }
 }

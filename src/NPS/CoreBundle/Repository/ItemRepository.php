@@ -75,4 +75,19 @@ class ItemRepository extends EntityRepository
 
         return $itemCollection;
     }
+
+    /**
+     * Update item adding language
+     */
+    public function addLanguage($itemId, $languageCode)
+    {
+        $query = $this->createQueryBuilder('i')
+            ->update()
+            ->set('i.language', ':languageCode')
+            ->where('i.id = :itemId')
+            ->setParameter('itemId', $itemId)
+            ->setParameter('languageCode', $languageCode)
+            ->getQuery();
+        $query->execute();
+    }
 }
