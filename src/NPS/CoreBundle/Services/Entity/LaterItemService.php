@@ -158,9 +158,14 @@ class LaterItemService
         $collection = array();
         foreach ($laterItems as $laterItem) {
             $text = $this->removeUnreadContentFromText($laterItem['content']);
-            if (strlen($text) > 1000) {
-                $laterItem['text'] = $text;
-                $collection[] = $laterItem;
+            if (strlen($text) < 1000) {
+                continue;
+            }
+
+            $laterItem['text'] = $text;
+            $collection[] = $laterItem;
+            if (strlen($laterItem['item_language']) == 2) {
+                $laterItem['language'] = $laterItem['item_language'];
             }
         }
 
