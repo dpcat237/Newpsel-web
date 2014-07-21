@@ -2,14 +2,6 @@ parameters:
 #    nps_frontend.example.class: NPS\FrontendBundle\Example
 
 services:
-    nps.manager.crawler:
-        class: NPS\CoreBundle\Services\CrawlerManager
-
-    nps.launcher.queue:
-        class: NPS\CoreBundle\Services\QueueLauncherService
-        arguments:
-            rs_queue.producer: @rs_queue.producer
-
     download_feeds:
         class: NPS\CoreBundle\Services\DownloadFeedsService
         arguments:
@@ -19,6 +11,19 @@ services:
             feed:         @nps.entity.feed
             item:         @item
             feed_history: @feed_history
+
+    nps.detector.language:
+        class: NPS\CoreBundle\Services\LanguageDetectService
+        arguments:
+            google_detector: @eko.google_translate.detector
+
+    nps.launcher.queue:
+        class: NPS\CoreBundle\Services\QueueLauncherService
+        arguments:
+            rs_queue.producer: @rs_queue.producer
+
+    nps.manager.crawler:
+        class: NPS\CoreBundle\Services\CrawlerManager
 
     nps.manager.filter:
         class: NPS\CoreBundle\Services\FilteringManager

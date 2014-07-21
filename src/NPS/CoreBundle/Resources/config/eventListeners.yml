@@ -5,7 +5,7 @@ services:
           - { name: kernel.event_listener, event: nps.feed.created, method: onFeedCreated }
       arguments:
           item_repository:   @=service("doctrine.orm.entity_manager").getRepository("NPSCoreBundle:Item")
-          language_detector: @eko.google_translate.detector
+          language_detector: @nps.detector.language
           entity_manager:    @doctrine.orm.entity_manager
 
     nps.listener.user:

@@ -1,12 +1,12 @@
 <?php
 namespace NPS\CoreBundle\EventListener;
 
-use Eko\GoogleTranslateBundle\Translate\Method\Detector;
 use Doctrine\ORM\EntityManager;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\Repository\ItemRepository;
+use NPS\CoreBundle\Services\LanguageDetectService;
 
 class FeedListener
 {
@@ -21,16 +21,16 @@ class FeedListener
     private $itemRepository;
 
     /**
-     * @var Detector
+     * @var LanguageDetectService
      */
     private $languageDetector;
 
     /**
-     * @param ItemRepository $itemRepository   Item Repository
-     * @param Detector       $languageDetector Google Translate Detector
-     * @param EntityManager  $entityManager    Entity Manager
+     * @param ItemRepository        $itemRepository   Item Repository
+     * @param LanguageDetectService $languageDetector LanguageDetectService
+     * @param EntityManager         $entityManager    Entity Manager
      */
-    public function __construct(ItemRepository $itemRepository, Detector $languageDetector, EntityManager $entityManager)
+    public function __construct(ItemRepository $itemRepository, LanguageDetectService $languageDetector, EntityManager $entityManager)
     {
         $this->itemRepository = $itemRepository;
         $this->languageDetector = $languageDetector;
@@ -65,7 +65,7 @@ class FeedListener
         if (strlen($content) < 20) {
             return;
         }
-        $languageCode = $this->languageDetector->detect($content);
+        $languageCode = $this->languageDetector->detectLanguage($content);
         $feed->setLanguage($languageCode);
         $this->entityManager->persist($feed);
         $this->entityManager->flush();
