@@ -1,15 +1,37 @@
-app/SymfonyRequirements.php
-web/bundles/
+### Symfony2 ###
+# Cache and logs
+/app/cache/*
+/app/logs/*
+!app/cache/.gitkeep
+!app/logs/.gitkeep
+
+# Parameters
+/app/config/parameters.yml
+/app/config/parameters.ini
+
+# Managed by Composer
+/app/bootstrap.php.cache
+/bin/
+/vendor/
+
+# Assets and user uploads
+/web/bundles/
+/web/uploads/
 web/css/
 web/js/
-app/bootstrap.php.cache
-app/cache/*
-app/logs/*
-build/
-vendor
-composer.phar
-npm-debug.log
+
+# PHPUnit
+/app/phpunit.xml
+
+# Composer PHAR
+/composer.phar
+
+# PhpStorm
 .idea/
 .idea/*
+
+# Travis
 .travis.yml
-.tags*
+
+# Other files
+app/SymfonyRequirements.php
