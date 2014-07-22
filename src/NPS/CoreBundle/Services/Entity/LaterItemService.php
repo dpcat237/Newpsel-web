@@ -112,18 +112,48 @@ class LaterItemService
     public function getUnreadItemsApi($labelId, array $unreadItems, $limit) {
         $readItems = array();
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+        $totalUnread = $laterItemRepo->totalLaterUnreadItems($labelId);
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
 
-        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $unreadIds, $limit);
-        //filters and add content
+        $laterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $limit, $totalUnread);
         if (count($unreadIds)) {
             $readItems = $laterItemRepo->getReadDictations($unreadIds);
         }
-
-        $laterItems = $this->addCompleteContent($laterItems);
-        $laterItems = $this->removeShortContent($laterItems);
         if (count($readItems)) {
             $laterItems = $this->addReadItems($laterItems, $readItems);
+        }
+
+        return $laterItems;
+    }
+
+    /**
+     * Get unread items for API
+     *
+     * @param LaterItemRepository $laterItemRepo LaterItem
+     * @param int                 $labelId       later id
+     * @param array               $unreadIds     ids of unread and added to sync items
+     * @param int                 $limit         quantity of items required by API
+     * @param int                 $totalUnread   total unread items of later
+     *
+     * @return array
+     */
+    private function getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $limit, $totalUnread)
+    {
+        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $unreadIds, $limit);
+        $newUnreadIds = ArrayHelper::getIdsFromArray($laterItems, 'api_id');
+        $laterItems = $this->addCompleteContent($laterItems);
+        $laterItems = $this->removeShortContent($laterItems);
+
+        if (count($laterItems) >= $limit) {
+            return $laterItems;
+        }
+
+        $unreadIds = array_merge($unreadIds, $newUnreadIds);
+        if (count($unreadIds) < $totalUnread) {
+            //get more unread items
+            $limit = $limit - count($laterItems);
+            $newLaterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $limit, $totalUnread);
+            $laterItems = array_merge($laterItems, $newLaterItems);
         }
 
         return $laterItems;

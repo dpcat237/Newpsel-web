@@ -201,4 +201,24 @@ class LaterItemRepository extends EntityRepository
 
         return $query->getArrayResult();
     }
+
+    /**
+     * Count unread items of label
+     *
+     * @param int $laterId
+     *
+     * @return int
+     */
+    public function totalLaterUnreadItems($laterId)
+    {
+        $query = $this->createQueryBuilder('li');
+        $query
+            ->add('select', $query->expr()->count('li'))
+            ->where('li.later = :laterId')
+            ->andWhere('li.unread = :unread')
+            ->setParameter('laterId', $laterId)
+            ->setParameter('unread', true);
+
+        return $query->getQuery()->getSingleScalarResult();
+    }
 }
