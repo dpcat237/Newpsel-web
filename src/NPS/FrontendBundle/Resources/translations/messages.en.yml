@@ -13,6 +13,8 @@ notification_401: Review the errors to save your data
 notification_501: Try again after several minutes
 notification_502: Feed's url is wrong
 notification_503: Feed doesn't exists
+#lists
+_notification_no_articles: Aren't new articles.
 
 #*** Menu ***
 _Settings: Settings
