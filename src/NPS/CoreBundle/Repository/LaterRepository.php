@@ -156,12 +156,12 @@ class LaterRepository extends EntityRepository
      * @param int   $userId
      * @param int   $lastUpdate
      * @param array $changedLabels
-     * @param array $createdIds
      *
      * @return array
      */
-    public function getUserLabelsApiCreated($userId, $lastUpdate = 0, $changedLabels, $createdIds)
+    public function getUserLabelsApiCreated($userId, $lastUpdate = 0, $changedLabels)
     {
+        $changedIds = array();
         foreach ($changedLabels as $changedLabel) {
             $changedIds[] = $changedLabel['id'];
         }

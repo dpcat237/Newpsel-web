@@ -9,7 +9,6 @@ use HTMLPurifier,
     HTMLPurifier_Config;
 use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\Item,
-    NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserItem;
 
@@ -39,9 +38,9 @@ class ItemService
     private $filter;
 
     /**
-     * @var LaterService
+     * @var LaterItemService
      */
-    private $later;
+    private $laterItem;
 
     /**
      * @var HTMLPurifier
@@ -49,18 +48,18 @@ class ItemService
     private $purifier;
 
     /**
-     * @param Registry         $doctrine Doctrine Registry
-     * @param Client           $cache    Client
-     * @param FilteringManager $filter   FilteringManager
-     * @param LaterService     $later    LaterService
+     * @param Registry         $doctrine  Doctrine Registry
+     * @param Client           $cache     Client
+     * @param FilteringManager $filter    FilteringManager
+     * @param LaterItemService $laterItem LaterItemService
      */
-    public function __construct(Registry $doctrine, Client $cache, FilteringManager $filter, LaterService $later)
+    public function __construct(Registry $doctrine, Client $cache, FilteringManager $filter, LaterItemService $laterItem)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->filter = $filter;
-        $this->later = $later;
+        $this->laterItem = $laterItem;
 
         if (empty($this->purifier)) {
             $config = HTMLPurifier_Config::createDefault();
@@ -125,47 +124,6 @@ class ItemService
     }
 
     /**
-     * Add page / item to selected label or if exists set as unread
-     *
-     * @param User   $user
-     * @param id     $labelId
-     * @param string $pageTitle
-     * @param string $pageUrl
-     */
-    public function addPageToLater(User $user, $labelId, $pageTitle, $pageUrl)
-    {
-        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-        $laterItem = $laterItemRepo->checkExistsLaterItemUrl($user->getId(), $labelId, $pageUrl);
-        if (!$laterItem instanceof LaterItem) {
-            $item = new Item();
-            $item->setContentHash(sha1($pageUrl));
-            $item->setLink($pageUrl);
-            $item->setTitle($pageTitle);
-            $item->setContent($pageTitle.'...');
-            $this->entityManager->persist($item);
-            $this->entityManager->flush();
-
-            $userItem = new UserItem();
-            $userItem->setItem($item);
-            $userItem->setUser($user);
-            $this->entityManager->persist($userItem);
-            $this->entityManager->flush();
-
-            $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-            $later = $laterRepo->find($labelId);
-            $laterItem = new LaterItem();
-            $laterItem->setLater($later);
-            $laterItem->setUserItem($userItem);
-            $this->entityManager->persist($laterItem);
-            $this->entityManager->flush();
-        } elseif (!$laterItem->isUnread()) {
-            $laterItem->setUnread(true);
-            $this->entityManager->persist($laterItem);
-            $this->entityManager->flush();
-        }
-    }
-
-    /**
      * Add shared pages from api
      * @param User $user
      * @param $sharedItems
@@ -173,7 +131,7 @@ class ItemService
     public function addSharedItems(User $user, $sharedItems)
     {
         foreach ($sharedItems as $sharedItem) {
-            $this->addPageToLater($user, $sharedItem['label_api_id'], $sharedItem['title'], $sharedItem['text']);
+            $this->laterItem->addPageToLater($user, $sharedItem['label_api_id'], $sharedItem['title'], $sharedItem['text']);
         }
     }
 
@@ -190,7 +148,7 @@ class ItemService
             $unread =($laterId)? false : true;
             $userItem = $this->addUserItem($feedUser->getUser(), $item, $unread);
             if ($laterId) {
-                $this->later->addLaterItem($userItem, $laterId);
+                $this->laterItem->addLaterItem($userItem, $laterId);
             }
         }
         $this->entityManager->flush();

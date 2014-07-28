@@ -1,6 +1,9 @@
 <?php
 namespace NPS\CoreBundle\Services\Entity;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Services\NotificationManager;
+use NPS\CoreBundle\Services\UserWrapper;
 use Symfony\Component\Form\Form;
 use NPS\CoreBundle\Entity\Later,
     NPS\CoreBundle\Entity\LaterItem,
@@ -13,6 +16,24 @@ use NPS\CoreBundle\Helper\NotificationHelper;
  */
 class LaterService extends AbstractEntityService
 {
+    /**
+     * @var LaterItemService
+     */
+    protected $laterItem;
+
+
+    /**
+     * @param Registry            $doctrine     Registry
+     * @param UserWrapper         $userWrapper  UserWrapper
+     * @param NotificationManager $notification NotificationManager
+     * @param LaterItemService    $laterItem LaterItemService
+     */
+    public function __construct(Registry $doctrine, UserWrapper $userWrapper, NotificationManager $notification, LaterItemService $laterItem)
+    {
+        parent::__construct($doctrine, $userWrapper, $notification);
+        $this->laterItem = $laterItem;
+    }
+
     /**
      * Extract user labels data for api
      *
@@ -34,22 +55,6 @@ class LaterService extends AbstractEntityService
         }
 
         return $collection;
-    }
-
-    /**
-     * Add new later item
-     *
-     * @param UserItem $userItem
-     * @param int      $labelId
-     */
-    public function addLaterItem(UserItem $userItem, $labelId)
-    {
-        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-
-        $laterItem = new LaterItem();
-        $laterItem->setLater($laterRepo->find($labelId));
-        $laterItem->setUserItem($userItem);
-        $this->entityManager->persist($laterItem);
     }
 
     /**
@@ -93,7 +98,7 @@ class LaterService extends AbstractEntityService
         $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
         if (count($changedLabels)) {
             $createdIds = $this->syncLabelsProcess($user, $changedLabels);
-            $createdCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels, $createdIds);
+            $createdCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels);
             $labelCollection = $this->addLabelsApiIds($createdCollection, $createdIds);
         } else {
             $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
@@ -121,7 +126,7 @@ class LaterService extends AbstractEntityService
                 $this->entityManager->persist($label);
                 $this->entityManager->flush();
             } else {
-                $label = $this->hasLabelByName($user->getId(), $changedLabel['name']);
+                $label = $laterRepo->hasLabelByName($user->getId(), $changedLabel['name']);
                 if (!$label instanceof Later) {
                     $label = new Later();
                     $label->setUser($user);
@@ -164,7 +169,7 @@ class LaterService extends AbstractEntityService
                 continue;
             }
 
-            $this->addLaterItem($userItem, $labelId);
+            $this->laterItem->addLaterItem($userItem, $labelId);
         }
         $this->entityManager->flush();
     }

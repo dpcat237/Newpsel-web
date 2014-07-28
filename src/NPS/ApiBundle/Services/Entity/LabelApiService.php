@@ -188,4 +188,30 @@ class LabelApiService
 
         return $responseData;
     }
+
+    /**
+     * Add page for Chrome api
+     * @param $appKey
+     * @param $labelId
+     * @param $webTitle
+     * @param $webUrl
+     *
+     * @return array
+     */
+    public function addPage($appKey, $labelId, $webTitle, $webUrl)
+    {
+        $response = false;
+        $user = $this->secure->getUserByDevice($appKey);
+        if ($user instanceof User) {
+            $this->labelItemService->addPageToLater($user, $labelId, $webTitle, $webUrl);
+            $response = true;
+        }
+        $this->queueLauncher->executeCrawling($user->getId());
+
+        $responseData = array(
+            'response' => $response
+        );
+
+        return $responseData;
+    }
 }

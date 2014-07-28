@@ -24,11 +24,12 @@ services:
             doctrine:     @doctrine
             server_cache: @snc_redis.default
             filter:       @nps.manager.filter
-            later:        @nps.entity.later
+            later_item:   @nps.entity.later_item
 
     nps.entity.later:
         class: NPS\CoreBundle\Services\Entity\LaterService
-        parent: nps.abstract.entity
+        parent:       nps.abstract.entity
+        later_item:   @nps.entity.later_item
 
     nps.entity.later_item:
         class: NPS\CoreBundle\Services\Entity\LaterItemService
