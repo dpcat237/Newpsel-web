@@ -158,12 +158,11 @@ class LabelApiService
      *
      * @param array $appKey       login key
      * @param array $dictateItems items for dictation
-     * @param int   $labelId      label id
      * @param int   $limit        limit of dictations to sync
      *
      * @return array
      */
-    public function syncDictateItems($appKey, $dictateItems, $labelId, $limit)
+    public function syncDictateItems($appKey, $dictateItems, $limit)
     {
         $error = false;
         $result = array();
@@ -179,7 +178,7 @@ class LabelApiService
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
         }
         if (empty($error)) {
-            $result = $this->labelItemService->getUnreadItemsApi($labelId, $unreadItems, $limit);
+            $result = $this->labelItemService->getUnreadItemsApi($user->getPreference()->getReadLaterId(), $unreadItems, $limit);
         }
         $responseData = array(
             'error' => $error,

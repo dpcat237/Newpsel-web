@@ -78,7 +78,7 @@ class LabelController extends ApiController
     {
         $json = json_decode($request->getContent(), true);
         $labelService = $this->get('api.label.service');
-        $responseData = $labelService->syncDictateItems($json['appKey'], $json['items'], $json['laterId'], $json['limit']);
+        $responseData = $labelService->syncDictateItems($json['appKey'], $json['items'], $json['limit']);
         if ($responseData['error']) {
             return $this->plainResponse($responseData['error']);
         }
