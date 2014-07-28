@@ -3,8 +3,6 @@
 namespace NPS\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use NPS\CoreBundle\Entity\AbstractEntity,
-    NPS\CoreBundle\Entity\Later;
 
 /**
  * Preference
@@ -23,43 +21,43 @@ class Preference extends AbstractEntity
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Later", inversedBy="preferences")
-     * @ORM\JoinColumn(name="shared_later_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="read_later_id", referencedColumnName="id", nullable=true)
      */
-    protected $sharedLater;
+    protected $readLater;
 
 
     /**
-     * Get the sharedLater
+     * Get the readLater
      *
      * @return Later
      */
-    public function getSharedLater()
+    public function getReadLater()
     {
-        return $this->sharedLater;
+        return $this->readLater;
     }
 
     /**
-     * Set the sharedLater
-     * @param Later $sharedLater
+     * Set the readLater
+     * @param Later $readLater
      */
-    public function setSharedLater(Later $sharedLater)
+    public function setReadLater(Later $readLater)
     {
-        $this->sharedLater = $sharedLater;
+        $this->readLater = $readLater;
     }
 
     /**
-     * Get the sharedLater id
+     * Get the readLater id
      *
      * @return integer id
      */
-    public function getSharedLaterId()
+    public function getReadLaterId()
     {
-        if (is_object($this->getSharedLater())) {
-            $sharedLaterId = $this->getSharedLater()->getId();
+        if (is_object($this->getReadLater())) {
+            $readLaterId = $this->getReadLater()->getId();
         } else {
-            $sharedLaterId = 0;
+            $readLaterId = 0;
         }
 
-        return $sharedLaterId;
+        return $readLaterId;
     }
 }

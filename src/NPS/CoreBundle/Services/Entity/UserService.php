@@ -91,12 +91,11 @@ class UserService extends AbstractEntityService
     public function setPreferenceNewUser(User $user)
     {
         $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-        $laterRepo->createLabel($user, 'Read later');
+        $readLater = $laterRepo->createLabel($user, 'Read later');
         $laterRepo->createLabel($user, 'Watch later');
-        $sharedLater = $laterRepo->createLabel($user, 'Shared');
 
         $preference = new Preference();
-        $preference->setSharedLater($sharedLater);
+        $preference->setReadLater($readLater);
         $this->entityManager->persist($preference);
 
         $user->setPreference($preference);
