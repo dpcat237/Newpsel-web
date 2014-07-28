@@ -36,8 +36,12 @@ services:
         arguments:
             doctrine:     @doctrine
             server_cache: @snc_redis.default
-            item:         @item
+            user_item:    @nps.entity.user_item
 
     nps.entity.user:
         class: NPS\CoreBundle\Services\Entity\UserService
+        parent: nps.abstract.entity
+
+    nps.entity.user_item:
+        class: NPS\CoreBundle\Services\Entity\UserItemService
         parent: nps.abstract.entity

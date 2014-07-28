@@ -31,22 +31,22 @@ class LaterItemService
     private $entityManager;
 
     /**
-     * @var ItemService
+     * @var UserItemService
      */
-    private $item;
+    private $userItem;
 
 
     /**
-     * @param Registry     $doctrine Doctrine Registry
-     * @param Client       $cache    Client
-     * @param ItemService  $item     Item service
+     * @param Registry        $doctrine Doctrine Registry
+     * @param Client          $cache    Client
+     * @param UserItemService $userItem UserItemService
      */
-    public function __construct(Registry $doctrine, Client $cache, ItemService $item)
+    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
-        $this->item = $item;
+        $this->userItem = $userItem;
     }
 
     /**
@@ -82,7 +82,7 @@ class LaterItemService
         $item = $laterItem->getUserItem()->getItem();
         $user = $laterItem->getUserItem()->getUser();
         $this->makeLaterRead($laterItem);
-        $this->item->changeStatus($user, $item, "isUnread", "setUnread", 2);
+        $this->userItem->changeStatus($user, $item, "isUnread", "setUnread", 2);
 
         if ($content = $this->cache->get('crawledItem_'.$item->getId())) {
             $item->setContent($content);

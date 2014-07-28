@@ -99,7 +99,7 @@ class ItemController extends Controller
             return new RedirectResponse($route);
         }
 
-        $this->get('item')->changeUserItemStatus($userItem, "isUnread", "setUnread", 2);
+        $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isUnread", "setUnread", 2);
         $renderData = array(
             'userItem' => $userItem,
             'title' => $userFeed->getTitle()
@@ -158,7 +158,7 @@ class ItemController extends Controller
             return new JsonResponse(false);
         }
 
-        $status = $this->get('item')->changeUserItemStatus($userItem, "isUnread", "setUnread", $status);
+        $status = $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isUnread", "setUnread", $status);
         $result = ($status)? NotificationHelper::OK_IS_UNREAD : NotificationHelper::OK_IS_READ ;
 
         $response = array (
@@ -186,7 +186,7 @@ class ItemController extends Controller
             $this->get('nps.entity.later_item')->makeLaterRead($laterItem);
 
             $item = $laterItem->getUserItem()->getItem();
-            $this->get('item')->changeStatus($user, $item, "isUnread", "setUnread", 2);
+            $this->get('nps.entity.user_item')->changeStatus($user, $item, "isUnread", "setUnread", 2);
 
             $renderData = array(
                 'result' => NotificationHelper::OK_IS_READ
@@ -215,7 +215,7 @@ class ItemController extends Controller
             return new JsonResponse(false);
         }
 
-        $status = $this->get('item')->changeUserItemStatus($userItem, "isStared", "setStared");
+        $status = $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared");
         $result =($status)? NotificationHelper::OK_IS_NOT_STARED : NotificationHelper::OK_IS_STARED ;
 
         $response = array (
