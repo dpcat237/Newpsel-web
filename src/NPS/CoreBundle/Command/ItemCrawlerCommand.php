@@ -83,7 +83,7 @@ class ItemCrawlerCommand extends ConsumerCommand
         $container = $this->getContainer();
         $this->cache = $container->get('snc_redis.default');
         $this->crawler = $container->get('nps.manager.crawler');
-        $this->languageDetector = $this->get('nps.detector.language');
+        $this->languageDetector = $container->get('nps.detector.language');
         $this->doctrine = $container->get('doctrine');
         $this->logger = $container->get('logger');
         $userId =(is_numeric($userId))? : null;
