@@ -20,7 +20,9 @@
                                     <a href="{{ url('label_edit', {'id': label.id}) }}" class="no-link icon-pencil" ></a>
                                 </td>
                                 <td class="td-star">
-                                    <a href="{{ url('label_delete', {'label_id': label.id}) }}" class="no-link icon-trash" ></a>
+                                    {% if not label.basic %}
+                                        <a href="{{ url('label_delete', {'label_id': label.id}) }}" class="no-link icon-trash" ></a>
+                                    {% endif %}
                                 </td>
                                 <td class="inbox-message">
                                     <a class="list-item" href="{{ url('label_edit', {'id': label.id}) }}" >{{ label.name }}</a>

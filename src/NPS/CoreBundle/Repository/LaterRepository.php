@@ -17,18 +17,20 @@ class LaterRepository extends EntityRepository
     /**
      * Create label
      *
-     * @param User   $user      User
-     * @param string $labelName label name
+     * @param User    $user      User
+     * @param string  $labelName label name
+     * @param boolean $isBasic   set if label is basic
      *
      * @return Later | null
      */
-    public function createLabel(User $user, $labelName)
+    public function createLabel(User $user, $labelName, $isBasic = false)
     {
         $entityManager = $this->getEntityManager();
         if (!$this->hasLabelByName($user->getId(), $labelName)) {
             $label = new Later();
             $label->setName($labelName);
             $label->setUser($user);
+            $label->setBasic($isBasic);
 
             $entityManager->persist($label);
             $entityManager->flush();

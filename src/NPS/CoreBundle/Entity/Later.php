@@ -47,6 +47,13 @@ class Later extends AbstractEntity
      */
     protected $filters;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_basic", type="boolean", nullable=true)
+     */
+    protected $basic = false;
+
 
     /**
      * Constructor
@@ -180,6 +187,30 @@ class Later extends AbstractEntity
     public function getFilters()
     {
         return $this->laterItems;
+    }
+
+    /**
+     * Set is basic
+     *
+     * @param boolean $basic
+     *
+     * @return Feed
+     */
+    public function setBasic($basic)
+    {
+        $this->basic = $basic;
+
+        return $this;
+    }
+
+    /**
+     * Get if later is basic and can't be deleted
+     *
+     * @return boolean
+     */
+    public function isBasic()
+    {
+        return $this->basic;
     }
 
     /**

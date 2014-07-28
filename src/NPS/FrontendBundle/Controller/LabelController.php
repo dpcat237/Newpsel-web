@@ -77,7 +77,7 @@ class LabelController extends Controller
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $route = $this->container->get('router')->generate('labels_list');
-        if ($label->getUserId() == $user->getId()) {
+        if ($label->getUserId() == $user->getId() && !$label->isBasic()) {
             $this->get('nps.entity.later')->removeLabel($label);
         }
 
