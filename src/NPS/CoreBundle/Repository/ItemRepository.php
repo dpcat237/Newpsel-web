@@ -105,25 +105,4 @@ class ItemRepository extends EntityRepository
             ->getQuery();
         $query->execute();
     }
-
-    /**
-     * Get read items to check that unread items from api were read
-     *
-     * @param array $itemsIds ids of unread items
-     *
-     * @return array
-     */
-    public function getReadItems($itemsIds)
-    {
-        $query = $this->createQueryBuilder('i');
-        $query
-            ->select('i.id AS api_id')
-            ->add('where', $query->expr()->in('i.id', $itemsIds))
-            ->andWhere('i.unread = :unread')
-            ->orderBy('i.id', 'ASC')
-            ->setParameter('unread', false);
-        $query = $query->getQuery();
-
-        return $query->getArrayResult();
-    }
 }

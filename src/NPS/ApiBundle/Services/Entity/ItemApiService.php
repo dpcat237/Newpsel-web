@@ -128,7 +128,7 @@ class ItemApiService
         $items = $itemRepo->getUnreadApi($userId, $unreadIds, $limit);
 
         if (count($unreadIds)) {
-            $readItems = $itemRepo->getReadItems($unreadIds);
+            $readItems = $this->doctrine->getRepository('NPSCoreBundle:UserItem')->getReadItems($unreadIds);
         }
         if (count($readItems)) {
             $items = $this->addReadItems($items, $readItems);
