@@ -215,9 +215,17 @@ class LaterItemService
      */
     private function removeUnreadContentFromText($text)
     {
+        //remove html tags
         $text = strip_tags($text);
         $pattern = "#[-a-zA-Z0-9@:%_\+.~\#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~\#?&//=]*)?#si";
         $text = preg_replace($pattern, "", $text);
+
+        //remove long space
+        $text = trim(preg_replace('/\s+/', ' ', $text));
+
+        //remove &...; chars
+        $text = preg_replace("/&#?[a-z0-9]{2,8};/i","",$text);
+
 
         return $text;
     }
@@ -231,9 +239,9 @@ class LaterItemService
      * @return array
      */
     private function addReadItems($laterItems, $readItems) {
-        foreach ($readItems as $unreadItem) {
+        foreach ($readItems as $readItem) {
             $item = array(
-                'api_id' => $unreadItem['api_id'],
+                'api_id' => $readItem['api_id'],
                 'item_id' => 0,
                 'feed_id' => 0,
                 'later_id' => 0,
