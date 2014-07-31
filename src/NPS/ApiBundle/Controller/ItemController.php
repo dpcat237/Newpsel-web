@@ -21,11 +21,11 @@ class ItemController extends ApiController
     {
         $json = json_decode($request->getContent(), true);
         $itemService = $this->get('api.item.service');
-        $responseData = $itemService->syncUnreadItems($json['appKey'], $json['viewedItems'], $json['isDownload']);
+        $responseData = $itemService->syncItems($json['appKey'], $json['items'], $json['limit']);
         if ($responseData['error']) {
             return $this->plainResponse($responseData['error']);
         }
 
-        return new JsonResponse($responseData['unreadItems']);
+        return new JsonResponse($responseData['items']);
     }
 }

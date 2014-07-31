@@ -3,6 +3,7 @@ namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
+use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Services\Entity\ItemService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
@@ -78,54 +79,90 @@ class ItemApiService
 
     /**
      * Sync viewed items and download unread items if is required
-     * @param $appKey
-     * @param $viewedItems
-     * @param $download
+     * @param string $appKey app/device key
+     * @param array  $items  array of all items from API with basic information
+     * @param int    $limit  max quantity of items to sync
      *
      * @return array
      */
-    public function syncUnreadItems($appKey, $viewedItems, $download)
+    public function syncItems($appKey, $items, $limit)
     {
         $error = false;
-        $unreadItems = array();
+        $result = array();
 
         $user = $this->secure->getUserByDevice($appKey);
         if (!$user instanceof User) {
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
-        if (empty($error)){
-            $unreadItems = $this->syncUnreadItemsProcess($user, $viewedItems, $download);
+        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
+        if (empty($error) && is_array($readItems) && count($readItems)) {
+            $this->doctrine->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($readItems);
+        }
+
+        if (!$error) {
+            $result = $this->getUnreadItems($user->getId(), $unreadItems, $limit);
         }
         $responseData = array(
             'error' => $error,
-            'unreadItems' => $unreadItems,
+            'items' => $result,
         );
 
         return $responseData;
     }
 
     /**
-     * If aren't errors sync unread items
+     * Get unread items and mix them with read on server
      *
-     * @param $user
-     * @param $viewedItems
-     * @param $download
+     * @param int   $userId
+     * @param array $unreadItems
+     * @param int   $limit
      *
      * @return array
      */
-    protected function syncUnreadItemsProcess(User $user, $viewedItems, $download)
+    protected function getUnreadItems($userId, array $unreadItems, $limit)
     {
-        $unreadItems = array();
+        $readItems = array();
         $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-        if (is_array($viewedItems) && count($viewedItems)) {
-            $this->doctrine->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($viewedItems);
+        $unreadIds = ArrayHelper::getIdsFromArray($unreadItems);
+        $items = $itemRepo->getUnreadApi($userId, $unreadIds, $limit);
+
+        if (count($unreadIds)) {
+            $readItems = $itemRepo->getReadItems($unreadIds);
+        }
+        if (count($readItems)) {
+            $items = $this->addReadItems($items, $readItems);
         }
 
-        if ($download) {
-            $unreadItems = $itemRepo->getUnreadItemsApi($user->getId());
+        return $items;
+    }
+
+    /**
+     * Add read items which came as unread from api
+     *
+     * @param array $items
+     * @param array $readItems
+     *
+     * @return array
+     */
+    private function addReadItems($items, $readItems)
+    {
+        foreach ($readItems as $readItem) {
+            $item = array(
+                'api_id' => $readItem['api_id'],
+                'ui_id' => 0,
+                'feed_id' => 0,
+                'is_stared' => false,
+                'is_unread' => false,
+                'date_add' => 0,
+                'language' => "",
+                'link' => "",
+                'title' => "",
+                'content' => ""
+            );
+            $items[] = $item;
         }
 
-        return $unreadItems;
+        return $items;
     }
 }

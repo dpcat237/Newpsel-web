@@ -21,38 +21,53 @@ class ItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getUnreadItemsApi($userId, $feedId = null, $limit = 300)
+    public function getUnreadItems($userId, $feedId = null, $limit = 300)
     {
-        if ($feedId) {
-            $query = $this->createQueryBuilder('i')
-                ->select('i.id AS api_id, ui.id AS ui_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add, f.language')
-                ->leftJoin('i.userItems', 'ui')
-                ->innerJoin('i.feed', 'f')
-                ->where('ui.unread = :unread')
-                ->andWhere('ui.user = :userId')
-                ->andWhere('f.id = :feedId')
-                ->setParameter('unread', true)
-                ->setParameter('userId', $userId)
-                ->setParameter('feedId', $feedId)
-                ->orderBy('i.dateAdd', 'DESC')
-                ->setMaxResults($limit)
-                ->getQuery();
-        } else {
-            $query = $this->createQueryBuilder('i')
-                ->select('i.id AS api_id, ui.id AS ui_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add, f.language')
-                ->leftJoin('i.userItems', 'ui')
-                ->innerJoin('i.feed', 'f')
-                ->where('ui.unread = :unread')
-                ->andWhere('ui.user = :userId')
-                ->setParameter('unread', true)
-                ->setParameter('userId', $userId)
-                ->orderBy('i.dateAdd', 'DESC')
-                ->setMaxResults($limit)
-                ->getQuery();
-        }
+        $query = $this->createQueryBuilder('i')
+            ->select('i.id AS api_id, ui.id AS ui_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add, f.language')
+            ->leftJoin('i.userItems', 'ui')
+            ->innerJoin('i.feed', 'f')
+            ->where('ui.unread = :unread')
+            ->andWhere('ui.user = :userId')
+            ->andWhere('f.id = :feedId')
+            ->setParameter('unread', true)
+            ->setParameter('userId', $userId)
+            ->setParameter('feedId', $feedId)
+            ->orderBy('i.dateAdd', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery();
         $itemCollection = $query->getArrayResult();
 
         return $itemCollection;
+    }
+
+    /**
+     * Get unread items for API
+     *
+     * @param int   $userId
+     * @param array $toFilterIds
+     * @param int   $limit
+     *
+     * @return array
+     */
+    public function getUnreadApi($userId, array $toFilterIds, $limit = 300)
+    {
+        $toFilterIds =(count($toFilterIds) < 1)? array(0) : $toFilterIds;
+        $query = $this->createQueryBuilder('i');
+        $query
+            ->select('i.id AS api_id, ui.id AS ui_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add, f.language')
+            ->leftJoin('i.userItems', 'ui')
+            ->innerJoin('i.feed', 'f')
+            ->add('where', $query->expr()->notIn('i.id', $toFilterIds))
+            ->andWhere('ui.unread = :unread')
+            ->andWhere('ui.user = :userId')
+            ->setParameter('unread', true)
+            ->setParameter('userId', $userId)
+            ->orderBy('i.dateAdd', 'DESC')
+            ->setMaxResults($limit);
+        $query = $query->getQuery();
+
+        return $query->getArrayResult();
     }
 
     /**
@@ -89,5 +104,26 @@ class ItemRepository extends EntityRepository
             ->setParameter('languageCode', $languageCode)
             ->getQuery();
         $query->execute();
+    }
+
+    /**
+     * Get read items to check that unread items from api were read
+     *
+     * @param array $itemsIds ids of unread items
+     *
+     * @return array
+     */
+    public function getReadItems($itemsIds)
+    {
+        $query = $this->createQueryBuilder('i');
+        $query
+            ->select('i.id AS api_id')
+            ->add('where', $query->expr()->in('i.id', $itemsIds))
+            ->andWhere('i.unread = :unread')
+            ->orderBy('i.id', 'ASC')
+            ->setParameter('unread', false);
+        $query = $query->getQuery();
+
+        return $query->getArrayResult();
     }
 }

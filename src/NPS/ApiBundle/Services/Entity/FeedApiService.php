@@ -67,7 +67,7 @@ class FeedApiService
         if (empty($error)){
             $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
             $feed = $checkCreate['feed'];
-            $unreadItems = $itemRepo->getUnreadItemsApi($user->getId(), $feed->getId());
+            $unreadItems = $itemRepo->getUnreadItems($user->getId(), $feed->getId());
         }
         $responseData = array(
             'error' => $error,
