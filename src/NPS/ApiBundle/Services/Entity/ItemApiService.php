@@ -129,7 +129,7 @@ class ItemApiService
         $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems);
         $totalUnread = $userItemRepo->totalUnreadFeedItems($userId);
-        $unreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 0, $limit, $totalUnread);
+        $unreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 0, $limit+5, $totalUnread); //"+5" extra to don't do many loops for few items
         $unreadItemsIds = ArrayHelper::getIdsFromArray($unreadItems, 'item_id');
         $items = array();
         if (count($unreadItemsIds)) {
@@ -157,11 +157,12 @@ class ItemApiService
         $unreadItems = $this->filterUnreadItemsIds($unreadItems, $unreadIds);
         $unreadCount = count($unreadItems);
         $begin = $begin + $limit;
-        if ($unreadCount >= $limit || ($begin + 1) >= $total) {
+
+        if ($unreadCount >= $limit || ($begin + 1) >= $total || $limit < 5) { //added 5 just in case to don't do a lot of loops for few items
             return $unreadItems;
         }
 
-        $limit = (($limit - $unreadCount) < 10)? 10 : ($limit - $unreadCount);
+        $limit -= $unreadCount;
         if (($begin + $limit) > $total) {
             $limit = $total - $begin;
         }

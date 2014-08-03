@@ -117,7 +117,8 @@ class LaterItemService
         $totalUnread = $laterItemRepo->totalLaterUnreadItems($labelId);
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
 
-        $laterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, 0, $limit, $totalUnread);
+        //"+5" extra to don't do many loops for few items
+        $laterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, 0, $limit+5, $totalUnread);
         if (count($unreadIds)) {
             $readItems = $laterItemRepo->getReadDictations($unreadIds);
         }
@@ -151,11 +152,11 @@ class LaterItemService
 
         $unreadCount = count($laterItems);
         $begin = $begin + $limit;
-        if ($unreadCount >= $limit || ($begin + 1) >= $totalUnread) {
+        if ($unreadCount >= $limit || ($begin + 1) >= $totalUnread || $limit < 5) { //added 5 just in case to don't do a lot of loops for few items
             return $laterItems;
         }
 
-        $limit = (($limit - $unreadCount) < 10)? 10 : ($limit - $unreadCount);
+        $limit -= $unreadCount;
         if (($begin + $limit) > $totalUnread) {
             $limit = $totalUnread - $begin;
         }
