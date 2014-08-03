@@ -117,7 +117,7 @@ class LaterItemService
         $totalUnread = $laterItemRepo->totalLaterUnreadItems($labelId);
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
 
-        $laterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $limit, $totalUnread);
+        $laterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, 0, $limit, $totalUnread);
         if (count($unreadIds)) {
             $readItems = $laterItemRepo->getReadDictations($unreadIds);
         }
@@ -134,28 +134,51 @@ class LaterItemService
      * @param LaterItemRepository $laterItemRepo LaterItem
      * @param int                 $labelId       later id
      * @param array               $unreadIds     ids of unread and added to sync items
+     * @param int                 $begin         first item for query
      * @param int                 $limit         quantity of items required by API
      * @param int                 $totalUnread   total unread items of later
      *
      * @return array
      */
-    private function getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $limit, $totalUnread)
+    private function getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread)
     {
-        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $unreadIds, $limit);
-        $newUnreadIds = ArrayHelper::getIdsFromArray($laterItems, 'api_id');
+        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $begin, $limit);
+        if (count($unreadIds)) {
+            $laterItems = $this->filterUnreadDictation($laterItems, $unreadIds);
+        }
         $laterItems = $this->addCompleteContent($laterItems);
         $laterItems = $this->removeShortContent($laterItems);
 
-        if (count($laterItems) >= $limit) {
+        $unreadCount = count($laterItems);
+        $begin = $begin + $limit;
+        if ($unreadCount >= $limit || ($begin + 1) >= $totalUnread) {
             return $laterItems;
         }
 
-        $unreadIds = array_merge($unreadIds, $newUnreadIds);
-        if (count($unreadIds) < $totalUnread) {
-            //get more unread items
-            $limit = $limit - count($laterItems);
-            $newLaterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $limit, $totalUnread);
-            $laterItems = array_merge($laterItems, $newLaterItems);
+        $limit = (($limit - $unreadCount) < 10)? 10 : ($limit - $unreadCount);
+        if (($begin + $limit) > $totalUnread) {
+            $limit = $totalUnread - $begin;
+        }
+        $newLaterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread);
+        $laterItems = array_merge($laterItems, $newLaterItems);
+
+        return $laterItems;
+    }
+
+    /**
+     * Filter dictations which still unread in API
+     *
+     * @param array $laterItems
+     * @param array $unreadIds
+     *
+     * @return array
+     */
+    private function filterUnreadDictation(array $laterItems, array $unreadIds)
+    {
+        foreach ($laterItems as $key => $laterItem) {
+            if (in_array($laterItem['api_id'], $unreadIds)) {
+                unset($laterItems[$key]);
+            }
         }
 
         return $laterItems;
