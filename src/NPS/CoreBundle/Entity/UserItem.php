@@ -187,7 +187,7 @@ class UserItem extends AbstractEntity
      */
     public function setShared($shared)
     {
-        $this->stared = $shared;
+        $this->shared = $shared;
 
         return $this;
     }
