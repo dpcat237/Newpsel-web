@@ -32,13 +32,13 @@ class UserItem extends AbstractEntity
     protected $user;
 
     /**
-     * @var int
+     * @var boolean
      * @ORM\Column(name="unread", type="boolean", nullable=false)
      */
     protected $unread = true;
 
     /**
-     * @var int
+     * @var boolean
      * @ORM\Column(name="stared", type="boolean", nullable=false)
      */
     protected $stared = false;
@@ -47,6 +47,12 @@ class UserItem extends AbstractEntity
      * @ORM\OneToMany(targetEntity="LaterItem", mappedBy="userItem")
      */
     protected $laterItems;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="shared", type="boolean")
+     */
+    protected $shared = false;
 
 
     /**
@@ -171,5 +177,18 @@ class UserItem extends AbstractEntity
     public function isStared()
     {
         return $this->stared;
+    }
+
+    /**
+     * Set shared
+     * @param \boolean $shared
+     *
+     * @return UserItem
+     */
+    public function setShared($shared)
+    {
+        $this->stared = $shared;
+
+        return $this;
     }
 }

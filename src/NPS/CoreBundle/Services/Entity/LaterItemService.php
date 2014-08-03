@@ -262,12 +262,13 @@ class LaterItemService
     /**
      * Add page / item to selected label or if exists set as unread
      *
-     * @param User   $user
-     * @param id     $labelId
-     * @param string $pageTitle
-     * @param string $pageUrl
+     * @param User    $user
+     * @param id      $labelId
+     * @param string  $pageTitle
+     * @param string  $pageUrl
+     * @param boolean $shared
      */
-    public function addPageToLater(User $user, $labelId, $pageTitle, $pageUrl)
+    public function addPageToLater(User $user, $labelId, $pageTitle, $pageUrl, $shared = false)
     {
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
         $laterItem = $laterItemRepo->checkExistsLaterItemUrl($user->getId(), $labelId, $pageUrl);
@@ -283,6 +284,7 @@ class LaterItemService
             $userItem = new UserItem();
             $userItem->setItem($item);
             $userItem->setUser($user);
+            $userItem->setShared($shared);
             $this->entityManager->persist($userItem);
             $this->entityManager->flush();
 

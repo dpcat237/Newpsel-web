@@ -202,7 +202,7 @@ class LabelApiService
         $response = false;
         $user = $this->secure->getUserByDevice($appKey);
         if ($user instanceof User) {
-            $this->labelItemService->addPageToLater($user, $labelId, $webTitle, $webUrl);
+            $this->labelItemService->addPageToLater($user, $labelId, $webTitle, $webUrl, true);
             $response = true;
         }
         $this->queueLauncher->executeCrawling($user->getId());
