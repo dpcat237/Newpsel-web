@@ -4,6 +4,7 @@ namespace NPS\ApiBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Helper\ArrayHelper;
+use NPS\CoreBundle\Repository\UserItemRepository;
 use NPS\CoreBundle\Services\Entity\ItemService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
@@ -100,7 +101,7 @@ class ItemApiService
             $this->doctrine->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($readItems);
         }
 
-        if (!$error) {
+        if (!$error && $limit > 1) {
             $result = $this->getUnreadItems($user->getId(), $unreadItems, $limit);
         }
         $responseData = array(
@@ -117,24 +118,85 @@ class ItemApiService
      * @param int   $userId
      * @param array $unreadItems
      * @param int   $limit
-     *
+     *+
      * @return array
      */
     protected function getUnreadItems($userId, array $unreadItems, $limit)
     {
         $readItems = array();
         $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems);
-        $items = $itemRepo->getUnreadApi($userId, $unreadIds, $limit);
+        $totalUnread = $userItemRepo->totalUnreadFeedItems($userId);
+        $unreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 1, $limit, $totalUnread);
+        $unreadItemsIds = ArrayHelper::getIdsFromArray($readItems, 'item_id');
+        $itemsAlone = $itemRepo->getUnreadApi($unreadItemsIds);
+        $items = array();
 
+        if (count($unreadItemsIds) && count($itemsAlone)) {
+            $items = $this->mergeUserItemsWithItems($unreadItems, $items);
+        }
         if (count($unreadIds)) {
-            $readItems = $this->doctrine->getRepository('NPSCoreBundle:UserItem')->getReadItems($unreadIds);
+            $readItems = $userItemRepo->getReadItems($unreadIds);
         }
         if (count($readItems)) {
             $items = $this->addReadItems($items, $readItems);
         }
 
         return $items;
+    }
+
+    public function getUnreadItemsIdsRecursive(UserItemRepository $userItemRepo, $userId, array $unreadIds, $begin, $limit, $total)
+    {
+        $unreadItems = $userItemRepo->getUnreadFeedItems($userId, 1, $limit);
+        if (!count($unreadIds)) {
+            return $unreadItems;
+        }
+
+        $unreadItems = $this->filterUnreadItemsIds($unreadItems, $unreadIds);
+        $unreadCount = count($unreadItems);
+        $begin = $begin + $limit;
+        if ($unreadCount >= $limit || ($begin + 1) >= $total) {
+            return $unreadItems;
+        }
+
+        $limit = (($limit - $unreadCount) < 10)? 10 : ($limit - $unreadCount);
+        if (($begin + $limit) > $total) {
+            $limit = $total - $begin;
+        }
+        $moreUnreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, $begin, $limit, $total);
+        $unreadItems = array_merge($unreadItems, $moreUnreadItems);
+
+        return $unreadItems;
+    }
+
+    private function filterUnreadItemsIds($readItems, $unreadIds)
+    {
+        $unreadItems = array();
+        foreach ($readItems as $readItem) {
+            if (!in_array($readItem['item_id'], $unreadIds)) {
+                $unreadItems[] = $readItem;
+            }
+        }
+
+        return $unreadItems;
+    }
+
+    private function mergeUserItemsWithItems($unreadItems, $items)
+    {
+        $newItems = array();
+        foreach ($items as $key => $item) {
+            foreach ($unreadItems as $unreadItem) {
+                if ($item['api_id'] = $unreadItem['item_id']) {
+                    $item['ui_id'] = $unreadItem['ui_id'];
+                    $item['is_stared'] = $unreadItem['is_stared'];
+                    $item['is_unread'] = $unreadItem['is_unread'];
+                    $newItems[] = $item;
+                }
+            }
+        }
+
+        return $newItems;
     }
 
     /**

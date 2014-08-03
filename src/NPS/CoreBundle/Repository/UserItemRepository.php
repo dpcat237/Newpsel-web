@@ -145,4 +145,46 @@ class UserItemRepository extends EntityRepository
 
         return $query->getArrayResult();
     }
+
+    /**
+     * Get unread feed items ids
+     *
+     * @param int $userId
+     * @param int $begin
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getUnreadFeedItems($userId, $begin = 1, $limit = 300)
+    {
+        $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
+        $sql = "SELECT ui.id AS ui_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id
+            FROM ".$userItemTable." ui
+            WHERE ui.shared=false AND ui.unread=true AND ui.user_id=".$userId." LIMIT ".$begin.",".$limit.";";
+        $query = $this->getEntityManager()->getConnection()->executeQuery($sql);
+
+        return $query->fetchAll();
+    }
+
+    /**
+     * Count unread feed items
+     *
+     * @param int $userId
+     *
+     * @return int
+     */
+    public function totalUnreadFeedItems($userId)
+    {
+        $query = $this->createQueryBuilder('ui');
+        $query
+            ->add('select', $query->expr()->count('ui'))
+            ->where('ui.shared = :shared')
+            ->andWhere('ui.unread = :unread')
+            ->andWhere('ui.user = :userId')
+            ->setParameter('shared', false)
+            ->setParameter('unread', true)
+            ->setParameter('userId', $userId);
+
+        return $query->getQuery()->getSingleScalarResult();
+    }
 }

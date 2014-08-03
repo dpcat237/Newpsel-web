@@ -44,27 +44,18 @@ class ItemRepository extends EntityRepository
     /**
      * Get unread items for API
      *
-     * @param int   $userId
-     * @param array $toFilterIds
-     * @param int   $limit
+     * @param array $ids
      *
      * @return array
      */
-    public function getUnreadApi($userId, array $toFilterIds, $limit = 300)
+    public function getUnreadApi(array $ids)
     {
-        $toFilterIds =(count($toFilterIds) < 1)? array(0) : $toFilterIds;
         $query = $this->createQueryBuilder('i');
         $query
-            ->select('i.id AS api_id, ui.id AS ui_id, f.id AS feed_id, i.title, i.link, i.content, ui.stared AS is_stared, ui.unread AS is_unread, i.dateAdd AS date_add, f.language')
-            ->leftJoin('i.userItems', 'ui')
+            ->select('i.id AS api_id, f.id AS feed_id, i.title, i.link, i.content, i.dateAdd AS date_add, f.language')
             ->innerJoin('i.feed', 'f')
-            ->add('where', $query->expr()->notIn('i.id', $toFilterIds))
-            ->andWhere('ui.unread = :unread')
-            ->andWhere('ui.user = :userId')
-            ->setParameter('unread', true)
-            ->setParameter('userId', $userId)
-            ->orderBy('i.dateAdd', 'DESC')
-            ->setMaxResults($limit);
+            ->add('where', $query->expr()->in('i.id', $ids))
+            ->orderBy('i.dateAdd', 'DESC');
         $query = $query->getQuery();
 
         return $query->getArrayResult();
