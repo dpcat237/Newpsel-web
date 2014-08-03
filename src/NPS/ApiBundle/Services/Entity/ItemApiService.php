@@ -104,6 +104,7 @@ class ItemApiService
         if (!$error && $limit > 1) {
             $result = $this->getUnreadItems($user->getId(), $unreadItems, $limit);
         }
+
         $responseData = array(
             'error' => $error,
             'items' => $result,
@@ -129,13 +130,13 @@ class ItemApiService
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems);
         $totalUnread = $userItemRepo->totalUnreadFeedItems($userId);
         $unreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 1, $limit, $totalUnread);
-        $unreadItemsIds = ArrayHelper::getIdsFromArray($readItems, 'item_id');
-        $itemsAlone = $itemRepo->getUnreadApi($unreadItemsIds);
+        $unreadItemsIds = ArrayHelper::getIdsFromArray($unreadItems, 'item_id');
         $items = array();
-
-        if (count($unreadItemsIds) && count($itemsAlone)) {
-            $items = $this->mergeUserItemsWithItems($unreadItems, $items);
+        if (count($unreadItemsIds)) {
+            $itemsAlone = $itemRepo->getUnreadApi($unreadItemsIds);
+            $items = $this->mergeUserItemsWithItems($unreadItems, $itemsAlone);
         }
+
         if (count($unreadIds)) {
             $readItems = $userItemRepo->getReadItems($unreadIds);
         }
@@ -146,7 +147,7 @@ class ItemApiService
         return $items;
     }
 
-    public function getUnreadItemsIdsRecursive(UserItemRepository $userItemRepo, $userId, array $unreadIds, $begin, $limit, $total)
+    private function getUnreadItemsIdsRecursive(UserItemRepository $userItemRepo, $userId, array $unreadIds, $begin, $limit, $total)
     {
         $unreadItems = $userItemRepo->getUnreadFeedItems($userId, 1, $limit);
         if (!count($unreadIds)) {
@@ -185,13 +186,14 @@ class ItemApiService
     private function mergeUserItemsWithItems($unreadItems, $items)
     {
         $newItems = array();
-        foreach ($items as $key => $item) {
-            foreach ($unreadItems as $unreadItem) {
-                if ($item['api_id'] = $unreadItem['item_id']) {
+        foreach ($items as $item) {
+            foreach ($unreadItems as $key => $unreadItem) {
+                if ($item['api_id'] == $unreadItem['item_id']) {
                     $item['ui_id'] = $unreadItem['ui_id'];
                     $item['is_stared'] = $unreadItem['is_stared'];
                     $item['is_unread'] = $unreadItem['is_unread'];
                     $newItems[] = $item;
+                    unset($unreadItems[$key]);
                 }
             }
         }
