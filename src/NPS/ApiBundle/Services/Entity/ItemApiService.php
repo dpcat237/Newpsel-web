@@ -189,9 +189,9 @@ class ItemApiService
         foreach ($items as $item) {
             foreach ($unreadItems as $key => $unreadItem) {
                 if ($item['api_id'] == $unreadItem['item_id']) {
-                    $item['ui_id'] = $unreadItem['ui_id'];
-                    $item['is_stared'] = $unreadItem['is_stared'];
-                    $item['is_unread'] = $unreadItem['is_unread'];
+                    $item['ui_id'] = (int) $unreadItem['ui_id'];
+                    $item['is_stared'] = ($unreadItem['is_stared'])? true : false;
+                    $item['is_unread'] = ($unreadItem['is_unread'])? true : false;
                     $newItems[] = $item;
                     unset($unreadItems[$key]);
                 }
