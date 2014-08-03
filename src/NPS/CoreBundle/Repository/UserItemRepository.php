@@ -155,7 +155,7 @@ class UserItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getUnreadFeedItems($userId, $begin = 1, $limit = 300)
+    public function getUnreadFeedItems($userId, $begin = 0, $limit = 300)
     {
         $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
         $sql = "SELECT ui.id AS ui_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id

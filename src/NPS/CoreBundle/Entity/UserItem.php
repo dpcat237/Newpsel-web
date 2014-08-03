@@ -172,7 +172,7 @@ class UserItem extends AbstractEntity
     /**
      * Get isStared
      *
-     * @return \int
+     * @return \boolean
      */
     public function isStared()
     {
@@ -190,5 +190,15 @@ class UserItem extends AbstractEntity
         $this->shared = $shared;
 
         return $this;
+    }
+
+    /**
+     * Get isShared
+     *
+     * @return \boolean
+     */
+    public function isShared()
+    {
+        return $this->shared;
     }
 }

@@ -129,7 +129,7 @@ class ItemApiService
         $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
         $unreadIds = ArrayHelper::getIdsFromArray($unreadItems);
         $totalUnread = $userItemRepo->totalUnreadFeedItems($userId);
-        $unreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 1, $limit, $totalUnread);
+        $unreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 0, $limit, $totalUnread);
         $unreadItemsIds = ArrayHelper::getIdsFromArray($unreadItems, 'item_id');
         $items = array();
         if (count($unreadItemsIds)) {
@@ -149,7 +149,7 @@ class ItemApiService
 
     private function getUnreadItemsIdsRecursive(UserItemRepository $userItemRepo, $userId, array $unreadIds, $begin, $limit, $total)
     {
-        $unreadItems = $userItemRepo->getUnreadFeedItems($userId, 1, $limit);
+        $unreadItems = $userItemRepo->getUnreadFeedItems($userId, $begin, $limit);
         if (!count($unreadIds)) {
             return $unreadItems;
         }
