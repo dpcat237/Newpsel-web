@@ -39,7 +39,13 @@ api_add_feed:
 #Item
 api_sync_unread:
     pattern:  /sync_unread/
-    defaults: { _controller: NPSApiBundle:Item:syncUnread }
+    defaults: { _controller: NPSApiBundle:Item:syncItems }
+    requirements:
+      _method: POST
+
+api_sync_later_items:
+    pattern:  /sync_later_items/
+    defaults: { _controller: NPSApiBundle:Item:syncLaterItems }
     requirements:
       _method: POST
 

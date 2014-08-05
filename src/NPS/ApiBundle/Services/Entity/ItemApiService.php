@@ -79,7 +79,8 @@ class ItemApiService
     }
 
     /**
-     * Sync viewed items and download unread items if is required
+     * Sync viewed items and download unread items
+     *
      * @param string $appKey app/device key
      * @param array  $items  array of all items from API with basic information
      * @param int    $limit  max quantity of items to sync
@@ -147,6 +148,18 @@ class ItemApiService
         return $items;
     }
 
+    /**
+     * Get unread items recursively
+     *
+     * @param UserItemRepository $userItemRepo
+     * @param int                $userId       user id
+     * @param array              $unreadIds    still unread items ids from api
+     * @param int                $begin        position from which begin limit in query
+     * @param int                $limit        limit of items for query
+     * @param int                $total        total unread items in data base
+     *
+     * @return array
+     */
     private function getUnreadItemsIdsRecursive(UserItemRepository $userItemRepo, $userId, array $unreadIds, $begin, $limit, $total)
     {
         $unreadItems = $userItemRepo->getUnreadFeedItems($userId, $begin, $limit);
@@ -154,7 +167,7 @@ class ItemApiService
             return $unreadItems;
         }
 
-        $unreadItems = $this->filterUnreadItemsIds($unreadItems, $unreadIds);
+        $unreadItems = ArrayHelper::filterUnreadItemsIds($unreadItems, $unreadIds, 'item_id');
         $unreadCount = count($unreadItems);
         $begin = $begin + $limit;
 
@@ -172,18 +185,14 @@ class ItemApiService
         return $unreadItems;
     }
 
-    private function filterUnreadItemsIds($readItems, $unreadIds)
-    {
-        $unreadItems = array();
-        foreach ($readItems as $readItem) {
-            if (!in_array($readItem['item_id'], $unreadIds)) {
-                $unreadItems[] = $readItem;
-            }
-        }
-
-        return $unreadItems;
-    }
-
+    /**
+     * Merge user items data with items
+     *
+     * @param array $unreadItems
+     * @param array $items
+     *
+     * @return array
+     */
     private function mergeUserItemsWithItems($unreadItems, $items)
     {
         $newItems = array();

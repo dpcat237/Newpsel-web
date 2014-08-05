@@ -143,9 +143,9 @@ class LaterItemService
      */
     private function getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread)
     {
-        $laterItems = $laterItemRepo->getUnreadForApi($labelId, $begin, $limit);
+        $laterItems = $laterItemRepo->getUnreadForApiByLabel($labelId, $begin, $limit);
         if (count($unreadIds)) {
-            $laterItems = $this->filterUnreadDictation($laterItems, $unreadIds);
+            $laterItems = ArrayHelper::filterUnreadItemsIds($laterItems, $unreadIds);
         }
         $laterItems = $this->addCompleteContent($laterItems);
         $laterItems = $this->removeShortContent($laterItems);
@@ -162,25 +162,6 @@ class LaterItemService
         }
         $newLaterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread);
         $laterItems = array_merge($laterItems, $newLaterItems);
-
-        return $laterItems;
-    }
-
-    /**
-     * Filter dictations which still unread in API
-     *
-     * @param array $laterItems
-     * @param array $unreadIds
-     *
-     * @return array
-     */
-    private function filterUnreadDictation(array $laterItems, array $unreadIds)
-    {
-        foreach ($laterItems as $key => $laterItem) {
-            if (in_array($laterItem['api_id'], $unreadIds)) {
-                unset($laterItems[$key]);
-            }
-        }
 
         return $laterItems;
     }

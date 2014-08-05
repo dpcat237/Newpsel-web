@@ -26,6 +26,12 @@ services:
             item:               @item
             api.secure.service: @api.secure.service
 
+    api.later_item.service:
+        class: NPS\ApiBundle\Services\Entity\LaterItemApiService
+        arguments:
+            doctrine:           @doctrine
+            api.secure.service: @api.secure.service
+
     api.label.service:
         class: NPS\ApiBundle\Services\Entity\LabelApiService
         arguments:

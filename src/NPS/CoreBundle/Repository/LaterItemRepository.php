@@ -105,7 +105,7 @@ class LaterItemRepository extends EntityRepository
     }
 
     /**
-     * Get unread items for api
+     * Get unread items for api by label
      *
      * @param int $laterId
      * @param int $begin
@@ -113,7 +113,7 @@ class LaterItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getUnreadForApi($laterId, $begin = 0, $limit = 50)
+    public function getUnreadForApiByLabel($laterId, $begin = 0, $limit = 50)
     {
         $query = $this->createQueryBuilder('li');
         $query
@@ -129,6 +129,35 @@ class LaterItemRepository extends EntityRepository
             ->setMaxResults($limit)
             ->setParameter('unread', true)
             ->setParameter('laterId', $laterId);
+        $query = $query->getQuery();
+
+        return $query->getArrayResult();
+    }
+
+    /**
+     * Get unread items for api by several labels
+     *
+     * @param array $labelsIds
+     * @param int   $begin
+     * @param int   $limit
+     *
+     * @return array
+     */
+    public function getUnreadForApiByLabels($labelsIds, $begin = 0, $limit = 50)
+    {
+        $query = $this->createQueryBuilder('li');
+        $query
+            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
+            ->join('li.userItem', 'ui')
+            ->join('ui.item', 'i')
+            ->leftJoin('i.feed', 'f')
+            ->leftJoin('li.later', 'l')
+            ->add('where', $query->expr()->in('li.later', $labelsIds))
+            ->andWhere('li.unread = :unread')
+            ->orderBy('li.id', 'DESC')
+            ->setFirstResult($begin)
+            ->setMaxResults($limit)
+            ->setParameter('unread', true);
         $query = $query->getQuery();
 
         return $query->getArrayResult();
@@ -219,5 +248,44 @@ class LaterItemRepository extends EntityRepository
             ->setParameter('unread', true);
 
         return $query->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Count unread items by labels
+     *
+     * @param array $labelsIds
+     *
+     * @return int
+     */
+    public function totalUnreadLabelsItems($labelsIds)
+    {
+        $query = $this->createQueryBuilder('li');
+        $query
+            ->add('select', $query->expr()->count('li'))
+            ->add('where', $query->expr()->in('li.later', $labelsIds))
+            ->andWhere('li.unread = :unread')
+            ->setParameter('unread', true);
+
+        return $query->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Get read items to check that unread items from api were read
+     *
+     * @param array $itemsIds ids of unread items
+     *
+     * @return array
+     */
+    public function getReadItems($itemsIds)
+    {
+        $query = $this->createQueryBuilder('li');
+        $query
+            ->select('li.id AS api_id')
+            ->add('where', $query->expr()->in('li.id', $itemsIds))
+            ->andWhere('li.unread = :unread')
+            ->setParameter('unread', false);
+        $query = $query->getQuery();
+
+        return $query->getArrayResult();
     }
 }

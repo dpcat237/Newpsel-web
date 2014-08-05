@@ -65,4 +65,24 @@ class ArrayHelper extends Helper
 
         return $ids;
     }
+
+    /**
+     * Filter items which still unread in device
+     *
+     * @param array  $unreadItems unread items to send to api
+     * @param array  $unreadIds   still unread items ids from api
+     * @param string $idKey       id key
+     *
+     * @return array
+     */
+    static public function filterUnreadItemsIds($unreadItems, $unreadIds, $idKey = 'api_id')
+    {
+        foreach ($unreadItems as $key => $unreadItem) {
+            if (in_array($unreadItem[$idKey], $unreadIds)) {
+                unset($unreadItems[$key]);
+            }
+        }
+
+        return $unreadItems;
+    }
 }
