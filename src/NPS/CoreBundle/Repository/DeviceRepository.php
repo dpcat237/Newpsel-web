@@ -22,4 +22,19 @@ class DeviceRepository extends EntityRepository
         $em->persist($device);
         $em->flush();
     }
+
+    /**
+     * Update Google Cloud Messaging ID
+     */
+    public function updateGcmId($appKey, $gcmId)
+    {
+        $query = $this->createQueryBuilder('d')
+            ->update()
+            ->set('d.gcmId', ':gcmId')
+            ->where('d.appKey = :appKey')
+            ->setParameter('appKey', $appKey)
+            ->setParameter('gcmId', $gcmId)
+            ->getQuery();
+        $query->execute();
+    }
 }

@@ -28,12 +28,18 @@ class Device extends AbstractEntity
      */
     protected $user;
 
+    /**
+     * @var string
+     * @ORM\Column(name="gcm_id", type="string", length=255)
+     */
+    protected $gcmId;
+
 
     /**
      * Set appKey
      * @param string $appKey
      *
-     * @return Item
+     * @return Device
      */
     public function setAppKey($appKey)
     {
@@ -43,7 +49,7 @@ class Device extends AbstractEntity
     }
 
     /**
-     * Get title
+     * Get app key
      *
      * @return string 
      */
@@ -85,5 +91,29 @@ class Device extends AbstractEntity
         }
 
         return $userId;
+    }
+
+    /**
+     * Set GCM id
+     *
+     * @param string $gcmId
+     *
+     * @return Device
+     */
+    public function setGcmId($gcmId)
+    {
+        $this->gcmId = $gcmId;
+
+        return $this;
+    }
+
+    /**
+     * Get GCM ID
+     *
+     * @return string
+     */
+    public function getGcmId()
+    {
+        return $this->gcmId;
     }
 }

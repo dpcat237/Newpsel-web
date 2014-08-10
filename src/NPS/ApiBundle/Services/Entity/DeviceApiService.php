@@ -127,4 +127,33 @@ class DeviceApiService
 
         return NotificationHelper::OK;
     }
+
+    /**
+     * Update Google Cloud Messaging ID of Android device
+     *
+     * @param string $appKey
+     * @param string $gcmId
+     *
+     * @return array
+     */
+    public function updateGcmId($appKey, $gcmId)
+    {
+        $error = false;
+        $user = $this->secure->getUserByDevice($appKey);
+        if (!$user instanceof User) {
+            $error = NotificationHelper::ERROR_NO_LOGGED;
+        }
+
+        if (!$error) {
+            $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');
+            $deviceRepo->updateGcmId($appKey, $gcmId);
+
+        }
+
+        $responseData = array(
+            'error' => $error,
+        );
+
+        return $responseData;
+    }
 }

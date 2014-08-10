@@ -23,6 +23,13 @@ chrome_request:
     requirements:
       _method: POST
 
+#GCM
+gcm_add_id:
+    pattern:  /gcm/add_id/
+    defaults: { _controller: NPSApiBundle:Gcm:addRegistrationId }
+    requirements:
+      _method: POST
+
 #Feed
 api_sync_feeds:
     pattern:  /sync_feeds/
