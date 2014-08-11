@@ -8,7 +8,8 @@ services:
     nps.api.gcm.service:
         class: NPS\ApiBundle\Services\GcmService
         arguments:
-            gcm:     @endroid.gcm
+            gcm:               @endroid.gcm
+            device_repository: @=service("doctrine.orm.entity_manager").getRepository("NPSCoreBundle:Device")
 
 #Entities
     api.device.service:

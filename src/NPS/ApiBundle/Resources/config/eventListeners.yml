@@ -4,5 +4,4 @@ services:
       tags:
           - { name: kernel.event_listener, event: nps.label.modified, method: onLabelModified }
       arguments:
-          gcm.service:       @nps.api.gcm.service
-          device_repository:   @=service("doctrine.orm.entity_manager").getRepository("NPSCoreBundle:Device")
+          gcm.service: @nps.api.gcm.service
