@@ -30,7 +30,7 @@ class Device extends AbstractEntity
 
     /**
      * @var string
-     * @ORM\Column(name="gcm_id", type="string", length=255)
+     * @ORM\Column(name="gcm_id", type="string", length=255, nullable=true)
      */
     protected $gcmId;
 
