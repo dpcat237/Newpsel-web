@@ -73,6 +73,7 @@ class LaterService extends AbstractEntityService
                 $deletedLabels[] = $label->getId();
             }
         }
+        $deletedLabels = implode(',', $deletedLabels);
         $this->cache->set(RedisConstants::LABEL_DELETED."_".$label->getUserId(), $deletedLabels);
 
         $this->removeObject($label);

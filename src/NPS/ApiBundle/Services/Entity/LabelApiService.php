@@ -5,6 +5,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Constant\RedisConstants;
 use NPS\CoreBundle\Event\LabelsModifiedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
+use NPS\CoreBundle\Repository\LaterRepository;
 use Predis\Client;
 use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use NPS\ApiBundle\Services\SecureService;
@@ -159,7 +160,6 @@ class LabelApiService
     {
         $labels = array();
         $this->modified = false;
-
         if (!count($apiLabels)) {
             foreach ($dbLabels as $dbLabel) {
                 $dbLabel['status'] = EntityConstants::STATUS_NEW;
@@ -169,7 +169,8 @@ class LabelApiService
             return $labels;
         }
 
-        $deletedLabels = $this->checkDeletedLabels($user, $apiLabels);
+        $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+        list($apiLabels, $deletedLabels) = $this->checkDeletedLabels($user, $apiLabels);
         if (count($deletedLabels)) {
             $labels = $deletedLabels;
         }
@@ -187,8 +188,8 @@ class LabelApiService
                     break;
                 }
 
-                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel, $user);
-                if ($changedLabel instanceof Later) {
+                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel, $labelRepo);
+                if (!empty($changedLabel)) {
                     $labels[] = $changedLabel;
                 }
 
@@ -204,7 +205,10 @@ class LabelApiService
 
         if (count($apiLabels)) {
             foreach ($apiLabels as $apiLabel) {
-                $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
+                $label = $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
+                $apiLabel['api_id'] = $label->getId();
+                $apiLabel['status'] = EntityConstants::STATUS_CHANGED;
+                $labels[] = $apiLabel;
             }
             $this->modified = true;
         }
@@ -221,26 +225,25 @@ class LabelApiService
     /**
      * Compare last update dates and update label in proper place
      *
-     * @param array $dbLabel
-     * @param array $apiLabel
-     * @param User  $user
+     * @param array           $dbLabel
+     * @param array           $apiLabel
+     * @param LaterRepository $labelRepo
      *
      * @return null
      */
-    private function processChangedLabel($dbLabel, $apiLabel, User $user)
+    private function processChangedLabel($dbLabel, $apiLabel, LaterRepository $labelRepo)
     {
         if ($dbLabel['date_up'] > $apiLabel['date_up']) {
             $dbLabel['status'] = EntityConstants::STATUS_CHANGED;
+            $dbLabel['id'] = $apiLabel['id'];
 
             return $dbLabel;
         }
         if ($dbLabel['date_up'] < $apiLabel['date_up']) {
-            $label = $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
-            $apiLabel['api_id'] = $label->getId();
-            $apiLabel['status'] = EntityConstants::STATUS_CHANGED;
+            $labelRepo->updateLabel($apiLabel['api_id'], $apiLabel['name'], $apiLabel['date_up']);
             $this->modified = true;
 
-            return $apiLabel;
+            return null;
         }
     }
 
@@ -257,21 +260,21 @@ class LabelApiService
         $labels = array();
         $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED."_".$user->getId());
         if (empty($deletedLabels)) {
-            return $labels;
+            return array($apiLabels, $labels);
         }
 
-        $deletedLabels = explode(',', $deletedLabels);
         foreach ($deletedLabels as $deletedLabel) {
-            foreach ($apiLabels as $apiLabel) {
+            foreach ($apiLabels as $key => $apiLabel) {
                 if ($apiLabel['api_id'] == $deletedLabel) {
                     $apiLabel['status'] = EntityConstants::STATUS_DELETED;
                     $labels[] = $apiLabel;
+                    unset($apiLabels[$key]);
                     break;
                 }
             }
         }
 
-        return $labels;
+        return array($apiLabels, $labels);
     }
 
     /**

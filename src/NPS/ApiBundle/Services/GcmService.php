@@ -49,6 +49,9 @@ class GcmService
 
         $registrationIds = array();
         foreach ($devices as $device) {
+            if (!$device->getGcmId()) {
+                continue;
+            }
             $registrationIds[] = $device->getGcmId();
         }
         if (!count($registrationIds)) {

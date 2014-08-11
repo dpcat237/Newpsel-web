@@ -175,4 +175,21 @@ class LaterRepository extends EntityRepository
 
         return $collection;
     }
+
+    /**
+     * Update label data
+     */
+    public function updateLabel($labelId, $name, $dateUp)
+    {
+        $query = $this->createQueryBuilder('l')
+            ->update()
+            ->set('l.name', ':name')
+            ->set('l.dateUp', ':dateUp')
+            ->where('l.id = :labelId')
+            ->setParameter('labelId', $labelId)
+            ->setParameter('name', $name)
+            ->setParameter('dateUp', $dateUp)
+            ->getQuery();
+        $query->execute();
+    }
 }
