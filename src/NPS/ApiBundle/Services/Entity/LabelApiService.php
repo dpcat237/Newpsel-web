@@ -160,6 +160,7 @@ class LabelApiService
     {
         $labels = array();
         $this->modified = false;
+        //first sync to device
         if (!count($apiLabels)) {
             foreach ($dbLabels as $dbLabel) {
                 $dbLabel['status'] = EntityConstants::STATUS_NEW;
@@ -169,40 +170,19 @@ class LabelApiService
             return $labels;
         }
 
-        $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+        //check if in server were deleted labels
         list($apiLabels, $deletedLabels) = $this->checkDeletedLabels($user, $apiLabels);
         if (count($deletedLabels)) {
             $labels = $deletedLabels;
         }
 
-        foreach ($dbLabels as $dbLabel) {
-            $found = false;
-            foreach ($apiLabels as $keyApi => $apiLabel) {
-                if ($dbLabel['api_id'] != $apiLabel['api_id']) {
-                    continue;
-                }
-
-                if ($dbLabel['date_up'] == $apiLabel['date_up']) {
-                    unset($apiLabels[$keyApi]);
-                    $found = true;
-                    break;
-                }
-
-                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel, $labelRepo);
-                if (!empty($changedLabel)) {
-                    $labels[] = $changedLabel;
-                }
-
-                unset($apiLabels[$keyApi]);
-                $found = true;
-                break;
-            }
-            if (!$found) {
-                $dbLabel['status'] = EntityConstants::STATUS_NEW;
-                $labels[] = $dbLabel;
-            }
+        //compare labels from API and server data base
+        list($apiLabels, $changedLabels) = $this->compareSyncApiDb($dbLabels, $apiLabels);
+        if (count($changedLabels)) {
+            $labels = array_merge($labels, $changedLabels);
         }
 
+        //if are new labels from API
         if (count($apiLabels)) {
             foreach ($apiLabels as $apiLabel) {
                 $label = $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
@@ -213,6 +193,7 @@ class LabelApiService
             $this->modified = true;
         }
 
+        //if it's necessary notify about changes other devices
         if ($this->modified) {
             //notify about modification
             $labelEvent = new LabelsModifiedEvent($user->getId());
@@ -245,6 +226,50 @@ class LabelApiService
 
             return null;
         }
+    }
+
+    /**
+     * Compare labels from API and data base to find difference
+     *
+     * @param array $dbLabels
+     * @param array $apiLabels
+     *
+     * @return array
+     */
+    private function compareSyncApiDb(array $dbLabels, array $apiLabels)
+    {
+        $labels = array();
+        $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+
+        foreach ($dbLabels as $dbLabel) {
+            $found = false;
+            foreach ($apiLabels as $keyApi => $apiLabel) {
+                if ($dbLabel['api_id'] != $apiLabel['api_id']) {
+                    continue;
+                }
+
+                if ($dbLabel['date_up'] == $apiLabel['date_up']) {
+                    unset($apiLabels[$keyApi]);
+                    $found = true;
+                    break;
+                }
+
+                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel, $labelRepo);
+                if (!empty($changedLabel)) {
+                    $labels[] = $changedLabel;
+                }
+
+                unset($apiLabels[$keyApi]);
+                $found = true;
+                break;
+            }
+            if (!$found) {
+                $dbLabel['status'] = EntityConstants::STATUS_NEW;
+                $labels[] = $dbLabel;
+            }
+        }
+
+        return array($apiLabels, $labels);
     }
 
     /**
