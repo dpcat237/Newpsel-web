@@ -160,4 +160,7 @@ rs_queue:
 #                        elastica_to_model_transformer: ~
 
 eko_google_translate:
-    api_key: AIzaSyCR7kFwJEvGR9LMGNUtgQko9G7791Nh218
+    api_key: %google_developer_key%
+
+endroid_gcm:
+    api_key: %google_developer_key%

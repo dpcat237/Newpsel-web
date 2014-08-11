@@ -15,8 +15,7 @@ use NPS\CoreBundle\Entity\Traits\EnabledTrait;
  * @ORM\Table(name="`later`")
  * @ORM\HasLifecycleCallbacks
  */
-class Later extends AbstractEntity
-{
+class Later extends AbstractEntity {
     use EnabledTrait;
 
     /**

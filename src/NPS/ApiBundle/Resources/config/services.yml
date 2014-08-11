@@ -5,6 +5,11 @@ services:
             doctrine:     @doctrine
             server_cache: @snc_redis.default
 
+    nps.api.gcm.service:
+        class: NPS\ApiBundle\Services\GcmService
+        arguments:
+            gcm:     @endroid.gcm
+
 #Entities
     api.device.service:
             class: NPS\ApiBundle\Services\Entity\DeviceApiService
@@ -40,3 +45,5 @@ services:
             api.secure.service: @api.secure.service
             label:              @nps.entity.later
             label_item:         @nps.entity.later_item
+            server_cache:       @snc_redis.default
+            event_dispatcher:   @event_dispatcher

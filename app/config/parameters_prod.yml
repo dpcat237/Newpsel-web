@@ -16,3 +16,5 @@ parameters:
 
     redis_cache_server:    redis://localhost/4
     redis_sessions_server: redis://localhost/5
+
+    google_developer_key: AIzaSyCR7kFwJEvGR9LMGNUtgQko9G7791Nh218

@@ -21,12 +21,12 @@ class LabelController extends ApiController
     {
         $json = json_decode($request->getContent(), true);
         $labelService = $this->get('api.label.service');
-        $responseData = $labelService->syncLabels($json['appKey'], $json['changedLabels'], $json['lastUpdate']);
+        $responseData = $labelService->syncLabels($json['appKey'], $json['labels']);
         if ($responseData['error']) {
             return $this->plainResponse($responseData['error']);
         }
 
-        return new JsonResponse($responseData['labelCollection']);
+        return new JsonResponse($responseData['labels']);
     }
 
     /**

@@ -130,26 +130,18 @@ class LaterRepository extends EntityRepository
      * Get user's labels list for api
      *
      * @param int $userId
-     * @param int $lastUpdate
      *
      * @return array
      */
-    public function getUserLabelsApi($userId, $lastUpdate = 0)
+    public function getUserLabelsApi($userId)
     {
         $query = $this->createQueryBuilder('l')
-            ->select('l.id AS api_id, l.name, l.dateUp AS lastUpdate')
+            ->select('l.id AS api_id, l.name, l.dateUp AS date_up')
             ->where('l.user = :userId')
-            ->andWhere('l.dateUp > :lastUpdate')
-            ->orderBy('l.dateUp', 'ASC')
             ->setParameter('userId', $userId)
-            ->setParameter('lastUpdate', $lastUpdate)
             ->getQuery();
-        $collection = $query->getResult();
-        foreach (array_keys($collection) as $key) {
-            $collection[$key]['id'] = 0;
-        }
 
-        return $collection;
+        return $collection = $query->getArrayResult();
     }
 
     /**

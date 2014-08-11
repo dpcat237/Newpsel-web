@@ -2,13 +2,21 @@
 namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Event\LabelsModifiedEvent;
+use NPS\CoreBundle\NPSCoreEvents;
+use Predis\Client;
+use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use NPS\ApiBundle\Services\SecureService;
+use NPS\CoreBundle\Constant\EntityConstants;
+use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Services\Entity\LaterService,
     NPS\CoreBundle\Services\Entity\LaterItemService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Services\QueueLauncherService;
+
 
 /**
  * LabelApiService
@@ -26,6 +34,11 @@ class LabelApiService
     private $doctrine;
 
     /**
+     * @var ContainerAwareEventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * @var LaterService
      */
     private $labelService;
@@ -40,21 +53,35 @@ class LabelApiService
      */
     private $secure;
 
+    /**
+     * @var Client
+     */
+    private $cache;
 
     /**
-     * @param QueueLauncherService   $queueLauncher          QueueLauncherService
-     * @param Registry         $doctrine         Doctrine Registry
-     * @param SecureService    $secure           SecureService
-     * @param LaterService     $labelService     LaterService
-     * @param LaterItemService $labelItemService LaterItemService
+     * @var Boolean
      */
-    public function __construct(QueueLauncherService $queueLauncher, Registry $doctrine, SecureService $secure, LaterService $labelService, LaterItemService $labelItemService)
+    private $modified = false;
+
+
+    /**
+     * @param QueueLauncherService          $queueLauncher    QueueLauncherService
+     * @param Registry                      $doctrine         Doctrine Registry
+     * @param SecureService                 $secure           SecureService
+     * @param LaterService                  $labelService     LaterService
+     * @param LaterItemService              $labelItemService LaterItemService
+     * @param Client                        $cache            Redis Client
+     * @param ContainerAwareEventDispatcher $eventDispatcher  ContainerAwareEventDispatcher
+     */
+    public function __construct(QueueLauncherService $queueLauncher, Registry $doctrine, SecureService $secure, LaterService $labelService, LaterItemService $labelItemService, Client $cache, ContainerAwareEventDispatcher $eventDispatcher)
     {
         $this->queueLauncher = $queueLauncher;
         $this->doctrine = $doctrine;
+        $this->eventDispatcher = $eventDispatcher;
         $this->labelService = $labelService;
         $this->labelItemService = $labelItemService;
         $this->secure = $secure;
+        $this->cache = $cache;
     }
 
     /**
@@ -92,31 +119,147 @@ class LabelApiService
 
     /**
      * Sync labels
-     * @param $appKey
-     * @param $changedLabels
-     * @param $lastUpdate
+     *
+     * @param string $appKey
+     * @param array  $apiLabels
      *
      * @return array
      */
-    public function syncLabels($appKey, $changedLabels, $lastUpdate)
+    public function syncLabels($appKey, $apiLabels)
     {
         $error = false;
-        $labelCollection = array();
-
+        $labels = array();
         $user = $this->secure->getUserByDevice($appKey);
         if (!$user instanceof User) {
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
         if (empty($error)){
-            $labelCollection = $this->labelService->syncLabelsApi($user, $changedLabels, $lastUpdate);
+            $dbLabels = $this->doctrine->getRepository('NPSCoreBundle:Later')->getUserLabelsApi($user->getId());
+            $labels = $this->processLabelsSync($apiLabels, $dbLabels, $user);
         }
         $responseData = array(
             'error' => $error,
-            'labelCollection' => $labelCollection,
+            'labels' => $labels,
         );
 
         return $responseData;
+    }
+
+    /**
+     * Process labels updating if necessary data in data base and get new data to return to API
+     *
+     * @param array $dbLabels
+     * @param array $apiLabels
+     * @param User  $user
+     *
+     * @return array
+     */
+    private function processLabelsSync(array $dbLabels, array $apiLabels, $user)
+    {
+        $labels = array();
+        $this->modified = false;
+        $deletedLabels = $this->checkDeletedLabels($user, $apiLabels);
+        if (count($deletedLabels)) {
+            $labels = $deletedLabels;
+        }
+
+        foreach ($dbLabels as $dbLabel) {
+            $found = false;
+            foreach ($apiLabels as $keyApi => $apiLabel) {
+                if ($dbLabel['api_id'] != $apiLabel['api_id']) {
+                    continue;
+                }
+
+                if ($dbLabel['date_up'] == $apiLabel['date_up']) {
+                    unset($apiLabels[$keyApi]);
+                    $found = true;
+                    break;
+                }
+
+                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel, $user);
+                if ($changedLabel instanceof Later) {
+                    $labels[] = $changedLabel;
+                }
+
+                unset($apiLabels[$keyApi]);
+                $found = true;
+                break;
+            }
+            if (!$found) {
+                $dbLabel['status'] = EntityConstants::STATUS_NEW;
+                $labels[] = $dbLabel;
+            }
+        }
+
+        if (count($apiLabels)) {
+            foreach ($apiLabels as $apiLabel) {
+                $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
+            }
+            $this->modified = true;
+        }
+
+        if ($this->modified) {
+            //notify about modification
+            $labelEvent = new LabelsModifiedEvent($user->getId());
+            $this->eventDispatcher->dispatch(NPSCoreEvents::LABEL_MODIFIED, $labelEvent);
+        }
+
+        return $labels;
+    }
+
+    /**
+     * Compare last update dates and update label in proper place
+     *
+     * @param array $dbLabel
+     * @param array $apiLabel
+     * @param User  $user
+     *
+     * @return null
+     */
+    private function processChangedLabel($dbLabel, $apiLabel, User $user)
+    {
+        if ($dbLabel['date_up'] > $apiLabel['date_up']) {
+            $dbLabel['status'] = EntityConstants::STATUS_CHANGED;
+
+            return $dbLabel;
+        }
+        if ($dbLabel['date_up'] < $apiLabel['date_up']) {
+            $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
+            $this->modified = true;
+
+            return null;
+        }
+    }
+
+    /**
+     * Get deleted labels in server
+     *
+     * @param User  $user
+     * @param array $apiLabels
+     *
+     * @return array
+     */
+    private function checkDeletedLabels(User $user, array $apiLabels)
+    {
+        $labels = array();
+        $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED."_".$user->getId());
+        if (empty($deletedLabels)) {
+            return $labels;
+        }
+
+        $deletedLabels = explode(',', $deletedLabels);
+        foreach ($deletedLabels as $deletedLabel) {
+            foreach ($apiLabels as $apiLabel) {
+                if ($apiLabel['api_id'] == $deletedLabel) {
+                    $apiLabel['status'] = EntityConstants::STATUS_DELETED;
+                    $labels[] = $apiLabel;
+                    break;
+                }
+            }
+        }
+
+        return $labels;
     }
 
     /**
@@ -190,10 +333,11 @@ class LabelApiService
 
     /**
      * Add page for Chrome api
-     * @param $appKey
-     * @param $labelId
-     * @param $webTitle
-     * @param $webUrl
+     *
+     * @param string $appKey
+     * @param int    $labelId
+     * @param string $webTitle
+     * @param string $webUrl
      *
      * @return array
      */

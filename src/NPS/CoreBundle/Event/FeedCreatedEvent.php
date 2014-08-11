@@ -5,7 +5,7 @@ use Symfony\Component\EventDispatcher\Event;
 use NPS\CoreBundle\Entity\Feed;
 
 /**
- * Event fired when a customer signs up
+ * Event fired when feed is created
  *
  * This event send an email to customer
  */

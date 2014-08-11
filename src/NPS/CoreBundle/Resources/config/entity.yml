@@ -30,6 +30,7 @@ services:
         class: NPS\CoreBundle\Services\Entity\LaterService
         arguments:
             doctrine:     @doctrine
+            server_cache: @snc_redis.default
             user_wrapper: @nps.wrapper.user
             notification: @nps.manager.notification
             later_item:   @nps.entity.later_item

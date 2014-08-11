@@ -2,6 +2,8 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use NPS\CoreBundle\Event\LabelsModifiedEvent;
+use NPS\CoreBundle\NPSCoreEvents;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -59,6 +61,10 @@ class LabelController extends Controller
         $labelRepo->createLabel($user, $request->get('label'));
         $route = $this->container->get('router')->generate('labels_list');
 
+        //notify about new label
+        $labelEvent = new LabelsModifiedEvent($user->getId());
+        $this->get('event_dispatcher')->dispatch(NPSCoreEvents::LABEL_MODIFIED, $labelEvent);
+
         return new RedirectResponse($route);
     }
 
@@ -79,6 +85,10 @@ class LabelController extends Controller
         $route = $this->container->get('router')->generate('labels_list');
         if ($label->getUserId() == $user->getId() && !$label->isBasic()) {
             $this->get('nps.entity.later')->removeLabel($label);
+
+            //notify about delete
+            $labelEvent = new LabelsModifiedEvent($user->getId());
+            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::LABEL_MODIFIED, $labelEvent);
         }
 
         return new RedirectResponse($route);
@@ -109,6 +119,10 @@ class LabelController extends Controller
             if ($request->getMethod() == 'POST') {
                 $form->handleRequest($request);
                 $this->get('nps.entity.later')->saveFormLabel($form);
+
+                //notify about change
+                $labelEvent = new LabelsModifiedEvent($user->getId());
+                $this->get('event_dispatcher')->dispatch(NPSCoreEvents::LABEL_MODIFIED, $labelEvent);
 
                 return new RedirectResponse($route);
             }

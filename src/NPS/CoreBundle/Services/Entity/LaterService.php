@@ -2,6 +2,8 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Constant\RedisConstants;
+use Predis\Client;
 use NPS\CoreBundle\Services\NotificationManager;
 use NPS\CoreBundle\Services\UserWrapper;
 use Symfony\Component\Form\Form;
@@ -17,6 +19,11 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class LaterService extends AbstractEntityService
 {
     /**
+     * @var Client
+     */
+    private $cache;
+
+    /**
      * @var LaterItemService
      */
     protected $laterItem;
@@ -24,37 +31,16 @@ class LaterService extends AbstractEntityService
 
     /**
      * @param Registry            $doctrine     Registry
+     * @param Client           $cache     Client
      * @param UserWrapper         $userWrapper  UserWrapper
      * @param NotificationManager $notification NotificationManager
      * @param LaterItemService    $laterItem LaterItemService
      */
-    public function __construct(Registry $doctrine, UserWrapper $userWrapper, NotificationManager $notification, LaterItemService $laterItem)
+    public function __construct(Registry $doctrine, Client $cache, UserWrapper $userWrapper, NotificationManager $notification, LaterItemService $laterItem)
     {
         parent::__construct($doctrine, $userWrapper, $notification);
+        $this->cache = $cache;
         $this->laterItem = $laterItem;
-    }
-
-    /**
-     * Extract user labels data for api
-     *
-     * @param $collection
-     * @param $createdIds
-     *
-     * @return array
-     */
-    private function addLabelsApiIds($collection, $createdIds){
-        foreach ($collection as $key => $value) {
-            $collection[$key]['id'] = 0;
-            if (count($createdIds)) {
-                foreach ($createdIds as $apiId => $webId) {
-                    if ($value['api_id'] == $webId) {
-                        $collection[$key]['id'] = $apiId;
-                    }
-                }
-            }
-        }
-
-        return $collection;
     }
 
     /**
@@ -72,10 +58,23 @@ class LaterService extends AbstractEntityService
 
     /**
      * Remove label
+     *
      * @param Later $label
      */
     public function removeLabel(Later $label)
     {
+        //set to cache that label was deleted to notify API
+        $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED."_".$label->getUserId());
+        if (empty($deletedLabels)) {
+            $deletedLabels[] = $label->getId();
+        } else {
+            $deletedLabels = explode(',', $deletedLabels);
+            if (!in_array($label->getId(), $deletedLabels)) {
+                $deletedLabels[] = $label->getId();
+            }
+        }
+        $this->cache->set(RedisConstants::LABEL_DELETED."_".$label->getUserId(), $deletedLabels);
+
         $this->removeObject($label);
     }
 
@@ -91,55 +90,6 @@ class LaterService extends AbstractEntityService
         } else {
             $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
         }
-    }
-
-    public function syncLabelsApi(User $user, $changedLabels, $lastUpdate)
-    {
-        $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-        if (count($changedLabels)) {
-            $createdIds = $this->syncLabelsProcess($user, $changedLabels);
-            $createdCollection = $labelRepo->getUserLabelsApiCreated($user->getId(), $lastUpdate, $changedLabels);
-            $labelCollection = $this->addLabelsApiIds($createdCollection, $createdIds);
-        } else {
-            $labelCollection = $labelRepo->getUserLabelsApi($user->getId(), $lastUpdate);
-        }
-
-        return $labelCollection;
-    }
-
-    /**
-     * Sync labels from device
-     *
-     * @param User $user
-     * @param $changedLabels
-     *
-     * @return array
-     */
-    public function syncLabelsProcess(User $user, $changedLabels)
-    {
-        $createdIds = null;
-        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-        foreach ($changedLabels as $changedLabel) {
-            if ($changedLabel['id']) {
-                $label = $laterRepo->find($changedLabel['id']);
-                $label->setName($changedLabel['name']);
-                $this->entityManager->persist($label);
-                $this->entityManager->flush();
-            } else {
-                $label = $laterRepo->hasLabelByName($user->getId(), $changedLabel['name']);
-                if (!$label instanceof Later) {
-                    $label = new Later();
-                    $label->setUser($user);
-                }
-                $label->setName($changedLabel['name']);
-                $this->entityManager->persist($label);
-                $this->entityManager->flush();
-
-                $createdIds[$changedLabel['api_id']] = $label->getId();
-            }
-        }
-
-        return $createdIds;
     }
 
     /**
@@ -171,6 +121,25 @@ class LaterService extends AbstractEntityService
 
             $this->laterItem->addLaterItem($userItem, $labelId);
         }
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Create new Label
+     *
+     * @param User $user
+     * @param $name
+     * @param null $dateUp
+     */
+    public function createLabel(User $user, $name, $dateUp = null)
+    {
+        $label = new Later();
+        $label->setUser($user);
+        $label->setName($name);
+        if ($dateUp) {
+            $label->setDateUp($dateUp);
+        }
+        $this->entityManager->persist($label);
         $this->entityManager->flush();
     }
 }
