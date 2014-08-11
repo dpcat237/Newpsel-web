@@ -146,8 +146,8 @@ class DeviceApiService
 
         if (!$error) {
             $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');
+            $deviceRepo->removeLogOutDevices($appKey, $gcmId);
             $deviceRepo->updateGcmId($appKey, $gcmId);
-
         }
 
         $responseData = array(

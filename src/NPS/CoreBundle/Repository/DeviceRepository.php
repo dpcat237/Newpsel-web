@@ -25,6 +25,9 @@ class DeviceRepository extends EntityRepository
 
     /**
      * Update Google Cloud Messaging ID
+     *
+     * @param string $appKey
+     * @param string $gcmId
      */
     public function updateGcmId($appKey, $gcmId)
     {
@@ -32,6 +35,24 @@ class DeviceRepository extends EntityRepository
             ->update()
             ->set('d.gcmId', ':gcmId')
             ->where('d.appKey = :appKey')
+            ->setParameter('appKey', $appKey)
+            ->setParameter('gcmId', $gcmId)
+            ->getQuery();
+        $query->execute();
+    }
+
+    /**
+     * Remove devices which were logout with same gcmId
+     *
+     * @param string $appKey
+     * @param string $gcmId
+     */
+    public function removeLogOutDevices($appKey, $gcmId)
+    {
+        $query = $this->createQueryBuilder('d')
+            ->delete()
+            ->where('d.appKey != :appKey')
+            ->andWhere('d.gcmId = :gcmId')
             ->setParameter('appKey', $appKey)
             ->setParameter('gcmId', $gcmId)
             ->getQuery();
