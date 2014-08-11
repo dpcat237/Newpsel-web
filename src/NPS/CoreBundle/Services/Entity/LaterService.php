@@ -130,6 +130,8 @@ class LaterService extends AbstractEntityService
      * @param User $user
      * @param $name
      * @param null $dateUp
+     *
+     * @return Label
      */
     public function createLabel(User $user, $name, $dateUp = null)
     {
@@ -141,5 +143,7 @@ class LaterService extends AbstractEntityService
         }
         $this->entityManager->persist($label);
         $this->entityManager->flush();
+
+        return $label;
     }
 }

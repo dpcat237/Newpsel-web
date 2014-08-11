@@ -136,7 +136,7 @@ class LabelApiService
 
         if (empty($error)){
             $dbLabels = $this->doctrine->getRepository('NPSCoreBundle:Later')->getUserLabelsApi($user->getId());
-            $labels = $this->processLabelsSync($apiLabels, $dbLabels, $user);
+            $labels = $this->processLabelsSync($dbLabels, $apiLabels, $user);
         }
         $responseData = array(
             'error' => $error,
@@ -159,6 +159,16 @@ class LabelApiService
     {
         $labels = array();
         $this->modified = false;
+
+        if (!count($apiLabels)) {
+            foreach ($dbLabels as $dbLabel) {
+                $dbLabel['status'] = EntityConstants::STATUS_NEW;
+                $labels[] = $dbLabel;
+            }
+
+            return $labels;
+        }
+
         $deletedLabels = $this->checkDeletedLabels($user, $apiLabels);
         if (count($deletedLabels)) {
             $labels = $deletedLabels;
@@ -225,10 +235,12 @@ class LabelApiService
             return $dbLabel;
         }
         if ($dbLabel['date_up'] < $apiLabel['date_up']) {
-            $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
+            $label = $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
+            $apiLabel['api_id'] = $label->getId();
+            $apiLabel['status'] = EntityConstants::STATUS_CHANGED;
             $this->modified = true;
 
-            return null;
+            return $apiLabel;
         }
     }
 
