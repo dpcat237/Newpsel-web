@@ -4,6 +4,7 @@ namespace NPS\FrontendBundle\Controller;
 
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
+use NPS\CoreBundle\Event\FeedModifiedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
@@ -67,8 +68,10 @@ class FeedController extends Controller
             $result = NotificationHelper::OK;
             $userFeed = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $feed->getId());
             $itemListUrl = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()), true);
-            $newFeedEvent = new FeedCreatedEvent($feed);
-            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_CREATED, $newFeedEvent);
+
+            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_CREATED, new FeedCreatedEvent($feed));
+            //notify other devices about modification
+            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
         }
         $response = array (
             'result' => $result,
@@ -106,6 +109,9 @@ class FeedController extends Controller
             $form->handleRequest($request);
             $this->get('nps.entity.feed')->saveFormUserFeed($form);
 
+            //notify other devices about modification
+            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
+
             return new RedirectResponse($route);
         }
 
@@ -139,6 +145,9 @@ class FeedController extends Controller
         }
 
         $this->get('nps.entity.feed')->removeUserFeed($userFeed);
+
+        //notify other devices about modification
+        $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
 
         return new RedirectResponse($route);
     }

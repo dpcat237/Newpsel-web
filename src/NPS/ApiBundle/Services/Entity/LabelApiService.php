@@ -3,7 +3,7 @@ namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Constant\RedisConstants;
-use NPS\CoreBundle\Event\LabelsModifiedEvent;
+use NPS\CoreBundle\Event\LabelModifiedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
 use NPS\CoreBundle\Repository\LaterRepository;
 use Predis\Client;
@@ -126,7 +126,7 @@ class LabelApiService
      *
      * @return array
      */
-    public function syncLabels($appKey, $apiLabels)
+    public function syncLabels($appKey, array $apiLabels)
     {
         $error = false;
         $labels = array();
@@ -196,7 +196,7 @@ class LabelApiService
         //if it's necessary notify about changes other devices
         if ($this->modified) {
             //notify about modification
-            $labelEvent = new LabelsModifiedEvent($user->getId());
+            $labelEvent = new LabelModifiedEvent($user->getId());
             $this->eventDispatcher->dispatch(NPSCoreEvents::LABEL_MODIFIED, $labelEvent);
         }
 
@@ -248,12 +248,14 @@ class LabelApiService
                     continue;
                 }
 
+                //any change
                 if ($dbLabel['date_up'] == $apiLabel['date_up']) {
                     unset($apiLabels[$keyApi]);
                     $found = true;
                     break;
                 }
 
+                //compare changes
                 $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel, $labelRepo);
                 if (!empty($changedLabel)) {
                     $labels[] = $changedLabel;

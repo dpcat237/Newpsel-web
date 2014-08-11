@@ -9,6 +9,7 @@ class NPSCoreEvents
 /** Feed **/
     //Event to fire when was created new feed
     const FEED_CREATED = 'nps.feed.created';
+    const FEED_MODIFIED = 'nps.feed.modified';
 
 /** Label **/
     //Event to fire when was created new feed

@@ -21,12 +21,12 @@ class FeedController extends ApiController
     {
         $json = json_decode($request->getContent(), true);
         $feedService = $this->get('api.feed.service');
-        $responseData = $feedService->syncFeeds($json['appKey'], $json['lastUpdate']);
+        $responseData = $feedService->syncFeeds($json['appKey'], $json['feeds']);
         if ($responseData['error']) {
             return $this->plainResponse($responseData['error']);
         }
 
-        return new JsonResponse($responseData['feedCollection']);
+        return new JsonResponse($responseData['feeds']);
     }
 
     /**

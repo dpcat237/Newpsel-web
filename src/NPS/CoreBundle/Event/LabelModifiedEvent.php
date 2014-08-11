@@ -4,11 +4,11 @@ namespace NPS\CoreBundle\Event;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Event fired when some label wes: created, changed or deleted
+ * Event fired when some label was: created, changed or deleted
  *
  * This event send an email to customer
  */
-class LabelsModifiedEvent extends Event
+class LabelModifiedEvent extends Event
 {
     /**
      * @var int

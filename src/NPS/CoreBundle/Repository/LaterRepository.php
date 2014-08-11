@@ -141,7 +141,7 @@ class LaterRepository extends EntityRepository
             ->setParameter('userId', $userId)
             ->getQuery();
 
-        return $collection = $query->getArrayResult();
+        return $query->getArrayResult();
     }
 
     /**
@@ -178,6 +178,10 @@ class LaterRepository extends EntityRepository
 
     /**
      * Update label data
+     *
+     * @param int    $labelId
+     * @param string $name
+     * @param int    $dateUp
      */
     public function updateLabel($labelId, $name, $dateUp)
     {

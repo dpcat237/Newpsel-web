@@ -3,14 +3,14 @@ namespace NPS\ApiBundle\EventListener;
 
 use NPS\ApiBundle\Constant\SyncConstants;
 use NPS\ApiBundle\Services\GcmService;
-use NPS\CoreBundle\Event\LabelModifiedEvent;
+use NPS\CoreBundle\Event\FeedModifiedEvent;
 
 /**
- * Class LabelListener
+ * Class FeedListener
  *
  * @package NPS\ApiBundle\EventListener
  */
-class LabelListener
+class FeedListener
 {
     /**
      * @var GcmService
@@ -28,11 +28,11 @@ class LabelListener
     /**
      * Make necessary processes after any modification with labels
      *
-     * @param LabelModifiedEvent $event
+     * @param FeedModifiedEvent $event
      */
-    public function onLabelModified(LabelModifiedEvent $event)
+    public function onFeedModified(FeedModifiedEvent $event)
     {
-        $this->gcmService->requireToSync(SyncConstants::SYNC_LABELS, $event->getUserId());
+        $this->gcmService->requireToSync(SyncConstants::SYNC_FEEDS, $event->getUserId());
     }
 }
 

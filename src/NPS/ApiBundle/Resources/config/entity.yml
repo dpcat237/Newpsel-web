@@ -1,0 +1,38 @@
+services:
+    api.device.service:
+            class: NPS\ApiBundle\Services\Entity\DeviceApiService
+            arguments:
+                doctrine:           @doctrine
+                api.secure.service: @api.secure.service
+
+    api.feed.service:
+        class: NPS\ApiBundle\Services\Entity\FeedApiService
+        arguments:
+            doctrine:           @doctrine
+            api.secure.service: @api.secure.service
+            download_feeds:     @download_feeds
+            event_dispatcher:   @event_dispatcher
+
+    api.item.service:
+        class: NPS\ApiBundle\Services\Entity\ItemApiService
+        arguments:
+            doctrine:           @doctrine
+            item:               @item
+            api.secure.service: @api.secure.service
+
+    api.later_item.service:
+        class: NPS\ApiBundle\Services\Entity\LaterItemApiService
+        arguments:
+            doctrine:           @doctrine
+            api.secure.service: @api.secure.service
+
+    api.label.service:
+        class: NPS\ApiBundle\Services\Entity\LabelApiService
+        arguments:
+            nps.launcher.queue: @nps.launcher.queue
+            doctrine:           @doctrine
+            api.secure.service: @api.secure.service
+            label:              @nps.entity.later
+            label_item:         @nps.entity.later_item
+            server_cache:       @snc_redis.default
+            event_dispatcher:   @event_dispatcher

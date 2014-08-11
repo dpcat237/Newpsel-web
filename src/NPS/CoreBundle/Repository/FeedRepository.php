@@ -89,30 +89,27 @@ class FeedRepository extends EntityRepository
 
     /**
      * Get user's feeds list for api
+     *
      * @param int $userId
-     * @param int $lastUpdate
      *
      * @return array
      */
-    public function getUserFeedsApi($userId, $lastUpdate = 0)
+    public function getUserFeedsApi($userId)
     {
         $query = $this->createQueryBuilder('f')
-            ->select('f.id AS api_id, uf.title, f.website, f.favicon, uf.dateUp AS lastUpdate')
+            ->select('f.id AS api_id, uf.title, f.website, f.favicon, uf.dateUp AS date_up, uf.deleted')
             ->join('f.userFeeds', 'uf')
             ->where('uf.user = :userId')
-            ->andWhere('uf.dateUp >= :lastUpdate')
-            ->andWhere('uf.deleted = :deleted')
             ->setParameter('userId', $userId)
-            ->setParameter('lastUpdate', $lastUpdate)
-            ->setParameter('deleted', false)
             ->getQuery();
-        $feedCollection = $query->getResult();
 
-        return $feedCollection;
+        return $query->getArrayResult();
     }
 
     /**
      * Get filters for cache
+     *
+     * @param $type
      *
      * @return array
      */
@@ -139,5 +136,26 @@ class FeedRepository extends EntityRepository
         $collection = $query->getQuery()->getArrayResult();
 
         return $collection;
+    }
+
+    /**
+     * Update feed data
+     *
+     * @param int    $feedId
+     * @param string $title
+     * @param int    $dateUp
+     */
+    public function updateFeed($feedId, $title, $dateUp)
+    {
+        $query = $this->createQueryBuilder('f')
+            ->update()
+            ->set('f.title', ':title')
+            ->set('f.dateUp', ':dateUp')
+            ->where('f.id = :feedId')
+            ->setParameter('feedId', $feedId)
+            ->setParameter('title', $title)
+            ->setParameter('dateUp', $dateUp)
+            ->getQuery();
+        $query->execute();
     }
 }
