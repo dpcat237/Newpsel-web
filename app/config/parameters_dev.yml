@@ -18,3 +18,5 @@ parameters:
     redis_sessions_server: redis://localhost/5
 
     google_developer_key: AIzaSyCR7kFwJEvGR9LMGNUtgQko9G7791Nh218
+
+    getpocket_key: 30933-85863e319abff6cd585202c0

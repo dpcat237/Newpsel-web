@@ -51,7 +51,8 @@
         "friendsofsymfony/elastica-bundle": "3.0.*@dev",
         "eko/googletranslatebundle": "dev-master",
         "endroid/gcm-bundle": "dev-master",
-        "celd/opml-import-export": "dev-master"
+        "celd/opml-import-export": "dev-master",
+        "duellsy/pockpack": "2.*"
     },
     "scripts": {
         "post-install-cmd": [

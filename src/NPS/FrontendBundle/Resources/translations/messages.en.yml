@@ -1,5 +1,6 @@
 # *** Global layout ***
 _Title: Newpsel
+_web_description: Newpsel - News Personal Selector. RSS feed reader which will help you be more productive.
 
 #*** Notifications ***
 #success
@@ -44,6 +45,8 @@ _Error_select_label: Select a label
 _OPML_import: Import feeds from OPML file
 _OPML_export: Export feeds to OPML file
 _Download: Download
+_Import: Import
 _Invalid_quantity_OPML: Aren't feeds in file
 _Invalid_opml: Please upload a valid OPML file
 _Success_opml: Succesfully added %quantity% feeds
+_GetPocket_import: Import from Pocket

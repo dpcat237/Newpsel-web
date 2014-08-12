@@ -27,6 +27,16 @@
                     </span>
                 </form>
             </div>
+
+            <br>
+            <p class="block-heading">{{ '_GetPocket_import'|trans }}</p>
+            <div class="block-body">
+                <form name="opml_import" action="{{ url('import_getpocket') }}" method="get">
+                    <span id="validate-basic-form-valid">
+                        <input type="submit" class="btn  btn-primary" value="{{ '_Import'|trans }}">
+                    </span>
+                </form>
+            </div>
         </div>
 
     </div>

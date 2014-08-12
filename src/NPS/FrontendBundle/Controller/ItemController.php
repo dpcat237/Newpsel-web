@@ -2,6 +2,9 @@
 
 namespace NPS\FrontendBundle\Controller;
 
+use Duellsy\Pockpack\Pockpack;
+use Duellsy\Pockpack\PockpackAuth;
+use Duellsy\Pockpack\PockpackQueue;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse,
@@ -16,6 +19,7 @@ use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\UserFeed,
     NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * ItemController
@@ -223,5 +227,34 @@ class ItemController extends Controller
         );
 
         return new JsonResponse($response);
+    }
+
+    /**
+     * Request for GetPocket auth to import later items
+     *
+     * @Route("/label/import/getpocket/request", name="import_getpocket_request")
+     * @Secure(roles="ROLE_USER")
+     *
+     * @return RedirectResponse
+     */
+    public function getpocketImportRequestAction()
+    {
+        $pockpathAuth = new PockpackAuth();
+        $requestToken = $pockpathAuth->connect($this->container->getParameter('getpocket_key'));
+        $url = "https://getpocket.com/auth/authorize?request_token=".$requestToken."&redirect_uri=".$this->generateUrl('import_getpocket', array(), true);
+
+        return new RedirectResponse($url);
+    }
+
+    /**
+     * Import later items from GetPocket
+     *
+     * @Route("/label/import/getpocket", name="import_getpocket")
+     * @Secure(roles="ROLE_USER")
+     */
+    public function getpocketImportAction(Request $request)
+    {
+        $json = json_decode($request->getContent(), true);
+        echo '<pre>tut: '; print_r($json); echo '</pre>'; exit();
     }
 }

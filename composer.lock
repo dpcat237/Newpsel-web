@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8bca6eb798c288530de6b75e63ceed42",
+    "hash": "3037b15844c365c0b70a51f8212b8751",
     "packages": [
         {
             "name": "celd/opml-import-export",
@@ -766,6 +766,61 @@
                 "orm"
             ],
             "time": "2014-07-11 03:13:19"
+        },
+        {
+            "name": "duellsy/pockpack",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/duellsy/pockpack.git",
+                "reference": "fb72366f563a832f4ef125613445655d299a463f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/duellsy/pockpack/zipball/fb72366f563a832f4ef125613445655d299a463f",
+                "reference": "fb72366f563a832f4ef125613445655d299a463f",
+                "shasum": ""
+            },
+            "require": {
+                "guzzle/guzzle": "3.*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Duellsy\\Pockpack": "src/"
+                },
+                "classmap": [
+                    "src/Duellsy/Pockpack/Exceptions.php",
+                    "src/Duellsy/Pockpack/Pockpack.php",
+                    "src/Duellsy/Pockpack/PockpackAuth.php",
+                    "src/Duellsy/Pockpack/PockpackQueue.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Duell",
+                    "email": "me@chrisduell.com"
+                }
+            ],
+            "description": "Package to handle communication with GetPocket.com API neatly.",
+            "homepage": "http://duellsy.github.com/pockpack/",
+            "keywords": [
+                "get pocket",
+                "getpocket",
+                "pocket",
+                "pockpack",
+                "read it later",
+                "readitlater"
+            ],
+            "time": "2014-07-16 00:03:32"
         },
         {
             "name": "eko/googletranslatebundle",
@@ -3145,12 +3200,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "72834831852fadca1c84d916e70f7c6171ab8658"
+                "reference": "1ce0ad50017513ae85d44c4bc68bd7a1cb055abe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/72834831852fadca1c84d916e70f7c6171ab8658",
-                "reference": "72834831852fadca1c84d916e70f7c6171ab8658",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/1ce0ad50017513ae85d44c4bc68bd7a1cb055abe",
+                "reference": "1ce0ad50017513ae85d44c4bc68bd7a1cb055abe",
                 "shasum": ""
             },
             "require": {
@@ -3251,7 +3306,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-08-11 09:13:50"
+            "time": "2014-08-12 14:04:33"
         },
         {
             "name": "twbs/bootstrap",
