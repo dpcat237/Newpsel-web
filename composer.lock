@@ -4,8 +4,51 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "817ec8f7a662bc826cbe5499849dd9c3",
+    "hash": "8bca6eb798c288530de6b75e63ceed42",
     "packages": [
+        {
+            "name": "celd/opml-import-export",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/clarence-eldefors/opml-feeds.git",
+                "reference": "effac430926e2219ddd8f64111123bbca8fe2c97"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/clarence-eldefors/opml-feeds/zipball/effac430926e2219ddd8f64111123bbca8fe2c97",
+                "reference": "effac430926e2219ddd8f64111123bbca8fe2c97",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/serializer": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Celd\\Opml\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Clarence Eldefors",
+                    "email": "clarence@eldefors.com"
+                }
+            ],
+            "description": "Library for importing and exporting OPML documents for list of (RSS/Atom) feeds.",
+            "keywords": [
+                "atom",
+                "feeds",
+                "opml",
+                "rss"
+            ],
+            "time": "2014-05-25 12:10:50"
+        },
         {
             "name": "doctrine/annotations",
             "version": "dev-master",
@@ -3410,7 +3453,8 @@
         "mmoreram/rsqueue-bundle": 20,
         "friendsofsymfony/elastica-bundle": 20,
         "eko/googletranslatebundle": 20,
-        "endroid/gcm-bundle": 20
+        "endroid/gcm-bundle": 20,
+        "celd/opml-import-export": 20
     },
     "prefer-stable": false,
     "platform": {

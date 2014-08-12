@@ -50,7 +50,8 @@
         "mmoreram/rsqueue-bundle": "dev-master",
         "friendsofsymfony/elastica-bundle": "3.0.*@dev",
         "eko/googletranslatebundle": "dev-master",
-        "endroid/gcm-bundle": "dev-master"
+        "endroid/gcm-bundle": "dev-master",
+        "celd/opml-import-export": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

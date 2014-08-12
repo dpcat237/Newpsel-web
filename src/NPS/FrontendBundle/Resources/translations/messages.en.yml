@@ -19,13 +19,15 @@ _notification_no_articles: Aren't new articles.
 #*** Menu ***
 _Settings: Settings
 _Manage_feeds: Manage feeds
+_Import_export: Import / Export
 _Manage_filters: Manage filters
 _Manage_labels: Manage labels
 _Logout: Logout
 
 _Edit_shared_later: Select label (in it will be saved shared links from mobile device)
 
-#*** Entities ***
+#*** Form ***
+_Submit: Submit
 
 #*** Error page ***
 _ERROR: ERROR !
@@ -36,3 +38,12 @@ _Not_found_text: For Some Reason The Page You Requested Could Not Be Found On Ou
 #Filter
 _Save_to_label: Save to label
 _Error_select_label: Select a label
+
+#*** Preferences ***
+#OPML
+_OPML_import: Import feeds from OPML file
+_OPML_export: Export feeds to OPML file
+_Download: Download
+_Invalid_quantity_OPML: Aren't feeds in file
+_Invalid_opml: Please upload a valid OPML file
+_Success_opml: Succesfully added %quantity% feeds

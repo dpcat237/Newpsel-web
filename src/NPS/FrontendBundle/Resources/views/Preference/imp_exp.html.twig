@@ -1,0 +1,33 @@
+{% extends 'NPSFrontendBundle::layout.html.twig' %}
+
+{% block content %}
+    {% set item = userItem.item %}
+    <div class="row-fluid">
+        <div class="block span12">
+            <p class="block-heading">{{ '_OPML_import'|trans }}</p>
+            <div class="block-body">
+                <form name="opml_import" action="{{ url('opml_import') }}" method="post" enctype="multipart/form-data">
+                    <div class="input-prepend">
+                        {{ form_widget(opml_form.opml_file) }}
+                    </div>
+
+                    <span id="validate-basic-form-valid">
+                        {{ form_row(opml_form._token) }}
+                        <input type="submit" class="btn  btn-primary" value="{{ '_Submit'|trans }}">
+                    </span>
+                </form>
+            </div>
+
+            <br>
+            <p class="block-heading">{{ '_OPML_export'|trans }}</p>
+            <div class="block-body">
+                <form name="opml_import" action="{{ url('opml_export') }}" method="get">
+                    <span id="validate-basic-form-valid">
+                        <input type="submit" class="btn  btn-primary" value="{{ '_Download'|trans }}">
+                    </span>
+                </form>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

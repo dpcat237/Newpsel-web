@@ -4,6 +4,7 @@ namespace NPS\FrontendBundle\Controller;
 
 use NPS\CoreBundle\Readability;
 use NPS\CoreBundle\Testy;
+use NPS\FrontendBundle\Form\Type\OpmlImportType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,5 +69,25 @@ class DefaultController extends Controller
         );
 
         return new JsonResponse($response);
+    }
+
+    /**
+     * Subscribe to newsletter
+     *
+     * @return Response
+     * @Route("/preference/imp_exp", name="preference_imp_exp")
+     * @Secure(roles="ROLE_USER")
+     * @Template("NPSFrontendBundle:Preference:imp_exp.html.twig")
+     */
+    public function impExpAction()
+    {
+        $opmlType = new OpmlImportType();
+        $opmlForm = $this->createForm($opmlType);
+
+        $viewData = array(
+            'opml_form' => $opmlForm->createView(),
+        );
+
+        return $viewData;
     }
 }
