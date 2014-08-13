@@ -290,6 +290,7 @@ class LabelApiService
             return array($apiLabels, $labels);
         }
 
+        $deletedLabels = explode(',', $deletedLabels);
         foreach ($deletedLabels as $deletedLabel) {
             foreach ($apiLabels as $key => $apiLabel) {
                 if ($apiLabel['api_id'] == $deletedLabel) {
