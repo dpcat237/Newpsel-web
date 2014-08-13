@@ -9,9 +9,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Type for a feed edit profile form
+ * Form to import OPML files
  */
-class OpmlImportType extends AbstractType
+class ImportOpmlType extends AbstractType
 {
     /**
      * @param OptionsResolverInterface $resolver

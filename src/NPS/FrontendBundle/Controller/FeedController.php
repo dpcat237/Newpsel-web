@@ -10,7 +10,7 @@ use Celd\Opml\Model\Feed as OpmlFeed;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\Event\FeedModifiedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
-use NPS\FrontendBundle\Form\Type\OpmlImportType;
+use NPS\FrontendBundle\Form\Type\ImportOpmlType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
@@ -195,7 +195,7 @@ class FeedController extends Controller
      */
     public function importOpmlAction(Request $request)
     {
-        $opmlType = new OpmlImportType();
+        $opmlType = new ImportOpmlType();
         $opmlForm = $this->createForm($opmlType);
         $opmlForm->handleRequest($request);
         $opmlFile = $opmlForm->getData()['opml_file'];

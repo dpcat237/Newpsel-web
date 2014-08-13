@@ -28,6 +28,7 @@ _Logout: Logout
 _Edit_shared_later: Select label (in it will be saved shared links from mobile device)
 
 #*** Form ***
+_Name: Name
 _Submit: Submit
 
 #*** Error page ***
@@ -50,3 +51,23 @@ _Invalid_quantity_OPML: Aren't feeds in file
 _Invalid_opml: Please upload a valid OPML file
 _Success_opml: Succesfully added %quantity% feeds
 _GetPocket_import: Import from Pocket
+_Tag: Tag
+_Favorite: Favorite
+_All: All
+_Not_favorite: Not favorite
+_Article: Article
+_Video: Video
+_OPML_explanation: OPML is a format which allows you to share the sources you have collected with other applications or migrate to another reader.
+_From: From
+_this_website: this website
+_Pocket_tag_explanation1: - empty: will search all items
+_Pocket_tag_explanation2: - write 'not': only untagged items
+_Pocket_tag_explanation3: - [your tag name]: only items with specified tag
+_Pocket_favorite_explanation1: - All: all items
+_Pocket_favorite_explanation2: - Favorite: only favorited items
+_Pocket_favorite_explanation3: - Not favorite: only un-favorited items
+_Pocket_contentType_explanation1: - All: all items
+_Pocket_contentType_explanation2: - Article: only articles
+_Pocket_contentType_explanation3: - Video: only videos or articles with embedded videos
+_Import_to_later_explanation: Select label to which import items
+_Invalid_pocket_token_request: Some problems with connection to Pcket. Try again in few minutes.

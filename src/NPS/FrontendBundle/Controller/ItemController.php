@@ -6,9 +6,12 @@ use Duellsy\Pockpack\Pockpack;
 use Duellsy\Pockpack\PockpackAuth;
 use Duellsy\Pockpack\PockpackQueue;
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use NPS\CoreBundle\Constant\ImportConstants;
+use NPS\CoreBundle\Helper\ImportHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -20,6 +23,7 @@ use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * ItemController
@@ -28,15 +32,15 @@ class ItemController extends Controller
 {
     /**
      * List of items
-     * @param UserFeed $userFeed
      *
-     * @return array
+     * @param UserFeed $userFeed
      *
      * @Route("/feed/{user_feed_id}/items_list", name="items_list")
      * @Secure(roles="ROLE_USER")
-     * @Template()
-     *
+     * @Template()     *
      * @ParamConverter("userFeed", class="NPSCoreBundle:UserFeed", options={"id": "user_feed_id"})
+     *
+     * @return array
      */
     public function listAction(UserFeed $userFeed)
     {
@@ -55,15 +59,15 @@ class ItemController extends Controller
 
     /**
      * List of items to read later
-     * @param Later   $label
      *
-     * @return array
+     * @param Later   $label
      *
      * @Route("/label/{label_id}/items_list", name="items_later_list")
      * @Secure(roles="ROLE_USER")
      * @Template()
-     *
      * @ParamConverter("label", class="NPSCoreBundle:Later", options={"id": "label_id"})
+     *
+     * @return array
      */
     public function laterListAction(Later $label)
     {
@@ -83,17 +87,17 @@ class ItemController extends Controller
 
     /**
      * Show item
+     *
      * @param UserItem $userItem user's item
      * @param UserFeed $userFeed user's feed
      *
-     * @return array
-     *
      * @Route("/feed/{user_feed_id}/item/{user_item_id}", name="item_view")
      * @Secure(roles="ROLE_USER")
-     * @Template()
-     *
+     * @Template()     *
      * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
      * @ParamConverter("userFeed", class="NPSCoreBundle:UserFeed", options={"id": "user_feed_id"})
+     *
+     * @return array
      */
     public function viewAction(UserItem $userItem, UserFeed $userFeed)
     {
@@ -114,15 +118,15 @@ class ItemController extends Controller
 
     /**
      * Show item
-     * @param LaterItem $laterItem
      *
-     * @return array
+     * @param LaterItem $laterItem
      *
      * @Route("/label/{label_id}/item/{later_item_id}", name="item_later_view")
      * @Secure(roles="ROLE_USER")
      * @Template()
-     *
      * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"later_item_id": "id", "label_id": "later"}})
+     *
+     * @return array
      */
     public function viewLaterAction(LaterItem $laterItem)
     {
@@ -143,6 +147,7 @@ class ItemController extends Controller
 
     /**
      * Change stat of item to read/unread
+     *
      * @param Request  $request  Request
      * @param UserItem $userItem user's item
      *
@@ -150,7 +155,6 @@ class ItemController extends Controller
      *
      * @Route("/feed/{user_feed_id}/item/{user_item_id}/mark_read/{status}", name="mark_read", defaults={"status" = null})
      * @Secure(roles="ROLE_USER")
-     *
      * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
      */
     public function readAction(Request $request, UserItem $userItem)
@@ -174,14 +178,14 @@ class ItemController extends Controller
 
     /**
      * Change stat of later item to read
-     * @param LaterItem $laterItem
      *
-     * @return JsonResponse
+     * @param LaterItem $laterItem
      *
      * @Route("/label/{label_id}/item/{later_item_id}/mark_read", name="mark_later_read")
      * @Secure(roles="ROLE_USER")
-     *
      * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"later_item_id": "id", "label_id": "later"}})
+     *
+     * @return JsonResponse
      */
     public function readLaterAction(LaterItem $laterItem)
     {
@@ -204,12 +208,11 @@ class ItemController extends Controller
      * Add/remove star to item
      * @param UserItem $userItem user's item
      *
-     * @return JsonResponse
-     *
      * @Route("/feed/{user_feed_id}/item/{user_item_id}/mark_star", name="mark_star")
      * @Secure(roles="ROLE_USER")
-     *
      * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
+     *
+     * @return JsonResponse
      */
     public function starAction(UserItem $userItem)
     {
@@ -232,15 +235,36 @@ class ItemController extends Controller
     /**
      * Request for GetPocket auth to import later items
      *
+     * @param Request  $request  Request
+     *
      * @Route("/label/import/getpocket/request", name="import_getpocket_request")
      * @Secure(roles="ROLE_USER")
+     * @Method("POST")
      *
      * @return RedirectResponse
      */
-    public function getpocketImportRequestAction()
+    public function getpocketImportRequestAction(Request $request)
     {
+        $pocketType = $this->get('nps.form.type.import.pocket');
+        $pocketForm = $this->createForm($pocketType);
+        $pocketForm->handleRequest($request);
+        if (!$pocketForm->isValid()) {
+            $request->getSession()->getFlashBag()->add('error', '_Invalid_pocket_form');
+
+            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
+        }
+
         $pockpathAuth = new PockpackAuth();
         $requestToken = $pockpathAuth->connect($this->container->getParameter('getpocket_key'));
+        if (!$requestToken) {
+            $request->getSession()->getFlashBag()->add('error', '_Invalid_pocket_token_request');
+
+            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
+        }
+
+        $pocketData = $pocketForm->getData();
+        ImportHelper::setPocketFilters(new Session(), 'token', $pocketData['tag'], $pocketData['favorite'], $pocketData['contentType'], $pocketData['later']->getId());
+
         $url = "https://getpocket.com/auth/authorize?request_token=".$requestToken."&redirect_uri=".$this->generateUrl('import_getpocket', array(), true);
 
         return new RedirectResponse($url);
@@ -249,11 +273,52 @@ class ItemController extends Controller
     /**
      * Import later items from GetPocket
      *
+     * @param Request  $request  Request
+     *
      * @Route("/label/import/getpocket", name="import_getpocket")
      * @Secure(roles="ROLE_USER")
      */
     public function getpocketImportAction(Request $request)
     {
+        $session = new Session();
+        $requestToken = $session->get(ImportConstants::SESSION_REQUEST_TOKEN);
+        $consumerKey = $this->container->getParameter('getpocket_key');
+
+        $pockpackAuth = new PockpackAuth();
+        $accessToken = $pockpackAuth->receiveToken($this->container->getParameter('getpocket_key'), $requestToken);
+        if (!$accessToken) {
+            $request->getSession()->getFlashBag()->add('error', '_Invalid_pocket_token_request');
+
+            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
+        }
+
+        $pockpack = new Pockpack($consumerKey, $accessToken);
+        $options = ImportHelper::getFiltersPocket($session);
+        $list = $pockpack->retrieve($options);
+        if (!$list->status) {
+            echo 'tut: some problem'; exit;
+        }
+
+        foreach ($list->list as $item) {
+            var_dump($item);
+            echo $item->resolved_title;
+            echo "<br><br>";
+            echo $item->resolved_url;
+            echo "<br><br>";
+            echo $item->is_article;
+            echo "<br><br>";
+            echo $item->time_added;
+            echo "<br><br>";
+            echo 'tut: end'; exit;
+        }
+
+        echo "<br><br>";
+        echo 'tut: end'; exit;
+
+        echo 'tut: '.$request->getContent()."<br>"; echo 'tut: '.$request->get('code'); exit;
+        echo 'tut: '.$request->get('code');
+        var_dump($request->get('code')); exit;
+
         $json = json_decode($request->getContent(), true);
         echo '<pre>tut: '; print_r($json); echo '</pre>'; exit();
     }

@@ -8,7 +8,7 @@
                     <form id="editLater" method="post" action="{{ action_url }}" class="wizard" {{ form_enctype(form) }}>
                         <div class="input-prepend">
                             <span class="add"><i class="icon-edit"></i></span>
-                            {{ form_widget(form.name, { 'attr' : {'placeholder':'Name' }} ) }}
+                            {{ form_widget(form.name, { 'attr' : {'placeholder':'_Name' }} ) }}
                         </div>
                         <div class="input-prepend">
                             <span class="add"><i class="icon-edit"></i></span>
@@ -27,7 +27,7 @@
 
                         <span id="validate-basic-form-valid">
                             {{ form_row(form._token) }}
-                            <input type="submit" class="btn  btn-primary" value="{% trans %}Submit{% endtrans %}">
+                            <input type="submit" class="btn  btn-primary" value="{{ '_Submit'|trans }}">
                         </span>
                     </form>
                 </div>

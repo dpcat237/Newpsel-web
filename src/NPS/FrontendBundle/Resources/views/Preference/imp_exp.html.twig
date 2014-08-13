@@ -1,11 +1,16 @@
 {% extends 'NPSFrontendBundle::layout.html.twig' %}
 
 {% block content %}
-    {% set item = userItem.item %}
     <div class="row-fluid">
         <div class="block span12">
             <p class="block-heading">{{ '_OPML_import'|trans }}</p>
             <div class="block-body">
+                <p>
+                    {{ '_OPML_explanation'|trans }} <br>
+                    - {{ '_From'|trans }} <a href="http://feedly.com/index.html#opml" target="_blank">Feedly</a>
+                </p>
+                <br>
+
                 <form name="opml_import" action="{{ url('opml_import') }}" method="post" enctype="multipart/form-data">
                     <div class="input-prepend">
                         {{ form_widget(opml_form.opml_file) }}
@@ -13,7 +18,7 @@
 
                     <span id="validate-basic-form-valid">
                         {{ form_row(opml_form._token) }}
-                        <input type="submit" class="btn  btn-primary" value="{{ '_Submit'|trans }}">
+                        <input type="submit" class="btn  btn-primary" value="{{ '_Import'|trans }}">
                     </span>
                 </form>
             </div>
@@ -21,7 +26,7 @@
             <br>
             <p class="block-heading">{{ '_OPML_export'|trans }}</p>
             <div class="block-body">
-                <form name="opml_import" action="{{ url('opml_export') }}" method="get">
+                <form name="opml_export" action="{{ url('opml_export') }}" method="get">
                     <span id="validate-basic-form-valid">
                         <input type="submit" class="btn  btn-primary" value="{{ '_Download'|trans }}">
                     </span>
@@ -31,13 +36,34 @@
             <br>
             <p class="block-heading">{{ '_GetPocket_import'|trans }}</p>
             <div class="block-body">
-                <form name="opml_import" action="{{ url('import_getpocket') }}" method="get">
+                <form name="pocket_import" method="post" action="{{ url('import_getpocket_request') }}" class="wizard" {{ form_enctype(pocket_form) }}>
+                    <div class="input-prepend">
+                        <span class="add"><i class="icon-tag"></i></span>
+                        {{ form_widget(pocket_form.tag, { 'attr' : {'placeholder':'_Tag', 'title':'_Pocket_tag_explanation1'|trans~'\n'~'_Pocket_tag_explanation2'|trans~'\n'~'_Pocket_tag_explanation3'|trans }} ) }}
+                        {{ form_errors(pocket_form.tag) }}
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add"><i class="icon-star"></i></span>
+                        {{ form_widget(pocket_form.favorite, { 'attr' : {'title':'_Pocket_favorite_explanation1'|trans~'\n'~'_Pocket_favorite_explanation2'|trans~'\n'~'_Pocket_favorite_explanation3'|trans }}) }}
+                        {{ form_errors(pocket_form.favorite) }}
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add"><i class="icon-book"></i></span>
+                        {{ form_widget(pocket_form.contentType, { 'attr' : {'title':'_Pocket_contentType_explanation1'|trans~'\n'~'_Pocket_contentType_explanation2'|trans~'\n'~'_Pocket_contentType_explanation3'|trans }}) }}
+                        {{ form_errors(pocket_form.contentType) }}
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add"><i class="icon-tag"></i></span>
+                        {{ form_widget(pocket_form.later, { 'attr' : {'title':'_Import_to_later_explanation' }}) }}
+                        {{ form_errors(pocket_form.later) }}
+                    </div>
+
                     <span id="validate-basic-form-valid">
+                        {{ form_row(pocket_form._token) }}
                         <input type="submit" class="btn  btn-primary" value="{{ '_Import'|trans }}">
                     </span>
                 </form>
             </div>
         </div>
-
     </div>
 {% endblock %}

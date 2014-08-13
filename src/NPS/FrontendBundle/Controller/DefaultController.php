@@ -2,9 +2,7 @@
 
 namespace NPS\FrontendBundle\Controller;
 
-use NPS\CoreBundle\Readability;
-use NPS\CoreBundle\Testy;
-use NPS\FrontendBundle\Form\Type\OpmlImportType;
+use NPS\FrontendBundle\Form\Type\ImportOpmlType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Class DefaultController
@@ -81,11 +80,15 @@ class DefaultController extends Controller
      */
     public function impExpAction()
     {
-        $opmlType = new OpmlImportType();
+        $opmlType = new ImportOpmlType();
         $opmlForm = $this->createForm($opmlType);
+
+        $pocketType = $this->get('nps.form.type.import.pocket');
+        $pocketForm = $this->createForm($pocketType);
 
         $viewData = array(
             'opml_form' => $opmlForm->createView(),
+            'pocket_form' => $pocketForm->createView(),
         );
 
         return $viewData;

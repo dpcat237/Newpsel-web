@@ -26,5 +26,6 @@ class NPSFrontendExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         //load NPSFrontendBundle services
+        $loader->load('formType.yml');
     }
 }
