@@ -135,7 +135,8 @@ undf_angular_js:
 
 rs_queue:
     queues:
-        crawler: "queues:crawler"
+        crawler:            "queues:crawler"
+        import_later_items: "item:import"
     serializer: ~
 
 #fos_elastica:
