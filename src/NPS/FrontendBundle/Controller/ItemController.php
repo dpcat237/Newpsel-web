@@ -8,6 +8,7 @@ use Duellsy\Pockpack\PockpackQueue;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use NPS\CoreBundle\Constant\ImportConstants;
 use NPS\CoreBundle\Helper\ImportHelper;
+use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request;
@@ -263,7 +264,7 @@ class ItemController extends Controller
         }
 
         $pocketData = $pocketForm->getData();
-        ImportHelper::setPocketFilters(new Session(), 'token', $pocketData['tag'], $pocketData['favorite'], $pocketData['contentType'], $pocketData['later']->getId());
+        ImportHelper::setPocketFilters(new Session(), $requestToken, $pocketData['tag'], $pocketData['favorite'], $pocketData['contentType'], $pocketData['later']->getId());
 
         $url = "https://getpocket.com/auth/authorize?request_token=".$requestToken."&redirect_uri=".$this->generateUrl('import_getpocket', array(), true);
 
@@ -277,6 +278,8 @@ class ItemController extends Controller
      *
      * @Route("/label/import/getpocket", name="import_getpocket")
      * @Secure(roles="ROLE_USER")
+     *
+     * @return RedirectResponse
      */
     public function getpocketImportAction(Request $request)
     {
@@ -295,31 +298,22 @@ class ItemController extends Controller
         $pockpack = new Pockpack($consumerKey, $accessToken);
         $options = ImportHelper::getFiltersPocket($session);
         $list = $pockpack->retrieve($options);
-        if (!$list->status) {
-            echo 'tut: some problem'; exit;
+        if ($list->status == 2) { // zero results
+            $request->getSession()->getFlashBag()->add('alert', '_Invalid_pocket_filter');
+
+            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
 
+        $count = 0;
+        $laterItemService = $this->get('nps.entity.later_item');
+        $user = $this->get('security.context')->getToken()->getUser();
+        $labelId = $session->get(ImportConstants::SESSION_LABEL_ID);
         foreach ($list->list as $item) {
-            var_dump($item);
-            echo $item->resolved_title;
-            echo "<br><br>";
-            echo $item->resolved_url;
-            echo "<br><br>";
-            echo $item->is_article;
-            echo "<br><br>";
-            echo $item->time_added;
-            echo "<br><br>";
-            echo 'tut: end'; exit;
+            $laterItemService->importItemFromPocket($user, $labelId, $item->resolved_title, $item->resolved_url, $item->time_added, $item->is_article);
+            $count++;
         }
+        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_pocket_imported', array('%quantity%' => $count)));
 
-        echo "<br><br>";
-        echo 'tut: end'; exit;
-
-        echo 'tut: '.$request->getContent()."<br>"; echo 'tut: '.$request->get('code'); exit;
-        echo 'tut: '.$request->get('code');
-        var_dump($request->get('code')); exit;
-
-        $json = json_decode($request->getContent(), true);
-        echo '<pre>tut: '; print_r($json); echo '</pre>'; exit();
+        return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
     }
 }

@@ -3,12 +3,14 @@ namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Entity\Item;
+use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use Predis\Client;
 use NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserFeed;
+use NPS\CoreBundle\Services\CrawlerManager;
 
 /**
  * LaterItemService
@@ -21,6 +23,11 @@ class LaterItemService
     private $cache;
 
     /**
+     * @var CrawlerManager
+     */
+    private $crawler;
+
+    /**
      * @var Doctrine
      */
     private $doctrine;
@@ -29,6 +36,11 @@ class LaterItemService
      * @var Entity Manager
      */
     private $entityManager;
+
+    /**
+     * @var boolean
+     */
+    private $import = false;
 
     /**
      * @var UserItemService
@@ -40,10 +52,12 @@ class LaterItemService
      * @param Registry        $doctrine Doctrine Registry
      * @param Client          $cache    Client
      * @param UserItemService $userItem UserItemService
+     * @param CrawlerManager  $crawler CrawlerManager
      */
-    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem)
+    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem, CrawlerManager $crawler)
     {
         $this->cache = $cache;
+        $this->crawler = $crawler;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->userItem = $userItem;
@@ -268,58 +282,158 @@ class LaterItemService
      * Add page / item to selected label or if exists set as unread
      *
      * @param User    $user
-     * @param id      $labelId
-     * @param string  $pageTitle
-     * @param string  $pageUrl
+     * @param int     $labelId
+     * @param string  $title
+     * @param string  $url
      * @param boolean $shared
      */
-    public function addPageToLater(User $user, $labelId, $pageTitle, $pageUrl, $shared = false)
+    public function addPageToLater(User $user, $labelId, $title, $url, $shared = false)
     {
-        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-        $laterItem = $laterItemRepo->checkExistsLaterItemUrl($user->getId(), $labelId, $pageUrl);
-        if (!$laterItem instanceof LaterItem) {
-            $item = new Item();
-            $item->setContentHash(sha1($pageUrl));
-            $item->setLink($pageUrl);
-            $item->setTitle($pageTitle);
-            $item->setContent($pageTitle.'...');
-            $this->entityManager->persist($item);
-            $this->entityManager->flush();
+        $exists = $this->existsItem($user->getId(), $url, $labelId);
+        if ($exists instanceof LaterItem) {
+            $laterItem = $exists;
+            if ($labelId == $laterItem->getLaterId()) {
+                $laterItem->setUnread(true);
+                $this->entityManager->persist($laterItem);
+                $this->entityManager->flush();
+            } else {
+                $this->addLaterItem($laterItem->getUserItem(), $labelId);
+            }
 
-            $userItem = new UserItem();
-            $userItem->setItem($item);
-            $userItem->setUser($user);
-            $userItem->setShared($shared);
-            $this->entityManager->persist($userItem);
-            $this->entityManager->flush();
-
-            $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-            $later = $laterRepo->find($labelId);
-            $laterItem = new LaterItem();
-            $laterItem->setLater($later);
-            $laterItem->setUserItem($userItem);
-            $this->entityManager->persist($laterItem);
-            $this->entityManager->flush();
-        } elseif (!$laterItem->isUnread()) {
-            $laterItem->setUnread(true);
-            $this->entityManager->persist($laterItem);
-            $this->entityManager->flush();
+            return;
         }
+
+        $item = $exists;
+        if (!$item instanceof Item) {
+            $item = $this->createItem($title, $url);
+        }
+        $userItem = $this->createUserItem($user, $item, $shared);
+        $this->addLaterItem($userItem, $labelId);
     }
+
+    /**
+     * Import later item from Pocket
+     *
+     * @param User   $user
+     * @param int    $labelId
+     * @param string $title
+     * @param string $url
+     * @param int    $dateAdd
+     * @param int    $isArticle
+     */
+    public function importItemFromPocket(User $user, $labelId, $title, $url, $dateAdd, $isArticle = 0)
+    {
+        $this->import = false;
+        $exists = $this->existsItem($user->getId(), $url, $labelId);
+        if ($exists == true) {
+            return;
+        }
+
+        $item = $exists;
+        if (!$item instanceof Item) {
+            $content = ($isArticle)? $this->crawler->getFullArticle($url) : '';
+            $item = $this->createItem($title, $url, $content);
+        }
+        $userItem = $this->createUserItem($user, $item, true);
+        $this->addLaterItem($userItem, $labelId, $dateAdd);
+    }
+
+    /**
+     * Check if item already exists
+     *
+     * @param int $userId
+     * @param string $url
+     *
+     * @return bool|Item|LaterItem
+     */
+    private function existsItem($userId, $url) {
+        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        $item = $itemRepo->findOneByLink($url);
+        if (!$item instanceof Item) {
+            return false;
+        }
+
+        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+        $laterItem = $laterItemRepo->getByItemId($userId, $item->getId());
+        if ($laterItem instanceof LaterItem && $this->import) {
+            return true;
+        }
+
+        if ($laterItem instanceof LaterItem) {
+            return $laterItem;
+        }
+
+        return $item;
+    }
+
+    /**
+     * Create item from title and url
+     *
+     * @param string $pageTitle
+     * @param string $pageUrl
+     * @param string $content
+     *
+     * @return Item
+     */
+    private function createItem($pageTitle, $pageUrl, $content = '')
+    {
+        $item = new Item();
+        $item->setContentHash(sha1($pageUrl));
+        $item->setLink($pageUrl);
+        $item->setTitle($pageTitle);
+        $content = (strlen($content) > 20)? $content : $pageTitle.'...';
+        $item->setContent($content);
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
+
+        return $item;
+    }
+
+    /**
+     * Create user item
+     *
+     * @param User $user
+     * @param Item $item
+     * @param bool $shared
+     *
+     * @return UserItem
+     */
+    private function createUserItem(User $user, Item $item, $shared = false)
+    {
+        $userItem = new UserItem();
+        $userItem->setUser($user);
+        $userItem->setItem($item);
+        $userItem->setShared($shared);
+        $this->entityManager->persist($userItem);
+        $this->entityManager->flush();
+
+        return $userItem;
+    }
+
 
     /**
      * Add new later item
      *
      * @param UserItem $userItem
      * @param int      $labelId
+     * @param int      $dateAdd
+     *
      */
-    public function addLaterItem(UserItem $userItem, $labelId)
+    public function addLaterItem(UserItem $userItem, $labelId, $dateAdd = 0)
     {
         $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+        $later = $laterRepo->find($labelId);
+        if (!$later instanceof Later) {
+            return;
+        }
 
         $laterItem = new LaterItem();
-        $laterItem->setLater($laterRepo->find($labelId));
+        $laterItem->setLater($later);
         $laterItem->setUserItem($userItem);
+        if ($dateAdd) {
+            $laterItem->setDateAdd($dateAdd);
+        }
         $this->entityManager->persist($laterItem);
+        $this->entityManager->flush();
     }
 }

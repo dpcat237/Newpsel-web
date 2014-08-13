@@ -41,6 +41,7 @@ services:
             doctrine:     @doctrine
             server_cache: @snc_redis.default
             user_item:    @nps.entity.user_item
+            crawler:      @nps.manager.crawler
 
     nps.entity.user:
         class: NPS\CoreBundle\Services\Entity\UserService

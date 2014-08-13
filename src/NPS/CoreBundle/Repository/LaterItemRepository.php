@@ -13,39 +13,6 @@ use Doctrine\ORM\EntityRepository;
 class LaterItemRepository extends EntityRepository
 {
     /**
-     * Check if exists later item by url
-     * @param $userId
-     * @param $labelId
-     * @param $itemUrl
-     *
-     * @return bool
-     */
-    public function checkExistsLaterItemUrl($userId, $labelId, $itemUrl)
-    {
-        $query = $this->createQueryBuilder('li')
-            ->join('li.userItem', 'ui')
-            ->join('li.later', 'l')
-            ->join('ui.user', 'u')
-            ->join('ui.item', 'i')
-            ->where('l.id = :laterId')
-            ->andWhere('u.id = :userId')
-            ->andWhere('i.link = :itemUrl')
-            ->setParameter('laterId', $labelId)
-            ->setParameter('userId', $userId)
-            ->setParameter('itemUrl', $itemUrl)
-            ->getQuery();
-        $laterCollection = $query->getResult();
-
-        if (count($laterCollection)) {
-            foreach ($laterCollection as $later) {
-                return $later;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Get incomplete later items
      *
      * @param int $userId
@@ -287,5 +254,34 @@ class LaterItemRepository extends EntityRepository
         $query = $query->getQuery();
 
         return $query->getArrayResult();
+    }
+
+    /**
+     * Get later item by item id
+     *
+     * @param int $userId
+     * @param int $itemId
+     *
+     * @return null
+     */
+    public function getByItemId($userId, $itemId)
+    {
+        $query = $this->createQueryBuilder('li')
+            ->join('li.userItem', 'ui')
+            ->where('ui.user = :userId')
+            ->andWhere('ui.item = :itemId')
+            ->setParameter('userId', $userId)
+            ->setParameter('itemId', $itemId)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        $collection = $query->getResult();
+        if (!count($collection)) {
+            return null;
+        }
+
+        foreach ($query->getResult() as $firstItem) {
+            return $firstItem;
+        }
     }
 }

@@ -15,7 +15,7 @@
 
 {# Warning message (yellow) #}
 {% for flashMessage in app.session.flashbag.get('alert') %}
-    {% include "NPSFrontendBundle:Default:flash_message.html.twig" with {flashMessage: flashMessage, class: ''} %}
+    {% include "NPSFrontendBundle:Default:flash_message.html.twig" with {flashMessage: flashMessage, class: 'alert-warning'} %}
 {% endfor %}
 
 {# Error message (red) #}

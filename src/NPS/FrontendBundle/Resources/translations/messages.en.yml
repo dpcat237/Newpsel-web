@@ -71,3 +71,5 @@ _Pocket_contentType_explanation2: - Article: only articles
 _Pocket_contentType_explanation3: - Video: only videos or articles with embedded videos
 _Import_to_later_explanation: Select label to which import items
 _Invalid_pocket_token_request: Some problems with connection to Pcket. Try again in few minutes.
+_Invalid_pocket_filter: Aren't any items to import from Pocket
+_Valid_pocket_imported: Succefully imported %quantity% items from Pocket
