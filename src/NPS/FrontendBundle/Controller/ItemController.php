@@ -298,8 +298,8 @@ class ItemController extends Controller
 
         $pockpack = new Pockpack($consumerKey, $accessToken);
         $options = ImportHelper::getFiltersPocket($session);
-        $list = $pockpack->retrieve($options);
-        if ($list->status == 2) { // zero results
+        $list = $pockpack->retrieve($options, true);
+        if ($list['status'] == 2) { // zero results
             $request->getSession()->getFlashBag()->add('alert', '_Invalid_pocket_filter');
 
             return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));

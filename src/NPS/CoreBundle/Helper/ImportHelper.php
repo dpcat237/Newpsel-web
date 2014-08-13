@@ -4,6 +4,7 @@ namespace NPS\CoreBundle\Helper;
 use NPS\CoreBundle\Constant\ImportConstants;
 use Symfony\Component\Templating\Helper\Helper;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class import static actions
@@ -160,12 +161,28 @@ class ImportHelper extends Helper
     public static function preparePocketItems($list)
     {
         $items = array();
-        foreach ($list->list as $line) {
+        foreach ($list['list'] as $line) {
+            $url = (array_key_exists('resolved_url', $line) && strlen($line['resolved_url']) > 1)? $line['resolved_url'] : $line['given_url'];
+            if (!$url) {
+                continue;
+            }
+
+            $title = (array_key_exists('resolved_title', $line) && strlen($line['resolved_title']) > 1)? $line['resolved_title'] : $line['given_title'];
+            if (!$title) {
+                $str = file_get_contents($url);
+                if(strlen($str) < 1){
+                    continue;
+                }
+                preg_match("/\<title\>(.*)\<\/title\>/",$str,$titleWeb);
+                $title = $titleWeb[1];
+            }
+
+            $isArticle = (array_key_exists('is_article', $line))? $line['is_article'] : 0;
             $item = array(
-                'title' => $line->resolved_title,
-                'url' => $line->resolved_url,
-                'date_add' => $line->time_added,
-                'is_article' => $line->is_article
+                'title' => $title,
+                'url' => $url,
+                'date_add' => $line['time_added'],
+                'is_article' => $isArticle
             );
             $items[] = $item;
         }
