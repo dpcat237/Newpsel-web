@@ -6,7 +6,6 @@ use NPS\CoreBundle\Constant\ImportConstants;
 use NPS\CoreBundle\Services\Entity\LaterService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,13 +25,6 @@ class ImportPocketType extends AbstractType
     public function __construct(LaterService $laterService)
     {
         $this->laterService = $laterService;
-    }
-
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
     }
 
     /**

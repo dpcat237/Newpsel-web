@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services;
 
 use Mmoreram\RSQueueBundle\Services\Producer;
+use NPS\CoreBundle\Constant\QueueConstants;
 
 /**
  * QueueLauncherService
@@ -29,6 +30,16 @@ class QueueLauncherService
      */
     public function executeCrawling($userId = null)
     {
-        $this->rsqueue->produce("crawler", $userId);
+        $this->rsqueue->produce(QueueConstants::ITEMS_CRAWLER, $userId);
+    }
+
+    /**
+     * Add import later items process to queue
+     *
+     * @param string $redisKey
+     */
+    public function executeImportItems($redisKey)
+    {
+        $this->rsqueue->produce(QueueConstants::IMPORT_LATER_ITEMS, $redisKey);
     }
 }

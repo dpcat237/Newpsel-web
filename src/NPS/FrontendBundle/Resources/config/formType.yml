@@ -13,4 +13,11 @@ services:
         arguments:
             entity_later:  @nps.entity.later
         tags:
-            - { name: form.import.pocket, alias: filters }
+            - { name: form.import.pocket, alias: pocket }
+
+    nps.form.type.import.instapaper:
+        class: NPS\FrontendBundle\Form\Type\ImportInstapaperType
+        arguments:
+            entity_later:  @nps.entity.later
+        tags:
+            - { name: form.import.instapaper, alias: instapaper }

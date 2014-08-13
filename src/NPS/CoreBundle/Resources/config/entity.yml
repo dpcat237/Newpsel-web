@@ -42,6 +42,7 @@ services:
             server_cache: @snc_redis.default
             user_item:    @nps.entity.user_item
             crawler:      @nps.manager.crawler
+            queue:        @nps.launcher.queue
 
     nps.entity.user:
         class: NPS\CoreBundle\Services\Entity\UserService

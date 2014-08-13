@@ -86,9 +86,13 @@ class DefaultController extends Controller
         $pocketType = $this->get('nps.form.type.import.pocket');
         $pocketForm = $this->createForm($pocketType);
 
+        $instapaperType = $this->get('nps.form.type.import.instapaper');
+        $instapaperForm = $this->createForm($instapaperType);
+
         $viewData = array(
             'opml_form' => $opmlForm->createView(),
             'pocket_form' => $pocketForm->createView(),
+            'instapaper_form' => $instapaperForm->createView(),
         );
 
         return $viewData;

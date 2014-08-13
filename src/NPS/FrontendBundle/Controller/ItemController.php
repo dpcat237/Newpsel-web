@@ -10,6 +10,7 @@ use NPS\CoreBundle\Constant\ImportConstants;
 use NPS\CoreBundle\Helper\ImportHelper;
 use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -304,15 +305,53 @@ class ItemController extends Controller
             return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
 
-        $count = 0;
-        $laterItemService = $this->get('nps.entity.later_item');
         $user = $this->get('security.context')->getToken()->getUser();
         $labelId = $session->get(ImportConstants::SESSION_LABEL_ID);
-        foreach ($list->list as $item) {
-            $laterItemService->importItemFromPocket($user, $labelId, $item->resolved_title, $item->resolved_url, $item->time_added, $item->is_article);
-            $count++;
+        $items = ImportHelper::preparePocketItems($list);
+        $count = count($items);
+        $this->get('nps.entity.later_item')->prepareToImport($user->getId(), $labelId, $items);
+        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import', array('%quantity%' => $count)));
+
+        return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
+    }
+
+    /**
+     * Import later items from Instapaper
+     *
+     * @param Request $request
+     *
+     * @Route("/label/import/instapaper", name="import_instapaper")
+     * @Secure(roles="ROLE_USER")
+     * @Method("POST")
+     *
+     * @return RedirectResponse
+     */
+    public function importInstapaperAction(Request $request)
+    {
+        $instapaperType = $this->get('nps.form.type.import.instapaper');
+        $instapaperForm = $this->createForm($instapaperType);
+        $instapaperForm->handleRequest($request);
+        $instapaperFile = $instapaperForm->getData()['csv_file'];
+        $labelId = $instapaperForm->getData()['later']->getId();
+
+        /** @var $opmlFile UploadedFile */
+        if (!$instapaperForm->isValid() || is_null($instapaperFile) || !($instapaperFile instanceof UploadedFile)) {
+            $request->getSession()->getFlashBag()->add('error', '_Invalid_csv');
+
+            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
-        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_pocket_imported', array('%quantity%' => $count)));
+
+        $user = $this->get('security.context')->getToken()->getUser();
+        $items = ImportHelper::prepareInstapaperItems(ImportHelper::csvToArray($instapaperFile->getRealPath()));
+        $count = count($items);
+        if ($count < 1) {
+            $request->getSession()->getFlashBag()->add('error', '_Invalid_quantity');
+
+            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
+        }
+
+        $this->get('nps.entity.later_item')->prepareToImport($user->getId(), $labelId, $items);
+        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import', array('%quantity%' => $count)));
 
         return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
     }

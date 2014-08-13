@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Constant\RedisConstants;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Entity\UserItem;
@@ -11,6 +12,7 @@ use NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Services\CrawlerManager;
+use NPS\CoreBundle\Services\QueueLauncherService;
 
 /**
  * LaterItemService
@@ -47,20 +49,27 @@ class LaterItemService
      */
     private $userItem;
 
+    /**
+     * @var QueueLauncherService
+     */
+    private $queue;
+
 
     /**
-     * @param Registry        $doctrine Doctrine Registry
-     * @param Client          $cache    Client
-     * @param UserItemService $userItem UserItemService
-     * @param CrawlerManager  $crawler CrawlerManager
+     * @param Registry             $doctrine Doctrine Registry
+     * @param Client               $cache    Client
+     * @param UserItemService      $userItem UserItemService
+     * @param CrawlerManager       $crawler  CrawlerManager
+     * @param QueueLauncherService $queue    QueueLauncherService
      */
-    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem, CrawlerManager $crawler)
+    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem, CrawlerManager $crawler, QueueLauncherService $queue)
     {
         $this->cache = $cache;
         $this->crawler = $crawler;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->userItem = $userItem;
+        $this->queue = $queue;
     }
 
     /**
@@ -312,7 +321,7 @@ class LaterItemService
     }
 
     /**
-     * Import later item from Pocket
+     * Import later item
      *
      * @param User   $user
      * @param int    $labelId
@@ -321,7 +330,7 @@ class LaterItemService
      * @param int    $dateAdd
      * @param int    $isArticle
      */
-    public function importItemFromPocket(User $user, $labelId, $title, $url, $dateAdd, $isArticle = 0)
+    public function importItem(User $user, $labelId, $title, $url, $dateAdd, $isArticle = 0)
     {
         $this->import = false;
         $exists = $this->existsItem($user->getId(), $url, $labelId);
@@ -332,10 +341,10 @@ class LaterItemService
         $item = $exists;
         if (!$item instanceof Item) {
             $content = ($isArticle)? $this->crawler->getFullArticle($url) : '';
-            $item = $this->createItem($title, $url, $content);
+            $item = $this->createItem($title, $url, $content, $dateAdd);
         }
         $userItem = $this->createUserItem($user, $item, true);
-        $this->addLaterItem($userItem, $labelId, $dateAdd);
+        $this->addLaterItem($userItem, $labelId);
     }
 
     /**
@@ -372,10 +381,11 @@ class LaterItemService
      * @param string $pageTitle
      * @param string $pageUrl
      * @param string $content
+     * @param int    $dateAdd
      *
      * @return Item
      */
-    private function createItem($pageTitle, $pageUrl, $content = '')
+    private function createItem($pageTitle, $pageUrl, $content = '', $dateAdd = 0)
     {
         $item = new Item();
         $item->setContentHash(sha1($pageUrl));
@@ -383,6 +393,9 @@ class LaterItemService
         $item->setTitle($pageTitle);
         $content = (strlen($content) > 20)? $content : $pageTitle.'...';
         $item->setContent($content);
+        if ($dateAdd) {
+            $item->setDateAdd($dateAdd);
+        }
         $this->entityManager->persist($item);
         $this->entityManager->flush();
 
@@ -416,10 +429,9 @@ class LaterItemService
      *
      * @param UserItem $userItem
      * @param int      $labelId
-     * @param int      $dateAdd
      *
      */
-    public function addLaterItem(UserItem $userItem, $labelId, $dateAdd = 0)
+    public function addLaterItem(UserItem $userItem, $labelId)
     {
         $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
         $later = $laterRepo->find($labelId);
@@ -430,10 +442,22 @@ class LaterItemService
         $laterItem = new LaterItem();
         $laterItem->setLater($later);
         $laterItem->setUserItem($userItem);
-        if ($dateAdd) {
-            $laterItem->setDateAdd($dateAdd);
-        }
         $this->entityManager->persist($laterItem);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Save items to cache and add to query import process
+     *
+     * @param int   $userId
+     * @param int   $labelId
+     * @param array $items
+     */
+    public function prepareToImport($userId, $labelId, $items)
+    {
+        $jsonData = json_encode($items);
+        $redisKey = RedisConstants::IMPORT_LATER_ITEMS.'_'.$userId.'_'.$labelId.'_'.time();
+        $this->cache->setex($redisKey, 604800, $jsonData); //7 days life
+        $this->queue->executeImportItems($redisKey);
     }
 }

@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Command;
 
 use Guzzle\Http\Exception\CurlException;
+use NPS\CoreBundle\Constant\QueueConstants;
 use NPS\CoreBundle\Services\CrawlerManager;
 use Predis\Client;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -67,11 +68,12 @@ class ItemCrawlerCommand extends ConsumerCommand
      */
     public function define()
     {
-        $this->addQueue('crawler', 'executeCrawling');
+        $this->addQueue(QueueConstants::ITEMS_CRAWLER, 'executeCrawling');
     }
 
     /**
-     * Synchronize all feeds
+     * Grab complete articles
+     *
      * @param InputInterface  $input  Input Interface
      * @param OutputInterface $output Output Interface
      * @param int             $userId User id, in case of null will get all users

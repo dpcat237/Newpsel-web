@@ -10,7 +10,6 @@
                     - {{ '_From'|trans }} <a href="http://feedly.com/index.html#opml" target="_blank">Feedly</a>
                 </p>
                 <br>
-
                 <form name="opml_import" action="{{ url('opml_import') }}" method="post" enctype="multipart/form-data">
                     <div class="input-prepend">
                         {{ form_widget(opml_form.opml_file) }}
@@ -60,6 +59,29 @@
 
                     <span id="validate-basic-form-valid">
                         {{ form_row(pocket_form._token) }}
+                        <input type="submit" class="btn  btn-primary" value="{{ '_Import'|trans }}">
+                    </span>
+                </form>
+            </div>
+
+            <br>
+            <p class="block-heading">{{ '_Instapaper_import'|trans }}</p>
+            <div class="block-body">
+                <p>{{ '_Instapaper_explanation'|trans }}</p>
+                <br>
+                <form name="instapaper_import" method="post" action="{{ url('import_instapaper') }}" class="wizard" {{ form_enctype(instapaper_form) }}>
+                    <div class="input-prepend">
+                        <span class="add"><i class="icon-tag"></i></span>
+                        {{ form_widget(instapaper_form.later, { 'attr' : {'title':'_Import_to_later_explanation' }}) }}
+                        {{ form_errors(instapaper_form.later) }}
+                    </div>
+                    <div class="input-prepend">
+                        {{ form_widget(instapaper_form.csv_file) }}
+                        {{ form_errors(instapaper_form.csv_file) }}
+                    </div>
+
+                    <span id="validate-basic-form-valid">
+                        {{ form_row(instapaper_form._token) }}
                         <input type="submit" class="btn  btn-primary" value="{{ '_Import'|trans }}">
                     </span>
                 </form>

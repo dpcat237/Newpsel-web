@@ -49,6 +49,7 @@ _Download: Download
 _Import: Import
 _Invalid_quantity_OPML: Aren't feeds in file
 _Invalid_opml: Please upload a valid OPML file
+_Invalid_csv: Please upload a valid CSV file
 _Success_opml: Succesfully added %quantity% feeds
 _GetPocket_import: Import from Pocket
 _Tag: Tag
@@ -58,6 +59,7 @@ _Not_favorite: Not favorite
 _Article: Article
 _Video: Video
 _OPML_explanation: OPML is a format which allows you to share the sources you have collected with other applications or migrate to another reader.
+_Instapaper_explanation: To export your Instapaper articles log into your Instapaper account, click your username at the top right corner, and click Settings. Next, scroll down to the Export section, and click the Download CSV link to save it to your computer.
 _From: From
 _this_website: this website
 _Pocket_tag_explanation1: - empty: will search all items
@@ -72,4 +74,6 @@ _Pocket_contentType_explanation3: - Video: only videos or articles with embedded
 _Import_to_later_explanation: Select label to which import items
 _Invalid_pocket_token_request: Some problems with connection to Pcket. Try again in few minutes.
 _Invalid_pocket_filter: Aren't any items to import from Pocket
-_Valid_pocket_imported: Succefully imported %quantity% items from Pocket
+_Instapaper_import: Import from Instapaper
+_Invalid_quantity: Aren't unread items in file.
+_Valid_will_import: Succefully prepared %quantity% items which will be imported before next 24 hours.

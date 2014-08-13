@@ -270,5 +270,4 @@ class FeedController extends Controller
 
         return $response;
     }
-
 }

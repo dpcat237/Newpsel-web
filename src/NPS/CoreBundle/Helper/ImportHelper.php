@@ -89,4 +89,87 @@ class ImportHelper extends Helper
 
         return $options;
     }
+
+    /**
+     * Convert a comma separated file into an associated array.
+     * The first row should contain the array keys.
+     *
+     * @param string $filename Path to the CSV file
+     * @param string $delimiter The separator used in the file
+     * @return array
+     * @link http://gist.github.com/385876
+     * @author Jay Williams <http://myd3.com/>
+     * @copyright Copyright (c) 2010, Jay Williams
+     * @license http://www.opensource.org/licenses/mit-license.php MIT License
+     */
+    public static function csvToArray($filename='', $delimiter=',')
+    {
+        if(!file_exists($filename) || !is_readable($filename))
+            return FALSE;
+
+        $header = NULL;
+        $data = array();
+        if (($handle = fopen($filename, 'r')) !== FALSE)
+        {
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
+            {
+                if(!$header)
+                    $header = $row;
+                else
+                    $data[] = array_combine($header, $row);
+            }
+            fclose($handle);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Prepare Instapaper items to import
+     *
+     * @param array $collection
+     *
+     * @return array
+     */
+    public static function prepareInstapaperItems($collection)
+    {
+        $items = array();
+        foreach ($collection as $line) {
+            if ($line['Folder'] != 'Unread') {
+                continue;
+            }
+            $item = array(
+                'title' => $line['Title'],
+                'url' => $line['URL'],
+                'date_add' => 0,
+                'is_article' => 1
+            );
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
+    /**
+     * Prepare Pocket items to import
+     *
+     * @param stdObject $list
+     *
+     * @return array
+     */
+    public static function preparePocketItems($list)
+    {
+        $items = array();
+        foreach ($list->list as $line) {
+            $item = array(
+                'title' => $line->resolved_title,
+                'url' => $line->resolved_url,
+                'date_add' => $line->time_added,
+                'is_article' => $line->is_article
+            );
+            $items[] = $item;
+        }
+
+        return $items;
+    }
 }
