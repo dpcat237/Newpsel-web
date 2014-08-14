@@ -54,6 +54,7 @@
         "celd/opml-import-export": "dev-master",
         "duellsy/pockpack": "2.*"
     },
+    //TODO: before update review "duellsy/pockpack" merged my pull request
     "scripts": {
         "post-install-cmd": [
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",

@@ -451,13 +451,21 @@ class LaterItemService
      *
      * @param int   $userId
      * @param int   $labelId
-     * @param array $items
+     * @param array $itemsCollections
      */
-    public function prepareToImport($userId, $labelId, $items)
+    public function prepareToImport($userId, $labelId, $itemsCollections)
     {
-        $jsonData = json_encode($items);
-        $redisKey = RedisConstants::IMPORT_LATER_ITEMS.'_'.$userId.'_'.$labelId.'_'.time();
-        $this->cache->setex($redisKey, 604800, $jsonData); //7 days life
-        $this->queue->executeImportItems($redisKey);
+        $part = 1;
+        foreach ($itemsCollections as $items) {
+            if (count($items) < 1) {
+                continue;
+            }
+
+            $redisKey = RedisConstants::IMPORT_LATER_ITEMS.'_'.$userId.'_'.$labelId.'_'.time().'_'.$part;
+            $jsonData = json_encode($items);
+            $this->cache->setex($redisKey, 604800, $jsonData); //7 days life
+            $this->queue->executeImportItems($redisKey);
+            $part++;
+        }
     }
 }

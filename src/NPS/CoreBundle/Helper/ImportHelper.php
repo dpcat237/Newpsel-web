@@ -134,7 +134,9 @@ class ImportHelper extends Helper
      */
     public static function prepareInstapaperItems($collection)
     {
+        $itemsCollection = array();
         $items = array();
+        $count = 0;
         foreach ($collection as $line) {
             if ($line['Folder'] != 'Unread') {
                 continue;
@@ -146,9 +148,19 @@ class ImportHelper extends Helper
                 'is_article' => 1
             );
             $items[] = $item;
+            $count++;
+            if ($count >= 250) {
+                $itemsCollection [] = $items;
+                $items = array();
+                $count = 0;
+            }
+        }
+        $itemsCollection [] = $items;
+        if (count($itemsCollection[0]) < 1) {
+            return array();
         }
 
-        return $items;
+        return $itemsCollection;
     }
 
     /**
@@ -160,7 +172,9 @@ class ImportHelper extends Helper
      */
     public static function preparePocketItems($list)
     {
+        $itemsCollection = array();
         $items = array();
+        $count = 0;
         foreach ($list['list'] as $line) {
             $url = (array_key_exists('resolved_url', $line) && strlen($line['resolved_url']) > 1)? $line['resolved_url'] : $line['given_url'];
             if (!$url) {
@@ -185,8 +199,18 @@ class ImportHelper extends Helper
                 'is_article' => $isArticle
             );
             $items[] = $item;
+            $count++;
+            if ($count >= 250) {
+                $itemsCollection [] = $items;
+                $items = array();
+                $count = 0;
+            }
+        }
+        $itemsCollection [] = $items;
+        if (count($itemsCollection[0]) < 1) {
+            return array();
         }
 
-        return $items;
+        return $itemsCollection;
     }
 }

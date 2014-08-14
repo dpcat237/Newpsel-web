@@ -308,9 +308,8 @@ class ItemController extends Controller
         $user = $this->get('security.context')->getToken()->getUser();
         $labelId = $session->get(ImportConstants::SESSION_LABEL_ID);
         $items = ImportHelper::preparePocketItems($list);
-        $count = count($items);
         $this->get('nps.entity.later_item')->prepareToImport($user->getId(), $labelId, $items);
-        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import', array('%quantity%' => $count)));
+        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import'));
 
         return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
     }
@@ -343,15 +342,14 @@ class ItemController extends Controller
 
         $user = $this->get('security.context')->getToken()->getUser();
         $items = ImportHelper::prepareInstapaperItems(ImportHelper::csvToArray($instapaperFile->getRealPath()));
-        $count = count($items);
-        if ($count < 1) {
+        if (count($items) < 1) {
             $request->getSession()->getFlashBag()->add('error', '_Invalid_quantity');
 
             return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
 
         $this->get('nps.entity.later_item')->prepareToImport($user->getId(), $labelId, $items);
-        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import', array('%quantity%' => $count)));
+        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import'));
 
         return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
     }

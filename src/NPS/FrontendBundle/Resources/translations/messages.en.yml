@@ -76,4 +76,4 @@ _Invalid_pocket_token_request: Some problems with connection to Pcket. Try again
 _Invalid_pocket_filter: Aren't any items to import from Pocket
 _Instapaper_import: Import from Instapaper
 _Invalid_quantity: Aren't unread items in file.
-_Valid_will_import: Succefully prepared %quantity% items which will be imported before next 24 hours.
+_Valid_will_import: Succefully received items will be imported before next 24 hours.
