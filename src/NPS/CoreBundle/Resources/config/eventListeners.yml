@@ -7,6 +7,7 @@ services:
           item_repository:   @=service("doctrine.orm.entity_manager").getRepository("NPSCoreBundle:Item")
           language_detector: @nps.detector.language
           entity_manager:    @doctrine.orm.entity_manager
+          crawler:           @nps.manager.crawler
 
     nps.listener.user:
       class: NPS\CoreBundle\EventListener\UserListener

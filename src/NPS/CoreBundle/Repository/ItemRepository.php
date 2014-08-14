@@ -77,9 +77,8 @@ class ItemRepository extends EntityRepository
             ->setMaxResults($limit)
             ->setParameter('feedId', $feedId)
             ->getQuery();
-        $itemCollection = $query->getResult();
 
-        return $itemCollection;
+        return $query->getResult();
     }
 
     /**
@@ -95,5 +94,23 @@ class ItemRepository extends EntityRepository
             ->setParameter('languageCode', $languageCode)
             ->getQuery();
         $query->execute();
+    }
+
+    /**
+     * Get items by feed
+     *
+     * @param int $feedId
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getByFeed($feedId, $limit = 10) {
+        $query = $this->createQueryBuilder('i')
+            ->where('i.feed = :feedId')
+            ->setParameter('feedId', $feedId)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        return $query->getResult();
     }
 }
