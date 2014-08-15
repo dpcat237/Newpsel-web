@@ -9,7 +9,6 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Constant\ImportConstants;
 use NPS\CoreBundle\Helper\ImportHelper;
-use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse,
@@ -195,7 +194,7 @@ class ItemController extends Controller
      *
      * @return JsonResponse
      *
-     * @Route("/item/{user_item_id}/unread_to_list", name="unread_to_list")
+     * @Route("/feed/{user_feed_id}/item/{user_item_id}/unread_to_list", name="unread_to_list")
      * @Secure(roles="ROLE_USER")
      * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
      */
@@ -236,9 +235,9 @@ class ItemController extends Controller
      *
      * @param LaterItem $laterItem
      *
-     * @Route("/label/{label_id}/item/{later_item_id}/mark_read", name="mark_later_read")
+     * @Route("/item/{later_item_id}/mark_later_read", name="mark_later_read")
      * @Secure(roles="ROLE_USER")
-     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"later_item_id": "id", "label_id": "later"}})
+     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"later_item_id": "id"}})
      *
      * @return JsonResponse
      */
@@ -263,7 +262,7 @@ class ItemController extends Controller
      * Add/remove star to item
      * @param UserItem $userItem user's item
      *
-     * @Route("/feed/{user_feed_id}/item/{user_item_id}/mark_star", name="mark_star")
+     * @Route("/item/{user_item_id}/mark_star", name="mark_star")
      * @Secure(roles="ROLE_USER")
      * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
      *
@@ -431,5 +430,107 @@ class ItemController extends Controller
         $this->get('nps.entity.later_item')->addLaterItemCheck($userItem, $later);
 
         return new JsonResponse(true);
+    }
+
+    /**
+     * Change state of later item to read
+     *
+     * @param UserItem $userItem user's item
+     *
+     * @Route("/item/{user_item_id}/mark_stared_read", name="mark_stared_read")
+     * @Secure(roles="ROLE_USER")
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
+     *
+     * @return JsonResponse
+     */
+    public function staredShowInTabAction(UserItem $userItem)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($userItem->getUserId() == $user->getId()) {
+            $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_READ);
+
+            $renderData = array(
+                'result' => NotificationHelper::OK_IS_READ
+            );
+
+            return new JsonResponse($renderData);
+        }
+    }
+
+    /**
+     * List of favorite items
+     *
+     * @Route("/item/items_favorite_list", name="items_stared_list")
+     * @Secure(roles="ROLE_USER")
+     * @Template()
+     *
+     * @return array
+     */
+    public function staredListAction()
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getStaredItems($user->getId());
+        $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
+
+        $viewData = array(
+            'items' => $userItems,
+            'title' => $this->get('translator')->trans('_Stared_list'),
+            'labels' => $labels
+        );
+
+        return $viewData;
+    }
+
+    /**
+     * Show item
+     *
+     * @param UserItem $userItem user's item
+     *
+     * @Route("/item/{user_item_id}/item_stared_view", name="item_stared_view")
+     * @Secure(roles="ROLE_USER")
+     * @Template()
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
+     *
+     * @return array
+     */
+    public function viewStaredAction(UserItem $userItem)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($user->getId() != $userItem->getUserId()) {
+            $route = $this->container->get('router')->generate('items_stared_list');
+
+            return new RedirectResponse($route);
+        }
+
+        $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_READ);
+        $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
+        $renderData = array(
+            'userItem' => $userItem,
+            'title' => $this->get('translator')->trans('_Stared_view'),
+            'labels' => $labels
+        );
+
+        return $renderData;
+    }
+
+    /**
+     * Unread user later item and go to list
+     *
+     * @param UserItem $userItem user's item
+     *
+     * @return JsonResponse
+     *
+     * @Route("/item/{user_item_id}/unread_to_stared_list", name="unread_to_stared_list")
+     * @Secure(roles="ROLE_USER")
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
+     */
+    public function unreadToStaredListAction(UserItem $userItem)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($userItem->getUserId() == $user->getId()) {
+            $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_UNREAD);
+        }
+
+        return new RedirectResponse($this->get('router')->generate('items_stared_list'));
     }
 }

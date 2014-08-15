@@ -36,9 +36,8 @@ class ItemRepository extends EntityRepository
             ->orderBy('i.dateAdd', 'DESC')
             ->setMaxResults($limit)
             ->getQuery();
-        $itemCollection = $query->getArrayResult();
 
-        return $itemCollection;
+        return $query->getArrayResult();
     }
 
     /**

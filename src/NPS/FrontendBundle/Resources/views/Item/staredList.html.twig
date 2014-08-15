@@ -7,13 +7,14 @@
 
                 <table class="table">
                     <tbody>
-                    {% for laterItem in items %}
-                        {% set userItem = laterItem.userItem %}
+                    {% for userItem in items %}
                         {% set item = userItem.item %}
                         <tr>
-                            <td class="list-later-item-btn">
-                                <i class="btn showLink icon-external-link" data-url="{{ url('mark_later_read', {'later_item_id': laterItem.id}) }}"
-                                   data-externallink="{{ item.link }}" data-id="{{ item.id }}" title="{{ '_Show_in_tab'|trans }}" ></i>
+                            <td class="list-item-btn">
+                                <i class="btn showLink icon-external-link" data-url="{{ url('mark_stared_read', {'user_item_id': userItem.id}) }}"
+                                   data-externallink="{{ item.link }}" data-id="{{ userItem.id }}" title="{{ '_Show_in_tab'|trans }}" ></i>
+                                <i id="itemStar-id-{{ userItem.id }}" class="btn starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}"
+                                   data-url="{{ url('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
                                 <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                                 <ul class="dropdown-menu">
                                     {% for label in labels %}
@@ -23,7 +24,10 @@
                                 </ul>
                             </td>
                             <td class="inbox-message">
-                                <a id="itemText-id-{{ item.id }}" class="list-item{% if laterItem.unread %} bold{% endif %}" href="{{ url('item_later_view', {'label_id': laterItem.LaterId, 'later_item_id': laterItem.id}) }}">{{ item.title|raw }}</a>
+                                <a id="itemText-id-{{ userItem.id }}" class="list-item{% if userItem.stared %} bold{% endif %}"
+                                   href="{{ url('item_stared_view', {'user_item_id': userItem.id}) }}">
+                                    {{ item.title|raw }}
+                                </a>
                             </td>
                             <td class="center dateColumn">{{ item.humanDateAdd }}</td>
                         </tr>

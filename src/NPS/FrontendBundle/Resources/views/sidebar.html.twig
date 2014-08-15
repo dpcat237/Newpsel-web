@@ -19,17 +19,17 @@
 
 
     <div class="" style="height: 43% !important;">
-        <a href="{{ url("homepage") }}" class="nav-header{% if app.request.get('_route') == 'homepage' %} selected{% endif %}" ><i class="icon-home"></i>{% trans %}Home{% endtrans %}</a>
-        {#<a href="dashboard-dark.html" class="nav-header" ><i class="icon-dashboard"></i>{% trans %}Starred{% endtrans %}</a>#}
-        <div class="blank-space"></div>
-
-        <a class="nav-header mOptAction" data-sebmenu="mLabelsList">
-            {% trans %}Labels{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
+        <a href="{{ url("homepage") }}" class="nav-header {% if app.request.get('_route') == 'homepage' %}selected{% endif %}" >
+            <i class="icon-home"></i>{{ '_Home'|trans }}
+        </a>
+        <a href="{{ url("items_stared_list") }}" class="nav-header {% if app.request.get('_route') == 'items_stared_list' %}selected{% endif %}" ><i class="icon-star"></i>{{ '_Starred'|trans }}</a>
+        <a class="nav-header mOptAction {% if app.request.get('_route') == 'items_later_list' %}selected{% endif %}" data-sebmenu="mLabelsList">
+            <i class="icon-tags"></i>{{ '_Labels'|trans }}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i></span>
         </a>
         {% render controller("NPSFrontendBundle:Label:menu") %}
 
-        <a class="nav-header mOptAction" data-sebmenu="mSubscriptionList">
-            {% trans %}Subscriptions{% endtrans %}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
+        <a class="nav-header mOptAction {% if app.request.get('_route') == 'items_list' %}selected{% endif %}" data-sebmenu="mSubscriptionList">
+            <i class="icon-rss"></i>{{ '_Feeds'|trans }}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i> </span>
         </a>
         {% render controller("NPSFrontendBundle:Feed:menu") %}
     </div>

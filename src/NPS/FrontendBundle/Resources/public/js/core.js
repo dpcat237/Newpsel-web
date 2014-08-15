@@ -281,6 +281,7 @@ var showExternalLink = function () {
             var url = elem.data('url');
             var externalLink = elem.data('externallink');
             var elemText = $('#itemText-id-'+elem.data('id'));
+            var elemStar = $('#itemStar-id-'+elem.data('id'));
 
             window.open(externalLink);
             if (elemText.hasClass('bold')) {
@@ -289,8 +290,13 @@ var showExternalLink = function () {
                     url: url,
                     dataType: 'json',
                     success: function (result) {
-                        if (result['result'] == "110") {
-                            elemText.removeClass('bold');
+                        if (result['result'] != "110") {
+                            return;
+                        }
+                        elemText.removeClass('bold');
+                        if (elemStar.length) {
+                            elemStar.removeClass('icon-star');
+                            elemStar.addClass('icon-star-empty');
                         }
                     }
                 });

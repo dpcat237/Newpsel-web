@@ -36,7 +36,7 @@
                                         data-url="{{ url('mark_read', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}"
                                         data-id="{{ userItem.id }}" title="{{ '_Read_unread'|trans }}" ></i>
                                     <i class="btn starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}"
-                                        data-url="{{ url('mark_star', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
+                                        data-url="{{ url('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
                                     <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                                     <ul class="dropdown-menu">
                                         {% for label in labels %}

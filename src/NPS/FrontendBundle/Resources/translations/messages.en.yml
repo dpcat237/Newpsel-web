@@ -17,6 +17,12 @@ notification_503: Feed doesn't exists
 #lists
 _notification_no_articles: Aren't new articles.
 
+#*** Sidebar ***
+_Home: Home
+_Starred: Starred
+_Labels: Labels
+_Feeds: Feeds
+
 #*** Menu ***
 _Settings: Settings
 _Manage_feeds: Manage feeds
@@ -84,3 +90,5 @@ _Read_unread: Mark as read / unread
 _Favorite_unfavorite: Mark as favorite / unfavorite
 _Set_label: Set a label
 _Show_in_tab: Show article in new tab
+_Stared_list: Favorite articles
+_Stared_view: Favorite article

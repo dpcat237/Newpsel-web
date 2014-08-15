@@ -187,4 +187,24 @@ class UserItemRepository extends EntityRepository
 
         return $query->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * Get users stared/favorite items
+     *
+     * @param int $userId
+     *
+     * @return array
+     */
+    public function getStaredItems($userId)
+    {
+        $query = $this->createQueryBuilder('ui')
+            ->where('ui.user = :userId')
+            ->andWhere('ui.stared = :stared')
+            ->setParameter('userId', $userId)
+            ->setParameter('stared', true)
+            ->orderBy('ui.dateAdd', 'DESC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
 }
