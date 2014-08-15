@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\UserItem;
@@ -80,9 +81,9 @@ class UserItemService extends AbstractEntityService
      */
     private function getNewStatus(UserItem $userItem, $change, $statusGet)
     {
-        if ($change == 1) {
+        if ($change == EntityConstants::STATUS_UNREAD) {
             $status = true;
-        } elseif ($change == 2)  {
+        } elseif ($change == EntityConstants::STATUS_READ)  {
             $status = false;
         } else {
             if ($userItem->$statusGet()) { //change current status

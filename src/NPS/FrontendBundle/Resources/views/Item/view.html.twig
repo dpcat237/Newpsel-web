@@ -6,6 +6,16 @@
         <div class="block span12">
             <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>
             <div class="block-body">
+                <div class="btn-group">
+                    <a class="btn icon-check" href="{{ url('unread_to_list', {'user_item_id': userItem.id}) }}" title="{{ '_Unread'|trans }}"></a>
+                    <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
+                    <ul class="dropdown-menu">
+                        {% for label in labels %}
+                            <li><a class="addLabelAction" data-url="{{ url('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
+                                   data-id="{{ label.id }}">{{ label.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 <p>
                     <span class="label label-disabled">on {{ item.humanDateAdd }}</span>
                     {% if (item.author) %}<span class="label label-disabled">by {{ item.author }}</span>{% endif %}

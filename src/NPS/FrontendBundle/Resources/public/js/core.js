@@ -13,6 +13,30 @@ var jsUrl = function () {
     };
 }();
 
+
+// ********************************************
+// Object addLabelAction
+// Add label to item
+// ********************************************
+var addLabelAction = function () {
+    function accessInit() {
+        $('.addLabelAction').click(function(){
+
+            var elem = $(this);
+            var url = elem.data('url');
+
+            $.ajax({
+                type: "GET",
+                url: url
+            });
+        });
+    }
+
+    return{
+        init : accessInit
+    }
+}();
+
 // ********************************************
 // Object subscribeNewsletter
 // Subscribe to newsletter

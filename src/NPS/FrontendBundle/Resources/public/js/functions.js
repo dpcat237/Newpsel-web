@@ -1,27 +1,30 @@
 $(document).ready(function(){
-    /*Subscribe*/
-    validGenericForm.init();
-
-    /*Subscribe to feed*/
-    subscribeFeed.init();
-
-    /*Show / hide submenu*/
-    showSubmenu.init();
-
-    /*Custom scrollbar*/
-    navScrollbar.init();
-
-    /*Stared action*/
-    staredAction.init();
-
-    /*Read action*/
-    readAction.init();
+    /*Create label*/
+    addLabelAction.init();
 
     /*Create label*/
     createLabel.init();
 
+    /*Custom scrollbar*/
+    navScrollbar.init();
+
+    /*Read action*/
+    readAction.init();
+
     /*Show external link*/
     showExternalLink.init();
+
+    /*Show / hide submenu*/
+    showSubmenu.init();
+
+    /*Stared action*/
+    staredAction.init();
+
+    /*Subscribe to feed*/
+    subscribeFeed.init();
+
+    /*Subscribe*/
+    validGenericForm.init();
 
     /*Login*/
     $('input').iCheck({

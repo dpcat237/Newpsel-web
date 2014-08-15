@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Constant\RedisConstants;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\Later;
@@ -116,11 +117,17 @@ class LaterItemService
 
     /**
      * Make later item read
+     *
      * @param LaterItem $laterItem
+     * @param int       $state
      */
-    public function makeLaterRead(LaterItem $laterItem)
+    public function makeLaterRead(LaterItem $laterItem, $state = 2)
     {
-        $laterItem->setUnread(false);
+        if ($state == EntityConstants::STATUS_READ) {
+            $laterItem->setUnread(false);
+        } else {
+            $laterItem->setUnread(true);
+        }
         $this->entityManager->persist($laterItem);
         $this->entityManager->flush();
     }
@@ -423,19 +430,41 @@ class LaterItemService
         return $userItem;
     }
 
-
     /**
      * Add new later item
      *
      * @param UserItem $userItem
      * @param int      $labelId
-     *
      */
     public function addLaterItem(UserItem $userItem, $labelId)
     {
         $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
         $later = $laterRepo->find($labelId);
         if (!$later instanceof Later) {
+            return;
+        }
+
+        $laterItem = new LaterItem();
+        $laterItem->setLater($later);
+        $laterItem->setUserItem($userItem);
+        $this->entityManager->persist($laterItem);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Add new later item. If it exists set Unread to true
+     *
+     * @param UserItem $userItem
+     * @param Later    $later
+     */
+    public function addLaterItemCheck(UserItem $userItem, Later $later)
+    {
+        $laterItem = $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->laterExists($later->getId(), $userItem->getId());
+        if ($laterItem instanceof LaterItem) {
+            $laterItem->setUnread(true);
+            $this->entityManager->persist($laterItem);
+            $this->entityManager->flush();
+
             return;
         }
 

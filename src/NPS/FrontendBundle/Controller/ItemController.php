@@ -6,6 +6,7 @@ use Duellsy\Pockpack\Pockpack;
 use Duellsy\Pockpack\PockpackAuth;
 use Duellsy\Pockpack\PockpackQueue;
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Constant\ImportConstants;
 use NPS\CoreBundle\Helper\ImportHelper;
 use stdClass;
@@ -47,13 +48,14 @@ class ItemController extends Controller
     public function listAction(UserFeed $userFeed)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $userItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
-        $userItems = $userItemRepo->getUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
+        $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
+        $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
         $viewData = array(
             'userItems' => $userItems,
             'title' => $userFeed->getTitle(),
-            'userFeedId' => $userFeed->getId()
+            'userFeedId' => $userFeed->getId(),
+            'labels' => $labels
         );
 
         return $viewData;
@@ -77,10 +79,12 @@ class ItemController extends Controller
         if ($label->getUserId() == $user->getId()) {
             $labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
             $itemsList = $labelItemRepo->getUnread($label->getId());
+            $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
             $viewData = array(
                 'items' => $itemsList,
-                'title' => 'Label '.$label->getName()
+                'title' => 'Label '.$label->getName(),
+                'labels' => $labels
             );
 
             return $viewData;
@@ -106,13 +110,16 @@ class ItemController extends Controller
         $user = $this->get('security.context')->getToken()->getUser();
         if ($user->getId() != $userItem->getUserId()) {
             $route = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getFeedId()));
+
             return new RedirectResponse($route);
         }
 
-        $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isUnread", "setUnread", 2);
+        $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isUnread", "setUnread", EntityConstants::STATUS_READ);
+        $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
         $renderData = array(
             'userItem' => $userItem,
-            'title' => $userFeed->getTitle()
+            'title' => $userFeed->getTitle(),
+            'labels' => $labels
         );
 
         return $renderData;
@@ -135,12 +142,14 @@ class ItemController extends Controller
         $user = $this->get('security.context')->getToken()->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
             $laterItemService = $this->get('nps.entity.later_item');
-            $item = $laterItemService->readItem($laterItem);
+            $laterItemService->readItem($laterItem);
             $title = $laterItemService->getViewTitle($laterItem, $user);
+            $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
             $renderData = array(
-                'item' => $item,
-                'title' => $title
+                'laterItem' => $laterItem,
+                'title' => $title,
+                'labels' => $labels
             );
 
             return $renderData;
@@ -179,7 +188,51 @@ class ItemController extends Controller
     }
 
     /**
-     * Change stat of later item to read
+     * Unread user item and go to list
+     *
+     * @param Request  $request  Request
+     * @param UserItem $userItem user's item
+     *
+     * @return JsonResponse
+     *
+     * @Route("/item/{user_item_id}/unread_to_list", name="unread_to_list")
+     * @Secure(roles="ROLE_USER")
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
+     */
+    public function unreadToListAction(Request $request, UserItem $userItem)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($user->getId() == $userItem->getUserId()) {
+            $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isUnread", "setUnread", EntityConstants::STATUS_UNREAD);
+        }
+
+        return new RedirectResponse($this->get('router')->generate('items_list', array('user_feed_id' => $request->get('user_feed_id'))));
+    }
+
+    /**
+     * Unread user later item and go to list
+     *
+     * @param Request   $request   Request
+     * @param LaterItem $laterItem user's later item
+     *
+     * @return JsonResponse
+     *
+     * @Route("/item/{later_item_id}/unread_to_later_list", name="unread_to_later_list")
+     * @Secure(roles="ROLE_USER")
+     * @ParamConverter("laterItem", class="NPSCoreBundle:LaterItem", options={"mapping": {"later_item_id": "id"}})
+     */
+    public function unreadToLaterListAction(Request $request, LaterItem $laterItem)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($laterItem->getLater()->getUserId() == $user->getId()) {
+            $this->get('nps.entity.later_item')->makeLaterRead($laterItem, EntityConstants::STATUS_UNREAD);
+        }
+
+        return new RedirectResponse($this->get('router')->generate('items_later_list', array('label_id' => $laterItem->getLaterId())));
+    }
+
+    /**
+     * Change state of later item to read
      *
      * @param LaterItem $laterItem
      *
@@ -196,7 +249,7 @@ class ItemController extends Controller
             $this->get('nps.entity.later_item')->makeLaterRead($laterItem);
 
             $item = $laterItem->getUserItem()->getItem();
-            $this->get('nps.entity.user_item')->changeStatus($user, $item, "isUnread", "setUnread", 2);
+            $this->get('nps.entity.user_item')->changeStatus($user, $item, "isUnread", "setUnread", EntityConstants::STATUS_READ);
 
             $renderData = array(
                 'result' => NotificationHelper::OK_IS_READ
@@ -352,5 +405,31 @@ class ItemController extends Controller
         $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import'));
 
         return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
+    }
+
+    /**
+     * Add label to item or later item
+     *
+     * @param UserItem $userItem user's item
+     * @param Later    $later    label
+     *
+     * @return JsonResponse
+     *
+     * @Route("/item/{user_item_id}/add_label/{label_id}", name="item_add_label")
+     * @Secure(roles="ROLE_USER")
+     * @Method("GET")
+     * @ParamConverter("userItem", class="NPSCoreBundle:UserItem", options={"mapping": {"user_item_id": "id"}})
+     * @ParamConverter("later", class="NPSCoreBundle:Later", options={"mapping": {"label_id": "id"}})
+     */
+    public function addLabelAction(UserItem $userItem, Later $later)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($user->getId() != $userItem->getUserId()) {
+            return new JsonResponse(false);
+        }
+
+        $this->get('nps.entity.later_item')->addLaterItemCheck($userItem, $later);
+
+        return new JsonResponse(true);
     }
 }
