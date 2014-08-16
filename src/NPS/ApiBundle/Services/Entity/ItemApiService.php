@@ -5,7 +5,6 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Repository\UserItemRepository;
-use NPS\CoreBundle\Services\Entity\ItemService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
@@ -25,11 +24,6 @@ class ItemApiService
     protected $entityManager;
 
     /**
-     * @var ItemService
-     */
-    private $itemService;
-
-    /**
      * @var SecureService
      */
     private $secure;
@@ -37,45 +31,13 @@ class ItemApiService
 
     /**
      * @param Registry      $doctrine    Doctrine Registry
-     * @param ItemService   $itemService ItemService
      * @param SecureService $secure      SecureService
      */
-    public function __construct(Registry $doctrine, ItemService $itemService, SecureService $secure)
+    public function __construct(Registry $doctrine, SecureService $secure)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
-        $this->itemService = $itemService;
         $this->secure = $secure;
-    }
-
-    /**
-     * Sync shared item from api
-     * @param $appKey
-     * @param $sharedItems
-     *
-     * @return array
-     */
-    public function syncShared($appKey, $sharedItems)
-    {
-        $error = false;
-        $result = false;
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-            $result = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
-        if (empty($error) && is_array($sharedItems) && count($sharedItems)){
-            $this->itemService->addSharedItems($user, $sharedItems);
-            $result = NotificationHelper::OK;
-        }
-        $responseData = array(
-            'error' => $error,
-            'result' => $result,
-        );
-
-        return $responseData;
     }
 
     /**

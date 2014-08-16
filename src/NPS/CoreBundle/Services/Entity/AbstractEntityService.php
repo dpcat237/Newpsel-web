@@ -2,7 +2,6 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Symfony\Bridge\Monolog\Logger;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Services\NotificationManager,
     NPS\CoreBundle\Services\UserWrapper;

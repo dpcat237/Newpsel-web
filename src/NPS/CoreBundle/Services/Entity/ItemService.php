@@ -124,18 +124,6 @@ class ItemService
     }
 
     /**
-     * Add shared pages from api
-     * @param User $user
-     * @param $sharedItems
-     */
-    public function addSharedItems(User $user, $sharedItems)
-    {
-        foreach ($sharedItems as $sharedItem) {
-            $this->laterItem->addPageToLater($user, $sharedItem['label_api_id'], $sharedItem['title'], $sharedItem['text'], true);
-        }
-    }
-
-    /**
      * Add item to subscribers
      *
      * @param Item  $item      Item

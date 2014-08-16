@@ -20,7 +20,7 @@ class ChromeController extends Controller
     public function addPageAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $itemService = $this->get('api.label.service');
+        $itemService = $this->get('api.later_item.service');
         $responseData = $itemService->addPage($json['appKey'], $json['labelId'], $json['webTitle'], $json['webUrl']);
         $response = new JsonResponse($responseData);
 

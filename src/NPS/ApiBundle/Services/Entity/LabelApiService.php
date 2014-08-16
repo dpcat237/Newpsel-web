@@ -10,13 +10,9 @@ use Predis\Client;
 use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Constant\EntityConstants;
-use NPS\CoreBundle\Entity\Later;
-use NPS\CoreBundle\Helper\ArrayHelper;
-use NPS\CoreBundle\Services\Entity\LaterService,
-    NPS\CoreBundle\Services\Entity\LaterItemService;
+use NPS\CoreBundle\Services\Entity\LaterService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Services\QueueLauncherService;
 
 
 /**
@@ -24,11 +20,6 @@ use NPS\CoreBundle\Services\QueueLauncherService;
  */
 class LabelApiService
 {
-    /**
-     * @var QueueLauncherService
-     */
-    private $queueLauncher;
-
     /**
      * @var Doctrine Registry
      */
@@ -43,11 +34,6 @@ class LabelApiService
      * @var LaterService
      */
     private $labelService;
-
-    /**
-     * @var LaterItemService
-     */
-    private $labelItemService;
 
     /**
      * @var SecureService
@@ -66,21 +52,17 @@ class LabelApiService
 
 
     /**
-     * @param QueueLauncherService          $queueLauncher    QueueLauncherService
      * @param Registry                      $doctrine         Doctrine Registry
      * @param SecureService                 $secure           SecureService
      * @param LaterService                  $labelService     LaterService
-     * @param LaterItemService              $labelItemService LaterItemService
      * @param Client                        $cache            Redis Client
      * @param ContainerAwareEventDispatcher $eventDispatcher  ContainerAwareEventDispatcher
      */
-    public function __construct(QueueLauncherService $queueLauncher, Registry $doctrine, SecureService $secure, LaterService $labelService, LaterItemService $labelItemService, Client $cache, ContainerAwareEventDispatcher $eventDispatcher)
+    public function __construct(Registry $doctrine, SecureService $secure, LaterService $labelService, Client $cache, ContainerAwareEventDispatcher $eventDispatcher)
     {
-        $this->queueLauncher = $queueLauncher;
         $this->doctrine = $doctrine;
         $this->eventDispatcher = $eventDispatcher;
         $this->labelService = $labelService;
-        $this->labelItemService = $labelItemService;
         $this->secure = $secure;
         $this->cache = $cache;
     }
@@ -303,101 +285,5 @@ class LabelApiService
         }
 
         return array($apiLabels, $labels);
-    }
-
-    /**
-     * Sync later item from API to database to be read later
-     *
-     * @param array $appKey     login key
-     * @param array $laterItems selected items to be read later
-     *
-     * @return array
-     */
-    public function syncLaterItemsApi($appKey, $laterItems)
-    {
-        $error = false;
-        $result = false;
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-            $result = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
-        if (empty($error) && is_array($laterItems) && count($laterItems)){
-            $this->labelService->syncLaterItems($user->getId(), $laterItems);
-            //get complete content for partial articles
-            $this->queueLauncher->executeCrawling($user->getId());
-
-            $result = NotificationHelper::OK;
-        }
-        $responseData = array(
-            'error' => $error,
-            'result' => $result,
-        );
-
-        return $responseData;
-    }
-
-    /**
-     * Sync later item to API and update the reviewed items
-     *
-     * @param array $appKey       login key
-     * @param array $dictateItems items for dictation
-     * @param int   $limit        limit of dictations to sync
-     *
-     * @return array
-     */
-    public function syncDictateItems($appKey, $dictateItems, $limit)
-    {
-        $error = false;
-        $result = array();
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-            $result = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
-        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
-        if (empty($error) && is_array($readItems) && count($readItems)) {
-            $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
-        }
-        if (empty($error)) {
-            $result = $this->labelItemService->getUnreadItemsApi($user->getPreference()->getReadLaterId(), $unreadItems, $limit);
-        }
-        $responseData = array(
-            'error' => $error,
-            'result' => $result,
-        );
-
-        return $responseData;
-    }
-
-    /**
-     * Add page for Chrome api
-     *
-     * @param string $appKey
-     * @param int    $labelId
-     * @param string $webTitle
-     * @param string $webUrl
-     *
-     * @return array
-     */
-    public function addPage($appKey, $labelId, $webTitle, $webUrl)
-    {
-        $response = false;
-        $user = $this->secure->getUserByDevice($appKey);
-        if ($user instanceof User) {
-            $this->labelItemService->addPageToLater($user, $labelId, $webTitle, $webUrl, true);
-            $response = true;
-        }
-        $this->queueLauncher->executeCrawling($user->getId());
-
-        $responseData = array(
-            'response' => $response
-        );
-
-        return $responseData;
     }
 }

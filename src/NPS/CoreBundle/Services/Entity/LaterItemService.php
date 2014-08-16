@@ -8,6 +8,7 @@ use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\ArrayHelper;
+use NPS\CoreBundle\Repository\LaterItemRepository;
 use Predis\Client;
 use NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
@@ -171,7 +172,7 @@ class LaterItemService
      *
      * @return array
      */
-    private function getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread)
+    private function getUnreadForApiRecursive(LaterItemRepository $laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread)
     {
         $laterItems = $laterItemRepo->getUnreadForApiByLabel($labelId, $begin, $limit);
         if (count($unreadIds)) {
@@ -496,5 +497,37 @@ class LaterItemService
             $this->queue->executeImportItems($redisKey);
             $part++;
         }
+    }
+
+    /**
+     * Add later items for specific user
+     *
+     * @param integer $userId
+     * @param array   $items
+     */
+    public function syncLaterItems($userId, $items)
+    {
+        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
+        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+
+        foreach ($items as $itemData) {
+            $itemId = $itemData['item_id'];
+            $labelId = $itemData['label_id'];
+            $userItem = $userItemRepo->hasItem($userId, $itemId);
+            if (!$userItem instanceof UserItem) {
+                continue;
+            }
+
+            $laterItem = $laterItemRepo->laterExists($labelId, $userItem->getId());
+            if ($laterItem instanceof LaterItem) {
+                $laterItem->setUnread(true);
+                $this->entityManager->persist($laterItem);
+
+                continue;
+            }
+
+            $this->addLaterItem($userItem, $labelId);
+        }
+        $this->entityManager->flush();
     }
 }

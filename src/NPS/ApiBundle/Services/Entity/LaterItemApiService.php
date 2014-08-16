@@ -7,6 +7,8 @@ use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Repository\LaterItemRepository;
+use NPS\CoreBundle\Services\Entity\LaterItemService;
+use NPS\CoreBundle\Services\QueueLauncherService;
 
 /**
  * LaterItemApiService
@@ -24,20 +26,61 @@ class LaterItemApiService
     protected $entityManager;
 
     /**
+     * @var LaterItemService
+     */
+    private $laterItem;
+
+    /**
      * @var SecureService
      */
     private $secure;
 
+    /**
+     * @var QueueLauncherService
+     */
+    private $queueLauncher;
+
 
     /**
-     * @param Registry      $doctrine    Doctrine Registry
-     * @param SecureService $secure      SecureService
+     * @param Registry             $doctrine         Doctrine Registry
+     * @param SecureService        $secure           SecureService
+     * @param QueueLauncherService $queueLauncher    QueueLauncherService
+     * @param LaterItemService     $laterItem LaterItemService
      */
-    public function __construct(Registry $doctrine, SecureService $secure)
+    public function __construct(Registry $doctrine, SecureService $secure, QueueLauncherService $queueLauncher, LaterItemService $laterItem)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
+        $this->laterItem = $laterItem;
         $this->secure = $secure;
+        $this->queueLauncher = $queueLauncher;
+    }
+
+    /**
+     * Add page for Chrome api
+     *
+     * @param string $appKey
+     * @param int    $labelId
+     * @param string $webTitle
+     * @param string $webUrl
+     *
+     * @return array
+     */
+    public function addPage($appKey, $labelId, $webTitle, $webUrl)
+    {
+        $response = false;
+        $user = $this->secure->getUserByDevice($appKey);
+        if ($user instanceof User) {
+            $this->laterItem->addPageToLater($user, $labelId, $webTitle, $webUrl, true);
+            $response = true;
+        }
+        $this->queueLauncher->executeCrawling($user->getId());
+
+        $responseData = array(
+            'response' => $response
+        );
+
+        return $responseData;
     }
 
     /**
@@ -168,5 +211,117 @@ class LaterItemApiService
         }
 
         return $laterItems;
+    }
+
+    /**
+     * Sync later item from API to database to be read later
+     *
+     * @param array $appKey     login key
+     * @param array $laterItems selected items to be read later
+     *
+     * @return array
+     */
+    public function syncLaterItemsApi($appKey, $laterItems)
+    {
+        $error = false;
+        $result = false;
+
+        $user = $this->secure->getUserByDevice($appKey);
+        if (!$user instanceof User) {
+            $error = NotificationHelper::ERROR_NO_LOGGED;
+            $result = NotificationHelper::ERROR_NO_LOGGED;
+        }
+
+        if (empty($error) && is_array($laterItems) && count($laterItems)){
+            $this->laterItem->syncLaterItems($user->getId(), $laterItems);
+            //get complete content for partial articles
+            $this->queueLauncher->executeCrawling($user->getId());
+
+            $result = NotificationHelper::OK;
+        }
+        $responseData = array(
+            'error' => $error,
+            'result' => $result,
+        );
+
+        return $responseData;
+    }
+
+    /**
+     * Sync shared item from api
+     * @param $appKey
+     * @param $sharedItems
+     *
+     * @return array
+     */
+    public function syncShared($appKey, $sharedItems)
+    {
+        $error = false;
+        $result = false;
+
+        $user = $this->secure->getUserByDevice($appKey);
+        if (!$user instanceof User) {
+            $error = NotificationHelper::ERROR_NO_LOGGED;
+            $result = NotificationHelper::ERROR_NO_LOGGED;
+        }
+
+        if (empty($error) && is_array($sharedItems) && count($sharedItems)){
+            $this->addSharedItems($user, $sharedItems);
+            $result = NotificationHelper::OK;
+        }
+        $responseData = array(
+            'error' => $error,
+            'result' => $result,
+        );
+
+        return $responseData;
+    }
+
+    /**
+     * Add shared pages from api
+     *
+     * @param User  $user
+     * @param array $sharedItems
+     */
+    public function addSharedItems(User $user, $sharedItems)
+    {
+        foreach ($sharedItems as $sharedItem) {
+            $this->laterItem->addPageToLater($user, $sharedItem['label_api_id'], $sharedItem['title'], $sharedItem['text'], true);
+        }
+    }
+
+    /**
+     * Sync later item to API and update the reviewed items
+     *
+     * @param array $appKey       login key
+     * @param array $dictateItems items for dictation
+     * @param int   $limit        limit of dictations to sync
+     *
+     * @return array
+     */
+    public function syncDictateItems($appKey, $dictateItems, $limit)
+    {
+        $error = false;
+        $result = array();
+
+        $user = $this->secure->getUserByDevice($appKey);
+        if (!$user instanceof User) {
+            $error = NotificationHelper::ERROR_NO_LOGGED;
+            $result = NotificationHelper::ERROR_NO_LOGGED;
+        }
+
+        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
+        if (empty($error) && is_array($readItems) && count($readItems)) {
+            $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
+        }
+        if (empty($error)) {
+            $result = $this->laterItem->getUnreadItemsApi($user->getPreference()->getReadLaterId(), $unreadItems, $limit);
+        }
+        $responseData = array(
+            'error' => $error,
+            'result' => $result,
+        );
+
+        return $responseData;
     }
 }

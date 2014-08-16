@@ -7,10 +7,8 @@ use Predis\Client;
 use NPS\CoreBundle\Services\NotificationManager;
 use NPS\CoreBundle\Services\UserWrapper;
 use Symfony\Component\Form\Form;
-use NPS\CoreBundle\Entity\Later,
-    NPS\CoreBundle\Entity\LaterItem,
-    NPS\CoreBundle\Entity\User,
-    NPS\CoreBundle\Entity\UserItem;
+use NPS\CoreBundle\Entity\Later;
+use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
@@ -23,24 +21,17 @@ class LaterService extends AbstractEntityService
      */
     private $cache;
 
-    /**
-     * @var LaterItemService
-     */
-    protected $laterItem;
-
 
     /**
      * @param Registry            $doctrine     Registry
-     * @param Client           $cache     Client
+     * @param Client              $cache     Client
      * @param UserWrapper         $userWrapper  UserWrapper
      * @param NotificationManager $notification NotificationManager
-     * @param LaterItemService    $laterItem LaterItemService
      */
-    public function __construct(Registry $doctrine, Client $cache, UserWrapper $userWrapper, NotificationManager $notification, LaterItemService $laterItem)
+    public function __construct(Registry $doctrine, Client $cache, UserWrapper $userWrapper, NotificationManager $notification)
     {
         parent::__construct($doctrine, $userWrapper, $notification);
         $this->cache = $cache;
-        $this->laterItem = $laterItem;
     }
 
     /**
@@ -94,45 +85,13 @@ class LaterService extends AbstractEntityService
     }
 
     /**
-     * Add later items for specific user
-     *
-     * @param integer $userId
-     * @param array   $items
-     */
-    public function syncLaterItems($userId, $items)
-    {
-        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
-        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-
-        foreach ($items as $itemData) {
-            $itemId = $itemData['item_id'];
-            $labelId = $itemData['label_id'];
-            $userItem = $userItemRepo->hasItem($userId, $itemId);
-            if (!$userItem instanceof UserItem) {
-                continue;
-            }
-
-            $laterItem = $laterItemRepo->laterExists($labelId, $userItem->getId());
-            if ($laterItem instanceof LaterItem) {
-                $laterItem->setUnread(true);
-                $this->entityManager->persist($laterItem);
-
-                continue;
-            }
-
-            $this->laterItem->addLaterItem($userItem, $labelId);
-        }
-        $this->entityManager->flush();
-    }
-
-    /**
      * Create new Label
      *
      * @param User $user
      * @param $name
      * @param null $dateUp
      *
-     * @return Label
+     * @return Later
      */
     public function createLabel(User $user, $name, $dateUp = null)
     {
