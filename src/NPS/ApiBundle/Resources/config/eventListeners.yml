@@ -12,3 +12,4 @@ services:
           - { name: kernel.event_listener, event: nps.feed.modified, method: onFeedModified }
       arguments:
           gcm.service: @nps.api.gcm.service
+          api.label:   @api.label.service

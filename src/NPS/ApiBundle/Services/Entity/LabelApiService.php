@@ -77,23 +77,25 @@ class LabelApiService
     {
         $response = false;
         $labels = array();
-
         $user = $this->secure->getUserByDevice($appKey);
-        if ($user instanceof User) {
-            $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-            $orderBy = array('name' => 'ASC');
-            $labelsData = $labelRepo->findByUser($user, $orderBy);
+        if (!$user instanceof User) {
+            $responseData = array(
+                'response' => $response,
+                'labels' => $labels
+            );
 
-            //prepare labels for api
-            foreach ($labelsData as $lab) {
-                $label['id'] = $lab->getId();
-                $label['name'] = $lab->getName();
-                $labels[] = $label;
-            }
-            $response = true;
+            return $responseData;
         }
+
+        $redisKey = RedisConstants::LABEL_TREE.'_'.$user->getId();
+        $labelsJson = $this->cache->get($redisKey);
+        if (!strlen($labelsJson)) {
+            $this->updateLabelsTree($user->getId());
+            $labelsJson = $this->cache->get($redisKey);
+        }
+        $labels = json_decode($labelsJson, true);
         $responseData = array(
-            'response' => $response,
+            'response' => true,
             'labels' => $labels
         );
 
@@ -285,5 +287,27 @@ class LabelApiService
         }
 
         return array($apiLabels, $labels);
+    }
+
+    /**
+     * Update labels tree in cache
+     *
+     * @param int $userId
+     */
+    public function updateLabelsTree($userId)
+    {
+        $labels = array();
+        $redisKey = RedisConstants::LABEL_TREE.'_'.$userId;
+        $labelsData = $this->doctrine->getRepository('NPSCoreBundle:Later')->getUserLabel($userId);
+
+        //prepare labels for api
+        foreach ($labelsData as $lab) {
+            $label['id'] = $lab->getId();
+            $label['name'] = $lab->getName();
+            $labels[] = $label;
+        }
+
+        $labelsJson = json_encode($labels);
+        $this->cache->set($redisKey, $labelsJson);
     }
 }
