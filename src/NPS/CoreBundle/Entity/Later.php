@@ -30,7 +30,7 @@ class Later extends AbstractEntity {
     protected $laterItems;
 
     /**
-     * @ORM\OneToMany(targetEntity="Preference", mappedBy="sharedLater")
+     * @ORM\OneToMany(targetEntity="Preference", mappedBy="readLater")
      **/
     protected $preferences;
 
