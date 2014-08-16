@@ -12,7 +12,7 @@ use NPS\CoreBundle\Entity\AbstractEntity;
  * Item
  *
  * @ORM\Entity(repositoryClass="NPS\CoreBundle\Repository\ItemRepository")
- * @ORM\Table(name="item")
+ * @ORM\Table(name="item",indexes={@ORM\Index(name="search_idx", columns={"link"})})
  * @ORM\HasLifecycleCallbacks
  */
 class Item extends AbstractEntity
