@@ -5,6 +5,7 @@ services:
           - { name: kernel.event_listener, event: nps.label.modified, method: onLabelModified }
       arguments:
           gcm.service: @nps.api.gcm.service
+          api.label:   @api.label.service
 
     nps.api.listener.feed:
       class: NPS\ApiBundle\EventListener\FeedListener
@@ -12,4 +13,3 @@ services:
           - { name: kernel.event_listener, event: nps.feed.modified, method: onFeedModified }
       arguments:
           gcm.service: @nps.api.gcm.service
-          api.label:   @api.label.service
