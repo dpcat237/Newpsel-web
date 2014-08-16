@@ -52,9 +52,9 @@
         "eko/googletranslatebundle": "dev-master",
         "endroid/gcm-bundle": "dev-master",
         "celd/opml-import-export": "dev-master",
-        "duellsy/pockpack": "2.*"
+        "duellsy/pockpack": "dev-master",
+        "hwi/oauth-bundle": "0.4.*@dev"
     },
-    //TODO: before update review "duellsy/pockpack" merged my pull request
     "scripts": {
         "post-install-cmd": [
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",

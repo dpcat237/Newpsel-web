@@ -29,6 +29,7 @@ class AppKernel extends Kernel
             new NPS\ApiBundle\NPSApiBundle(),
             new Eko\GoogleTranslateBundle\EkoGoogleTranslateBundle(),
             new Endroid\Bundle\GcmBundle\EndroidGcmBundle(),
+            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             //new FOS\ElasticaBundle\FOSElasticaBundle(),
             //new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),

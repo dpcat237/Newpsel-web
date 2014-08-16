@@ -53,6 +53,13 @@ services:
         calls:
             - [ setCurrentUser ]
 
+#** Auth **
+    hwi_oauth.user.provider.entity:
+        class: HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUserProvider
+    ib_user.oauth_user_provider:
+        class: NPS\CoreBundle\Provider\OAuthProvider
+        arguments: [@session, @doctrine, @security.encoder_factory]
+
 #**External services **
     gedmo.listener.timestampable:
           class: Gedmo\Timestampable\TimestampableListener

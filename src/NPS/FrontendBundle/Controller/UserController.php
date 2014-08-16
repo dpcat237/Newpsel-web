@@ -65,6 +65,7 @@ class UserController extends Controller
 
     /**
      * Process a POST for a login
+     *
      * @param Request $request
      *
      * @return boolean
@@ -104,10 +105,10 @@ class UserController extends Controller
      *
      * @param Request $request the current request
      *
-     * @return Response
-     *
-     * @Route("/sign_in", name="sign_in")
      * @Template("NPSFrontendBundle:User:sign_in.html.twig")
+     * Routing is defined in routing.yml
+     *
+     * @return Response
      */
     public function loginAction(Request $request)
     {
@@ -168,13 +169,14 @@ class UserController extends Controller
     }
 
     /**
-     * Signup action
+     * Sign up action
+     *
      * @param Request $request
      *
-     * @return Response|RedirectResponse
-     *
-     * @Route("/sign_up", name="sign_up")
      * @Template("NPSFrontendBundle:User:sign_up.html.twig")
+     * Routing is defined in routing.yml
+     *
+     * @return Response|RedirectResponse
      */
     public function signupAction(Request $request)
     {
@@ -239,17 +241,8 @@ class UserController extends Controller
         return $ok;
     }
 
-    /**
-     * Logout
-     * @param Request $request
-     *
-     * @return RedirectResponse
-     * @Route("/logout", name="logout")
-     */
-    public function logoutAction(Request $request)
+    public function twitterCallbackAction()
     {
-        $request->getSession()->invalidate();
-
-        return new RedirectResponse($this->container->get('router')->generate('welcome'));
+        echo 'tut: twitterCallbackAction'; exit;
     }
 }

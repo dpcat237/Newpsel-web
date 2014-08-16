@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3037b15844c365c0b70a51f8212b8751",
+    "hash": "e5d23529fcfb4b3215a69d30ed424229",
     "packages": [
         {
             "name": "celd/opml-import-export",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clarence-eldefors/opml-feeds.git",
-                "reference": "effac430926e2219ddd8f64111123bbca8fe2c97"
+                "reference": "acb301d833f090a5790cdeed8038951023ea8d02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/clarence-eldefors/opml-feeds/zipball/effac430926e2219ddd8f64111123bbca8fe2c97",
-                "reference": "effac430926e2219ddd8f64111123bbca8fe2c97",
+                "url": "https://api.github.com/repos/clarence-eldefors/opml-feeds/zipball/acb301d833f090a5790cdeed8038951023ea8d02",
+                "reference": "acb301d833f090a5790cdeed8038951023ea8d02",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                 "opml",
                 "rss"
             ],
-            "time": "2014-05-25 12:10:50"
+            "time": "2014-08-12 20:08:21"
         },
         {
             "name": "doctrine/annotations",
@@ -336,12 +336,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "6d0b0486bd6284d0886fef22fea164f7349990fb"
+                "reference": "83f92c3f28e927917ddcb7cf214ce99c0b72004b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/6d0b0486bd6284d0886fef22fea164f7349990fb",
-                "reference": "6d0b0486bd6284d0886fef22fea164f7349990fb",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/83f92c3f28e927917ddcb7cf214ce99c0b72004b",
+                "reference": "83f92c3f28e927917ddcb7cf214ce99c0b72004b",
                 "shasum": ""
             },
             "require": {
@@ -399,7 +399,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2014-08-05 18:04:50"
+            "time": "2014-08-13 07:14:49"
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -769,16 +769,16 @@
         },
         {
             "name": "duellsy/pockpack",
-            "version": "v2.4.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/duellsy/pockpack.git",
-                "reference": "fb72366f563a832f4ef125613445655d299a463f"
+                "reference": "b38b9942631ae786c6ed953da65f666ea9305f3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/duellsy/pockpack/zipball/fb72366f563a832f4ef125613445655d299a463f",
-                "reference": "fb72366f563a832f4ef125613445655d299a463f",
+                "url": "https://api.github.com/repos/duellsy/pockpack/zipball/b38b9942631ae786c6ed953da65f666ea9305f3c",
+                "reference": "b38b9942631ae786c6ed953da65f666ea9305f3c",
                 "shasum": ""
             },
             "require": {
@@ -820,7 +820,7 @@
                 "read it later",
                 "readitlater"
             ],
-            "time": "2014-07-16 00:03:32"
+            "time": "2014-08-14 00:24:16"
         },
         {
             "name": "eko/googletranslatebundle",
@@ -1394,12 +1394,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "50a80ef0d5fe8786d1786dc7604210580bf881f6"
+                "reference": "ef1b0c3075f18785fbbaa60be6b203d5490a81be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/50a80ef0d5fe8786d1786dc7604210580bf881f6",
-                "reference": "50a80ef0d5fe8786d1786dc7604210580bf881f6",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ef1b0c3075f18785fbbaa60be6b203d5490a81be",
+                "reference": "ef1b0c3075f18785fbbaa60be6b203d5490a81be",
                 "shasum": ""
             },
             "require": {
@@ -1451,7 +1451,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2014-08-08 22:10:18"
+            "time": "2014-08-15 06:03:39"
         },
         {
             "name": "guzzlehttp/streams",
@@ -1505,6 +1505,119 @@
                 "stream"
             ],
             "time": "2014-08-10 23:57:01"
+        },
+        {
+            "name": "hwi/oauth-bundle",
+            "version": "dev-master",
+            "target-dir": "HWI/Bundle/OAuthBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hwi/HWIOAuthBundle.git",
+                "reference": "835ab5eb2f8bd783a11980e8cbab549ee01aa720"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/835ab5eb2f8bd783a11980e8cbab549ee01aa720",
+                "reference": "835ab5eb2f8bd783a11980e8cbab549ee01aa720",
+                "shasum": ""
+            },
+            "require": {
+                "kriswallsmith/buzz": "~0.7",
+                "php": ">=5.3.3",
+                "symfony/framework-bundle": "~2.3",
+                "symfony/options-resolver": "~2.1",
+                "symfony/security-bundle": "~2.1",
+                "symfony/yaml": "~2.3"
+            },
+            "require-dev": {
+                "doctrine/orm": "~2.3",
+                "symfony/twig-bundle": "~2.1",
+                "symfony/validator": "~2.1"
+            },
+            "suggest": {
+                "doctrine/doctrine-bundle": "to use Doctrine user provider",
+                "friendsofsymfony/user-bundle": "to connect FOSUB with this bundle",
+                "symfony/twig-bundle": "to use the Twig hwi_oauth_* functions"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "HWI\\Bundle\\OAuthBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/hwi/HWIOAuthBundle/contributors"
+                },
+                {
+                    "name": "Joseph Bielawski",
+                    "email": "stloyd@gmail.com"
+                },
+                {
+                    "name": "Alexander",
+                    "email": "iam.asm89@gmail.com"
+                },
+                {
+                    "name": "Geoffrey Bachelet",
+                    "email": "geoffrey.bachelet@gmail.com"
+                }
+            ],
+            "description": "Support for authenticating users using both OAuth1.0a and OAuth2 in Symfony2.",
+            "homepage": "http://github.com/hwi/HWIOAuthBundle",
+            "keywords": [
+                "37signals",
+                "Authentication",
+                "amazon",
+                "bitbucket",
+                "bitly",
+                "box",
+                "dailymotion",
+                "deviantart",
+                "disqus",
+                "dropbox",
+                "eventbrite",
+                "facebook",
+                "firewall",
+                "flickr",
+                "foursquare",
+                "github",
+                "google",
+                "hubic",
+                "instagram",
+                "jira",
+                "linkedin",
+                "mail.ru",
+                "oauth",
+                "oauth1",
+                "oauth2",
+                "odnoklassniki",
+                "qq",
+                "salesforce",
+                "security",
+                "sensio connect",
+                "sina weibo",
+                "stack exchange",
+                "stereomood",
+                "trello",
+                "twitch",
+                "twitter",
+                "vkontakte",
+                "windows live",
+                "wordpress",
+                "yahoo",
+                "yandex"
+            ],
+            "time": "2014-07-30 11:47:22"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -3200,12 +3313,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "1ce0ad50017513ae85d44c4bc68bd7a1cb055abe"
+                "reference": "cf8b4e253b248dfe58c3019f0cd71756edca6691"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/1ce0ad50017513ae85d44c4bc68bd7a1cb055abe",
-                "reference": "1ce0ad50017513ae85d44c4bc68bd7a1cb055abe",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/cf8b4e253b248dfe58c3019f0cd71756edca6691",
+                "reference": "cf8b4e253b248dfe58c3019f0cd71756edca6691",
                 "shasum": ""
             },
             "require": {
@@ -3306,7 +3419,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-08-12 14:04:33"
+            "time": "2014-08-15 09:42:11"
         },
         {
             "name": "twbs/bootstrap",
@@ -3509,7 +3622,9 @@
         "friendsofsymfony/elastica-bundle": 20,
         "eko/googletranslatebundle": 20,
         "endroid/gcm-bundle": 20,
-        "celd/opml-import-export": 20
+        "celd/opml-import-export": 20,
+        "duellsy/pockpack": 20,
+        "hwi/oauth-bundle": 20
     },
     "prefer-stable": false,
     "platform": {

@@ -161,7 +161,24 @@ rs_queue:
 #                        elastica_to_model_transformer: ~
 
 eko_google_translate:
-    api_key: %google_developer_key%
+    api_key: %google_api_key%
 
 endroid_gcm:
-    api_key: %google_developer_key%
+    api_key: %google_api_key%
+
+hwi_oauth:
+    firewall_name: secured_area
+    resource_owners:
+        google:
+            type:          google
+            client_id:     %google_client_id%
+            client_secret: %google_api_key%
+            scope:         "email profile"
+        facebook:
+            type:          facebook
+            client_id:     %facebook_client_id%
+            client_secret: %facebook_api_key%
+        twitter:
+            type:          twitter
+            client_id:     %twitter_client_id%
+            client_secret: %twitter_api_key%

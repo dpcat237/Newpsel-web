@@ -24,11 +24,12 @@ class DefaultController extends Controller
     /**
      * Welcome page with sing in and sign up
      *
-     * @return Response
-     * @Route("/", name="welcome")
      * @Template("NPSFrontendBundle:Welcome:index.html.twig")
+     * Routing is defined in routing.yml
+     *
+     * @return Response
      */
-    public function welcomeAction()
+    public function indexAction()
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));

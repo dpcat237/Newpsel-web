@@ -15,41 +15,34 @@ security:
     #    ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-        main:
-            entity:
-                class: NPS\CoreBundle\Entity\User
-                property: username
+        my_custom_hwi_provider:
+            id: ib_user.oauth_user_provider
 
     firewalls:
-        web_secured_area:
-              pattern: /.*
-              anonymous: ~
-              form_login:
-                  login_path: /sign_in
-              logout:
-                  path:   /logout
-                  target: /
-        #members_secured_area:
-        #    pattern: /members/.*
-        #    provider: entity_members
-        #    anonymous: ~
-        #    form_login:
-        #        check_path: /members/login_check
-        #        login_path: /members/login
-        #    logout:
-        #        path:   /members/logout
-        #        target: /members/
-        dev:
-            pattern:  ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+        secured_area:
+            pattern: ^/
+            anonymous: true
+            logout: true
+            logout:
+                path:   /logout
+                target: /
+            oauth:
+                resource_owners:
+                    google: "/login/check-google"
+                    facebook: "/login/check-facebook"
+                    twitter: "/login/check-twitter"
+                login_path: /sign_in
+                failure_path: /sign_in
+                oauth_user_provider:
+                    service: ib_user.oauth_user_provider
 
     access_control:
-        web_login:
-                path: /sign_in
-                roles: IS_AUTHENTICATED_ANONYMOUSLY
+        welcome:
+            path: /*
+            roles: IS_AUTHENTICATED_ANONYMOUSLY
         api_area:
             path: /api/.*
             roles: IS_AUTHENTICATED_ANONYMOUSLY
-        #web_area:
-        #        path: /.*
-        #        roles: ROLE_USER
+        web_area:
+            path: /web/.*
+            roles: ROLE_USER

@@ -45,6 +45,11 @@
                 <hr class="hr-dark">
                 {#<p><a href="password.html">Forgot your password?</a></p>#}
                 <p class="para-account">{% trans %}Don't have an account yet?{% endtrans %} <a href="{{ url("sign_up") }}">{% trans %}Create an account{% endtrans %}</a></p>
+
+
+                <a href="{{ path("hwi_oauth_service_redirect", {service: "google"}) }}" class="hide" >Google</a>
+                <a href="{{ path("hwi_oauth_service_redirect", {service: "facebook"}) }}" class="hide" >Facebook</a>
+                <a href="{{ path("hwi_oauth_service_redirect", {service: "twitter"}) }}" class="hide" >Twitter</a>
             </div>
         </div>
     </div>

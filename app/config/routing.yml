@@ -1,12 +1,41 @@
 chicplace_web:
     resource: "@NPSFrontendBundle/Controller"
-    prefix:   /
+    prefix:   /web
     type:     annotation
+
+welcome:
+    pattern: /
+    defaults: { _controller: "NPSFrontendBundle:Default:index"}
 
 nps_api:
     resource: "@NPSApiBundle/Resources/config/routing.yml"
     prefix:   /api
 
+#hwi/oauth-bundle
+hwi_oauth_redirect:
+    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
+    prefix:   /connect
+hwi_oauth_login:
+    resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
+    prefix:   /login
+
+sign_in:
+    path: /sign_in
+    defaults: { _controller: "NPSFrontendBundle:User:login"}
+
+sign_up:
+    path: /sign_up
+    defaults: { _controller: "NPSFrontendBundle:User:signup"}
+
+google_login:
+    pattern: /login/check-google
+
+twitter_login_callback:
+    path: /login/twitter_login_callback
+    defaults: { _controller: "NPSFrontendBundle:User:twitterCallback"}
+
+logout:
+    path:   /logout
 
 page_not_found:
     path:  "/{notfounduri}"

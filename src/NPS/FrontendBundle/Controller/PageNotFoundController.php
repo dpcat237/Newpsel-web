@@ -13,11 +13,9 @@ class PageNotFoundController extends Controller
     /**
      * Not found view
      *
-     * @param Request $request
-     *
      * @return array
      */
-    public function viewAction(Request $request)
+    public function viewAction()
     {
         return new Response(
             $this->renderView('NPSFrontendBundle:PageNotFound:view.html.twig'),
