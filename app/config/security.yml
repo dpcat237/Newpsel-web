@@ -35,6 +35,13 @@ security:
                 failure_path: /sign_in
                 oauth_user_provider:
                     service: ib_user.oauth_user_provider
+            remember_me:
+                key:      "%nseck%"
+                lifetime: 31536000 # 365 days in seconds
+                always_remember_me: true
+                remember_me_parameter: _remember_me
+                path:     /
+                domain:   ~ # Defaults to the current domain from $_SERVER
 
     access_control:
         welcome:
