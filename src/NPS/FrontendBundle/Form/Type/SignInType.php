@@ -29,8 +29,13 @@ class SignInType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('username', null, array('required' => true))
-            ->add('password', 'password', array('required' => true));
+        $builder
+            ->add('email', null, array(
+                'required' => true
+            ))
+            ->add('password', 'password', array(
+                'required' => true
+            ));
     }
 
     /**

@@ -1,12 +1,10 @@
 <?php
-
 namespace NPS\CoreBundle\Provider;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUserProvider;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
+use NPS\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
-use Symfony\Component\HttpFoundation\Session\Session;
 use NPS\CoreBundle\Entity\User;
 
 /**
@@ -17,37 +15,37 @@ use NPS\CoreBundle\Entity\User;
 class OAuthProvider extends OAuthUserProvider
 {
     /**
-     * @var Registry
+     * @var UserRepository
      */
-    private  $doctrine;
+    private $userRepo;
 
     /**
      * @var EncoderFactory
      */
-    private  $encoderFactory;
+    private $encoderFactory;
 
     /**
-     * @var Session
+     * @var string
      */
-    private $session;
+    private $salt;
 
 
     /**
      * Constructor
      *
-     * @param Session        $session
-     * @param Registry       $doctrine
-     * @param EncoderFactory $encoderFactory
+     * @param UserRepository $userRepo       UserRepository
+     * @param EncoderFactory $encoderFactory EncoderFactory
+     * @param string         $salt           salt key
      */
-    public function __construct(Session $session, Registry $doctrine, EncoderFactory $encoderFactory)
+    public function __construct(UserRepository $userRepo, EncoderFactory $encoderFactory, $salt)
     {
-        $this->doctrine = $doctrine;
         $this->encoderFactory = $encoderFactory;
-        $this->session = $session;
+        $this->salt = $salt;
+        $this->userRepo = $userRepo;
     }
 
     /**
-     * Load user by username
+     * Load user by email as username
      *
      * @param string $username
      *
@@ -55,7 +53,7 @@ class OAuthProvider extends OAuthUserProvider
      */
     public function loadUserByUsername($username)
     {
-        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->findOneByUsername($username);
+        $user = $this->userRepo->findOneByEmail($username);
         if ($user instanceof User) {
             return $user;
         }
@@ -63,52 +61,33 @@ class OAuthProvider extends OAuthUserProvider
         return new User();
     }
 
-    //twitter: callback https://github.com/hwi/HWIOAuthBundle/blob/master/Resources/doc/resource_owners/twitter.md
+    /**
+     * Load user from UserResponseInterface and do login or sign up
+     *
+     * @param UserResponseInterface $response
+     *
+     * @return User
+     */
     public function loadUserByOAuthUserResponse(UserResponseInterface $response)
     {
-        echo 'tut: loadUserByOAuthUserResponse'; exit;
-        //Data from Google response
-        $google_id = $response->getUsername(); /* An ID like: 112259658235204980084 */
         $email = $response->getEmail();
-        $nickname = $response->getNickname();
-        $realname = $response->getRealName();
-        $avatar = $response->getProfilePicture();
-        //set data in session
-        $this->session->set('email', $email);
-        $this->session->set('nickname', $nickname);
-        $this->session->set('realname', $realname);
-        $this->session->set('avatar', $avatar);
-        //Check if this Google user already exists in our app DB
-        $qb = $this->doctrine->getManager()->createQueryBuilder();
-        $qb->select('u')
-            ->from('FoggylineTickerBundle:User', 'u')
-            ->where('u.googleId = :gid')
-            ->setParameter('gid', $google_id)
-            ->setMaxResults(1);
-        $result = $qb->getQuery()->getResult();
-        //add to database if doesn't exists
-        if (!count($result)) {
-            $user = new User();
-            $user->setUsername($google_id);
-            $user->setRealname($realname);
-            $user->setNickname($nickname);
-            $user->setEmail($email);
-            $user->setGoogleId($google_id);
-            //$user->setRoles('ROLE_USER');
-            //Set some wild random pass since its irrelevant, this is Google login
-            $encoder = $this->encoderFactory->getEncoder($user);
-            $password = $encoder->encodePassword(md5(uniqid()), $user->getSalt());
-            $user->setPassword($password);
-            $em = $this->doctrine->getManager();
-            $em->persist($user);
-            $em->flush();
-        } else {
-            $user = $result[0]; /* return User */
+        $user = $this->userRepo->findOneByEmail($email);
+        if ($user instanceof User) {
+            return $user;
         }
-        //set id
-        $this->session->set('id', $user->getId());
-        return $this->loadUserByUsername($response->getUsername());
+
+        $encoder = $this->encoderFactory->getEncoder(new User());
+        $password = $encoder->encodePassword(md5(uniqid()), $this->salt);
+        $password = substr($password, 0, 16);
+
+        return $this->userRepo->createUser($email, $password);
     }
+
+    /**
+     * @param string $class
+     *
+     * @return bool
+     */
     public function supportsClass($class)
     {
         return $class === 'NPS\\CoreBundle\\Entity\\User';

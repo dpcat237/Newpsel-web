@@ -5,6 +5,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
 /**
  * DeviceApiService
@@ -17,6 +18,16 @@ class DeviceApiService
     private $doctrine;
 
     /**
+     * @var EncoderFactory
+     */
+    private $encoderFactory;
+
+    /**
+     * @var string
+     */
+    private $salt;
+
+    /**
      * @var $secure SecureService
      */
     private $secure;
@@ -25,10 +36,14 @@ class DeviceApiService
     /**
      * @param Registry     $doctrine Doctrine Registry
      * @param SecureService $secure  SecureService
+     * @param EncoderFactory $encoderFactory EncoderFactory
+     * @param string         $salt           salt key
      */
-    public function __construct(Registry $doctrine, SecureService $secure)
+    public function __construct(Registry $doctrine, SecureService $secure, EncoderFactory $encoderFactory, $salt)
     {
         $this->doctrine = $doctrine;
+        $this->encoderFactory = $encoderFactory;
+        $this->salt = $salt;
         $this->secure = $secure;
     }
 
@@ -55,15 +70,16 @@ class DeviceApiService
 
     /**
      * Login process for app api
+     *
      * @param string $appKey
-     * @param string $username
+     * @param string $email
      * @param string $password
      *
      * @return string
      */
-    public function loginApi($appKey, $username, $password)
+    public function loginApi($appKey, $email, $password)
     {
-        if (!$this->secure->checkLogged($appKey, $username, $password)) {
+        if (!$this->secure->checkLogged($appKey, $email, $password)) {
             return NotificationHelper::ERROR_LOGIN_DATA;
         }
 
@@ -72,15 +88,16 @@ class DeviceApiService
 
     /**
      * Send app key for Chrome api
-     * @param string $username
+     *
+     * @param string $email
      *
      * @return array
      */
-    public function requestAppKey($username)
+    public function requestAppKey($email)
     {
         $response = false;
         $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-        $user = $userRepo->findOneByUsername($username);
+        $user = $userRepo->findOneByEmail($email);
         if($user instanceof User){
             $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');
             $extensionKey = substr(hash("sha1", uniqid(rand(), true)), 0, 16);
@@ -101,24 +118,30 @@ class DeviceApiService
 
     /**
      * Sign up for app api
+     *
      * @param string $appKey
-     * @param string $username
      * @param string $email
      * @param string $password
      *
      * @return string
      */
-    public function signUpApi($appKey, $username, $email, $password)
+    public function signUpApi($appKey, $email, $password = '')
     {
         $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-        $checkUser = $userRepo->checkUserExists($username, $email);
-        if ($checkUser) {
-            return $checkUser;
+        $user = $userRepo->findOneByEmail($email);
+
+        if ($user instanceof User && $password) {
+            return NotificationHelper::ERROR_EMAIL_EXISTS;
         }
 
-        $user = $userRepo->createUser($username, $email, $password);
+        if (!$password && !$user instanceof User) {
+            $encoder = $this->encoderFactory->getEncoder(new User());
+            $password = $encoder->encodePassword(md5(uniqid()), $this->salt);
+            $password = substr($password, 0, 16);
+        }
+
         if (!$user instanceof User) {
-            return NotificationHelper::ERROR_TRY_LATER;
+            $user = $userRepo->createUser($email, $password);
         }
 
         $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');

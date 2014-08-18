@@ -15,3 +15,11 @@ services:
           - { name: kernel.event_listener, event: nps.user.signup, method: onUserSignup }
       arguments:
           user_service: @nps.entity.user
+
+#**External services **
+    gedmo.listener.timestampable:
+          class: Gedmo\Timestampable\TimestampableListener
+          tags:
+              - { name: doctrine.event_subscriber, connection: default }
+          calls:
+              - [ setAnnotationReader, [ @annotation_reader ] ]

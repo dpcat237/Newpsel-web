@@ -27,12 +27,14 @@ sign_up:
     path: /sign_up
     defaults: { _controller: "NPSFrontendBundle:User:signup"}
 
+facebook_login:
+    pattern: /login/check-facebook
+
 google_login:
     pattern: /login/check-google
 
-twitter_login_callback:
-    path: /login/twitter_login_callback
-    defaults: { _controller: "NPSFrontendBundle:User:twitterCallback"}
+twitter_login:
+    pattern: /login/check-twitter
 
 logout:
     path:   /logout

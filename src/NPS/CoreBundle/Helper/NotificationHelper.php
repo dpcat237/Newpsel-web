@@ -24,7 +24,6 @@ class NotificationHelper extends Helper
     const ERROR_LOGIN_DATA = 301;
     const ERROR_NO_APP_KEY = 302;
     const ERROR_NO_LOGGED = 303;
-    const ERROR_USERNAME_EXISTS = 304;
     const ERROR_EMAIL_EXISTS = 305;
     const ERROR_WRONG_FEED = 306;
     const ERROR_NO_DATA = 307;

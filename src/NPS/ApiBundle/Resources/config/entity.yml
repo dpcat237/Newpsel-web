@@ -2,8 +2,10 @@ services:
     api.device.service:
             class: NPS\ApiBundle\Services\Entity\DeviceApiService
             arguments:
-                doctrine:   @doctrine
-                api.secure: @api.secure.service
+                doctrine:        @doctrine
+                api.secure:      @api.secure.service
+                encoder_factory: @security.encoder_factory
+                nseck:           %nseck%
 
     api.feed.service:
         class: NPS\ApiBundle\Services\Entity\FeedApiService

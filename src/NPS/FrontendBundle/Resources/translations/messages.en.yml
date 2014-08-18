@@ -36,6 +36,17 @@ _Edit_shared_later: Select label (in it will be saved shared links from mobile d
 #*** Form ***
 _Name: Name
 _Submit: Submit
+_Email: Email
+_Password: Password
+#Login
+_Login_to_account: Login to your account
+_Sign_up: Sign up
+_Sign_in: Sign in
+_Email_pwd_wrong: Email and password combination isn't correct
+_Create_account: Create an account
+_Dont_acount_yet: Don't have an account yet?
+_Email_exists: Email already exists
+_Already_account: Already have an account?
 
 #*** Error page ***
 _ERROR: ERROR !

@@ -16,12 +16,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\HasLifecycleCallbacks
  * @ORM\MappedSuperclass
- * @UniqueEntity("username")
  * @UniqueEntity("email")
  */
-//@UniqueEntity(fields="username", message="Sorry, this username is not available or allowed")
-//@UniqueEntity(fields="username", message="Sorry, this username is not available or allowed", groups={"registration"})
-//@UniqueEntity(fields="email", message="Sorry, this email is not available or allowed")
 abstract class AbstractUser extends OAuthUser
 {
     use EnabledTrait;
@@ -53,13 +49,6 @@ abstract class AbstractUser extends OAuthUser
 
     /**
      * @var string
-     * @ORM\Column(name="username", type="string", length=255, nullable=true, unique=true)
-     * @Assert\NotNull(message={"Write an username"})
-     */
-    protected $username;
-
-    /**
-     * @var string
      * @ORM\Column(name="email", type="string", length=255, nullable=false, unique=true)
      * @Assert\Email
      * @Assert\NotBlank
@@ -84,7 +73,6 @@ abstract class AbstractUser extends OAuthUser
     );
 
 
-
     /**
      * Set email
      *
@@ -95,10 +83,10 @@ abstract class AbstractUser extends OAuthUser
     public function setEmail($email)
     {
         $this->email = $email;
+        $this->username = $email;
 
         return $this;
     }
-
 
     /**
      * @return string
@@ -108,33 +96,30 @@ abstract class AbstractUser extends OAuthUser
         return $this->email;
     }
 
-
     /**
      * Set username
      *
      * @param String $username Username
      *
-     * @return AbstractUser self Object
+     * @return User
      */
     public function setUsername($username)
     {
         $this->username = $username;
+        $this->email = $username;
 
         return $this;
     }
 
-
     /**
      * Return Username
      *
-     * @return String Username
+     * @return string
      */
     public function getUsername()
     {
-        return $this->username;
+        return $this->email;
     }
-
-
 
     /**
      * Set password
@@ -145,16 +130,13 @@ abstract class AbstractUser extends OAuthUser
      */
     public function setPassword($password)
     {
-        if (null === $password)  {
-
+        if (null === $password) {
             return;
         }
-
         $this->password = $password;
 
         return $this;
     }
-
 
     /**
      * Return password
@@ -166,8 +148,6 @@ abstract class AbstractUser extends OAuthUser
         return $this->password;
     }
 
-
-
     /**
      * Part of UserInterface. Dummy
      *
@@ -177,7 +157,6 @@ abstract class AbstractUser extends OAuthUser
     {
         return "";
     }
-
 
     /**
      * Part of UserInterface.
@@ -192,7 +171,6 @@ abstract class AbstractUser extends OAuthUser
         return $user->getUsername() === $this->username;
     }
 
-
     /**
      * Part of UserInterface.
      *
@@ -204,7 +182,6 @@ abstract class AbstractUser extends OAuthUser
     {
         return "";
     }
-
 
     /**
      * Part of UserInterface.
@@ -219,7 +196,6 @@ abstract class AbstractUser extends OAuthUser
     {
         return $this->roles;
     }
-
 
     /**
      * String representation of object

@@ -69,7 +69,7 @@ class ChromeController extends Controller
     {
         $json = json_decode($request->getContent(), true);
         $deviceService = $this->get('api.device.service');
-        $responseData = $deviceService->requestAppKey($json['username']);
+        $responseData = $deviceService->requestAppKey($json['email']);
         $response = new JsonResponse($responseData);
 
         return $response;

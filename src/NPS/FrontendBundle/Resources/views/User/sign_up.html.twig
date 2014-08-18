@@ -5,28 +5,26 @@
         <div class="login bgd-account">
             <div class="wrapper">
                 <div class="block-dark sign-block">
-                    <h3>{% trans %}Sign up{% endtrans %}</h3>
-                    <form data-validate="parsley" action="{{ url("sign_up") }}" id="sign-form" class="form-dark" method="post">
-                        <div class="input-prepend">
-                            <span class="add-dark"><i class="icon-user"></i></span>
-                            {{ form_widget(form.username, { 'attr' : {'data-required':'true', 'placeholder':'Username' }} ) }}
-                            {{ errors }}
-                            {% if errors == '304' %}
-                                <ul class="parsley-error-list" style="display: block;">
-                                    <li class="required" style="display: list-item;">
-                                        {% trans %}Username already exists{% endtrans %}
-                                    </li>
-                                </ul>
-                            {% endif %}
+                    <h3>{{ '_Sign_up'|trans }}</h3>
+
+                    <hr class="hr-dark">
+                    <div class="row-fluid">
+                        <div class="span12 open-id">
+                            <a href="{{ path("hwi_oauth_service_redirect", {service: "facebook"}) }}" class="modern sign-facebook"><span class="mordern-id">Facebook</span></a>
+                            <a href="{{ path("hwi_oauth_service_redirect", {service: "google"}) }}" class="modern sign-google"><span class="mordern-id">Google +</span></a>
+                            {# already works but because API doesn't return email we can't add it
+                            <a href="{{ path("hwi_oauth_service_redirect", {service: "twitter"}) }}" class="hide" >Twitter</a>#}
                         </div>
+                    </div>
+                    <hr class="hr-dark">
+
+                    <form data-validate="parsley" action="{{ url("sign_up") }}" id="sign-form" class="form-dark" method="post">
                         <div class="input-prepend">
                             <span class="add-dark"><i class="icon-envelope"></i></span>
                             {{ form_widget(form.email, { 'attr' : {'data-required':'true', 'data-type':'email', 'placeholder':'Email' }} ) }}
                             {% if errors == '305' %}
                                 <ul class="parsley-error-list" style="display: block;">
-                                    <li class="required" style="display: list-item;">
-                                        {% trans %}Email already exists{% endtrans %}
-                                    </li>
+                                    <li class="required" style="display: list-item;">{{ '_Email_exists'|trans }}</li>
                                 </ul>
                             {% endif %}
                         </div>
@@ -40,7 +38,7 @@
                         </div>
                             {{ form_row(form._token) }}
                             <span id="sign-form-valid" onclick="javascript:$('#sign-form').parsley('validate');">
-                            <input type="submit" class="btn btn-inverse pull-right" value="{% trans %}Submit{% endtrans %}">
+                            <input type="submit" class="btn btn-inverse pull-right" value="{{ '_Submit'|trans }}">
                           </span>
                     </form>
 
@@ -51,7 +49,7 @@
                     </form>#}
                     <div class="clearfix"></div>
                     <hr class="hr-dark">
-                    <p class="para-account">{% trans %}Already have an account?{% endtrans %} <a href="{{ url("sign_in") }}">{% trans %}Sign in{% endtrans %}</a></p>
+                    <p class="para-account">{{ '_Already_account'|trans }} <a href="{{ url("sign_in") }}">{{ '_Sign_in'|trans }}</a></p>
                 </div>
             </div>
         </div>

@@ -13,6 +13,7 @@ class UserController extends ApiController
 {
     /**
      * List of feeds
+     *
      * @param Request $request the current request
      *
      * @return Response
@@ -21,13 +22,14 @@ class UserController extends ApiController
     {
         $json = json_decode($request->getContent(), true);
         $itemService = $this->get('api.device.service');
-        $responseData = $itemService->loginApi($json['appKey'], $json['username'], $json['password']);
+        $responseData = $itemService->loginApi($json['appKey'], $json['email'], $json['password']);
 
         return $this->plainResponse($responseData);
     }
 
     /**
      * Sign up an user
+     *
      * @param Request $request
      * 
      * @return Response
@@ -36,7 +38,7 @@ class UserController extends ApiController
     {
         $json = json_decode($request->getContent(), true);
         $itemService = $this->get('api.device.service');
-        $responseData = $itemService->signUpApi($json['appKey'], $json['username'], $json['email'], $json['password']);
+        $responseData = $itemService->signUpApi($json['appKey'], $json['email'], $json['password']);
 
         return $this->plainResponse($responseData);
     }

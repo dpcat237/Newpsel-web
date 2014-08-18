@@ -72,18 +72,17 @@ class UserController extends Controller
      */
     protected function processLogin(Request $request)
     {
-
         //if he's not logged
         $formData = $request->get('signIn');
-        $username = $formData['username'];
+        $email = $formData['email'];
         $password = $formData['password'];
 
         //check password
         $userRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:User');
-        $user = $userRepo->findOneByUsername($username);
+        $user = $userRepo->findOneByEmail($email);
         $ok = false;
         if ($user instanceof User) {
-            $ok = ($user->getPassword() == sha1("sc_".$password));
+            $ok = ($user->getPassword() == sha1($this->container->getParameter('nseck').'_'.$password));
         }
 
         //check that pwd is OK and user is enabled
@@ -195,7 +194,7 @@ class UserController extends Controller
         }
 
         $form->handleRequest($request);
-        list($user, $errors) = $this->get('nps.entity.user')->saveFormUser($form);
+        list($user, $errors) = $this->get('nps.entity.user')->saveFormUser($form, $this->container->getParameter('nseck'));
         if (!$errors) {
             $userSignUpEvent = new UserSignUpEvent($user);
             $this->get('event_dispatcher')->dispatch(NPSCoreEvents::USER_SIGN_UP, $userSignUpEvent);
@@ -239,10 +238,5 @@ class UserController extends Controller
         }
 
         return $ok;
-    }
-
-    public function twitterCallbackAction()
-    {
-        echo 'tut: twitterCallbackAction'; exit;
     }
 }

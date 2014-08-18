@@ -17,13 +17,13 @@ parameters:
     redis_cache_server:    redis://localhost/4
     redis_sessions_server: redis://localhost/5
 
-    google_client_id: 8108991373.apps.googleusercontent.com
-    google_api_key:   AIzaSyCR7kFwJEvGR9LMGNUtgQko9G7791Nh218
+    google_client_id:     8108991373-3pelt7s1pevojlhikoapq09bhldlknhf.apps.googleusercontent.com
+    google_client_secret: Biq3NalcK51VK85sTfPLVKRz
 
-    facebook_client_id: 149114668611897
-    facebook_api_key:   f3cc27080c1c74f4519d8295f23f7fef
+    facebook_client_id:     149114668611897
+    facebook_client_secret: f3cc27080c1c74f4519d8295f23f7fef
 
-    twitter_client_id: sDLzI0H30q9loeYFFsVrpTpQi
-    twitter_api_key:   04IAG55X30lFEUswnQLXEVucCZnxLVqXbhoj00LeHYFOqtPerd
+    twitter_client_id:     sDLzI0H30q9loeYFFsVrpTpQi
+    twitter_client_secret: 04IAG55X30lFEUswnQLXEVucCZnxLVqXbhoj00LeHYFOqtPerd
 
     getpocket_key: 30933-85863e319abff6cd585202c0

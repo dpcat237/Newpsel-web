@@ -58,12 +58,5 @@ services:
         class: HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUserProvider
     ib_user.oauth_user_provider:
         class: NPS\CoreBundle\Provider\OAuthProvider
-        arguments: [@session, @doctrine, @security.encoder_factory]
+        arguments: [@=service("doctrine.orm.entity_manager").getRepository("NPSCoreBundle:User"), @security.encoder_factory, %nseck%]
 
-#**External services **
-    gedmo.listener.timestampable:
-          class: Gedmo\Timestampable\TimestampableListener
-          tags:
-              - { name: doctrine.event_subscriber, connection: default }
-          calls:
-              - [ setAnnotationReader, [ @annotation_reader ] ]

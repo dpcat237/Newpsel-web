@@ -29,7 +29,7 @@ class SignUpType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('username', 'text', array('label' => 'Your username'))
+        $builder
             ->add('email', 'text', array('label' => 'Your email'))
             ->add('password', 'repeated', array(
                 'type' => 'password',

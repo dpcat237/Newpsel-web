@@ -22,13 +22,15 @@ class UserService extends AbstractEntityService
         if ($form->isValid() && $formObject instanceof Preference) {
             $this->saveObject($formObject, true);
         } else {
-            $this->systemNotification->setMessage(NotificationHelper::ALERT_FORM_DATA);
+            $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
         }
     }
 
     /**
      * Save form of user to data base
-     * @param Form $form
+     *
+     * @param Form   $form
+     * @param string $nseck
      *
      * Add:
      * Generate Activation Code
@@ -38,12 +40,12 @@ class UserService extends AbstractEntityService
      * $cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
      * Show message 'check your email to confirm registration...'
      */
-    public function saveFormUser(Form $form)
+    public function saveFormUser(Form $form, $nseck)
     {
         $check = $this->checkFormUser($form);
+        $user = $check['user'];
         if (!$check['errors']) {
-            $user = $check['user'];
-            $password = sha1("sc_".$user->getPassword());
+            $password = sha1($nseck."_".$user->getPassword());
             $user->setPassword($password);
             $user->setEnabled(true);
             $user->setRegistered(true);
@@ -66,13 +68,13 @@ class UserService extends AbstractEntityService
         $errors = false;
         $user = $form->getData();
         if (!$form->isValid() || !$user instanceof User) {
-            $this->systemNotification->setMessage(NotificationHelper::ALERT_FORM_DATA);
+            $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
             $errors = true;
         }
 
         if (empty($errors)) {
             $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-            $errors = $userRepo->checkUserExists($user->getUsername(), $user->getEmail());
+            $errors = $userRepo->checkUserExists($user->getEmail());
         }
 
         $response = array(
