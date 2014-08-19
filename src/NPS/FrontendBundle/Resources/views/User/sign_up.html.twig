@@ -21,7 +21,8 @@
                     <form data-validate="parsley" action="{{ url("sign_up") }}" id="sign-form" class="form-dark" method="post">
                         <div class="input-prepend">
                             <span class="add-dark"><i class="icon-envelope"></i></span>
-                            {{ form_widget(form.email, { 'attr' : {'data-required':'true', 'data-type':'email', 'placeholder':'Email' }} ) }}
+                            {{ form_widget(form.email, { 'attr' : {'data-required':'true', 'data-type':'email', 'placeholder':'_Email' }} ) }}
+                            <div>{{ form_errors(form.email) }}</div>
                             {% if errors == '305' %}
                                 <ul class="parsley-error-list" style="display: block;">
                                     <li class="required" style="display: list-item;">{{ '_Email_exists'|trans }}</li>
@@ -30,11 +31,11 @@
                         </div>
                         <div class="input-prepend">
                             <span class="add-dark"><i class="icon-lock"></i></span>
-                            {{ form_widget(form.password.first, { 'attr' : {'data-required':'true', 'data-equalto':'#signUp_password_first', 'placeholder':'Password' }} ) }}
+                            {{ form_widget(form.password.first, { 'attr' : {'data-required':'true', 'data-equalto':'#signUp_password_first', 'placeholder':'_Password' }} ) }}
                         </div>
                         <div class="input-prepend">
                             <span class="add-dark"><i class="icon-ok"></i></span>
-                            {{ form_widget(form.password.second, { 'attr' : {'data-required':'true', 'data-equalto':'#signUp_password_first', 'placeholder':'Confirm password' }} ) }}
+                            {{ form_widget(form.password.second, { 'attr' : {'data-required':'true', 'data-equalto':'#signUp_password_first', 'placeholder':'_Confirm_password' }} ) }}
                         </div>
                             {{ form_row(form._token) }}
                             <span id="sign-form-valid" onclick="javascript:$('#sign-form').parsley('validate');">

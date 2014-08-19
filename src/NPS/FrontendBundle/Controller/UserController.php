@@ -6,6 +6,8 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 use NPS\CoreBundle\Event\UserSignUpEvent;
 use NPS\CoreBundle\NPSCoreEvents;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\RedirectResponse,
     Symfony\Component\HttpFoundation\Response;
@@ -31,11 +33,11 @@ class UserController extends Controller
      *
      * @param Request $request the current request
      *
-     * @return Response
-     *
      * @Route("/user/preference", name="user_preferences")
      * @Secure(roles="ROLE_USER")
      * @Template()
+     *
+     * @return Response
      */
     public function editPreferencesAction(Request $request)
     {
@@ -66,16 +68,15 @@ class UserController extends Controller
     /**
      * Process a POST for a login
      *
-     * @param Request $request
+     * @param Form $form
      *
-     * @return boolean
+     * @return array
      */
-    protected function processLogin(Request $request)
+    protected function processLoginForm(Form $form)
     {
-        //if he's not logged
-        $formData = $request->get('signIn');
-        $email = $formData['email'];
-        $password = $formData['password'];
+
+        $email = $form->get('email')->getData();
+        $password = $form->get('password')->getData();
 
         //check password
         $userRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:User');
@@ -85,18 +86,27 @@ class UserController extends Controller
             $ok = ($user->getPassword() == sha1($this->container->getParameter('nseck').'_'.$password));
         }
 
+        if (!$ok) {
+            $form->get('password')->addError(new FormError($this->get('translator')->trans('_Email_pwd_wrong')));
+
+            return array(false, $form);
+        }
+
+        if ($ok && !$user->isEnabled()) {
+            $form->get('password')->addError(new FormError($this->get('translator')->trans('_Verify_email')));
+            $ok = false;
+        }
+
+
         //check that pwd is OK and user is enabled
         if ($ok && $user->isEnabled()) {
             //password is correct, make login
             $this->doLogin($user);
 
-            return true;
+            return array(true, $form);
         }
 
-        //login is not correct, set AUTH_ERROR in context, display login page
-        $request->attributes->set(SecurityContext::AUTHENTICATION_ERROR, true);
-
-        return false;
+        return array(false, $form);
     }
 
     /**
@@ -111,60 +121,34 @@ class UserController extends Controller
      */
     public function loginAction(Request $request)
     {
-        $errors = null;
-        //if user is logged redirect to homepage
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
-        //if login process went well redirect to homepage
-        if ($request->getMethod() == 'POST' && $this->processLogin($request)) {
-            return new RedirectResponse($this->container->get('router')->generate('homepage'));
-        }
-        //check for login process errors
-        if ($this->checkLoginErrors($request)) {
-            $errors = NotificationHelper::ERROR_LOGIN_DATA;
-        }
 
-        return $this->prepareLoginViewData($errors);
-    }
-
-    /**
-     * Prepare view data for login action
-     * @param $errors
-     *
-     * @return array
-     */
-    protected function prepareLoginViewData($errors)
-    {
+        $checkForm = false;
         $user = new User();
         $formType = new SignInType($user);
         $form = $this->createForm($formType, $user);
+
+        if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
+            list($checkForm, $form) = $this->processLoginForm($form);
+        }
+
+        if ($checkForm) {
+            return new RedirectResponse($this->container->get('router')->generate('homepage'));
+        }
+
+        if ($request->getMethod() == 'POST' && !$checkForm) {
+            //login is not correct, set AUTH_ERROR in context, display login page
+            $request->attributes->set(SecurityContext::AUTHENTICATION_ERROR, true);
+        }
+
         $viewData = array(
-            'errors' => $errors,
             'form' => $form->createView()
         );
 
         return $viewData;
-    }
-
-    /**
-     * Get the login error if there is one
-     * @param Request $request Request
-     *
-     * @return mixed
-     */
-    private function checkLoginErrors(Request $request)
-    {
-        $error = null;
-        $session = $request->getSession();
-        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-        } else {
-            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
-            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
-        }
-
-        return $error;
     }
 
     /**
@@ -183,7 +167,6 @@ class UserController extends Controller
         $user = new User();
         $formType = new SignUpType($user);
         $form = $this->createForm($formType, $user);
-
         $viewData = array (
             'form' => $form->createView(),
             'errors' => $errors
@@ -196,12 +179,16 @@ class UserController extends Controller
         $form->handleRequest($request);
         list($user, $errors) = $this->get('nps.entity.user')->saveFormUser($form, $this->container->getParameter('nseck'));
         if (!$errors) {
+
             $userSignUpEvent = new UserSignUpEvent($user);
             $this->get('event_dispatcher')->dispatch(NPSCoreEvents::USER_SIGN_UP, $userSignUpEvent);
 
             return new RedirectResponse($this->container->get('router')->generate('sign_in'));
         }
-        $viewData['errors'] = $errors;
+        $viewData = array (
+            'form' => $form->createView(),
+            'errors' => $errors
+        );
 
         return $viewData;
     }
@@ -238,5 +225,25 @@ class UserController extends Controller
         }
 
         return $ok;
+    }
+
+    /**
+     * Verify email
+     *
+     * @param Request $request
+     *
+     * @Route("/verify/email/{key}/", name="verify_email")
+     *
+     * @return RedirectResponse
+     */
+    public function verifyEmailAction(Request $request)
+    {
+        $user = $this->get('nps.entity.user')->getUserByVerifyCode($request->get('key'));
+        if (!$user instanceof User) {
+            return new RedirectResponse($this->container->get('router')->generate('welcome'));
+        }
+        $this->doLogin($user);
+
+        return new RedirectResponse($this->container->get('router')->generate('homepage'));
     }
 }

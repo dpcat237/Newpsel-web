@@ -43,10 +43,11 @@ class UserRepository extends EntityRepository
     {
         $user = $this->findOneByEmail($email);
         if (!$user instanceof User) {
-            return false;
+            return array(false, null);
         }
+        $error = (($user->isRegistered()) ? NotificationHelper::ERROR_EMAIL_EXISTS : false);
 
-        return ($user->isRegistered()) ? NotificationHelper::ERROR_EMAIL_EXISTS : false;
+        return array($error, $user);
     }
 
     /**

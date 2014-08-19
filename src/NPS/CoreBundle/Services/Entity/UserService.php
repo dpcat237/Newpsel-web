@@ -1,6 +1,12 @@
 <?php
 namespace NPS\CoreBundle\Services\Entity;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Services\NotificationManager;
+use NPS\CoreBundle\Services\UserNotificationsService;
+use NPS\CoreBundle\Services\UserWrapper;
+use Predis\Client;
 use Symfony\Component\Form\Form;
 use NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\Preference;
@@ -12,6 +18,30 @@ use NPS\CoreBundle\Services\Entity\AbstractEntityService;
  */
 class UserService extends AbstractEntityService
 {
+    /**
+     * @var UserNotificationsService
+     */
+    private $cache;
+
+    /**
+     * @var Client
+     */
+    private $userNotification;
+
+    /**
+     * @param Registry                 $doctrine         Registry
+     * @param UserWrapper              $userWrapper      UserWrapper
+     * @param NotificationManager      $notification     NotificationManager
+     * @param Client                   $cache            Client
+     * @param UserNotificationsService $userNotification UserNotificationsService
+     */
+    public function __construct(Registry $doctrine, UserWrapper $userWrapper, NotificationManager $notification, Client $cache, UserNotificationsService $userNotification)
+    {
+        parent::__construct($doctrine, $userWrapper, $notification);
+        $this->cache = $cache;
+        $this->userNotification = $userNotification;
+    }
+
     /**
      * Save form of user preferences to data base
      * @param Form $form
@@ -30,31 +60,77 @@ class UserService extends AbstractEntityService
      * Save form of user to data base
      *
      * @param Form   $form
-     * @param string $nseck
+     * @param string $nseck secret key
      *
-     * Add:
-     * Generate Activation Code
-     * $ac = array("userid" => $user->getId(), "activationcode" => sha1(microtime()));
-     * Set verification code key in cache
-     * $cache = $this->container->get('redis_cache');
-     * $cache->set("verify:".$ac["userid"]."_".$ac["activationcode"], "");
-     * Show message 'check your email to confirm registration...'
+     * @return array
      */
     public function saveFormUser(Form $form, $nseck)
     {
         $check = $this->checkFormUser($form);
         $user = $check['user'];
+        $existUser = $check['existUser'];
+        if (!$check['errors'] && $existUser instanceof User) {
+            $password = sha1($nseck."_".$user->getPassword());
+            $existUser->setPassword($password);
+            $existUser->setEnabled(false);
+            $existUser->setRegistered(true);
+            $this->saveObject($existUser, true);
+
+            $this->setVerifyCode($user->getId());
+
+            return array($existUser, $check['errors']);
+        }
+
         if (!$check['errors']) {
             $password = sha1($nseck."_".$user->getPassword());
             $user->setPassword($password);
-            $user->setEnabled(true);
+            $user->setEnabled(false);
             $user->setRegistered(true);
             $this->saveObject($user, true);
-        }
-        $response[] = $user;
-        $response[] = $check['errors'];
 
-        return $response;
+            $this->setVerifyCode($user->getId());
+        }
+
+        return array($user, $check['errors']);
+    }
+
+    /**
+     * Set email activation code to cache
+     *
+     * @param int    $userId
+     */
+    private function setVerifyCode($userId)
+    {
+        $activationCode = sha1(microtime());
+        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$activationCode, 2592000, $userId);
+        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$userId, 2592000, $activationCode);
+    }
+
+    /**
+     * Get verified user and activate it
+     *
+     * @param $activationCode
+     *
+     * @return User|null
+     */
+    public function getUserByVerifyCode($activationCode)
+    {
+        $redisKey = RedisConstants::USER_ACTIVATION_CODE.'_'.$activationCode;
+        $userId = $this->cache->get($redisKey);
+        if (!$userId) {
+            return null;
+        }
+
+        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->find($userId);
+        if (!$user instanceof User) {
+            return null;
+        }
+
+        $user->setEnabled(true);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
     }
 
     /**
@@ -65,21 +141,23 @@ class UserService extends AbstractEntityService
      */
     protected function checkFormUser(Form $form)
     {
-        $errors = false;
+        $error = false;
+        $existUser = null;
         $user = $form->getData();
         if (!$form->isValid() || !$user instanceof User) {
             $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
             $errors = true;
         }
 
-        if (empty($errors)) {
+        if (empty($error)) {
             $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-            $errors = $userRepo->checkUserExists($user->getEmail());
+            list($error, $existUser) = $userRepo->checkUserExists($user->getEmail());
         }
 
         $response = array(
-            'errors' => $errors,
-            'user'   => $user
+            'errors' => $error,
+            'user'   => $user,
+            'existUser'   => $existUser
         );
 
         return $response;
@@ -102,5 +180,17 @@ class UserService extends AbstractEntityService
 
         $user->setPreference($preference);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Send verification email
+     *
+     * @param User $user
+     */
+    public function sendVerificationEmail(User $user)
+    {
+        $redisKey = RedisConstants::USER_ACTIVATION_CODE.'_'.$user->getId();
+        $activationCode = $this->cache->get($redisKey);
+        $this->userNotification->sendEmailVerification($user->getEmail(), $activationCode);
     }
 }

@@ -4,13 +4,7 @@ namespace NPS\CoreBundle\Services;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Predis\Client;
 use Symfony\Bridge\Monolog\Logger;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormError;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
-use NPS\CoreBundle\Entity\Filter;
-use NPS\FrontendBundle\Services\SystemNotificationService,
-    NPS\CoreBundle\Services\UserWrapper;
-use NPS\CoreBundle\Entity\Later;
+
 
 /**
  * FilteringManager

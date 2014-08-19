@@ -1,35 +1,61 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
-use NPS\CoreBundle\Entity\User;
-
 /**
  * Class UserNotificationsService
+ *
  * @package NPS\CoreBundle\Services
  */
 class UserNotificationsService extends AbstractEmailNotificationService
 {
     /**
+     * @var string
+     */
+    private $emailSender = 'newpsel@gmail.com';
+
+    /**
      * Send new extension key to user
-     * @param User   $user         User
+     *
+     * @param string $userEmail
      * @param string $extensionKey extension key
      */
-    public function sendChromeKey(User $user, $extensionKey)
+    public function sendChromeKey($userEmail, $extensionKey)
     {
         $viewData = array(
-            'user' => $user,
             'key' => $extensionKey
         );
 
         $message = \Swift_Message::newInstance()
-            ->setSubject("Newpsel: Chrome extension key")
-            ->setFrom('newpsel@gmail.com')
-            ->setTo($user->getEmail())
-            ->setBody($this->getTemplating()->render('NPSApiBundle:Email:chrome_key.html.twig', $viewData))
+            ->setSubject($this->getTranslator()->trans('_Chrome_key_subject'))
+            ->setFrom($this->emailSender)
+            ->setTo($userEmail)
+            ->setBody($this->getTemplating()->render('NPSFrontendBundle:Email:chrome_key.html.twig', $viewData))
             ->setContentType('text/html');
 
         $mailer = \Swift_Mailer::newInstance($this->getTransporter());
         $mailer->send($message);
     }
 
+    /**
+     * Send welcome with link to email verification
+     *
+     * @param string $userEmail
+     * @param string $activationKey
+     */
+    public function sendEmailVerification($userEmail, $activationKey)
+    {
+        $viewData = array(
+            'key' => $activationKey
+        );
+
+        $message = \Swift_Message::newInstance()
+            ->setSubject($this->getTranslator()->trans('_Verify_email_subject'))
+            ->setFrom($this->emailSender)
+            ->setTo($userEmail)
+            ->setBody($this->getTemplating()->render('NPSFrontendBundle:Email:verify_email.html.twig', $viewData))
+            ->setContentType('text/html');
+
+        $mailer = \Swift_Mailer::newInstance($this->getTransporter());
+        $mailer->send($message);
+    }
 }

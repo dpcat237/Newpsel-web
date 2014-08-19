@@ -12,7 +12,7 @@ services:
     nps.listener.user:
       class: NPS\CoreBundle\EventListener\UserListener
       tags:
-          - { name: kernel.event_listener, event: nps.user.signup, method: onUserSignup }
+          - { name: kernel.event_listener, event: nps.user.signup, method: onUserSignUp }
       arguments:
           user_service: @nps.entity.user
 

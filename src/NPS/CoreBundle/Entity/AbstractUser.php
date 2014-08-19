@@ -16,7 +16,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\HasLifecycleCallbacks
  * @ORM\MappedSuperclass
- * @UniqueEntity("email")
  */
 abstract class AbstractUser extends OAuthUser
 {
@@ -50,9 +49,6 @@ abstract class AbstractUser extends OAuthUser
     /**
      * @var string
      * @ORM\Column(name="email", type="string", length=255, nullable=false, unique=true)
-     * @Assert\Email
-     * @Assert\NotBlank
-     * @Assert\NotNull(message={"Write an email"})
      */
     protected $email;
 

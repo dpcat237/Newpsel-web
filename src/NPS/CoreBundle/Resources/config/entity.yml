@@ -45,7 +45,12 @@ services:
 
     nps.entity.user:
         class: NPS\CoreBundle\Services\Entity\UserService
-        parent: nps.abstract.entity
+        arguments:
+            doctrine:      @doctrine
+            user_wrapper:  @nps.wrapper.user
+            notification:  @nps.manager.notification
+            server_cache:  @snc_redis.default
+            notifications: @user.notifications
 
     nps.entity.user_item:
         class: NPS\CoreBundle\Services\Entity\UserItemService

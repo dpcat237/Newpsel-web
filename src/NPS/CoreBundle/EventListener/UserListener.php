@@ -24,9 +24,13 @@ class UserListener
      *
      * @param UserSignUpEvent $event
      */
-    public function onUserSignup(UserSignUpEvent $event)
+    public function onUserSignUp(UserSignUpEvent $event)
     {
-        $this->userService->setPreferenceNewUser($event->getUser());
+        $user = $event->getUser();
+        $this->userService->setPreferenceNewUser($user);
+        if (!$user->isEnabled()) {
+            $this->userService->sendVerificationEmail($user);
+        }
     }
 }
 

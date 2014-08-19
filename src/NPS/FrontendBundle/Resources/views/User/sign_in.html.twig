@@ -20,17 +20,18 @@
 
                 <form data-validate="parsley" id="sign-form" class="form-dark" method="post">
                     <div class="input-prepend">
-                        <span class="add-dark"><i class="icon-user"></i></span>
-                        {{ form_widget(form.email, { 'attr' : {'data-required':'true', 'placeholder':'_Email' }} ) }}
+                        <div>
+                            <span class="add-dark"><i class="icon-user"></i></span>
+                            {{ form_widget(form.email, { 'attr' : {'data-required':'true', 'placeholder':'_Email' }} ) }}
+                        </div>
+                        <div>{{ form_errors(form.email) }}</div>
                     </div>
                     <div class="input-prepend">
-                        <span class="add-dark"><i class="icon-lock"></i></span>
-                        {{ form_widget(form.password, { 'attr' : {'data-required':'true', 'placeholder':'_Password' }} ) }}
-                        {% if errors == '301' %}
-                            <ul class="parsley-error-list" style="display: block;">
-                                <li class="required" style="display: list-item;">{{ '_Email_pwd_wrong'|trans }}</li>
-                            </ul>
-                        {% endif %}
+                        <div>
+                            <span class="add-dark"><i class="icon-lock"></i></span>
+                            {{ form_widget(form.password, { 'attr' : {'data-required':'true', 'placeholder':'_Password' }} ) }}
+                        </div>
+                        <div>{{ form_errors(form.password) }}</div>
                     </div>
                         <span id="sign-form-valid">
                             {{ form_row(form._token) }}

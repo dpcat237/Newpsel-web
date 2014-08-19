@@ -1,0 +1,20 @@
+{% extends 'NPSFrontendBundle:Email:simple_layout.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="font-family: Arial,Helvetica,sans-serif; font-size: 18px; line-height: 20px; font-weight: bold; color: #4f586b;" align="left" valign="top">
+            <strong>Hello!</strong>
+        </td>
+    </tr>
+    <tr>
+        <td style="font-size: 0px;" height="30">&nbsp;</td>
+    </tr>
+    <tr>
+        <td style="font-family: Arial,Helvetica,sans-serif; font-size: 14px; line-height: 18px; color: #353b49;" align="left" valign="top">
+            {{ '_Here_Chrome_key'|trans }}: {{ key }}.
+        </td>
+    </tr>
+    <tr>
+        <td style="font-size: 0px;" height="30">&nbsp;</td>
+    </tr>
+{% endblock %}

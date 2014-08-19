@@ -1,5 +1,6 @@
 # *** Global layout ***
 _Title: Newpsel
+_web_url: www.newpsel.com
 _web_description: Newpsel (News Personal Selector) is RSS feed reader which will help you be more productive.
 
 #*** Notifications ***
@@ -38,21 +39,26 @@ _Name: Name
 _Submit: Submit
 _Email: Email
 _Password: Password
+_Confirm_password: Confirm password
 #Login
 _Login_to_account: Login to your account
 _Sign_up: Sign up
 _Sign_in: Sign in
-_Email_pwd_wrong: Email and password combination isn't correct
+_Email_pwd_wrong: Email and password combination isn't correct.
 _Create_account: Create an account
 _Dont_acount_yet: Don't have an account yet?
-_Email_exists: Email already exists
+_Email_exists: This email already exists.
 _Already_account: Already have an account?
+_Your_email: Your email
+#Errors:
+_Verify_email: This email isn't verified. \n We sent you an email with account activation.
+_passwords_match: The password fields must match.
 
 #*** Error page ***
 _ERROR: ERROR !
 _Page_Not_Found: Page Not Found
 _Go_Homepage: Go Home page
-_Not_found_text: For Some Reason The Page You Requested Could Not Be Found On Our Server
+_Not_found_text: For Some Reason The Page You Requested Could Not Be Found On Our Server.
 
 #Filter
 _Save_to_label: Save to label
@@ -103,3 +109,14 @@ _Set_label: Set a label
 _Show_in_tab: Show article in new tab
 _Stared_list: Favorite articles
 _Stared_view: Favorite article
+
+#*** Email ***
+#Chrome key
+_Chrome_key_subject: Newpsel: Chrome extension key
+#Verify email
+_Verify_email_subject: Welcome to Newpsel!
+_Verify_email_text: To verify your email click to next
+_Here_Chrome_key: Here are you Chrome extension key
+_Email_write_us: You can reach us by email at newpsel@gmail.com if you have any issues, questions, requests or suggestions.
+_Email_copyright: &copy; 2014 Newpsel, All rights reserved.
+_link: link

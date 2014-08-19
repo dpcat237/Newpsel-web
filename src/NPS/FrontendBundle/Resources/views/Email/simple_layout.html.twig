@@ -1,9 +1,7 @@
-{#{% trans_default_domain "emails" %}#}
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Newpsel</title>
 </head>
 <body>
 <center>
@@ -14,9 +12,9 @@
                 <table style="width: 612px;" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                     <tr>
-                        <td align="left" valign="top" height="140">
-                            <a title="Newpsel.com" href="http://www.newpsel.com" target="_blank">
-                                <img src="http://www.newpsel.com/bundles/npsfrontend/images/xlogo_web.png.pagespeed.ic.p6fEGG5oxJ.png" alt="Newpsel logo" width="81" height="81" />
+                        <td align="center" valign="top" height="100">
+                            <a title="Newpsel.com" href="http://{{ '_web_url'|trans }}" target="_blank">
+                                <img src="{{ domain|default('http://www.newpsel.com') ~ '/bundles/npsfrontend/images/logo_web.png' }}" alt="{{ '_Title'|trans }} logo" width="81" height="81" />
                             </a>
                         </td>
                     </tr>
@@ -31,22 +29,7 @@
             <td align="center" valign="top">
                 <table style="width: 600px;" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
-                    <tr>
-                        <td style="font-family: Arial,Helvetica,sans-serif; font-size: 18px; line-height: 20px; font-weight: bold; color: #4f586b;" align="left" valign="top">
-                            <strong>Hello!</strong>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 0px;" height="15">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td style="font-family: Arial,Helvetica,sans-serif; font-size: 12px; line-height: 18px; color: #353b49;" align="left" valign="top">
-                            Here are you Chrome extension key: {{ key }}.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 0px;" height="30">&nbsp;</td>
-                    </tr>
+                    {% block content %}{% endblock %}
                     {#<tr>
                         <td style="font-family: Arial,Helvetica,sans-serif; font-size: 18px; line-height: 30px; font-weight: bold; color: #4f586b; text-transform: uppercase; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #dc6355;" align="left" valign="top">
                             <strong>{{ 'manage_order_label' | trans }}</strong>
@@ -94,6 +77,25 @@
                     <tr>
                         <td style="font-size: 0px;" height="75">&nbsp;</td>
                     </tr>#}
+                    <tr>
+                        <td style="font-size: 0px;" height="30">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: Arial,Helvetica,sans-serif; font-size: 13px; line-height: 18px; color: #353b49;" align="left" valign="top">
+                            {{ '_Email_write_us' | trans }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 0px;" height="20">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:12px;text-align:left;color:#999;line-height:1.5em;" align="left" valign="top">
+                            {{ '_Email_copyright' | trans | raw }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 0px;" height="75">&nbsp;</td>
+                    </tr>
                     </tbody>
                 </table>
             </td>
