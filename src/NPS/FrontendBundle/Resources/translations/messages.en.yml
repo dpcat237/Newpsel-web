@@ -50,6 +50,11 @@ _Dont_acount_yet: Don't have an account yet?
 _Email_exists: This email already exists.
 _Already_account: Already have an account?
 _Your_email: Your email
+_Forgot_password: Forgot your password?
+_Forget_pwd: Forget Password ?
+_Change_password: Change password
+_Back: Back
+_Sent_recover_pwd: We sent to you an email with link to create new password.
 #Errors:
 _Verify_email: This email isn't verified. \n We sent you an email with account activation.
 _passwords_match: The password fields must match.
@@ -115,7 +120,9 @@ _Stared_view: Favorite article
 _Chrome_key_subject: Newpsel: Chrome extension key
 #Verify email
 _Verify_email_subject: Welcome to Newpsel!
+_Password_recovery_subject: Newpsel: recovery your password
 _Verify_email_text: To verify your email click to next
+_Password_recovery_text: To create new password click to next
 _Here_Chrome_key: Here are you Chrome extension key
 _Email_write_us: You can reach us by email at newpsel@gmail.com if you have any issues, questions, requests or suggestions.
 _Email_copyright: &copy; 2014 Newpsel, All rights reserved.

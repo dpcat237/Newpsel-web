@@ -14,4 +14,5 @@ class RedisConstants {
 
     /* User */
     const USER_ACTIVATION_CODE = "user_verify";
+    const USER_PASSWORD_RECOVERY = "user_password_recovery";
 }

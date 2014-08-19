@@ -33,10 +33,10 @@
                         </div>
                         <div>{{ form_errors(form.password) }}</div>
                     </div>
-                        <span id="sign-form-valid">
-                            {{ form_row(form._token) }}
-                            <input type="submit" class="btn btn-inverse pull-right" value="Log In">
-                        </span>
+                    <span id="sign-form-valid">
+                        {{ form_row(form._token) }}
+                        <input type="submit" class="btn btn-inverse pull-right" value="{{ '_Submit'|trans }}">
+                    </span>
                     {#<div class="remember">
                         <input type="checkbox" id="signIn[remember_me]" name="signIn[remember_me]" checked>
                         <span{% trans %}>Remember me{% endtrans %}</span>
@@ -44,7 +44,7 @@
                 </form>
                 <div class="clearfix"></div>
                 <hr class="hr-dark">
-                {#<p><a href="password.html">Forgot your password?</a></p>#}
+                <p><a href="{{ path('recover_password') }}">{{ '_Forgot_password'|trans }}</a></p>
                 <p class="para-account">{{ '_Dont_acount_yet'|trans }} <a href="{{ url("sign_up") }}">{{ '_Create_account'|trans }}</a></p>
             </div>
         </div>

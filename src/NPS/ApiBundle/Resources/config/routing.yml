@@ -93,3 +93,9 @@ api_sign_up:
     defaults: { _controller: NPSApiBundle:User:signUp }
     requirements:
       _method: POST
+
+api_password_recovery:
+    pattern:  /password_recovery/
+    defaults: { _controller: NPSApiBundle:User:recoveryPassword }
+    requirements:
+      _method: POST

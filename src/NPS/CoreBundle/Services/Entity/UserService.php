@@ -71,27 +71,33 @@ class UserService extends AbstractEntityService
         $existUser = $check['existUser'];
         if (!$check['errors'] && $existUser instanceof User) {
             $password = sha1($nseck."_".$user->getPassword());
-            $existUser->setPassword($password);
-            $existUser->setEnabled(false);
-            $existUser->setRegistered(true);
-            $this->saveObject($existUser, true);
-
-            $this->setVerifyCode($user->getId());
+            $this->newUserSets($existUser, $password);
 
             return array($existUser, $check['errors']);
         }
 
         if (!$check['errors']) {
             $password = sha1($nseck."_".$user->getPassword());
-            $user->setPassword($password);
-            $user->setEnabled(false);
-            $user->setRegistered(true);
-            $this->saveObject($user, true);
-
-            $this->setVerifyCode($user->getId());
+            $this->newUserSets($user, $password);
         }
 
         return array($user, $check['errors']);
+    }
+
+    /**
+     * Sets of new user and set email verification code
+     *
+     * @param User   $user
+     * @param string $password
+     */
+    private function newUserSets(User $user, $password)
+    {
+        $user->setPassword($password);
+        $user->setEnabled(false);
+        $user->setRegistered(true);
+        $this->saveObject($user, true);
+
+        $this->setVerifyCode($user->getId());
     }
 
     /**
@@ -102,8 +108,8 @@ class UserService extends AbstractEntityService
     private function setVerifyCode($userId)
     {
         $activationCode = sha1(microtime());
-        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$activationCode, 2592000, $userId);
-        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$userId, 2592000, $activationCode);
+        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$activationCode, 2592000, $userId); //7 days life
+        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$userId, 2592000, $activationCode); //7 days life
     }
 
     /**
@@ -192,5 +198,47 @@ class UserService extends AbstractEntityService
         $redisKey = RedisConstants::USER_ACTIVATION_CODE.'_'.$user->getId();
         $activationCode = $this->cache->get($redisKey);
         $this->userNotification->sendEmailVerification($user->getEmail(), $activationCode);
+    }
+
+    /**
+     * Send an email with link to create new password
+     *
+     * @param $email
+     */
+    public function requestRecoverPassword($email)
+    {
+        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->findOneByEmail($email);
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $recoveryCode = sha1(microtime());
+        $this->cache->setex(RedisConstants::USER_PASSWORD_RECOVERY.'_'.$recoveryCode, 2592000, $user->getId()); //7 days life
+        $this->userNotification->sendPasswordRecovery($user->getEmail(), $recoveryCode);
+    }
+
+    /**
+     * Get user from recovery password code
+     *
+     * @param string $nseck        system secret code
+     * @param string $recoveryCode recovery password code
+     * @param string $password     new password
+     *
+     * @return User|null
+     */
+    public function newRecoveryPassword($nseck, $recoveryCode, $password)
+    {
+        $userId = $this->cache->get(RedisConstants::USER_PASSWORD_RECOVERY.'_'.$recoveryCode);
+        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->find($userId);;
+        if (!$user instanceof User) {
+            return null;
+        }
+
+        $password = sha1($nseck."_".$password);
+        $user->setPassword($password);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
     }
 }

@@ -58,4 +58,27 @@ class UserNotificationsService extends AbstractEmailNotificationService
         $mailer = \Swift_Mailer::newInstance($this->getTransporter());
         $mailer->send($message);
     }
+
+    /**
+     * Send email with link to create new password
+     *
+     * @param string $userEmail
+     * @param string $recoveryKey
+     */
+    public function sendPasswordRecovery($userEmail, $recoveryKey)
+    {
+        $viewData = array(
+            'key' => $recoveryKey
+        );
+
+        $message = \Swift_Message::newInstance()
+            ->setSubject($this->getTranslator()->trans('_Password_recovery_subject'))
+            ->setFrom($this->emailSender)
+            ->setTo($userEmail)
+            ->setBody($this->getTemplating()->render('NPSFrontendBundle:Email:password_recovery.html.twig', $viewData))
+            ->setContentType('text/html');
+
+        $mailer = \Swift_Mailer::newInstance($this->getTransporter());
+        $mailer->send($message);
+    }
 }

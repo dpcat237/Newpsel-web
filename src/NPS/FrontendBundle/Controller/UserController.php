@@ -3,8 +3,11 @@
 namespace NPS\FrontendBundle\Controller;
 
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use NPS\CoreBundle\Constant\SessionConstants;
 use NPS\CoreBundle\Event\UserSignUpEvent;
 use NPS\CoreBundle\NPSCoreEvents;
+use NPS\FrontendBundle\Form\Type\ChangePasswordType;
+use NPS\FrontendBundle\Form\Type\RecoverPasswordType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
@@ -239,6 +242,70 @@ class UserController extends Controller
     public function verifyEmailAction(Request $request)
     {
         $user = $this->get('nps.entity.user')->getUserByVerifyCode($request->get('key'));
+        if (!$user instanceof User) {
+            return new RedirectResponse($this->container->get('router')->generate('welcome'));
+        }
+        $this->doLogin($user);
+
+        return new RedirectResponse($this->container->get('router')->generate('homepage'));
+    }
+
+    /**
+     * Request url to recover password
+     *
+     * @param Request $request
+     *
+     * @Route("/recover/password/", name="recover_password")
+     * @Template()
+     *
+     * @return array
+     */
+    public function recoverPasswordAction(Request $request)
+    {
+        $formType = new RecoverPasswordType();
+        $form = $this->createForm($formType);
+        $viewData = array (
+            'form' => $form->createView(),
+            'sent' => false
+        );
+
+        if ($request->getMethod() != 'POST') {
+            return $viewData;
+        }
+
+        $form->handleRequest($request);
+        $this->get('nps.entity.user')->requestRecoverPassword($form->getData()['email']);
+        $viewData['sent'] = true;
+
+        return $viewData;
+    }
+
+    /**
+     * Change password after
+     *
+     * @param Request $request
+     *
+     * @Route("/new/password/{key}/", name="new_password")
+     * @Template()
+     *
+     * @return RedirectResponse
+     */
+    public function newPasswordAction(Request $request)
+    {
+        $formType = new ChangePasswordType();
+        $form = $this->createForm($formType);
+
+        if ($request->getMethod() != 'POST') {
+            $viewData = array (
+                'form' => $form->createView(),
+                'key' => $request->get('key')
+            );
+
+            return $viewData;
+        }
+
+        $form->handleRequest($request);
+        $user = $this->get('nps.entity.user')->newRecoveryPassword($this->container->getParameter('nseck'), $request->get('key'), $form->getData()['password']);
         if (!$user instanceof User) {
             return new RedirectResponse($this->container->get('router')->generate('welcome'));
         }
