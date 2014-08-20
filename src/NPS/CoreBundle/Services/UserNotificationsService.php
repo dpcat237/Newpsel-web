@@ -1,6 +1,9 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
+use Swift_Mailer;
+use Swift_Message;
+
 /**
  * Class UserNotificationsService
  *
@@ -8,11 +11,6 @@ namespace NPS\CoreBundle\Services;
  */
 class UserNotificationsService extends AbstractEmailNotificationService
 {
-    /**
-     * @var string
-     */
-    private $emailSender = 'newpsel@gmail.com';
-
     /**
      * Send new extension key to user
      *
@@ -25,14 +23,14 @@ class UserNotificationsService extends AbstractEmailNotificationService
             'key' => $extensionKey
         );
 
-        $message = \Swift_Message::newInstance()
-            ->setSubject($this->getTranslator()->trans('_Chrome_key_subject'))
+        $message = Swift_Message::newInstance()
+            ->setSubject($this->translator->trans('_Chrome_key_subject'))
             ->setFrom($this->emailSender)
             ->setTo($userEmail)
-            ->setBody($this->getTemplating()->render('NPSFrontendBundle:Email:chrome_key.html.twig', $viewData))
+            ->setBody($this->templating->render('NPSFrontendBundle:Email:chrome_key.html.twig', $viewData))
             ->setContentType('text/html');
 
-        $mailer = \Swift_Mailer::newInstance($this->getTransporter());
+        $mailer = Swift_Mailer::newInstance($this->getTransporter());
         $mailer->send($message);
     }
 
@@ -48,14 +46,14 @@ class UserNotificationsService extends AbstractEmailNotificationService
             'key' => $activationKey
         );
 
-        $message = \Swift_Message::newInstance()
-            ->setSubject($this->getTranslator()->trans('_Verify_email_subject'))
+        $message = Swift_Message::newInstance()
+            ->setSubject($this->translator->trans('_Verify_email_subject'))
             ->setFrom($this->emailSender)
             ->setTo($userEmail)
-            ->setBody($this->getTemplating()->render('NPSFrontendBundle:Email:verify_email.html.twig', $viewData))
+            ->setBody($this->templating->render('NPSFrontendBundle:Email:verify_email.html.twig', $viewData))
             ->setContentType('text/html');
 
-        $mailer = \Swift_Mailer::newInstance($this->getTransporter());
+        $mailer = Swift_Mailer::newInstance($this->getTransporter());
         $mailer->send($message);
     }
 
@@ -71,14 +69,14 @@ class UserNotificationsService extends AbstractEmailNotificationService
             'key' => $recoveryKey
         );
 
-        $message = \Swift_Message::newInstance()
-            ->setSubject($this->getTranslator()->trans('_Password_recovery_subject'))
+        $message = Swift_Message::newInstance()
+            ->setSubject($this->translator->trans('_Password_recovery_subject'))
             ->setFrom($this->emailSender)
             ->setTo($userEmail)
-            ->setBody($this->getTemplating()->render('NPSFrontendBundle:Email:password_recovery.html.twig', $viewData))
+            ->setBody($this->templating->render('NPSFrontendBundle:Email:password_recovery.html.twig', $viewData))
             ->setContentType('text/html');
 
-        $mailer = \Swift_Mailer::newInstance($this->getTransporter());
+        $mailer = Swift_Mailer::newInstance($this->getTransporter());
         $mailer->send($message);
     }
 }

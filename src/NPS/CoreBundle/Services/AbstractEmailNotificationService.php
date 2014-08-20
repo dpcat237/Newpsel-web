@@ -2,32 +2,42 @@
 namespace NPS\CoreBundle\Services;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
-use Symfony\Bundle\TwigBundle\Debug\TimedTwigEngine;
-use \Swift_Mailer;
+use Swift_SmtpTransport;
 use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\TwigBundle\TwigEngine;
 
 abstract class AbstractEmailNotificationService
 {
-    private $templating;
-    private $mailer;
-    private $translator;
+    /**
+     * @var TwigEngine
+     */
+    protected $templating;
+
+    /**
+     * @var Translator
+     */
+    protected $translator;
 
     /**
      * @var $entityManager EntityManager
      */
-    private $entityManager;
+    protected $entityManager;
+
+    /**
+     * @var string
+     */
+    protected $emailSender = 'newpsel@gmail.com';
+
 
     /**
      * All email notification services need this
      *
-     * @param TimedTwigEngine $templating TimedTwigEngine
-     * @param Swift_Mailer    $mailer     Swift_Mailer
-     * @param Translator      $translator Translator
+     * @param TwigEngine   $templating TwigEngine
+     * @param Translator   $translator Translator
      */
-    public function __construct(TimedTwigEngine $templating, Swift_Mailer $mailer, Translator $translator)
+    public function __construct(TwigEngine $templating, Translator $translator)
     {
         $this->templating = $templating;
-        $this->mailer = $mailer;
         $this->translator = $translator;
     }
 
@@ -39,40 +49,13 @@ abstract class AbstractEmailNotificationService
         return $this->entityManager;
     }
 
-
-    /**
-     * @return mixed
-     */
-    public function getTemplating()
-    {
-        return $this->templating;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getMailer()
-    {
-        return $this->mailer;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getTranslator()
-    {
-        return $this->translator;
-    }
-
     /**
      * @return mixed
      */
     public function getTransporter()
     {
-        $transporter = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
-            ->setUsername('newpsel@gmail.com')
+        $transporter = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
+            ->setUsername($this->emailSender)
             ->setPassword('n#06p04e2013r#s');
 
         return $transporter;

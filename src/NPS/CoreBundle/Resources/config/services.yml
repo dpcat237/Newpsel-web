@@ -43,7 +43,6 @@ services:
         class: NPS\CoreBundle\Services\UserNotificationsService
         arguments:
             templating: @templating
-            mailer:     @mailer
             translator: @translator
 
     nps.wrapper.user:
