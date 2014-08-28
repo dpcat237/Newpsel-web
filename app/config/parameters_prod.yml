@@ -17,6 +17,7 @@ parameters:
     redis_cache_server:    redis://localhost/4
     redis_sessions_server: redis://localhost/5
 
+    google_developer_key: AIzaSyCR7kFwJEvGR9LMGNUtgQko9G7791Nh218
     google_client_id:     8108991373-3pelt7s1pevojlhikoapq09bhldlknhf.apps.googleusercontent.com
     google_client_secret: Biq3NalcK51VK85sTfPLVKRz
 

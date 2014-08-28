@@ -161,10 +161,10 @@ rs_queue:
 #                        elastica_to_model_transformer: ~
 
 eko_google_translate:
-    api_key: %google_client_id%
+    api_key: %google_developer_key%
 
 endroid_gcm:
-    api_key: %google_client_id%
+    api_key: %google_developer_key%
 
 hwi_oauth:
     firewall_name: secured_area
