@@ -1,5 +1,8 @@
 <?php
 namespace NPS\CoreBundle\Services\Crawler\libraries\humblehttpagent;
+
+use SimplePie_Misc;
+
 /**
  * Humble HTTP Agent
  * 
@@ -371,7 +374,7 @@ class HumbleHttpAgent
 							if ((in_array($status_code, array(300, 301, 302, 303, 307)) || $status_code > 307 && $status_code < 400) && $request->getResponseHeader('location')) {
 								$redirectURL = $request->getResponseHeader('location');
 								if (!preg_match('!^https?://!i', $redirectURL)) {
-									$redirectURL = \SimplePie_Misc::absolutize_url($redirectURL, $url);
+									$redirectURL = SimplePie_Misc::absolutize_url($redirectURL, $url);
 								}
 								if ($this->validateURL($redirectURL)) {
 									$this->debug('Redirect detected. Valid URL: '.$redirectURL);
@@ -586,7 +589,7 @@ class HumbleHttpAgent
 							if ((in_array($status_code, array(300, 301, 302, 303, 307)) || $status_code > 307 && $status_code < 400) && isset($this->requests[$orig]['location'])) {
 								$redirectURL = $this->requests[$orig]['location'];
 								if (!preg_match('!^https?://!i', $redirectURL)) {
-									$redirectURL = \SimplePie_Misc::absolutize_url($redirectURL, $url);
+									$redirectURL = SimplePie_Misc::absolutize_url($redirectURL, $url);
 								}
 								if ($this->validateURL($redirectURL)) {
 									$this->debug('Redirect detected. Valid URL: '.$redirectURL);

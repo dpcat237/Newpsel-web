@@ -76,7 +76,7 @@ class UserService extends AbstractEntityService
             return array($existUser, $check['errors']);
         }
 
-        if (!$check['errors']) {
+        if (!$check['errors'] && strlen($user->getEmail()) > 2) {
             $password = sha1($nseck."_".$user->getPassword());
             $this->newUserSets($user, $password);
         }
