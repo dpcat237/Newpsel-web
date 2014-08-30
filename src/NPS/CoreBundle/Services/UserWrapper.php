@@ -5,6 +5,7 @@ use NPS\CoreBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use HWI\Bundle\OAuthBundle\Security\Core\Authentication\Token\OAuthToken;
 
 /**
  * UserWrapper
@@ -73,7 +74,11 @@ class UserWrapper
      */
     public function setCurrentUser()
     {
-        if (!$this->user instanceof User && $this->security->getToken() instanceof UsernamePasswordToken) {
+        if ($this->user instanceof User) {
+            return;
+        }
+
+        if ($this->security->getToken() instanceof UsernamePasswordToken || $this->security->getToken() instanceof OAuthToken) {
             $this->user = $this->security->getToken()->getUser();
         }
     }

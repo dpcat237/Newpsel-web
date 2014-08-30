@@ -16,13 +16,6 @@ services:
       arguments:
           user_service: @nps.entity.user
 
-    nps.listener.security:
-      class: NPS\CoreBundle\EventListener\SecuritySuccessListener
-      tags:
-          - { name: kernel.event_listener, event: security.authentication.success, method: handle }
-      arguments:
-          user_wrapper: @nps.wrapper.user
-
 #**External services **
     gedmo.listener.timestampable:
           class: Gedmo\Timestampable\TimestampableListener
