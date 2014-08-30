@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services;
 
 use NPS\CoreBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
@@ -16,6 +17,11 @@ class UserWrapper
     private $security;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * @var User
      */
     private $user;
@@ -23,10 +29,43 @@ class UserWrapper
 
     /**
      * @param SecurityContext $security SecurityContext
+     * @param Session         $session Session
      */
-    public function __construct(SecurityContext $security)
+    public function __construct(SecurityContext $security, Session $session)
     {
         $this->security = $security;
+        $this->session = $session;
+    }
+
+    /**
+     * Do login manually setting user to session
+     *
+     * @param User $user
+     *
+     * @return User|null
+     */
+    public function doLogin(User $user)
+    {
+        $ok = false;
+
+        //create new token
+        $token = new UsernamePasswordToken($user, null, 'secured_area', $user->getRoles());
+        $this->security->setToken($token);
+        //roles
+        $roles = $user->getRoles();
+        foreach ($roles as &$role) {
+            //check that each role was granted correctly
+            $ok = ($this->security->isGranted($role));
+        }
+        if ($ok) {
+            //serialize token and put it on session
+            $this->session->set('_security_secured_area', serialize($token));
+            $this->setCurrentUser();
+
+            return $user;
+        }
+
+        return null;
     }
 
     /**

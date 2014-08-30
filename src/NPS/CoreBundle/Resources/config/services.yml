@@ -49,6 +49,7 @@ services:
         class: NPS\CoreBundle\Services\UserWrapper
         arguments:
             security: @security.context
+            session:  @session
         calls:
             - [ setCurrentUser ]
 

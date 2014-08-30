@@ -212,19 +212,7 @@ class UserController extends Controller
         $this->get('request')->getSession()->invalidate();
         // Only enabled users allowed. Set to true after activation code confirm e-mail.
         if ($user->isEnabled()) {
-            //create new token
-            $token = new UsernamePasswordToken($user, null, 'secured_area', $user->getRoles());
-            $this->get('security.context')->setToken($token);
-            //roles
-            $roles = $user->getRoles();
-            foreach ($roles as &$role) {
-                //check that each role was granted correctly
-                $ok = $ok && ($this->get('security.context')->isGranted($role));
-            }
-            if ($ok) {
-                //serialize token and put it on session
-                $this->get('request')->getSession()->set('_security_secured_area', serialize($token));
-            }
+            $this->get('nps.wrapper.user')->doLogin($user);
         }
 
         return $ok;
