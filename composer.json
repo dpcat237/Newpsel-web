@@ -53,7 +53,9 @@
         "endroid/gcm-bundle": "dev-master",
         "celd/opml-import-export": "dev-master",
         "duellsy/pockpack": "dev-master",
-        "hwi/oauth-bundle": "0.4.*@dev"
+        "hwi/oauth-bundle": "0.4.*@dev",
+        "friendsofsymfony/rest-bundle": "dev-master",
+        "jms/serializer-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

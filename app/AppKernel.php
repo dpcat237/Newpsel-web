@@ -30,6 +30,8 @@ class AppKernel extends Kernel
             new Eko\GoogleTranslateBundle\EkoGoogleTranslateBundle(),
             new Endroid\Bundle\GcmBundle\EndroidGcmBundle(),
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
             //new FOS\ElasticaBundle\FOSElasticaBundle(),
             //new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),
