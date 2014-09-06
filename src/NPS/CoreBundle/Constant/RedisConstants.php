@@ -7,6 +7,10 @@ namespace NPS\CoreBundle\Constant;
  * @package NPS\CoreBundle\Constant
  */
 class RedisConstants {
+    /* Item */
+    const ITEM_URL_HASH = "item_url_hash";
+    const ITEM_TITLE_HASH = "item_title_hash";
+
     /* Label */
     const LABEL_DELETED = "user_labels_deleted";
     const IMPORT_LATER_ITEMS = 'import-later-items';

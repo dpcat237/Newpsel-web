@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Constant\RedisConstants;
 use NPS\CoreBundle\Services\FilteringManager;
 use Predis\Client;
 use SimplePie_Item;
@@ -103,15 +104,20 @@ class ItemService
         $item->setContentHash(sha1($itemData->get_content()));
         $item->setLink($itemData->get_link());
         $title = $this->purifier->purify($itemData->get_title());
-        $item->setTitle(html_entity_decode($title, ENT_QUOTES, 'UTF-8'));
+        $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+        $item->setTitle($title);
         $item->setContent($this->purifier->purify($itemData->get_content()));
 
         $this->entityManager->persist($item);
         $this->entityManager->flush();
 
-        $linkHash = "item_url_hash_".sha1($itemData->get_link());
-        $ttl = 86400;
+        //save temporary hash of url
+        $linkHash = RedisConstants::ITEM_URL_HASH."_".sha1($itemData->get_link());
+        $ttl = 259200; // 3 days
         $this->cache->setex($linkHash, $ttl, $item->getId());
+        //save temporary hash of title
+        $titleHash = RedisConstants::ITEM_TITLE_HASH."_".sha1($title);
+        $this->cache->setex($titleHash, $ttl, $item->getId());
 
         $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
         $whereUsersFeeds = array(
@@ -180,21 +186,31 @@ class ItemService
     }
 
     /**
-     * Check if exist item by url
-     * @param $link
+     * Check if item already exists by url or title hash to update his data
+     *
+     * @param string $link
+     * @param string $title
      *
      * @return mixed
      */
-    public function checkExistByLink($link) {
-        $linkHash = "item_url_hash_".sha1($link);
+    public function checkItemWasUpdated($link, $title) {
+        $linkHash = RedisConstants::ITEM_URL_HASH."_".sha1($link);
         $itemId = $this->cache->get($linkHash);
+
+        if (!$itemId) {
+            $title = $this->purifier->purify($title);
+            $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+            $titleHash = RedisConstants::ITEM_TITLE_HASH."_".sha1($title);
+            $itemId = $this->cache->get($titleHash);
+        }
+
         if ($itemId) {
             $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
 
             return $itemRepo->find($itemId);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

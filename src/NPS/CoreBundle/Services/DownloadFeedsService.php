@@ -148,7 +148,7 @@ class DownloadFeedsService
      */
     protected function addUpdateItem(SimplePie_Item $itemData, Feed $feed)
     {
-        $item = $this->itemS->checkExistByLink($itemData->get_link());
+        $item = $this->itemS->checkItemWasUpdated($itemData->get_link(), $itemData->get_title());
         if ($item instanceof Item) {
             $this->itemS->updateItemContent($item, $itemData);
         } else {
