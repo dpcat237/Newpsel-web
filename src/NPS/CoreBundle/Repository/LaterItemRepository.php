@@ -61,11 +61,9 @@ class LaterItemRepository extends EntityRepository
             ->leftJoin('ui.item', 'i')
             ->where('li.later = :laterId')
             ->andWhere('li.unread = :unread')
-            ->andWhere('i.id >= :idMin')
             ->orderBy('i.dateAdd', 'DESC')
             ->setParameter('laterId', $labelId)
             ->setParameter('unread', true)
-            ->setParameter('idMin', 1)
             ->getQuery();
 
         return $query->getResult();
@@ -82,21 +80,20 @@ class LaterItemRepository extends EntityRepository
      */
     public function getUnreadForApiByLabel($laterId, $begin = 0, $limit = 50)
     {
-        $query = $this->createQueryBuilder('li');
-        $query
+        $query = $this->createQueryBuilder('li')
             ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
-            ->join('li.userItem', 'ui')
-            ->join('ui.item', 'i')
+            ->leftJoin('li.userItem', 'ui')
+            ->leftJoin('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
             ->leftJoin('li.later', 'l')
-            ->where('li.unread = :unread')
-            ->andWhere('li.later = :laterId')
-            ->orderBy('li.id', 'DESC')
+            ->where('li.later = :laterId')
+            ->andWhere('li.unread = :unread')
+            ->orderBy('i.dateAdd', 'DESC')
             ->setFirstResult($begin)
             ->setMaxResults($limit)
+            ->setParameter('laterId', $laterId)
             ->setParameter('unread', true)
-            ->setParameter('laterId', $laterId);
-        $query = $query->getQuery();
+            ->getQuery();
 
         return $query->getArrayResult();
     }

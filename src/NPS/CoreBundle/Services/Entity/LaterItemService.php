@@ -226,7 +226,7 @@ class LaterItemService
         $collection = array();
         foreach ($laterItems as $laterItem) {
             $text = $this->removeUnreadContentFromText($laterItem['content']);
-            if (strlen($text) < 1000) {
+            if (strlen($text) < 250) {
                 continue;
             }
 
