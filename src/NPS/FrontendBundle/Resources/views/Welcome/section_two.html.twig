@@ -1,0 +1,14 @@
+<div class="wrapper style3">
+    <section class="container">
+        <header class="major">
+            <h2>{{ '_Section3_header'|trans }}</h2>
+        </header>
+        <p>{{ '_Section3_text'|trans }}</p>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="6QYKV55HDCE2W">
+            <input id="paypalSubmit" class="button alt" type="image" alt="{{ '_PayPal_alt'|trans }}" style="display: none;">
+            <a onclick="$('#paypalSubmit').click();" class="button alt">{{ '_Donate'|trans }}</a>
+        </form>
+    </section>
+</div>

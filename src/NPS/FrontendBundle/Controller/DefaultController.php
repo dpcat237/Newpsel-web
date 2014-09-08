@@ -39,6 +39,19 @@ class DefaultController extends Controller
     }
 
     /**
+     * Privacy policy page
+     *
+     * @Template("NPSFrontendBundle:Welcome:privacyPolicy.html.twig")
+     * Routing is defined in routing.yml
+     *
+     * @return Response
+     */
+    public function privacyPolicyAction()
+    {
+        return array();
+    }
+
+    /**
      * Homepage
      *
      * @return Response

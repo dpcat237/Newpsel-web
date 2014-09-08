@@ -1,7 +1,160 @@
 # *** Global layout ***
 _Title: Newpsel
+_title: newpsel
 _web_url: www.newpsel.com
-_web_description: Newpsel (News Personal Selector) is RSS feed reader which will help you be more productive.
+_web_description: newpsel: be more productive selecting, reading, listening, sharing news.
+_web_description_full: Newpsel (News Personal Selector) is news reader which will help you be more productive. You will spend less time selecting, reading, listening, sharing news and much more.
+_web_keywords: news, information, reader, blog, rss, feed, read it later, save for later, read later, dictate news, listen news, text to voice, news player
+_web_email: newpsel@gmail.com
+
+#*** Welcome page ***
+_Sign_in: Sign in
+_Sign_up: Sign up
+_Title_explanation: News Personal Selector
+_Short_explanation: Be more productive selecting, reading, listening and sharing news.
+_Section1_header: Newpsel: News Personal Selector
+_Section1_text: Newpsel made with idea to help be more productive interacting with interesting to your articles. For this propose the application is simple visually to have few interactions for your actions but in another hand it have advanced functionalities and configurations. It implements feeds reader, save for later functionality and dictation of articles as music player.
+_Section2_header: Applications
+_Google_Play_alt: Get it on Google Play
+_Chrome_Store_alt: Available in the Chrome web store
+_Section3_header: Help to this project
+_Section3_text: Newpsel it's personal project opened to public. You can show your interest in make it better by donation.
+_Donate: Donate
+_PayPal_alt: PayPal - The safer, easier way to pay online!
+_Features: Features
+_Feature1_header: Import your data
+_Feature1_text: You can easily import your RSS Feeds from an OPML export from your current service like Feedly. Also you can import your data from Pocket and Instapaper.
+_Feature2_header: Save to later
+_Feature2_text: Save easily articles with Chrome extension, Android app or shared from other apps.
+_Feature3_header: Listen articles
+_Feature3_text: Android application dictate individually each article, news titles and saved artiles like music player. Also you can control this from Android Wear device.
+_Feature4_header: Full-text search
+_Feature4_text: Our system search for complet article content and detect his language to be able be dictated automatically.
+_Feature5_header: Content filters
+_Feature5_text: You can set filters for feed content to be added directly to some label like for dictation.
+_Feature6_header: Works offline
+_Feature6_text: Android application store the data in your device to be accessible offline.
+_Connect_with_us: Connect with us
+_Connect_with_us_text: Any opinion, suggestion, issue report will be very appreciated
+_Facebook: Facebook
+_Google_plus: Google+
+_Design: Design
+_Image: Image
+_Cookie_message: Newpsel is using cookies to provide better service.
+
+#*** Privacy policy ***
+_Privacy_policy: Privacy policy
+_Privacy_policy1_header: Data Controller and Owner
+_Privacy_policy1_text: Denys Pasishnyi. Bartomeu Brufalt 47 Bajo 1, Granollers 08402, Barcelona, Spain,
+_Privacy_policy2_header: Types of Data collected
+_Privacy_policy2_text1: Among the types of Personal Data that this Application collects, by itself or through third parties, there are: Cookie and Usage Data, Email, Password.
+_Privacy_policy2_text2: Other Personal Data collected may be described in other sections of this privacy policy or by dedicated explanation text contextually with the Data collection.
+_Privacy_policy2_text3: The Personal Data may be freely provided by the User, or collected automatically when using this Application.
+_Privacy_policy2_text4: Any use of Cookies - or of other tracking tools - by this Application or by the owners of third party services used by this Application, unless stated otherwise, serves to identify Users and remember their preferences, for the sole purpose of providing the service required by the User.
+_Privacy_policy2_text5: Failure to provide certain Personal Data may make it impossible for this Application to provide its services.
+_Privacy_policy2_text6: The User assumes responsibility for the Personal Data of third parties published or shared through this Application and declares to have the right to communicate or broadcast them, thus relieving the Data Controller of all responsibility.
+_Privacy_policy3_header1: Mode and place of processing the Data
+_Privacy_policy3_header2: Methods of processing
+_Privacy_policy3_text1: The Data Controller processes the Data of Users in a proper manner and shall take appropriate security measures to prevent unauthorized access, disclosure, modification, or unauthorized destruction of the Data.
+_Privacy_policy3_text2: The Data processing is carried out using computers and/or IT enabled tools, following organizational procedures and modes strictly related to the purposes indicated. In addition to the Data Controller, in some cases, the Data may be accessible to certain types of persons in charge, involved with the operation of the site (administration, sales, marketing, legal, system administration) or external parties (such as third party technical service providers, mail carriers, hosting providers, IT companies, communications agencies) appointed, if necessary, as Data Processors by the Owner. The updated list of these parties may be requested from the Data Controller at any time.
+_Privacy_policy3_header3: Place
+_Privacy_policy3_text3: The Data is processed at the Data Controller's operating offices and in any other places where the parties involved with the processing are located. For further information, please contact the Data Controller.
+_Privacy_policy3_header4: Retention time
+_Privacy_policy3_text4: The Data is kept for the time necessary to provide the service requested by the User, or stated by the purposes outlined in this document, and the User can always request that the Data Controller suspend or remove the data.
+_Privacy_policy4_header: The use of the collected Data
+_Privacy_policy4_text1: The Data concerning the User is collected to allow the Application to provide its services, as well as for the following purposes: Analytics, Contacting the User, Registration and authentication, Access to third party services' accounts, Displaying content from external platforms, Handling payments.
+_Privacy_policy4_text2: The Personal Data used for each purpose is outlined in the specific sections of this document.
+_Privacy_policy5_header1: Detailed information on the processing of Personal Data
+_Privacy_policy5_text1: Personal Data is collected for the following purposes and using the following services:
+_Privacy_policy5_header2: Access a third party services’ accounts
+_Privacy_policy5_text2: These services allow this Application to access Data from your account on a third party service and perform actions with it.
+_Privacy_policy5_text3: These services are not activated automatically, but require explicit authorization by the User.
+_Privacy_policy5_header3: Access to the Facebook account (This Application)
+_Privacy_policy5_text4: This service allows this Application to connect with the User's account on the Facebook social network, provided by Facebook Inc.
+_Privacy_policy5_text5: Permissions asked: Email.
+_Privacy_policy5_text6: Place of processing : USA – <a target="_blank" href="http://www.facebook.com/privacy/explanation.php">Privacy Policy</a>
+_Privacy_policy5_header4: Access to the Pocket data (This Application)
+_Privacy_policy5_text7: This service allows this Application to connect with the User's data provided by Read It Later, Inc.
+_Privacy_policy5_text8: Permissions asked: saved web sites.
+_Privacy_policy5_text9: Place of processing : USA – <a target="_blank" href="https://getpocket.com/privacy">Privacy Policy</a>
+_Privacy_policy5_header5: Analytics
+_Privacy_policy5_text10: The services contained in this section enable the Owner to monitor and analyze web traffic and can be used to keep track of User behavior.
+_Privacy_policy5_header6: Google Analytics (Google)
+_Privacy_policy5_text11: Google Analytics is a web analysis service provided by Google Inc. (“Google”). Google utilizes the Data collected to track and examine the use of this Application, to prepare reports on its activities and share them with other Google services.
+_Privacy_policy5_text12: Google may use the Data collected to contextualize and personalize the ads of its own advertising network.
+_Privacy_policy5_text13: Personal Data collected: Cookie and Usage Data.
+_Privacy_policy5_text14: Place of processing : USA – <a target="_blank" href="http://www.google.com/policies/privacy/">Privacy Policy</a>
+_Privacy_policy5_header7: Contacting the User
+_Privacy_policy5_header8: Mailing List or Newsletter (This Application)
+_Privacy_policy5_text15: By registering to the mailing list or to the newsletter, the User’s email address will be added to the contact list of those who may receive email messages containing information of commercial or promotional nature concerning this Application. Your email address might also be added to this list as a result of signing up to this Application or after performing a purchase.
+_Privacy_policy5_text16: Personal Data collected: Email.
+_Privacy_policy5_header9: Displaying content from external platforms
+_Privacy_policy5_text17: These services allow you to view content hosted on external platforms directly from the pages of this Application and interact with them.
+_Privacy_policy5_text18: If a service of this kind is installed, it may still collect web traffic data for the pages where the service is installed, even when users do not use it.
+_Privacy_policy5_header10: Youtube video widget (Google)
+_Privacy_policy5_text19: Youtube is a video content visualization service provided by Google Inc. that allows this Application to incorporate content of this kind on its pages.
+_Privacy_policy5_text20: Personal Data collected: Cookie and Usage Data.
+_Privacy_policy5_text21: Place of processing : USA – <a target="_blank" href="http://www.google.it/intl/en/policies/privacy/">Privacy Policy</a>
+_Privacy_policy5_header11: Handling payments
+_Privacy_policy5_text22: Payment processing services enable this Application to process payments by credit card, bank transfer or other means. To ensure greater security, this Application shares only the information necessary to execute the transaction with the financial intermediaries handling the transaction.
+_Privacy_policy5_header12: PayPal (PayPal Inc.)
+_Privacy_policy5_text23: PayPal is a payment service provided by PayPal Inc., which allows users to make online payments using their Paypal credentials.
+_Privacy_policy5_text24: Personal Data collected: Various types of Data.
+_Privacy_policy5_text25: <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=p/gen/ua/policy_privacy-outside">Privacy Policy</a>
+_Privacy_policy5_header13: Registration and authentication
+_Privacy_policy5_text26: By registering or authenticating, Users allow this Application to identify them and give them access to dedicated services.
+_Privacy_policy5_text27: Depending on what is described below, third parties may provide registration and authentication services.
+_Privacy_policy5_text28: In this case, this Application will be able to access some Data, stored by these third party services, for registration or identification purposes.
+_Privacy_policy5_header14: Google OAuth (Google)
+_Privacy_policy5_text29: Google OAuth is a registration and authentication service provided by Google Inc. and is connected to the Google network.
+_Privacy_policy5_text30: Personal Data collected: email.
+_Privacy_policy5_text31: Place of processing : USA – <a target="_blank" href="http://www.google.com/policies/privacy/">Privacy Policy</a>
+_Privacy_policy5_header15: Direct registration (This Application)
+_Privacy_policy5_text32: The User registers by filling out the registration form and providing the Personal Data directly to this Application.
+_Privacy_policy5_text33: Personal Data collected: Email and Password.
+_Privacy_policy6_header1: Further information about Personal Data
+_Privacy_policy6_header2: Further rights of the Users
+_Privacy_policy6_text: We don't sell or rent Users' Data to any third parties for any purpose. The only uses of Data are those highlighted in this policy. Users are the only owner of their Data and can request modification or deletion at any time.
+_Privacy_policy7_header1: Additional information about Data collection and processing
+_Privacy_policy7_header2: Legal action
+_Privacy_policy7_text1: The User's Personal Data may be used for legal purposes by the Data Controller, in Court or in the stages leading to possible legal action arising from improper use of this Application or the related services.
+_Privacy_policy7_text2: The User is aware of the fact that the Data Controller may be required to reveal personal data upon request of public authorities.
+_Privacy_policy7_header3: Additional information about User's Personal Data
+_Privacy_policy7_text3: In addition to the information contained in this privacy policy, this Application may provide the User with additional and contextual information concerning particular services or the collection and processing of Personal Data upon request.
+_Privacy_policy7_header4: System Logs and Maintenance
+_Privacy_policy7_text4: For operation and maintenance purposes, this Application and any third party services may collect files that record interaction with this Application (System Logs) or use for this purpose other Personal Data (such as IP Address).
+_Privacy_policy7_header5: Information not contained in this policy
+_Privacy_policy7_text5: More details concerning the collection or processing of Personal Data may be requested from the Data Controller at any time. Please see the contact information at the beginning of this document.
+_Privacy_policy7_header6: The rights of Users
+_Privacy_policy7_text6: Users have the right, at any time, to know whether their Personal Data has been stored and can consult the Data Controller to learn about their contents and origin, to verify their accuracy or to ask for them to be supplemented, cancelled, updated or corrected, or for their transformation into anonymous format or to block any data held in violation of the law, as well as to oppose their treatment for any and all legitimate reasons. Requests should be sent to the Data Controller at the contact information set out above.
+_Privacy_policy7_text7: This Application does not support “Do Not Track” requests.
+_Privacy_policy7_text8: To determine whether any of the third party services it uses honor the “Do Not Track” requests, please read their privacy policies.
+_Privacy_policy7_header7: Changes to this privacy policy
+_Privacy_policy7_text9: The Data Controller reserves the right to make changes to this privacy policy at any time by giving notice to its Users on this page. It is strongly recommended to check this page often, referring to the date of the last modification listed at the bottom. If a User objects to any of the changes to the Policy, the User must cease using this Application and can request that the Data Controller erase the Personal Data.
+_Privacy_policy7_text10: Unless stated otherwise, the then-current privacy policy applies to all Personal Data the Data Controller has about Users.
+_Privacy_policy7_header8: Information about this privacy policy
+_Privacy_policy7_text11: The Data Controller is responsible for this privacy policy, prepared starting from the modules provided by Newpsel and hosted on Amazon's servers.
+_Privacy_policy_last_update: Latest update: September 8, 2014
+_Definition_legal_header1: Definition and legal references
+_Definition_legal_header2: Personal Data (or Data)
+_Definition_legal_text1: Any information regarding a natural person, a legal person, an institution or an association, which is, or can be, identified, even indirectly, by reference to any other information, including a personal identification number.
+_Definition_legal_header3: Usage Data
+_Definition_legal_text2: Information collected automatically from this Application (or third party services employed in this Application ), which can include: the IP addresses or domain names of the computers utilized by the Users who use this Application, the URI addresses (Uniform Resource Identifier), the time of the request, the method utilized to submit the request to the server, the size of the file received in response, the numerical code indicating the status of the server's answer (successful outcome, error, etc.), the country of origin, the features of the browser and the operating system utilized by the User, the various time details per visit (e.g., the time spent on each page within the Application) and the details about the path followed within the Application with special reference to the sequence of pages visited, and other parameters about the device operating system and/or the User's IT environment.
+_Definition_legal_header4: User
+_Definition_legal_text3: The individual using this Application, which must coincide with or be authorized by the Data Subject, to whom the Personal Data refer.
+_Definition_legal_header5: Data Subject
+_Definition_legal_text4: The legal or natural person to whom the Personal Data refers to.
+_Definition_legal_header6: Data Processor (or Data Supervisor)
+_Definition_legal_text5: The natural person, legal person, public administration or any other body, association or organization authorized by the Data Controller to process the Personal Data in compliance with this privacy policy.
+_Definition_legal_header7: Data Controller (or Owner)
+_Definition_legal_text6: The natural person, legal person, public administration or any other body, association or organization with the right, also jointly with another Data Controller, to make decisions regarding the purposes, and the methods of processing of Personal Data and the means used, including the security measures concerning the operation and use of this Application. The Data Controller, unless otherwise specified, is the Owner of this Application.
+_Definition_legal_header8: This Application
+_Definition_legal_text7: The hardware or software tool by which the Personal Data of the User is collected.
+_Definition_legal_header9: Cookie
+_Definition_legal_text8: Small piece of data stored in the User's device.
+_Definition_legal_header10: Legal information
+_Definition_legal_text9: Notice to European Users: this privacy statement has been prepared in fulfillment of the obligations under Art. 10 of EC Directive n. 95/46/EC, and under the provisions of Directive 2002/58/EC, as revised by Directive 2009/136/EC, on the subject of Cookies.
+_Definition_legal_text10: This privacy policy relates only to this Application.
 
 #*** Notifications ***
 #success

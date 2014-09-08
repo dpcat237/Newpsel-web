@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+	Solarize by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <title>{{ '_Title' | trans }}</title>
+    <meta name="description" content="{{ '_web_description'|trans }}">
+    <meta name="keywords" content="{{ '_web_keywords'|trans }}">
+    <meta name="author" content="Denys Pasishnyi">
+
+    {# Google Authorship and Publisher Markup #}
+    <link rel="author" href="https://plus.google.com/+Newpsel/posts" />
+    <link rel="publisher" href="https://plus.google.com/+Newpsel" />
+    <meta name="google-site-verification" content="NOrkRbFGgCRtd4_-nZo-ebpUferY159G0p7la358cjg" />
+
+    {# Schema.org markup for Google+ #}
+    <meta itemprop="name" content="{{ '_web_description'|trans }}">
+    <meta itemprop="description" content="{{ '_web_description_full'|trans }}">
+    <meta itemprop="image" content="{{ asset('bundles/npsfrontend/images/logo_web.png') }}">
+
+    {# Twitter Card data #}
+
+    {# Open Graph data #}
+    <meta property="og:url" content="http://{{ '_web_url'|trans }}">
+    <meta property="og:site_name" content="{{ '_title'|trans }}">
+    <meta property="og:image" content="{{ asset('bundles/npsfrontend/images/logo_web.png') }}">
+    <meta property="og:title" content="{{ '_web_description'|trans }}">
+    <meta property="og:description" content="{{ '_web_description_full'|trans }}">
+
+    {% block head_style %}
+        {# Customized Bootstrap application styles, generated via LESS #}
+        {% stylesheets debug=false filter='lessphp' output='bundles/npsfrontend/css/*.css'
+            '@NPSFrontendBundle/Resources/public/less/welcome/skel.less'
+            '@NPSFrontendBundle/Resources/public/less/welcome/style.less'
+            '@NPSFrontendBundle/Resources/public/less/welcome/ie/v8.less'
+        %}
+            <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+        {% endstylesheets %}
+
+        {% javascripts
+            '@NPSFrontendBundle/Resources/public/js/welcome/html5shiv.js'
+            '@NPSFrontendBundle/Resources/public/js/jquery/jquery-1.10.2.js'
+            '@NPSFrontendBundle/Resources/public/js/jquery/jquery.dropotron.min.js'
+            '@NPSFrontendBundle/Resources/public/js/welcome/skel.min.js'
+            '@NPSFrontendBundle/Resources/public/js/welcome/skel-layers.min.js'
+            '@NPSFrontendBundle/Resources/public/js/welcome/init.js'
+            '@NPSFrontendBundle/Resources/public/js/welcome/jquery.cookieBar.js'
+
+            filter="uglifyjs2"
+            output="bundles/npsfrontend/js/*.js" %}
+            <script src="{{ asset_url }}" type="text/javascript" ></script>
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $('.cookie-message').cookieBar();
+                });
+            </script>
+        {% endjavascripts %}
+
+    {% endblock head_style %}
+    {% block head_script %}{% endblock head_script %}
+
+    {# Favicon for different devices #}
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('apple-touch-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('apple-touch-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('apple-touch-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('apple-touch-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('apple-touch-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('apple-touch-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('apple-touch-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('apple-touch-icon-152x152.png') }}">
+    <meta name="apple-mobile-web-app-title" content="{{ '_Title' | trans }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-196x196.png') }}" sizes="196x196">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-160x160.png') }}" sizes="160x160">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-16x16.png') }}" sizes="16x16">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
+    <meta name="msapplication-TileColor" content="#00a300">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="application-name" content="{{ '_Title' | trans }}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+</head>
+<body {% block bodyclass %}class=""{% endblock bodyclass %}>
+{% block body %}{% endblock body %}
+{% block javascripts %}{% endblock javascripts %}
+{% block foot_script %}
+    {%- javascripts output='js/*.js'
+    '@NPSFrontendBundle/Resources/public/js/analytics.js'
+    filter='uglifyjs2'
+    %}
+    <script src="{{ asset_url }}" type="text/javascript"></script>
+    <script>
+        jsUrl.URL_HOMEPAGE = "{{ url("homepage") }}";
+        jsUrl.URL_SUBSCRIBE_FEED = "{{ url("feed_add") }}";
+        jsUrl.URL_CREATE_LABEL = "{{ url("label_create") }}";
+    </script>
+    {% endjavascripts %}
+{% endblock foot_script %}
+</body>
+</html>
