@@ -11,7 +11,6 @@ use Symfony\Component\Form\Form;
 use NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\Preference;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Services\Entity\AbstractEntityService;
 
 /**
  * UserService
@@ -19,12 +18,12 @@ use NPS\CoreBundle\Services\Entity\AbstractEntityService;
 class UserService extends AbstractEntityService
 {
     /**
-     * @var UserNotificationsService
+     * @var Client
      */
     private $cache;
 
     /**
-     * @var Client
+     * @var UserNotificationsService
      */
     private $userNotification;
 

@@ -5,6 +5,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Services\UserNotificationsService;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
 /**
@@ -23,6 +24,11 @@ class DeviceApiService
     private $encoderFactory;
 
     /**
+     * @var UserNotificationsService
+     */
+    private $userNotification;
+
+    /**
      * @var string
      */
     private $salt;
@@ -37,14 +43,16 @@ class DeviceApiService
      * @param Registry     $doctrine Doctrine Registry
      * @param SecureService $secure  SecureService
      * @param EncoderFactory $encoderFactory EncoderFactory
+     * @param UserNotificationsService $userNotification UserNotificationsService
      * @param string         $salt           salt key
      */
-    public function __construct(Registry $doctrine, SecureService $secure, EncoderFactory $encoderFactory, $salt)
+    public function __construct(Registry $doctrine, SecureService $secure, EncoderFactory $encoderFactory, UserNotificationsService $userNotification, $salt)
     {
         $this->doctrine = $doctrine;
         $this->encoderFactory = $encoderFactory;
         $this->salt = $salt;
         $this->secure = $secure;
+        $this->userNotification = $userNotification;
     }
 
     /**
@@ -103,7 +111,7 @@ class DeviceApiService
             $extensionKey = substr(hash("sha1", uniqid(rand(), true)), 0, 16);
 
             //send email to user with new key
-            $this->userNotify->sendChromeKey($user, $extensionKey);
+            $this->userNotification->sendChromeKey($user, $extensionKey);
             //save new key for extension
             $deviceRepo->createDevice($extensionKey, $user);
 

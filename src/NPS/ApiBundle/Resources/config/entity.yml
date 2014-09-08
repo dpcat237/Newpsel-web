@@ -5,6 +5,7 @@ services:
                 doctrine:        @doctrine
                 api.secure:      @api.secure.service
                 encoder_factory: @security.encoder_factory
+                notifications:   @user.notifications
                 nseck:           %nseck%
 
     api.feed.service:
