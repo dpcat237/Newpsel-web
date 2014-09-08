@@ -111,7 +111,7 @@ class DeviceApiService
             $extensionKey = substr(hash("sha1", uniqid(rand(), true)), 0, 16);
 
             //send email to user with new key
-            $this->userNotification->sendChromeKey($user, $extensionKey);
+            $this->userNotification->sendChromeKey($user->getEmail(), $extensionKey);
             //save new key for extension
             $deviceRepo->createDevice($extensionKey, $user);
 
