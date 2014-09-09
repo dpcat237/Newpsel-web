@@ -48,9 +48,6 @@ class ItemCrawlerCommand extends ConsumerCommand
     private $logger;
 
 
-
-
-    
     /**
      * configure of ItemCrawlerCommand
      */
@@ -122,9 +119,10 @@ class ItemCrawlerCommand extends ConsumerCommand
 
     /**
      * Make crawling process
-     * @param array          $laterItem   array
-     * @param string         $cacheKey    cache key
-     * @param string         $notFoundKey key of not found
+     *
+     * @param array  $laterItem   array
+     * @param string $cacheKey    cache key
+     * @param string $notFoundKey key of not found
      */
     private function makeCrawling($laterItem, $cacheKey, $notFoundKey)
     {
@@ -179,10 +177,11 @@ class ItemCrawlerCommand extends ConsumerCommand
     /**
      * If it's shared item detect his language and save to data base
      *
-     * @param $laterItem
-     * @param $completeContent
+     * @param array  $laterItem
+     * @param string $completeContent
      */
-    private function detectArticleLanguage($laterItem, $completeContent) {
+    private function detectArticleLanguage($laterItem, $completeContent)
+    {
         if ($laterItem['feed_id']) {
             return;
         }
