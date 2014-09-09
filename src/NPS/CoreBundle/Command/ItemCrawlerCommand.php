@@ -183,7 +183,7 @@ class ItemCrawlerCommand extends ConsumerCommand
      * @param $completeContent
      */
     private function detectArticleLanguage($laterItem, $completeContent) {
-        if (!$laterItem['feed_id']) {
+        if ($laterItem['feed_id']) {
             return;
         }
         $textSample = substr(strip_tags($completeContent), 0, 500);
