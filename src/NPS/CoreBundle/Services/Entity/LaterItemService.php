@@ -231,9 +231,11 @@ class LaterItemService
             }
 
             $laterItem['text'] = $text;
-            $collection[] = $laterItem;
             if (strlen($laterItem['item_language']) == 2) {
                 $laterItem['language'] = $laterItem['item_language'];
+            }
+            if (strlen($laterItem['language']) == 2) {
+                $collection[] = $laterItem;
             }
         }
 
