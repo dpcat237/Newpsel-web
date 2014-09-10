@@ -25,6 +25,7 @@ services:
             server_cache: @snc_redis.default
             filter:       @nps.manager.filter
             later_item:   @nps.entity.later_item
+            queue:        @nps.launcher.queue
 
     nps.entity.later:
         class: NPS\CoreBundle\Services\Entity\LaterService

@@ -4,6 +4,7 @@ namespace NPS\CoreBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Constant\RedisConstants;
 use NPS\CoreBundle\Services\FilteringManager;
+use NPS\CoreBundle\Services\QueueLauncherService;
 use Predis\Client;
 use SimplePie_Item;
 use HTMLPurifier,
@@ -49,18 +50,26 @@ class ItemService
     private $purifier;
 
     /**
+     * @var QueueLauncherService
+     */
+    private $queueLauncher;
+
+
+    /**
      * @param Registry         $doctrine  Doctrine Registry
      * @param Client           $cache     Client
      * @param FilteringManager $filter    FilteringManager
      * @param LaterItemService $laterItem LaterItemService
+     * @param QueueLauncherService $queueLauncher    QueueLauncherService
      */
-    public function __construct(Registry $doctrine, Client $cache, FilteringManager $filter, LaterItemService $laterItem)
+    public function __construct(Registry $doctrine, Client $cache, FilteringManager $filter, LaterItemService $laterItem, QueueLauncherService $queueLauncher)
     {
         $this->cache = $cache;
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
         $this->filter = $filter;
         $this->laterItem = $laterItem;
+        $this->queueLauncher = $queueLauncher;
 
         if (empty($this->purifier)) {
             $config = HTMLPurifier_Config::createDefault();
@@ -143,6 +152,7 @@ class ItemService
             $userItem = $this->addUserItem($feedUser->getUser(), $item, $unread);
             if ($laterId) {
                 $this->laterItem->addLaterItem($userItem, $laterId);
+                $this->queueLauncher->executeCrawling($feedUser->getUser()->getId());
             }
         }
         $this->entityManager->flush();
