@@ -25,7 +25,7 @@ class FeedApiService
     /**
      * @var DownloadFeedsService
      */
-    private $downloadDeeds;
+    private $downloadFeeds;
 
     /**
      * @var ContainerAwareEventDispatcher
@@ -46,13 +46,13 @@ class FeedApiService
     /**
      * @param Registry                      $doctrine        Doctrine Registry
      * @param SecureService                 $secure          SecureService
-     * @param DownloadFeedsService          $downloadDeeds   DownloadFeedsService
+     * @param DownloadFeedsService          $downloadFeeds   DownloadFeedsService
      * @param ContainerAwareEventDispatcher $eventDispatcher ContainerAwareEventDispatcher
      */
-    public function __construct(Registry $doctrine, SecureService $secure, DownloadFeedsService $downloadDeeds, ContainerAwareEventDispatcher $eventDispatcher)
+    public function __construct(Registry $doctrine, SecureService $secure, DownloadFeedsService $downloadFeeds, ContainerAwareEventDispatcher $eventDispatcher)
     {
         $this->doctrine = $doctrine;
-        $this->downloadDeeds = $downloadDeeds;
+        $this->downloadFeeds = $downloadFeeds;
         $this->eventDispatcher = $eventDispatcher;
         $this->secure = $secure;
     }
