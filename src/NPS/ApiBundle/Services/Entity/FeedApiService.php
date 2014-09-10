@@ -66,12 +66,12 @@ class FeedApiService
      */
     public function addFeed($appKey, $feedUrl)
     {
-        $error = false;
         $unreadItems = array();
+        $feed = null;
 
         $user = $this->secure->getUserByDevice($appKey);
         if ($user instanceof User) {
-            $checkCreate = $this->downloadFeeds->addFeed($feedUrl, $user);
+            list($feed, $error) = $this->downloadFeeds->addFeed($feedUrl, $user);
         } else {
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
@@ -83,7 +83,6 @@ class FeedApiService
 
         if (empty($error)){
             $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-            $feed = $checkCreate['feed'];
             $unreadItems = $itemRepo->getUnreadItems($user->getId(), $feed->getId());
 
             //notify other devices about modification

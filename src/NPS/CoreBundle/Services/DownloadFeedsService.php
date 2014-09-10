@@ -112,10 +112,8 @@ class DownloadFeedsService
         } else {
             $feed = $this->createFeed($url, $user);
         }
-        $result[] = $feed;
-        $result[] = $this->error;
 
-        return $result;
+        return array($feed, $this->error);
     }
 
     /**
