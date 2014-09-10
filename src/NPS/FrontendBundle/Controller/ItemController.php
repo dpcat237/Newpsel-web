@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class ItemController extends Controller
 {
     /**
-     * List of items
+     * List of new items
      *
      * @param UserFeed $userFeed
      *
@@ -47,7 +47,7 @@ class ItemController extends Controller
     public function listAction(UserFeed $userFeed)
     {
         $user = $this->get('security.context')->getToken()->getUser();
-        $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getUnreadByFeedUser($user->getId(), $userFeed->getFeedId());
+        $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getByFeedUser($user->getId(), $userFeed->getFeedId());
         $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
         $viewData = array(
@@ -61,9 +61,37 @@ class ItemController extends Controller
     }
 
     /**
-     * List of items to read later
+     * List of seen items
      *
-     * @param Later   $label
+     * @param UserFeed $userFeed
+     *
+     * @Route("/feed/{user_feed_id}/items_list_read", name="items_list_read")
+     * @Secure(roles="ROLE_USER")
+     * @Template()
+     * @ParamConverter("userFeed", class="NPSCoreBundle:UserFeed", options={"id": "user_feed_id"})
+     *
+     * @return array
+     */
+    public function listReadAction(UserFeed $userFeed)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getByFeedUser($user->getId(), $userFeed->getFeedId(), false);
+        $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
+
+        $viewData = array(
+            'userItems' => $userItems,
+            'title' => $userFeed->getTitle(),
+            'userFeedId' => $userFeed->getId(),
+            'labels' => $labels
+        );
+
+        return $viewData;
+    }
+
+    /**
+     * List of new saved items
+     *
+     * @param Later $label
      *
      * @Route("/label/{label_id}/items_list", name="items_later_list")
      * @Secure(roles="ROLE_USER")
@@ -77,7 +105,37 @@ class ItemController extends Controller
         $user = $this->get('security.context')->getToken()->getUser();
         if ($label->getUserId() == $user->getId()) {
             $labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
-            $itemsList = $labelItemRepo->getUnread($label->getId());
+            $itemsList = $labelItemRepo->getItems($label->getId());
+            $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
+
+            $viewData = array(
+                'items' => $itemsList,
+                'title' => 'Label '.$label->getName(),
+                'labels' => $labels
+            );
+
+            return $viewData;
+        }
+    }
+
+    /**
+     * List of seen saved items
+     *
+     * @param Later $label
+     *
+     * @Route("/label/{label_id}/items_list_read", name="items_later_list_read")
+     * @Secure(roles="ROLE_USER")
+     * @Template()
+     * @ParamConverter("label", class="NPSCoreBundle:Later", options={"id": "label_id"})
+     *
+     * @return array
+     */
+    public function laterListReadAction(Later $label)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        if ($label->getUserId() == $user->getId()) {
+            $labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
+            $itemsList = $labelItemRepo->getItems($label->getId(), false);
             $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
             $viewData = array(

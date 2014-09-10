@@ -6,11 +6,11 @@
             <div class="block-body">
                 <div class="inbox-filter">
                     <div class="btn-group">
-                        <a class="btn" href="{{ path('items_later_list', {'label_id': app.request.get('label_id')}) }}" title="{{ '_Refresh'|trans }}">
+                        <a class="btn" href="{{ path('items_later_list_read', {'label_id': app.request.get('label_id')}) }}" title="{{ '_Refresh'|trans }}">
                             <i class="icon-refresh"></i>
                         </a>
-                        <a class="btn" href="{{ path('items_later_list_read', {'label_id': app.request.get('label_id')}) }}" title="{{ '_Show_last_seen'|trans }}">
-                            <i class="icon-eye-open"></i>
+                        <a class="btn" href="{{ path('items_later_list', {'label_id': app.request.get('label_id')}) }}" title="{{ '_Show_last'|trans }}">
+                            <i class="icon-eye-close"></i>
                         </a>
                     </div>
                 </div>

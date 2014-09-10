@@ -47,13 +47,14 @@ class LaterItemRepository extends EntityRepository
     }
 
     /**
-     * Get label's unread items
+     * Get label's items
      *
-     * @param $labelId
+     * @param int     $labelId
+     * @param boolean $unread
      *
      * @return array
      */
-    public function getUnread($labelId)
+    public function getItems($labelId, $unread = true)
     {
         $query = $this->createQueryBuilder('li')
             ->select('li', 'ui', 'i')
@@ -63,10 +64,12 @@ class LaterItemRepository extends EntityRepository
             ->andWhere('li.unread = :unread')
             ->orderBy('i.dateAdd', 'DESC')
             ->setParameter('laterId', $labelId)
-            ->setParameter('unread', true)
-            ->getQuery();
+            ->setParameter('unread', $unread);
+        if (!$unread) {
+            $query->setMaxResults(30);
+        }
 
-        return $query->getResult();
+        return $query->getQuery()->getResult();
     }
 
     /**

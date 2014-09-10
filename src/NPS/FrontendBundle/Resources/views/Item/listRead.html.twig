@@ -5,25 +5,12 @@
         <div class="block span12 inbox">
             <div class="block-body">
                 <div class="inbox-filter">
-                    {#<div class="btn-group">
-                        <a class="btn" href="#"><input type="checkbox"></a>
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-exclamation-sign"></i> All</a></li>
-                            <li><a href="#"><i class="icon-star"></i> Starred</a></li>
-                            <li><a href="#"><i class="icon-star-empty"></i> Unstarred</a></li>
-                        </ul>
-                    </div>#}
-
-                    {#<div class="btn demo-cancel-click" rel="tooltip" title="Refresh"><i class="icon-refresh"></i></div>#}
-
-
                     <div class="btn-group">
-                        <a class="btn" href="{{ path('items_list', {'user_feed_id': userFeedId}) }}" title="{{ '_Refresh'|trans }}">
+                        <a class="btn" href="{{ path('items_list_read', {'user_feed_id': userFeedId}) }}" title="{{ '_Refresh'|trans }}">
                             <i class="icon-refresh"></i>
                         </a>
-                        <a class="btn" href="{{ path('items_list_read', {'user_feed_id': userFeedId}) }}" title="{{ '_Show_last_seen'|trans }}">
-                            <i class="icon-eye-open"></i>
+                        <a class="btn" href="{{ path('items_list', {'user_feed_id': userFeedId}) }}" title="{{ '_Show_last'|trans }}">
+                            <i class="icon-eye-close"></i>
                         </a>
                     </div>
                 </div>

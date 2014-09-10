@@ -49,7 +49,7 @@ class UserItemRepository extends EntityRepository
      */
     public function countUnreadByFeedUser($userId, $feedId)
     {
-        $feedCollection = $this->getUnreadByFeedUser($userId, $feedId);
+        $feedCollection = $this->getByFeedUser($userId, $feedId);
 
         return count($feedCollection);
     }
@@ -57,12 +57,13 @@ class UserItemRepository extends EntityRepository
     /**
      * Get unread items by user and feed
      *
-     * @param $userId
-     * @param $feedId
+     * @param int     $userId
+     * @param int     $feedId
+     * @param boolean $unread
      *
      * @return array
      */
-    public function getUnreadByFeedUser($userId, $feedId)
+    public function getByFeedUser($userId, $feedId, $unread = true)
     {
         $query = $this->createQueryBuilder('ui')
             ->leftJoin('ui.item', 'i')
@@ -72,11 +73,12 @@ class UserItemRepository extends EntityRepository
             ->orderBy('i.dateAdd', 'DESC')
             ->setParameter('userId', $userId)
             ->setParameter('feedId', $feedId)
-            ->setParameter('unread', true)
-            ->getQuery();
-        $itemCollection = $query->getResult();
+            ->setParameter('unread', $unread);
+        if (!$unread) {
+            $query->setMaxResults(30);
+        }
 
-        return $itemCollection;
+        return $query->getQuery()->getResult();
     }
 
     /**
