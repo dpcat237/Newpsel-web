@@ -66,34 +66,21 @@ class FeedApiService
      */
     public function addFeed($appKey, $feedUrl)
     {
-        $unreadItems = array();
-        $feed = null;
-
         $user = $this->secure->getUserByDevice($appKey);
         if ($user instanceof User) {
             list($feed, $error) = $this->downloadFeeds->addFeed($feedUrl, $user);
         } else {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
+            return NotificationHelper::ERROR_NO_LOGGED;
         }
 
-
-        if (!empty($checkCreate['error'])) {
-            $error = NotificationHelper::ERROR_WRONG_FEED;
+        if ($error) {
+            return NotificationHelper::ERROR_WRONG_FEED;
         }
 
-        if (empty($error)){
-            $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-            $unreadItems = $itemRepo->getUnreadItems($user->getId(), $feed->getId());
+        //notify other devices about modification
+        $this->eventDispatcher->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
 
-            //notify other devices about modification
-            $this->eventDispatcher->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
-        }
-        $responseData = array(
-            'error' => $error,
-            'unreadItems' => $unreadItems,
-        );
-
-        return $responseData;
+        return NotificationHelper::OK;
     }
 
     /**

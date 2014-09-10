@@ -40,10 +40,7 @@ class FeedController extends ApiController
         $json = json_decode($request->getContent(), true);
         $feedService = $this->get('api.feed.service');
         $responseData = $feedService->addFeed($json['appKey'], $json['feed_url']);
-        if ($responseData['error']) {
-            return $this->plainResponse($responseData['error']);
-        }
 
-        return new JsonResponse($responseData['unreadItems']);
+        return new JsonResponse($responseData);
     }
 }
