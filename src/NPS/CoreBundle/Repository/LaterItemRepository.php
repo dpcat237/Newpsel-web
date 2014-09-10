@@ -172,7 +172,6 @@ class LaterItemRepository extends EntityRepository
         $this->getEntityManager()->getConnection()->executeQuery($query);
     }
 
-
     /**
      * Get read items to check that unread items from api were read
      *
@@ -180,7 +179,7 @@ class LaterItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getReadDictations($itemsIds)
+    public function getReadItems($itemsIds)
     {
         $query = $this->createQueryBuilder('li');
         $query
@@ -231,26 +230,6 @@ class LaterItemRepository extends EntityRepository
             ->setParameter('unread', true);
 
         return $query->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * Get read items to check that unread items from api were read
-     *
-     * @param array $itemsIds ids of unread items
-     *
-     * @return array
-     */
-    public function getReadItems($itemsIds)
-    {
-        $query = $this->createQueryBuilder('li');
-        $query
-            ->select('li.id AS api_id')
-            ->add('where', $query->expr()->in('li.id', $itemsIds))
-            ->andWhere('li.unread = :unread')
-            ->setParameter('unread', false);
-        $query = $query->getQuery();
-
-        return $query->getArrayResult();
     }
 
     /**

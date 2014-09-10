@@ -151,7 +151,7 @@ class LaterItemService
         //"+5" extra to don't do many loops for few items
         $laterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, 0, $limit+5, $totalUnread);
         if (count($unreadIds)) {
-            $readItems = $laterItemRepo->getReadDictations($unreadIds);
+            $readItems = $laterItemRepo->getReadItems($unreadIds);
         }
         if (count($readItems)) {
             $laterItems = $this->addReadItems($laterItems, $readItems);
