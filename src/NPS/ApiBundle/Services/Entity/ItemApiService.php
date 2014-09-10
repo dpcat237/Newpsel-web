@@ -101,7 +101,7 @@ class ItemApiService
         }
 
         if (count($unreadIds)) {
-            $readItems = $userItemRepo->getReadItems($unreadIds);
+            $readItems = $userItemRepo->getReadItems($userId, $unreadIds);
         }
         if (count($readItems)) {
             $items = $this->addReadItems($items, $readItems);
