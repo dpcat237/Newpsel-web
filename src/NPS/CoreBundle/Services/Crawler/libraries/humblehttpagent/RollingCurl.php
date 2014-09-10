@@ -36,7 +36,7 @@ class RollingCurlRequest {
         $this->headers = $headers;
         $this->options = $options;
     }
-	
+
     /**
      * @param string $url
      * @return void
@@ -168,8 +168,8 @@ class RollingCurl implements \Countable {
      */
     public function count() {
         return count($this->requests);
-    }	
-	
+    }
+
     /**
      * Add a request to the request queue
      *
@@ -385,7 +385,7 @@ class RollingCurl implements \Countable {
         }
 		// return response headers
 		$options[CURLOPT_HEADER] = 1;
-		
+
 		// send HEAD request?
 		if ($request->method == 'HEAD') {
 			$options[CURLOPT_NOBODY] = 1;

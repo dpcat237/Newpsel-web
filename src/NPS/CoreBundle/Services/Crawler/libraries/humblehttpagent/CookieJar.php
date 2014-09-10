@@ -2,18 +2,18 @@
 namespace NPS\CoreBundle\Services\Crawler\libraries\humblehttpagent;
 /**
  * Cookie Jar
- * 
- * PHP class for handling cookies, as defined by the Netscape spec: 
+ *
+ * PHP class for handling cookies, as defined by the Netscape spec:
  * <http://curl.haxx.se/rfc/cookie_spec.html>
  *
  * This class should be used to handle cookies (storing cookies from HTTP response messages, and
- * sending out cookies in HTTP request messages). This has been adapted for FiveFilters.org 
+ * sending out cookies in HTTP request messages). This has been adapted for FiveFilters.org
  * from the original version used in HTTP Navigator. See http://www.keyvan.net/code/http-navigator/
- * 
+ *
  * This class is mainly based on Cookies.pm <http://search.cpan.org/author/GAAS/libwww-perl-5.65/
  * lib/HTTP/Cookies.pm> from the libwww-perl collection <http://www.linpro.no/lwp/>.
  * Unlike Cookies.pm, this class only supports the Netscape cookie spec, not RFC 2965.
- * 
+ *
  * @version 0.5
  * @date 2011-03-15
  * @see http://php.net/HttpRequestPool
@@ -25,58 +25,58 @@ namespace NPS\CoreBundle\Services\Crawler\libraries\humblehttpagent;
 class CookieJar
 {
     /**
-    * Cookies - array containing all cookies.
-    *
-    * <pre>
-    * Cookies are stored like this:
-    *   [domain][path][name] = array
-    * where array is:
-    *   0 => value, 1 => secure, 2 => expires
-    * </pre>
-    * @var array
-    * @access private
-    */
+     * Cookies - array containing all cookies.
+     *
+     * <pre>
+     * Cookies are stored like this:
+     *   [domain][path][name] = array
+     * where array is:
+     *   0 => value, 1 => secure, 2 => expires
+     * </pre>
+     * @var array
+     * @access private
+     */
     public $cookies = array();
-	public $debug = false;
+    public $debug = false;
 
     /**
-    * Constructor
-    */
+     * Constructor
+     */
     function __construct() {
     }
 
-	protected function debug($msg, $file=null, $line=null) {
-		if ($this->debug) {
-			$mem = round(memory_get_usage()/1024, 2);
-			$memPeak = round(memory_get_peak_usage()/1024, 2);
-			echo '* ',$msg;
-			if (isset($file, $line)) echo " ($file line $line)";
-			echo ' - mem used: ',$mem," (peak: $memPeak)\n";	
-			ob_flush();
-			flush();
-		}
-	}	
-	
+    protected function debug($msg, $file=null, $line=null) {
+        if ($this->debug) {
+            $mem = round(memory_get_usage()/1024, 2);
+            $memPeak = round(memory_get_peak_usage()/1024, 2);
+            echo '* ',$msg;
+            if (isset($file, $line)) echo " ($file line $line)";
+            echo ' - mem used: ',$mem," (peak: $memPeak)\n";
+            ob_flush();
+            flush();
+        }
+    }
+
     /**
-    * Get matching cookies
-    *
-    * Only use this method if you cannot use add_cookie_header(), for example, if you want to use
-    * this cookie jar class without using the request class.
-    *
-    * @param array $param associative array containing 'domain', 'path', 'secure' keys
-    * @return string
-    * @see add_cookie_header()
-    */
+     * Get matching cookies
+     *
+     * Only use this method if you cannot use add_cookie_header(), for example, if you want to use
+     * this cookie jar class without using the request class.
+     *
+     * @param array $param associative array containing 'domain', 'path', 'secure' keys
+     * @return string
+     * @see add_cookie_header()
+     */
     public function getMatchingCookies($url)
     {
-		if (($parts = @parse_url($url)) && isset($parts['scheme'], $parts['host'], $parts['path'])) {
-			$param['domain'] = $parts['host'];
-			$param['path'] = $parts['path'];
-			$param['secure'] = (strtolower($parts['scheme']) == 'https');
-			unset($parts);
-		} else {
-			return false;
-		}
+        if (($parts = @parse_url($url)) && isset($parts['scheme'], $parts['host'], $parts['path'])) {
+            $param['domain'] = $parts['host'];
+            $param['path'] = $parts['path'];
+            $param['secure'] = (strtolower($parts['scheme']) == 'https');
+            unset($parts);
+        } else {
+            return false;
+        }
         // RFC 2965 notes:
         //  If multiple cookies satisfy the criteria above, they are ordered in
         //  the Cookie header such that those with more specific Path attributes
@@ -125,21 +125,21 @@ class CookieJar
     }
 
     /**
-    * Parse Set-Cookie values.
-    *
-    * Only use this method if you cannot use extract_cookies(), for example, if you want to use
-    * this cookie jar class without using the response class.
-    *
-    * @param array $set_cookies array holding 1 or more "Set-Cookie" header values
-    * @param array $param associative array containing 'host', 'path' keys
-    * @return void
-    * @see extract_cookies()
-    */
+     * Parse Set-Cookie values.
+     *
+     * Only use this method if you cannot use extract_cookies(), for example, if you want to use
+     * this cookie jar class without using the response class.
+     *
+     * @param array $set_cookies array holding 1 or more "Set-Cookie" header values
+     * @param array $param associative array containing 'host', 'path' keys
+     * @return void
+     * @see extract_cookies()
+     */
     public function storeCookies($url, $set_cookies)
     {
         if (count($set_cookies) == 0) return;
-		$param = @parse_url($url);
-		if (!is_array($param) || !isset($param['host'])) return;
+        $param = @parse_url($url);
+        if (!is_array($param) || !isset($param['host'])) return;
         $request_host = $param['host'];
         if (strpos($request_host, '.') === false) $request_host .= '.local';
         $request_path = @$param['path'];
@@ -182,7 +182,7 @@ class CookieJar
             //
             // check domain
             if (isset($tmp_cookie['domain']) && ($tmp_cookie['domain'] != $request_host) &&
-                    ($tmp_cookie['domain'] != ".$request_host")) {
+                ($tmp_cookie['domain'] != ".$request_host")) {
                 $domain = $tmp_cookie['domain'];
                 if ((strpos($domain, '.') === false) && ($domain != 'local')) {
                     $this->debug(' - domain "'.$domain.'" has no dot and is not a local domain');
@@ -228,16 +228,16 @@ class CookieJar
             $this->set_cookie($domain, $path, $tmp_cookie['name'], $tmp_cookie['value'], $secure, $expires);
         }
     }
-	
-	// return array of set-cookie values extracted from HTTP response headers (string $h)
-	public function extractCookies($h) {
+
+    // return array of set-cookie values extracted from HTTP response headers (string $h)
+    public function extractCookies($h) {
         $x = 0;
         $lines = 0;
         $headers = array();
         $last_match = false;
-		$h = explode("\n", $h);
+        $h = explode("\n", $h);
         foreach ($h as $line) {
-			$line = rtrim($line);
+            $line = rtrim($line);
             $lines++;
 
             $trimmed_line = trim($line);
@@ -276,18 +276,18 @@ class CookieJar
             }
         }
         return $headers;
-	}
+    }
 
     /**
-    * Set Cookie
-    * @param string $domain
-    * @param string $path
-    * @param string $name cookie name
-    * @param string $value cookie value
-    * @param bool $secure
-    * @param int $expires expiry time (null if session cookie, <= 0 will delete cookie)
-    * @return void
-    */
+     * Set Cookie
+     * @param string $domain
+     * @param string $path
+     * @param string $name cookie name
+     * @param string $value cookie value
+     * @param bool $secure
+     * @param int $expires expiry time (null if session cookie, <= 0 will delete cookie)
+     * @return void
+     */
     function set_cookie($domain, $path, $name, $value, $secure=false, $expires=null)
     {
         if ($domain == '') return;
@@ -304,12 +304,12 @@ class CookieJar
     }
 
     /**
-    * Clear cookies - [domain [,path [,name]]] - call method with no arguments to clear all cookies.
-    * @param string $domain
-    * @param string $path
-    * @param string $name
-    * @return void
-    */
+     * Clear cookies - [domain [,path [,name]]] - call method with no arguments to clear all cookies.
+     * @param string $domain
+     * @param string $path
+     * @param string $name
+     * @return void
+     */
     function clear($domain=null, $path=null, $name=null)
     {
         if (!isset($domain)) {
@@ -324,10 +324,10 @@ class CookieJar
     }
 
     /**
-    * Compare string length - used for sorting
-    * @access private
-    * @return int
-    */
+     * Compare string length - used for sorting
+     * @access private
+     * @return int
+     */
     function _cmp_length($a, $b)
     {
         $la = strlen($a); $lb = strlen($b);
@@ -336,11 +336,11 @@ class CookieJar
     }
 
     /**
-    * Reduce domain
-    * @param string $domain
-    * @return string
-    * @access private
-    */
+     * Reduce domain
+     * @param string $domain
+     * @return string
+     * @access private
+     */
     function _reduce_domain($domain)
     {
         if ($domain == '') return '';
@@ -349,47 +349,47 @@ class CookieJar
     }
 
     /**
-    * Path match - check if path1 path-matches path2
-    *
-    * From RFC 2965: 
-    *   <i>For two strings that represent paths, P1 and P2, P1 path-matches P2
-    *   if P2 is a prefix of P1 (including the case where P1 and P2 string-
-    *   compare equal).  Thus, the string /tec/waldo path-matches /tec.</i>
-    * @param string $path1
-    * @param string $path2
-    * @return bool
-    * @access private
-    */
+     * Path match - check if path1 path-matches path2
+     *
+     * From RFC 2965:
+     *   <i>For two strings that represent paths, P1 and P2, P1 path-matches P2
+     *   if P2 is a prefix of P1 (including the case where P1 and P2 string-
+     *   compare equal).  Thus, the string /tec/waldo path-matches /tec.</i>
+     * @param string $path1
+     * @param string $path2
+     * @return bool
+     * @access private
+     */
     function _path_match($path1, $path2)
     {
         return (substr($path1, 0, strlen($path2)) == $path2);
     }
 
     /**
-    * Domain match - check if domain1 domain-matches domain2
-    *
-    * A few extracts from RFC 2965: 
-    *  -  A Set-Cookie2 from request-host y.x.foo.com for Domain=.foo.com
-    *     would be rejected, because H is y.x and contains a dot.
-    *
-    *  -  A Set-Cookie2 from request-host x.foo.com for Domain=.foo.com
-    *     would be accepted.
-    *
-    *  -  A Set-Cookie2 with Domain=.com or Domain=.com., will always be
-    *     rejected, because there is no embedded dot.
-    *
-    *  -  A Set-Cookie2 from request-host example for Domain=.local will
-    *     be accepted, because the effective host name for the request-
-    *     host is example.local, and example.local domain-matches .local.
-    *
-    * I'm ignoring the first point for now (must check to see how other browsers handle
-    * this rule for Set-Cookie headers)
-    *
-    * @param string $domain1
-    * @param string $domain2
-    * @return bool
-    * @access private
-    */
+     * Domain match - check if domain1 domain-matches domain2
+     *
+     * A few extracts from RFC 2965:
+     *  -  A Set-Cookie2 from request-host y.x.foo.com for Domain=.foo.com
+     *     would be rejected, because H is y.x and contains a dot.
+     *
+     *  -  A Set-Cookie2 from request-host x.foo.com for Domain=.foo.com
+     *     would be accepted.
+     *
+     *  -  A Set-Cookie2 with Domain=.com or Domain=.com., will always be
+     *     rejected, because there is no embedded dot.
+     *
+     *  -  A Set-Cookie2 from request-host example for Domain=.local will
+     *     be accepted, because the effective host name for the request-
+     *     host is example.local, and example.local domain-matches .local.
+     *
+     * I'm ignoring the first point for now (must check to see how other browsers handle
+     * this rule for Set-Cookie headers)
+     *
+     * @param string $domain1
+     * @param string $domain2
+     * @return bool
+     * @access private
+     */
     function _domain_match($domain1, $domain2)
     {
         $domain1 = strtolower($domain1);
