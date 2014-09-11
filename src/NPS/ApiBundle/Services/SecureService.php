@@ -58,9 +58,9 @@ class SecureService
     /**
      * Check if device is logged
      *
-     * @param string $appKey
-     * @param string $email
-     * @param string $password
+     * @param string $appKey   device key
+     * @param string $email    email
+     * @param string $password password
      *
      * @return bool | User
      */
@@ -115,25 +115,27 @@ class SecureService
     /**
      * Check login data in data base
      *
-     * @param $appKey
-     * @param $email
-     * @param $password
+     * @param string $appKey   device key
+     * @param string $email    email
+     * @param string $password password
      *
      * @return bool
      */
     private function checkLoggedDB($appKey, $email, $password)
     {
-        $userRepo = $this->entityManager->getRepository('NPSCoreBundle:User');
-        $checkUser = $userRepo->checkLogin($email, $password);
-
-        if ($checkUser instanceof User) {
-            $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
-            $deviceRepo->createDevice($appKey, $checkUser);
-            $this->saveTemporaryKey($appKey, $checkUser->getId());
-
-            return true;
+        $user = $this->entityManager->getRepository('NPSCoreBundle:User')->findOneByEmail($email);
+        if (!$user instanceof User) {
+            return false;
         }
 
-        return false;
+        if ($user->getPassword() != $password) {
+            return false;
+        }
+
+        $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
+        $deviceRepo->createDevice($appKey, $user);
+        $this->saveTemporaryKey($appKey, $user->getId());
+
+        return true;
     }
 }

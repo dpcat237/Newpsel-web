@@ -16,18 +16,19 @@ class UserRepository extends EntityRepository
     /**
      * Check user data for login
      *
-     * @param string $email
-     * @param string $password
+     * @param string $email    email
+     * @param string $password password
+     * @param string $salt     password generation salt
      *
      * @return int|User
      */
-    public function checkLogin($email, $password){
+    public function checkLogin($email, $password, $salt){
         $user = $this->findOneByEmail($email);
         if (!$user instanceof User) {
             return NotificationHelper::ERROR_LOGIN_DATA;
         }
 
-        $appKey = sha1("checkPwd_".$user->getPassword());
+        $appKey = sha1($salt."_".$user->getPassword());
 
         return ($password == $appKey)? $user : NotificationHelper::ERROR_LOGIN_DATA;
     }
