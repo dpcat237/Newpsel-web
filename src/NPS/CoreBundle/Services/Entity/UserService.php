@@ -228,7 +228,7 @@ class UserService extends AbstractEntityService
     public function newRecoveryPassword($nseck, $recoveryCode, $password)
     {
         $userId = $this->cache->get(RedisConstants::USER_PASSWORD_RECOVERY.'_'.$recoveryCode);
-        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->find($userId);;
+        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->find($userId);
         if (!$user instanceof User) {
             return null;
         }

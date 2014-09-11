@@ -4,9 +4,12 @@ namespace NPS\ApiBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Event\UserSignUpEvent;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\NPSCoreEvents;
 use NPS\CoreBundle\Services\UserNotificationsService;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
+use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 
 /**
  * DeviceApiService
@@ -22,6 +25,11 @@ class DeviceApiService
      * @var EncoderFactory
      */
     private $encoderFactory;
+
+    /**
+     * @var ContainerAwareEventDispatcher
+     */
+    private $eventDispatcher;
 
     /**
      * @var UserNotificationsService
@@ -40,16 +48,18 @@ class DeviceApiService
 
 
     /**
-     * @param Registry     $doctrine Doctrine Registry
-     * @param SecureService $secure  SecureService
-     * @param EncoderFactory $encoderFactory EncoderFactory
-     * @param UserNotificationsService $userNotification UserNotificationsService
-     * @param string         $salt           salt key
+     * @param Registry                      $doctrine         Doctrine Registry
+     * @param SecureService                 $secure           SecureService
+     * @param EncoderFactory                $encoderFactory   EncoderFactory
+     * @param UserNotificationsService      $userNotification UserNotificationsService
+     * @param ContainerAwareEventDispatcher $eventDispatcher  ContainerAwareEventDispatcher
+     * @param string                        $salt             salt key
      */
-    public function __construct(Registry $doctrine, SecureService $secure, EncoderFactory $encoderFactory, UserNotificationsService $userNotification, $salt)
+    public function __construct(Registry $doctrine, SecureService $secure, EncoderFactory $encoderFactory, UserNotificationsService $userNotification, ContainerAwareEventDispatcher $eventDispatcher, $salt)
     {
         $this->doctrine = $doctrine;
         $this->encoderFactory = $encoderFactory;
+        $this->eventDispatcher = $eventDispatcher;
         $this->salt = $salt;
         $this->secure = $secure;
         $this->userNotification = $userNotification;
@@ -150,6 +160,9 @@ class DeviceApiService
 
         if (!$user instanceof User) {
             $user = $userRepo->createUser($email, $password);
+
+            $userSignUpEvent = new UserSignUpEvent($user);
+            $this->eventDispatcher->dispatch(NPSCoreEvents::USER_SIGN_UP, $userSignUpEvent);
         }
 
         $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');

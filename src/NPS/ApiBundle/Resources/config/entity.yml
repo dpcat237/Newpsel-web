@@ -2,11 +2,12 @@ services:
     api.device.service:
             class: NPS\ApiBundle\Services\Entity\DeviceApiService
             arguments:
-                doctrine:        @doctrine
-                api.secure:      @api.secure.service
-                encoder_factory: @security.encoder_factory
-                notifications:   @user.notifications
-                nseck:           %nseck%
+                doctrine:         @doctrine
+                api.secure:       @api.secure.service
+                encoder_factory:  @security.encoder_factory
+                notifications:    @user.notifications
+                event_dispatcher: @event_dispatcher
+                nseck:            %nseck%
 
     api.feed.service:
         class: NPS\ApiBundle\Services\Entity\FeedApiService
