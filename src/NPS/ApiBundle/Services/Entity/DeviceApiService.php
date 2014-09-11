@@ -160,7 +160,7 @@ class DeviceApiService
         }
 
         if (!$user instanceof User) {
-            $password =($newPassword)? $newPassword : sha1($this->salt."_".$password);
+            $password =($password)? $password : $newPassword;
             $user = $userRepo->createUser($email, $password);
 
             $userSignUpEvent = new UserSignUpEvent($user);
