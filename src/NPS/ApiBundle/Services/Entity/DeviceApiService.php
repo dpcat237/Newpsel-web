@@ -145,6 +145,7 @@ class DeviceApiService
      */
     public function signUpApi($appKey, $email, $password = '')
     {
+        $newPassword = '';
         $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
         list($error, $user) = $userRepo->checkUserExists($email);
 
@@ -154,11 +155,12 @@ class DeviceApiService
 
         if (!$password && !$user instanceof User) {
             $encoder = $this->encoderFactory->getEncoder(new User());
-            $password = $encoder->encodePassword(md5(uniqid()), $this->salt);
-            $password = substr($password, 0, 16);
+            $newPassword = $encoder->encodePassword(md5(uniqid()), $this->salt);
+            $newPassword = substr($newPassword, 0, 16);
         }
 
         if (!$user instanceof User) {
+            $password =($newPassword)? $newPassword : sha1($this->salt."_".$password);
             $user = $userRepo->createUser($email, $password);
 
             $userSignUpEvent = new UserSignUpEvent($user);
