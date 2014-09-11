@@ -64,6 +64,7 @@ class UserRepository extends EntityRepository
         $user = new User();
         $user->setEmail($email);
         $user->setPassword($password);
+        $user->setRegistered(true);
         $entityManager->persist($user);
         $entityManager->flush();
 
