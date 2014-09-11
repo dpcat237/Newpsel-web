@@ -146,9 +146,9 @@ class DeviceApiService
     public function signUpApi($appKey, $email, $password = '')
     {
         $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-        $user = $userRepo->findOneByEmail($email);
+        list($error, $user) = $userRepo->checkUserExists($email);
 
-        if ($user instanceof User && $password) {
+        if ($user instanceof User && $error && $password) {
             return NotificationHelper::ERROR_EMAIL_EXISTS;
         }
 
