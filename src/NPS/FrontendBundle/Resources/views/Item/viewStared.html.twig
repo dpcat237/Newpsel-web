@@ -7,6 +7,7 @@
             <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>
             <div class="block-body">
                 <div class="btn-group">
+                    <a class="btn icon-circle-arrow-left" href="{{ url('items_stared_list') }}" title="{{ '_Go_back'|trans }}"></a>
                     <a class="btn icon-star-empty" href="{{ url('unread_to_stared_list', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}"></a>
                     <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                     <ul class="dropdown-menu">

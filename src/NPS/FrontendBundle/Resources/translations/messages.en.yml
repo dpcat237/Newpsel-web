@@ -7,6 +7,9 @@ _web_description_full: Newpsel (News Personal Selector) is news reader which wil
 _web_keywords: news, information, reader, blog, rss, feed, read it later, save for later, read later, dictate news, listen news, text to voice, news player
 _web_email: newpsel@gmail.com
 
+#*** General ***
+_Go_back: Go back
+
 #*** Welcome page ***
 _Sign_in: Sign in
 _Sign_up: Sign up

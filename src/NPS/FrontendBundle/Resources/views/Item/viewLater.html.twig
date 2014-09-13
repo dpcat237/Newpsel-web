@@ -8,6 +8,7 @@
             <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>
             <div class="block-body">
                 <div class="btn-group">
+                    <a class="btn icon-circle-arrow-left" href="{{ url('items_later_list', {'label_id': app.request.get('label_id')}) }}" title="{{ '_Go_back'|trans }}"></a>
                     <a class="btn icon-check" href="{{ url('unread_to_later_list', {'later_item_id': laterItem.id}) }}" title="{{ '_Unread'|trans }}"></a>
                     <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                     <ul class="dropdown-menu">

@@ -7,6 +7,7 @@
             <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>
             <div class="block-body">
                 <div class="btn-group">
+                    <a class="btn icon-circle-arrow-left" href="{{ url('items_list', {'user_feed_id': app.request.get('user_feed_id')}) }}" title="{{ '_Go_back'|trans }}"></a>
                     <a class="btn icon-check" href="{{ url('unread_to_list', {'user_feed_id': app.request.get('user_feed_id'), 'user_item_id': userItem.id}) }}" title="{{ '_Unread'|trans }}"></a>
                     <i class="btn starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}"
                        data-url="{{ url('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
