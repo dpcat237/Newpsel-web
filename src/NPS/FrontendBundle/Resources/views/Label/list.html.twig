@@ -5,7 +5,7 @@
         <div class="block span12 inbox">
             <div class="block-body">
                 <div class="inbox-filter">
-                    <a href="{# {{ url('label_new') }} #}#" class="btn add-label show-tip" rel="popover" title="{% trans %}Create label{% endtrans %}"
+                    <a href="{# {{ url('label_new') }} #}#" class="btn add-label show-tip" rel="popover" title="{{ '_Create_label'|trans }}"
                        data-content="{% include "NPSFrontendBundle:Label:create.html.twig" %}" data-html="true">
                         <i class="icon-plus"></i>
                     </a>

@@ -4,6 +4,11 @@
     <div class="row-fluid">
         <div class="block span12 inbox">
             <div class="block-body">
+                <div class="inbox-filter">
+                    <a href="#modalAddFeed" class="btn add-label show-tip" role="button" data-toggle="modal">
+                        <i class="icon-plus"></i>
+                    </a>
+                </div>
 
                 {% if (userFeeds | length) > 0 %}
                     <table class="table">

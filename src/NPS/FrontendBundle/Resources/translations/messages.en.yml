@@ -44,6 +44,7 @@ _Google_plus: Google+
 _Design: Design
 _Image: Image
 _Cookie_message: Newpsel is using cookies to provide better service.
+_Subscribe_to_feed: Subscribe to feed
 
 #*** Privacy policy ***
 _Privacy_policy: Privacy policy
@@ -286,3 +287,7 @@ _Here_Chrome_key: Here are you Chrome extension key
 _Email_write_us: You can reach us by email at newpsel@gmail.com if you have any issues, questions, requests or suggestions.
 _Email_copyright: &copy; 2014 Newpsel, All rights reserved.
 _link: link
+
+#*** Lists ***
+_Create_label: Create label
+_Create_feed: Create label
