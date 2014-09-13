@@ -540,7 +540,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Show item
+     * Show favorite item
      *
      * @param UserItem $userItem user's item
      *
@@ -560,7 +560,6 @@ class ItemController extends Controller
             return new RedirectResponse($route);
         }
 
-        $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_READ);
         $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
         $renderData = array(
             'userItem' => $userItem,
@@ -572,7 +571,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Unread user later item and go to list
+     * Remove favorite from item
      *
      * @param UserItem $userItem user's item
      *
@@ -586,7 +585,7 @@ class ItemController extends Controller
     {
         $user = $this->get('security.context')->getToken()->getUser();
         if ($userItem->getUserId() == $user->getId()) {
-            $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_UNREAD);
+            $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_READ);
         }
 
         return new RedirectResponse($this->get('router')->generate('items_stared_list'));

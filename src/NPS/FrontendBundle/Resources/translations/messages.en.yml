@@ -267,6 +267,7 @@ _Valid_will_import: Succefully received items will be imported before next 24 ho
 _Unread: Unread an article
 _Read_unread: Mark as read / unread
 _Favorite_unfavorite: Mark as favorite / unfavorite
+_Mark_unfavorite: Remove as favorite
 _Set_label: Set a label
 _Show_in_tab: Show article in new tab
 _Stared_list: Favorite articles
