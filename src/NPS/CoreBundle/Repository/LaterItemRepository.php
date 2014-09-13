@@ -28,14 +28,8 @@ class LaterItemRepository extends EntityRepository
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
             ->where('li.unread = :unread')
-            ->andWhere(
-                $query->expr()->orX(
-                    'f.crawling = :isCrawling', $query->expr()->isNull('i.feed')
-                )
-            )
             ->orderBy('li.id', 'ASC')
-            ->setParameter('unread', true)
-            ->setParameter('isCrawling', true);
+            ->setParameter('unread', true);
         if ($userId) {
             $query
                 ->andWhere('ui.user = :userId')

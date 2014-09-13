@@ -60,7 +60,7 @@ class FeedListener
         $this->persist = false;
         $feed = $event->getFeed();
         $this->setFeedLanguage($feed);
-        $this->detectNecessaryCrawling($feed);
+        //$this->detectNecessaryCrawling($feed);
         if (!$this->persist) {
             return;
         }
