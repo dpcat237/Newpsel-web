@@ -731,13 +731,15 @@ class ContentExtractor
             // and which match our title
             if (isset($this->title) && ($this->title != '')) {
                 $firstChild = $this->body->firstChild;
-                while ($firstChild->nodeType && ($firstChild->nodeType !== XML_ELEMENT_NODE)) {
-                    $firstChild = $firstChild->nextSibling;
-                }
-                if (($firstChild->nodeType === XML_ELEMENT_NODE)
-                    && in_array(strtolower($firstChild->tagName), array('h1', 'h2', 'h3', 'h4', 'h5', 'h6'))
-                    && (strtolower(trim($firstChild->textContent)) == strtolower(trim($this->title)))) {
-                    $this->body->removeChild($firstChild);
+                if (is_object($firstChild) && is_object($firstChild->nodeType)) {
+                    while ($firstChild->nodeType && ($firstChild->nodeType !== XML_ELEMENT_NODE)) {
+                        $firstChild = $firstChild->nextSibling;
+                    }
+                    if (($firstChild->nodeType === XML_ELEMENT_NODE)
+                        && in_array(strtolower($firstChild->tagName), array('h1', 'h2', 'h3', 'h4', 'h5', 'h6'))
+                        && (strtolower(trim($firstChild->textContent)) == strtolower(trim($this->title)))) {
+                        $this->body->removeChild($firstChild);
+                    }
                 }
             }
             // prevent self-closing iframes
