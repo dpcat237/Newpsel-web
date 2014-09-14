@@ -28,7 +28,7 @@ class LaterItemRepository extends EntityRepository
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
             ->where('li.unread = :unread')
-            ->orderBy('li.id', 'ASC')
+            ->orderBy('li.id', 'DESC')
             ->setParameter('unread', true);
         if ($userId) {
             $query
