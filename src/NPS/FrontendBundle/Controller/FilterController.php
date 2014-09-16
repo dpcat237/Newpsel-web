@@ -3,6 +3,7 @@
 namespace NPS\FrontendBundle\Controller;
 
 use NPS\CoreBundle\Entity\Filter;
+use NPS\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -55,6 +56,10 @@ class FilterController extends Controller
      */
     public function createAction(Request $request)
     {
+        if (!$this->get('security.context')->getToken()->getUser() instanceof User) {
+            return new RedirectResponse($this->container->get('router')->generate('logout'));
+        }
+
         $formType = $this->get('nps.form.type.filter');
         $form = $this->createForm($formType, new Filter());
         $form->handleRequest($request);
