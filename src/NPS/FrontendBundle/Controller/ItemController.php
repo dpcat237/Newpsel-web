@@ -89,6 +89,26 @@ class ItemController extends Controller
     }
 
     /**
+     * Mark as read all unread and show empty items list
+     *
+     * @param UserFeed $userFeed
+     *
+     * @Route("/feed/{user_feed_id}/items_mark_read", name="items_mark_all_read")
+     * @Secure(roles="ROLE_USER")
+     * @Template()
+     * @ParamConverter("userFeed", class="NPSCoreBundle:UserFeed", options={"id": "user_feed_id"})
+     *
+     * @return array
+     */
+    public function markAllReadAction(UserFeed $userFeed)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->markAllRead($user->getId(), $userFeed->getFeedId());
+
+        return new RedirectResponse($this->container->get('router')->generate('items_list_read', array('user_feed_id' => $userFeed->getId())));
+    }
+
+    /**
      * List of new saved items
      *
      * @param Later $label

@@ -212,4 +212,23 @@ class UserItemRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    /**
+     * Mark as read all unread
+     *
+     * @param int $userId
+     * @param int $feedId
+     */
+    public function markAllRead($userId, $feedId)
+    {
+        $query = "START TRANSACTION; ";
+        $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
+        $itemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
+        $query.= "UPDATE ".$userItemTable." ui
+            LEFT JOIN ".$itemTable." i ON ui.item_id = i.id
+            SET unread=false WHERE ui.user_id=".$userId." AND i.feed_id=".$feedId." AND ui.unread=true;";
+        $query .= "COMMIT;";
+
+        $this->getEntityManager()->getConnection()->executeQuery($query);
+    }
 }

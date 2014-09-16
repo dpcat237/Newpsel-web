@@ -25,6 +25,11 @@
                         <a class="btn" href="{{ path('items_list_read', {'user_feed_id': userFeedId}) }}" title="{{ '_Show_last_seen'|trans }}">
                             <i class="icon-eye-open"></i>
                         </a>
+                        {% if userItems | length > 0 %}
+                            <a class="btn" href="{{ path('items_mark_all_read', {'user_feed_id': userFeedId}) }}" title="{{ '_Mark_all_read'|trans }}">
+                                <i class="icon-ok"></i>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 
