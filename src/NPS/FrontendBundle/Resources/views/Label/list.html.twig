@@ -9,6 +9,9 @@
                        data-content="{% include "NPSFrontendBundle:Label:create.html.twig" %}" data-html="true">
                         <i class="icon-plus"></i>
                     </a>
+                    <a class="btn" href="{{ path('change_menu_all_labels') }}" title="{{ '_Show_all_labels_menu'|trans }}">
+                        <i class="{% if menuAll %}icon-check{% else %}icon-check-empty{% endif %}"></i>
+                    </a>
                 </div>
 
                 {% if (labels | length) > 0 %}

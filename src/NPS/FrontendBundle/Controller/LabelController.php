@@ -23,6 +23,34 @@ use NPS\FrontendBundle\Form\Type\LaterEditType;
 class LabelController extends Controller
 {
     /**
+     * Menu build
+     *
+     * @Secure(roles="ROLE_USER")
+     * @Template()
+     */
+    public function menuAction()
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+        $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
+        $menuAll = $this->get('nps.entity.later')->getMenuAll($user->getId());
+        if ($menuAll) {
+            $labels = $labelRepo->getLabelsForMenu($user->getId(), $menuAll);
+            $labelsCount = $labelRepo->getLabelsForMenu($user->getId());
+        } else {
+            $labels = $labelRepo->getLabelsForMenu($user->getId());
+            $labelsCount = array();
+        }
+
+        $viewData = array(
+            'labels' => $labels,
+            'labelsCount' => $labelsCount,
+            'menuAll' => $menuAll
+        );
+
+        return $viewData;
+    }
+
+    /**
      * List of user's labels
      *
      * @return array
@@ -39,7 +67,8 @@ class LabelController extends Controller
 
         $viewData = array(
             'labels' => $labels,
-            'title' => 'Labels management'
+            'title' => 'Labels management',
+            'menuAll' => $this->get('nps.entity.later')->getMenuAll($user->getId())
         );
 
         return $viewData;
@@ -140,21 +169,15 @@ class LabelController extends Controller
     }
 
     /**
-     * Menu build
+     * Change status if show all labels in menu or only with new items
      *
+     * @Route("/change_menu_all", name="change_menu_all_labels")
      * @Secure(roles="ROLE_USER")
-     * @Template()
      */
-    public function menuAction()
+    public function changeAllFeedsStatusAction()
     {
-        $user = $this->get('security.context')->getToken()->getUser();
-        $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
-        $labels = $labelRepo->getLabelsForMenu($user->getId());
+        $this->get('nps.entity.later')->changeMenuAll($this->get('security.context')->getToken()->getUser()->getId());
 
-        $viewData = array(
-            'labels' => $labels
-        );
-
-        return $viewData;
+        return new RedirectResponse($this->container->get('router')->generate('labels_list'));
     }
 }

@@ -266,6 +266,9 @@ _Valid_will_import: Succefully received items will be imported before next 24 ho
 #*** Feed ***
 _Show_all_feeds_menu: Show all feeds in the menu
 
+#*** Label ***
+_Show_all_labels_menu: Show all labels in the menu
+
 #*** Item ***
 _Unread: Unread an article
 _Read_unread: Mark as read / unread

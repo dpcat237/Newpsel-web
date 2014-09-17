@@ -106,4 +106,30 @@ class LaterService extends AbstractEntityService
 
         return $label;
     }
+
+    /**
+     * Change status if show all labels in menu or only with new items
+     *
+     * @param int $userId
+     */
+    public function changeMenuAll($userId)
+    {
+        $value = $this->cache->get(RedisConstants::LABEL_MENU_ALL."_".$userId);
+        $value = ($value == 1)? 0 : 1;
+        $this->cache->set(RedisConstants::LABEL_MENU_ALL."_".$userId, $value);
+    }
+
+    /**
+     * Get status if show all labels in menu or only with new items
+     *
+     * @param int $userId
+     *
+     * @return bool
+     */
+    public function getMenuAll($userId)
+    {
+        $value = $this->cache->get(RedisConstants::LABEL_MENU_ALL."_".$userId);
+
+        return ($value == 1)? true : false;
+    }
 }

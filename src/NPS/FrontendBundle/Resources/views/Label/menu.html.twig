@@ -3,9 +3,20 @@
         {% for label in labels %}
             <li>
                 <a href="{{ url("items_later_list", {'label_id':label.id}) }}">
-                    <span class="badge">
-                        {{ label.total }}
-                    </span>
+                    {% if menuAll %}
+                        {% set val = 1 %}
+                        {% for labelCount in labelsCount %}
+                            {% if labelCount.id == label.id %}
+                                {% set val = 0 %}
+                                <span class="badge">{{ labelCount.total }}</span>
+                            {% endif %}
+                        {% endfor %}
+                        {% if val %}
+                            <span class="badge">0</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge">{{ label.total }}</span>
+                    {% endif %}
                     {% if (label.name | length) > 22 %}
                         {{ label.name | slice(0, 22) }}...
                     {% else %}

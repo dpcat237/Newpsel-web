@@ -2,7 +2,18 @@
     {% for userFeed in userFeeds %}
         <li>
             <a href="{{ url("items_list", {'user_feed_id':userFeed.id}) }}">
-                {% if menuAll == false %}
+                {% if menuAll %}
+                    {% set val = 1 %}
+                    {% for userFeedCount in userFeedsCount %}
+                        {% if userFeedCount.id == userFeed.id %}
+                            {% set val = 0 %}
+                            <span class="badge">{{ userFeedCount.total }}</span>
+                        {% endif %}
+                    {% endfor %}
+                    {% if val %}
+                        <span class="badge">0</span>
+                    {% endif %}
+                {% else %}
                     <span class="badge">{{ userFeed.total }}</span>
                 {% endif %}
                 {% if (userFeed.title | length) > 17 %}

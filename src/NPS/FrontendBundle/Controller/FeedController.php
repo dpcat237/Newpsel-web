@@ -44,10 +44,19 @@ class FeedController extends Controller
         $user = $this->get('security.context')->getToken()->getUser();
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
         $menuAll = $this->get('nps.entity.feed')->getMenuAll($user->getId());
-        $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
+        if ($menuAll) {
+            $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
+            $feedsCount = $userFeedRepo->getUserFeedsForMenu($user->getId());
+        } else {
+            $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
+            $feedsCount = array();
+        }
+
+
         $response = array (
-            'userFeeds' =>  $feedsList,
-            'menuAll'    => $menuAll
+            'userFeeds' => $feedsList,
+            'userFeedsCount' => $feedsCount,
+            'menuAll'   => $menuAll
         );
 
         return $response;
@@ -280,7 +289,7 @@ class FeedController extends Controller
     /**
      * Change status if show all feeds in menu or only with new items
      *
-     * @Route("/change_menu_all", name="change_menu_all")
+     * @Route("/change_menu_all", name="change_menu_all_feeds")
      * @Secure(roles="ROLE_USER")
      */
     public function changeAllFeedsStatusAction()

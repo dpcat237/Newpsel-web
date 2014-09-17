@@ -103,6 +103,7 @@ class UserItemRepository extends EntityRepository
      * Get user's feeds with count of user's items
      *
      * @param integer $userId
+     * @param boolean $all
      *
      * @return array
      */

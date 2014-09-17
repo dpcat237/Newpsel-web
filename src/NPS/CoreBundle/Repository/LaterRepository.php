@@ -88,24 +88,28 @@ class LaterRepository extends EntityRepository
      * Get labels of user with count of later items
      *
      * @param integer $userId
+     * @param boolean $all
      *
      * @return array
      */
-    public function getLabelsForMenu($userId)
+    public function getLabelsForMenu($userId, $all = false)
     {
         $laterItemRepository = $this->getEntityManager()->getRepository('NPSCoreBundle:LaterItem');
         $query = $laterItemRepository->createQueryBuilder('li')
             ->select('l.id, l.name, COUNT(li.id) total')
             ->innerJoin('li.later', 'l')
             ->where('l.user = :userId')
-            ->andWhere('li.unread = :unread')
             ->andWhere('l.enabled = :enabled')
             ->groupBy('l.id')
             ->orderBy('l.name', 'ASC')
             ->setParameter('userId', $userId)
-            ->setParameter('unread', true)
-            ->setParameter('enabled', true)
-            ->getQuery();
+            ->setParameter('enabled', true);
+        if (!$all) {
+            $query
+                ->andWhere('li.unread = :unread')
+                ->setParameter('unread', true);
+        }
+        $query = $query->getQuery();
 
         return $query->getArrayResult();
     }
