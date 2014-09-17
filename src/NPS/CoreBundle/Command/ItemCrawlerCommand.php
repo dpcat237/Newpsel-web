@@ -85,7 +85,7 @@ class ItemCrawlerCommand extends ConsumerCommand
         $this->languageDetector = $container->get('nps.detector.language');
         $this->doctrine = $container->get('doctrine');
         $this->logger = $container->get('logger');
-        $userId =(is_numeric($userId))? : null;
+        $userId =(is_numeric((int) $userId))? $userId : null;
 
         $this->logger->info('*** Start crawling uncompleted articles ***');
 
