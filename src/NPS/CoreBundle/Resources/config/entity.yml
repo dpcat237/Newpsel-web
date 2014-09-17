@@ -8,7 +8,11 @@ services:
 
     nps.entity.feed:
         class: NPS\CoreBundle\Services\Entity\FeedService
-        parent: nps.abstract.entity
+        arguments:
+            doctrine:     @doctrine
+            server_cache: @snc_redis.default
+            user_wrapper: @nps.wrapper.user
+            notification: @nps.manager.notification
 
     feed_history:
         class: NPS\CoreBundle\Services\Entity\FeedHistoryService

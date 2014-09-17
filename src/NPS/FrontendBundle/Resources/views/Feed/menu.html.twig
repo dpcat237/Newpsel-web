@@ -2,7 +2,9 @@
     {% for userFeed in userFeeds %}
         <li>
             <a href="{{ url("items_list", {'user_feed_id':userFeed.id}) }}">
-                <span class="badge">{{ userFeed.total }}</span>
+                {% if menuAll == false %}
+                    <span class="badge">{{ userFeed.total }}</span>
+                {% endif %}
                 {% if (userFeed.title | length) > 17 %}
                     {{ userFeed.title | slice(0, 17) }}...
                 {% else %}

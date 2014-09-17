@@ -43,9 +43,14 @@ class FeedController extends Controller
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
-        $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId());
+        $menuAll = $this->get('nps.entity.feed')->getMenuAll($user->getId());
+        $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
+        $response = array (
+            'userFeeds' =>  $feedsList,
+            'menuAll'    => $menuAll
+        );
 
-        return array('userFeeds' =>  $feedsList);
+        return $response;
     }
 
     /**
@@ -125,7 +130,7 @@ class FeedController extends Controller
         $viewData = array(
             'title' => 'Edit feed',
             'form' => $form->createView(),
-            'userFeed' => $userFeed,
+            'userFeed' => $userFeed
         );
 
         return $viewData;
@@ -176,7 +181,8 @@ class FeedController extends Controller
 
         $viewData = array(
             'userFeeds' => $userFeeds,
-            'title' => 'Feeds management'
+            'title' => 'Feeds management',
+            'menuAll' => $this->get('nps.entity.feed')->getMenuAll($user->getId())
         );
 
         return $viewData;
@@ -269,5 +275,18 @@ class FeedController extends Controller
         $response->setContent($importer->export($feedList));
 
         return $response;
+    }
+
+    /**
+     * Change status if show all feeds in menu or only with new items
+     *
+     * @Route("/change_menu_all", name="change_menu_all")
+     * @Secure(roles="ROLE_USER")
+     */
+    public function changeAllFeedsStatusAction()
+    {
+        $this->get('nps.entity.feed')->changeMenuAll($this->get('security.context')->getToken()->getUser()->getId());
+
+        return new RedirectResponse($this->container->get('router')->generate('feeds_list'));
     }
 }

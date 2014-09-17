@@ -106,7 +106,7 @@ class UserItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getUserFeedsForMenu($userId)
+    public function getUserFeedsForMenu($userId, $all = false)
     {
         $query = $this->createQueryBuilder('ui')
             ->select('uf.id, uf.title, COUNT(ui.id) total')
@@ -115,14 +115,17 @@ class UserItemRepository extends EntityRepository
             ->innerJoin('f.userFeeds', 'uf')
             ->where('ui.user = :userId')
             ->andWhere('uf.user = :userId')
-            ->andWhere('ui.unread = :unread')
             ->andWhere('uf.deleted = :deleted')
             ->groupBy('f.id')
             ->orderBy('uf.title', 'ASC')
             ->setParameter('userId', $userId)
-            ->setParameter('unread', true)
-            ->setParameter('deleted', false)
-            ->getQuery();
+            ->setParameter('deleted', false);
+        if (!$all) {
+            $query
+                ->andWhere('ui.unread = :unread')
+                ->setParameter('unread', true);
+        }
+        $query = $query->getQuery();
 
         return $query->getArrayResult();
     }

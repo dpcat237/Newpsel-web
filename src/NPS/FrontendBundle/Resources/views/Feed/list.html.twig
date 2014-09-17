@@ -8,6 +8,9 @@
                     <a href="#modalAddFeed" class="btn add-label show-tip" role="button" data-toggle="modal">
                         <i class="icon-plus"></i>
                     </a>
+                    <a class="btn" href="{{ path('change_menu_all') }}" title="{{ '_Show_all_feeds_menu'|trans }}">
+                        <i class="{% if menuAll %}icon-check{% else %}icon-check-empty{% endif %}"></i>
+                    </a>
                 </div>
 
                 {% if (userFeeds | length) > 0 %}

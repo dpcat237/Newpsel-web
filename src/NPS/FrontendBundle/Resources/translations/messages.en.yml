@@ -263,6 +263,9 @@ _Instapaper_import: Import from Instapaper
 _Invalid_quantity: Aren't unread items in file.
 _Valid_will_import: Succefully received items will be imported before next 24 hours.
 
+#*** Feed ***
+_Show_all_feeds_menu: Show all feeds in the menu
+
 #*** Item ***
 _Unread: Unread an article
 _Read_unread: Mark as read / unread

@@ -1,17 +1,40 @@
 <?php
 namespace NPS\CoreBundle\Services\Entity;
 
+use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Services\NotificationManager;
+use NPS\CoreBundle\Services\UserWrapper;
 use Symfony\Component\Form\Form;
 use NPS\CoreBundle\Entity\Feed,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Predis\Client;
 
 /**
  * FeedService
  */
 class FeedService extends AbstractEntityService
 {
+    /**
+     * @var Client
+     */
+    private $cache;
+
+
+    /**
+     * @param Registry            $doctrine     Registry
+     * @param Client              $cache     Client
+     * @param UserWrapper         $userWrapper  UserWrapper
+     * @param NotificationManager $notification NotificationManager
+     */
+    public function __construct(Registry $doctrine, Client $cache, UserWrapper $userWrapper, NotificationManager $notification)
+    {
+        parent::__construct($doctrine, $userWrapper, $notification);
+        $this->cache = $cache;
+    }
+
     /**
      * Active subscription of subscribed user
      *
@@ -161,5 +184,31 @@ class FeedService extends AbstractEntityService
             $feed->setEnabled(false);
             $this->saveObject($feed);
         }
+    }
+
+    /**
+     * Change status if show all feeds in menu or only with new items
+     *
+     * @param int $userId
+     */
+    public function changeMenuAll($userId)
+    {
+        $value = $this->cache->get(RedisConstants::FEED_MENU_ALL."_".$userId);
+        $value = ($value == 1)? 0 : 1;
+        $this->cache->set(RedisConstants::FEED_MENU_ALL."_".$userId, $value);
+    }
+
+    /**
+     * Get status if show all feeds in menu or only with new items
+     *
+     * @param int $userId
+     *
+     * @return bool
+     */
+    public function getMenuAll($userId)
+    {
+        $value = $this->cache->get(RedisConstants::FEED_MENU_ALL."_".$userId);
+
+        return ($value == 1)? true : false;
     }
 }
