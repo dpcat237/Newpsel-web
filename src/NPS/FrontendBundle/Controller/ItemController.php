@@ -506,6 +506,7 @@ class ItemController extends Controller
         }
 
         $this->get('nps.entity.later_item')->addLaterItemCheck($userItem, $later);
+        $this->get('nps.launcher.queue')->executeCrawling($user->getId());
 
         return new JsonResponse(true);
     }
