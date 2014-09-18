@@ -80,7 +80,7 @@ class UserWrapper
 
         if ($this->security->getToken() instanceof UsernamePasswordToken || $this->security->getToken() instanceof OAuthToken) {
             $this->user = $this->security->getToken()->getUser();
-        } else if ($this->security->getToken()->getUser() instanceof User) {
+        } else if (is_object($this->security->getToken()) && $this->security->getToken()->getUser() instanceof User) {
             $this->user = $this->security->getToken()->getUser();
         }
     }
