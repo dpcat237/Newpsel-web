@@ -90,7 +90,6 @@ class FeedController extends Controller
             $userFeed = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $feed->getId());
             $itemListUrl = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()), true);
 
-            $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_CREATED, new FeedCreatedEvent($feed));
             //notify other devices about modification
             $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
         }

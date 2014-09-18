@@ -3,7 +3,8 @@ namespace NPS\CoreBundle\Services;
 
 use Exception;
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use NPS\CoreBundle\Helper\FormatHelper;
+use NPS\CoreBundle\Event\FeedCreatedEvent;
+use NPS\CoreBundle\NPSCoreEvents;
 use Predis\Client;
 use SimplePie,
     SimplePie_Item;
@@ -14,6 +15,7 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Services\Entity\FeedService,
     NPS\CoreBundle\Services\Entity\FeedHistoryService,
     NPS\CoreBundle\Services\Entity\ItemService;
+use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 
 /**
  * DownloadFeedsService
@@ -43,6 +45,11 @@ class DownloadFeedsService
     private $error = null;
 
     /**
+     * @var ContainerAwareEventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * @var FeedService
      */
     private $feedS;
@@ -69,17 +76,19 @@ class DownloadFeedsService
 
 
     /**
-     * @param Registry           $doctrine     Doctrine Registry
-     * @param SimplePie          $rss          SimplePie
-     * @param Client             $redis        Redis Client
-     * @param FeedService        $feed         FeedService
-     * @param ItemService        $itemS        ItemService
-     * @param FeedHistoryService $feedHistoryS FeedHistoryService
+     * @param Registry                      $doctrine         Doctrine Registry
+     * @param SimplePie                     $rss              SimplePie
+     * @param Client                        $redis            Redis Client
+     * @param FeedService                   $feed             FeedService
+     * @param ItemService                   $itemS            ItemService
+     * @param FeedHistoryService            $feedHistoryS     FeedHistoryService
+     * @param ContainerAwareEventDispatcher $eventDispatcher  ContainerAwareEventDispatcher
      */
-    public function __construct(Registry $doctrine, SimplePie $rss, Client $redis, FeedService $feed, ItemService $itemS, FeedHistoryService $feedHistoryS)
+    public function __construct(Registry $doctrine, SimplePie $rss, Client $redis, FeedService $feed, ItemService $itemS, FeedHistoryService $feedHistoryS, ContainerAwareEventDispatcher $eventDispatcher)
     {
         $this->doctrine = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
+        $this->eventDispatcher = $eventDispatcher;
         $this->rss = $rss;
         $this->redis = $redis;
         $this->feedS = $feed;
@@ -111,6 +120,7 @@ class DownloadFeedsService
             $this->itemS->addLastItemsNewUser($user, $feed);
         } else {
             $feed = $this->createFeed($url, $user);
+            $this->eventDispatcher->dispatch(NPSCoreEvents::FEED_CREATED, new FeedCreatedEvent($feed));
         }
 
         return array($feed, $this->error);

@@ -5,12 +5,13 @@ services:
     download_feeds:
         class: NPS\CoreBundle\Services\DownloadFeedsService
         arguments:
-            doctrine:     @doctrine
-            simple_pie:   @fkr_simple_pie.rss
-            redis:        @snc_redis.default
-            feed:         @nps.entity.feed
-            item:         @item
-            feed_history: @feed_history
+            doctrine:         @doctrine
+            simple_pie:       @fkr_simple_pie.rss
+            redis:            @snc_redis.default
+            feed:             @nps.entity.feed
+            item:             @item
+            feed_history:     @feed_history
+            event_dispatcher: @event_dispatcher
 
     nps.detector.language:
         class: NPS\CoreBundle\Services\LanguageDetectService
