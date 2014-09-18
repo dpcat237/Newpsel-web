@@ -76,19 +76,37 @@ class FeedListener
      */
     private function setFeedLanguage(Feed $feed)
     {
-        $item = $this->itemRepository->findOneByFeed($feed);
-        if (!$item instanceof Item) {
-            return;
+        $items = $this->itemRepository->getByFeed($feed->getId(), 10);
+        foreach ($items as $item) {
+            if ($this->detectItemLanguage($feed, $item)) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Detect item content language and set to his feed
+     *
+     * @param Feed $feed
+     * @param Item $item
+     *
+     * @return bool
+     */
+    private function detectItemLanguage(Feed $feed, Item $item)
+    {
+        $content = strip_tags($item->getContent());
+        $limit = (strlen($content) < 250)? strlen($content) : 250;
+        if ($limit < 100) {
+            return false;
         }
 
-        $content = strip_tags($item->getContent());
-        $content = substr($content, 0, 70);
-        if (strlen($content) < 20) {
-            return;
-        }
+        $content = substr($content, 0, $limit);
         $languageCode = $this->languageDetector->detectLanguage($content);
+
         $feed->setLanguage($languageCode);
         $this->persist = true;
+
+        return true;
     }
 
     /**
