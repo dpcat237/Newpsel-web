@@ -86,6 +86,29 @@
                     </span>
                 </form>
             </div>
+
+            <br>
+            <p class="block-heading">{{ '_Readability_import'|trans }}</p>
+            <div class="block-body">
+                <p>{{ '_Readability_explanation'|trans|raw }}</p>
+                <br>
+                <form name="readability_import" method="post" action="{{ url('import_readability') }}" class="wizard" {{ form_enctype(readability_form) }}>
+                    <div class="input-prepend">
+                        <span class="add"><i class="icon-tag"></i></span>
+                        {{ form_widget(readability_form.later, { 'attr' : {'title':'_Import_to_later_explanation' }}) }}
+                        {{ form_errors(readability_form.later) }}
+                    </div>
+                    <div class="input-prepend">
+                        {{ form_widget(readability_form.json_file) }}
+                        {{ form_errors(readability_form.json_file) }}
+                    </div>
+
+                    <span id="validate-basic-form-valid">
+                        {{ form_row(readability_form._token) }}
+                        <input type="submit" class="btn  btn-primary" value="{{ '_Import'|trans }}">
+                    </span>
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}

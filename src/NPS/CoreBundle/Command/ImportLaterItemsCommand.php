@@ -64,6 +64,7 @@ class ImportLaterItemsCommand extends ConsumerCommand
         foreach ($items as $item) {
             $laterItemService->importItem($user, $labelId, $item['title'], $item['url'], $item['date_add'], $item['is_article']);
         }
+        $container->get('nps.launcher.queue')->executeCrawling($user->getId());
 
         $logger->info('*** Import items finished ***');
     }

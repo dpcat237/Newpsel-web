@@ -2,15 +2,9 @@
 
 namespace NPS\FrontendBundle\Controller;
 
-use Duellsy\Pockpack\Pockpack;
-use Duellsy\Pockpack\PockpackAuth;
-use Duellsy\Pockpack\PockpackQueue;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use NPS\CoreBundle\Constant\EntityConstants;
-use NPS\CoreBundle\Constant\ImportConstants;
-use NPS\CoreBundle\Helper\ImportHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -362,126 +356,6 @@ class ItemController extends Controller
         );
 
         return new JsonResponse($response);
-    }
-
-    /**
-     * Request for GetPocket auth to import later items
-     *
-     * @param Request  $request  Request
-     *
-     * @Route("/label/import/getpocket/request", name="import_getpocket_request")
-     * @Secure(roles="ROLE_USER")
-     * @Method("POST")
-     *
-     * @return RedirectResponse
-     */
-    public function getpocketImportRequestAction(Request $request)
-    {
-        $pocketType = $this->get('nps.form.type.import.pocket');
-        $pocketForm = $this->createForm($pocketType);
-        $pocketForm->handleRequest($request);
-        if (!$pocketForm->isValid()) {
-            $request->getSession()->getFlashBag()->add('error', '_Invalid_pocket_form');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-        $pockpathAuth = new PockpackAuth();
-        $requestToken = $pockpathAuth->connect($this->container->getParameter('getpocket_key'));
-        if (!$requestToken) {
-            $request->getSession()->getFlashBag()->add('error', '_Invalid_pocket_token_request');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-        $pocketData = $pocketForm->getData();
-        ImportHelper::setPocketFilters(new Session(), $requestToken, $pocketData['tag'], $pocketData['favorite'], $pocketData['contentType'], $pocketData['later']->getId());
-
-        $url = "https://getpocket.com/auth/authorize?request_token=".$requestToken."&redirect_uri=".$this->generateUrl('import_getpocket', array(), true);
-
-        return new RedirectResponse($url);
-    }
-
-    /**
-     * Import later items from GetPocket
-     *
-     * @param Request  $request  Request
-     *
-     * @Route("/label/import/getpocket", name="import_getpocket")
-     * @Secure(roles="ROLE_USER")
-     *
-     * @return RedirectResponse
-     */
-    public function getpocketImportAction(Request $request)
-    {
-        $session = new Session();
-        $requestToken = $session->get(ImportConstants::SESSION_REQUEST_TOKEN);
-        $consumerKey = $this->container->getParameter('getpocket_key');
-
-        $pockpackAuth = new PockpackAuth();
-        $accessToken = $pockpackAuth->receiveToken($this->container->getParameter('getpocket_key'), $requestToken);
-        if (!$accessToken) {
-            $request->getSession()->getFlashBag()->add('error', '_Invalid_pocket_token_request');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-        $pockpack = new Pockpack($consumerKey, $accessToken);
-        $options = ImportHelper::getFiltersPocket($session);
-        $list = $pockpack->retrieve($options, true);
-        if ($list['status'] == 2) { // zero results
-            $request->getSession()->getFlashBag()->add('alert', '_Invalid_pocket_filter');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-        $user = $this->get('security.context')->getToken()->getUser();
-        $labelId = $session->get(ImportConstants::SESSION_LABEL_ID);
-        $items = ImportHelper::preparePocketItems($list);
-        $this->get('nps.entity.later_item')->prepareToImport($user->getId(), $labelId, $items);
-        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import'));
-
-        return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-    }
-
-    /**
-     * Import later items from Instapaper
-     *
-     * @param Request $request
-     *
-     * @Route("/label/import/instapaper", name="import_instapaper")
-     * @Secure(roles="ROLE_USER")
-     * @Method("POST")
-     *
-     * @return RedirectResponse
-     */
-    public function importInstapaperAction(Request $request)
-    {
-        $instapaperType = $this->get('nps.form.type.import.instapaper');
-        $instapaperForm = $this->createForm($instapaperType);
-        $instapaperForm->handleRequest($request);
-        $instapaperFile = $instapaperForm->getData()['csv_file'];
-        $labelId = $instapaperForm->getData()['later']->getId();
-
-        /** @var $opmlFile UploadedFile */
-        if (!$instapaperForm->isValid() || is_null($instapaperFile) || !($instapaperFile instanceof UploadedFile)) {
-            $request->getSession()->getFlashBag()->add('error', '_Invalid_csv');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-        $user = $this->get('security.context')->getToken()->getUser();
-        $items = ImportHelper::prepareInstapaperItems(ImportHelper::csvToArray($instapaperFile->getRealPath()));
-        if (count($items) < 1) {
-            $request->getSession()->getFlashBag()->add('error', '_Invalid_quantity');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-        $this->get('nps.entity.later_item')->prepareToImport($user->getId(), $labelId, $items);
-        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Valid_will_import'));
-
-        return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
     }
 
     /**

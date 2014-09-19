@@ -26,7 +26,7 @@ _Donate: Donate
 _PayPal_alt: PayPal - The safer, easier way to pay online!
 _Features: Features
 _Feature1_header: Import your data
-_Feature1_text: You can easily import your RSS Feeds from an OPML export from your current service like Feedly. Also you can import your data from Pocket and Instapaper.
+_Feature1_text: You can easily import your RSS Feeds from an OPML export from your current service like Feedly. Also you can import your data from Pocket, Instapaper and Readability.
 _Feature2_header: Save to later
 _Feature2_text: Save easily articles with Chrome extension, Android app or shared from other apps.
 _Feature3_header: Listen articles
@@ -235,6 +235,7 @@ _Import: Import
 _Invalid_quantity_OPML: Aren't feeds in file
 _Invalid_opml: Please upload a valid OPML file
 _Invalid_csv: Please upload a valid CSV file
+_Invalid_json: Please upload a valid JSON file
 _Success_opml: Succesfully added %quantity% feeds
 _GetPocket_import: Import from Pocket
 _Tag: Tag
@@ -262,6 +263,8 @@ _Invalid_pocket_filter: Aren't any items to import from Pocket
 _Instapaper_import: Import from Instapaper
 _Invalid_quantity: Aren't unread items in file.
 _Valid_will_import: Succefully received items will be imported before next 24 hours.
+_Readability_import: Import from Readability
+_Readability_explanation: To export your Readability articles log into your account and go to "tools" or click to this <a target="_blank" href="https://www.readability.com/tools/">link</a>. At the end of the page click to "Export your data" button. Readability will send you an email with link to download a file.
 
 #*** Feed ***
 _Show_all_feeds_menu: Show all feeds in the menu

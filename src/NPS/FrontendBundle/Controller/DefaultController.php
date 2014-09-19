@@ -83,32 +83,4 @@ class DefaultController extends Controller
 
         return new JsonResponse($response);
     }
-
-    /**
-     * Subscribe to newsletter
-     *
-     * @return Response
-     * @Route("/preference/imp_exp", name="preference_imp_exp")
-     * @Secure(roles="ROLE_USER")
-     * @Template("NPSFrontendBundle:Preference:imp_exp.html.twig")
-     */
-    public function impExpAction()
-    {
-        $opmlType = new ImportOpmlType();
-        $opmlForm = $this->createForm($opmlType);
-
-        $pocketType = $this->get('nps.form.type.import.pocket');
-        $pocketForm = $this->createForm($pocketType);
-
-        $instapaperType = $this->get('nps.form.type.import.instapaper');
-        $instapaperForm = $this->createForm($instapaperType);
-
-        $viewData = array(
-            'opml_form' => $opmlForm->createView(),
-            'pocket_form' => $pocketForm->createView(),
-            'instapaper_form' => $instapaperForm->createView(),
-        );
-
-        return $viewData;
-    }
 }

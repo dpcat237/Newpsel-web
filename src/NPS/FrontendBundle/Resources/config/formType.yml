@@ -21,3 +21,10 @@ services:
             entity_later:  @nps.entity.later
         tags:
             - { name: form.import.instapaper, alias: instapaper }
+
+    nps.form.type.import.readability:
+        class: NPS\FrontendBundle\Form\Type\ImportReadabilityType
+        arguments:
+            entity_later:  @nps.entity.later
+        tags:
+            - { name: form.import.readability, alias: readability }

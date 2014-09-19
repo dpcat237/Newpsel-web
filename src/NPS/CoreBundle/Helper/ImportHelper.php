@@ -213,4 +213,44 @@ class ImportHelper extends Helper
 
         return $itemsCollection;
     }
+
+    /**
+     * Prepare Readability items to import
+     *
+     * @param array $collection
+     *
+     * @return array
+     */
+    public static function prepareReadabilityItems($collection)
+    {
+        $collection = $collection['bookmarks'];
+        $itemsCollection = array();
+        $items = array();
+        $count = 0;
+        foreach ($collection as $line) {
+            if ($line['archive']) {
+                continue;
+            }
+
+            $item = array(
+                'title' => $line['article__title'],
+                'url' => $line['article__url'],
+                'date_add' => strtotime($line['date_added']),
+                'is_article' => 1
+            );
+            $items[] = $item;
+            $count++;
+            if ($count >= 250) {
+                $itemsCollection [] = $items;
+                $items = array();
+                $count = 0;
+            }
+        }
+        $itemsCollection [] = $items;
+        if (count($itemsCollection[0]) < 1) {
+            return array();
+        }
+
+        return $itemsCollection;
+    }
 }

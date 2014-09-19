@@ -2,11 +2,7 @@
 
 namespace NPS\FrontendBundle\Controller;
 
-use Celd\Opml\Importer;
 use JMS\SecurityExtraBundle\Annotation\Secure;
-use Celd\Opml\Importer as OpmlImporter;
-use Celd\Opml\Model\FeedList as OpmlFeedList;
-use Celd\Opml\Model\Feed as OpmlFeed;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\Event\FeedModifiedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
@@ -16,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\RedirectResponse,
     Symfony\Component\HttpFoundation\Request,
@@ -194,95 +189,6 @@ class FeedController extends Controller
         );
 
         return $viewData;
-    }
-
-    /**
-     * Import feeds from OPML file
-     *
-     * @param Request $request
-     *
-     * @Route("/opml_import", name="opml_import")
-     * @Secure(roles="ROLE_USER")
-     * @Method("POST")
-     *
-     * @return RedirectResponse
-     */
-    public function importOpmlAction(Request $request)
-    {
-        $opmlType = new ImportOpmlType();
-        $opmlForm = $this->createForm($opmlType);
-        $opmlForm->handleRequest($request);
-        $opmlFile = $opmlForm->getData()['opml_file'];
-
-        /** @var $opmlFile UploadedFile */
-        if (!$opmlForm->isValid() || is_null($opmlFile) || !($opmlFile instanceof UploadedFile)) {
-            $request->getSession()->getFlashBag()->add('error', '_Invalid_opml');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-
-        $importer = new Importer(file_get_contents($opmlFile->getRealPath()));
-        $feedList = $importer->getFeedList();
-
-        /** if aren't feeds in file */
-        $feedsCount = count($feedList->getItems());
-        if ($feedsCount < 1) {
-            $request->getSession()->getFlashBag()->add('error', '_Invalid_quantity_OPML');
-
-            return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-        }
-
-        $user = $this->get('security.context')->getToken()->getUser();
-        $downloadFeeds = $this->get('download_feeds');
-        foreach ($feedList->getItems() as $item) {
-            if ($item->getType() == 'category') {
-                foreach($item->getFeeds() as $feed) {
-                    $downloadFeeds->addFeed($feed->getXmlUrl(), $user);
-                }
-
-                continue;
-            }
-
-            $downloadFeeds->addFeed($item->getXmlUrl(), $user);
-        }
-        $request->getSession()->getFlashBag()->add('success', $this->get('translator')->trans('_Success_opml', array('%quantity%' => $feedsCount)));
-
-        return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
-    }
-
-    /**
-     * Export feeds to OPML file
-     *
-     * @Route("/opml_import", name="opml_export")
-     * @Secure(roles="ROLE_USER")
-     */
-    public function exportOpmlAction()
-    {
-        $filename = "newpsel.opml";
-        $user = $this->get('security.context')->getToken()->getUser();
-        $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserFeed');
-        $userFeeds = $userFeedRepo->getUserFeeds($user->getId());
-
-        $feedList = new OpmlFeedList();
-        foreach($userFeeds as $userFeed) {
-            $feed = $userFeed->getFeed();
-            $opmlFeed = new OpmlFeed();
-            $opmlFeed->setTitle($feed->getTitle());
-            $opmlFeed->setXmlUrl($feed->getUrl());
-            $opmlFeed->setType('rss');
-            $opmlFeed->setHtmlUrl($feed->getWebsite());
-
-            $feedList->addItem($opmlFeed);
-        }
-
-        $response = new Response();
-        $importer = new OpmlImporter();
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename);
-        $response->setContent($importer->export($feedList));
-
-        return $response;
     }
 
     /**
