@@ -198,15 +198,16 @@ class LaterItemService
     }
 
     /**
-     * Add complete content for later items, if exists
+     * Get complete content for items and filtering items without complete content
      *
-     * @param array $laterItems
+     * @param array $collection
      *
      * @return mixed
      */
-    private function addCompleteContent(array $laterItems)
+    private function addCompleteContent(array $collection)
     {
-        foreach ($laterItems as $key => $laterItem) {
+        $laterItems = array();
+        foreach ($collection as $key => $laterItem) {
             if ($content = $this->cache->get('crawledItem_'.$laterItem['item_id'])) {
                 $laterItems[$key]['content'] = $content;
             }
@@ -223,6 +224,10 @@ class LaterItemService
      * @return array
      */
     private function removeShortContent(array $laterItems) {
+        if (count($laterItems) < 1) {
+            return array();
+        }
+
         $collection = array();
         foreach ($laterItems as $laterItem) {
             $text = $this->removeUnreadContentFromText($laterItem['content']);
