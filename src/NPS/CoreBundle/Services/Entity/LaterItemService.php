@@ -209,7 +209,8 @@ class LaterItemService
         $laterItems = array();
         foreach ($collection as $key => $laterItem) {
             if ($content = $this->cache->get('crawledItem_'.$laterItem['item_id'])) {
-                $laterItems[$key]['content'] = $content;
+                $laterItem['content'] = $content;
+                $laterItems[$key] = $laterItem;
             }
         }
 
