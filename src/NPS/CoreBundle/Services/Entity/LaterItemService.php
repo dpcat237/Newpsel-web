@@ -218,7 +218,7 @@ class LaterItemService
     }
 
     /**
-     * Remove items with short content
+     * Remove items with short content and adjust language
      *
      * @param $laterItems
      *
@@ -232,12 +232,12 @@ class LaterItemService
         $collection = array();
         foreach ($laterItems as $laterItem) {
             $text = $this->removeUnreadContentFromText($laterItem['content']);
-            if (strlen($text) < 250 || strlen($laterItem['item_language']) != 2) {
+            if (strlen($text) < 250 || (strlen($laterItem['language']) != 2 && strlen($laterItem['item_language']) != 2)) {
                 continue;
             }
 
             $laterItem['text'] = $text;
-            $laterItem['language'] = $laterItem['item_language'];
+            $laterItem['language'] =(strlen($laterItem['language']) == 2)? $laterItem['language'] : $laterItem['item_language'];
             $collection[] = $laterItem;
         }
 
