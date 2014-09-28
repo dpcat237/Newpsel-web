@@ -3,9 +3,12 @@ namespace NPS\CoreBundle\Provider;
 
 use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUserProvider;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
+use NPS\CoreBundle\Event\UserSignUpEvent;
+use NPS\CoreBundle\NPSCoreEvents;
 use NPS\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 use NPS\CoreBundle\Entity\User;
+use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 
 /**
  * Class OAuthProvider
@@ -15,19 +18,24 @@ use NPS\CoreBundle\Entity\User;
 class OAuthProvider extends OAuthUserProvider
 {
     /**
-     * @var UserRepository
-     */
-    private $userRepo;
-
-    /**
      * @var EncoderFactory
      */
     private $encoderFactory;
 
     /**
+     * @var ContainerAwareEventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * @var string
      */
     private $salt;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepo;
 
 
     /**
@@ -37,9 +45,10 @@ class OAuthProvider extends OAuthUserProvider
      * @param EncoderFactory $encoderFactory EncoderFactory
      * @param string         $salt           salt key
      */
-    public function __construct(UserRepository $userRepo, EncoderFactory $encoderFactory, $salt)
+    public function __construct(UserRepository $userRepo, ContainerAwareEventDispatcher $eventDispatcher, EncoderFactory $encoderFactory, $salt)
     {
         $this->encoderFactory = $encoderFactory;
+        $this->eventDispatcher = $eventDispatcher;
         $this->salt = $salt;
         $this->userRepo = $userRepo;
     }
@@ -80,7 +89,11 @@ class OAuthProvider extends OAuthUserProvider
         $password = $encoder->encodePassword(md5(uniqid()), $this->salt);
         $password = substr($password, 0, 16);
 
-        return $this->userRepo->createUser($email, $password);
+        $user =$this->userRepo->createUser($email, $password);
+        $userSignUpEvent = new UserSignUpEvent($user);
+        $this->eventDispatcher->dispatch(NPSCoreEvents::USER_SIGN_UP, $userSignUpEvent);
+
+        return $user;
     }
 
     /**
