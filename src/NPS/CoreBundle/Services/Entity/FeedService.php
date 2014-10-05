@@ -166,6 +166,7 @@ class FeedService extends AbstractEntityService
         $userFeed->setUser($user);
         $userFeed->setFeed($feed);
         $userFeed->setTitle($feed->getTitle());
+        $feed->setEnabled(true);
         $this->entityManager->persist($userFeed);
         $this->entityManager->flush();
 
