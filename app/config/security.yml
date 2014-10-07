@@ -47,9 +47,12 @@ security:
         welcome:
             path: /*
             roles: IS_AUTHENTICATED_ANONYMOUSLY
+            requires_channel: https
         api_area:
             path: /api/.*
             roles: IS_AUTHENTICATED_ANONYMOUSLY
+            requires_channel: https
         web_area:
             path: /web/.*
             roles: ROLE_USER
+            requires_channel: https

@@ -26,19 +26,24 @@ hwi_oauth_login:
 sign_in:
     path: /sign_in
     defaults: { _controller: "NPSFrontendBundle:User:login"}
+    schemes:  [https]
 
 sign_up:
     path: /sign_up
     defaults: { _controller: "NPSFrontendBundle:User:signup"}
+    schemes:  [https]
 
 facebook_login:
     pattern: /login/check-facebook
+    schemes:  [https]
 
 google_login:
     pattern: /login/check-google
+    schemes:  [https]
 
 twitter_login:
     pattern: /login/check-twitter
+    schemes:  [https]
 
 logout:
     path:   /logout
