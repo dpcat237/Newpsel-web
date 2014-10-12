@@ -28,7 +28,7 @@ security:
                 target: /
             oauth:
                 resource_owners:
-                    google:   "%base_url%/login/check-google"
+                    google:   "/login/check-google"
                     facebook: "/login/check-facebook"
                     twitter:  "/login/check-twitter"
                 login_path: /sign_in

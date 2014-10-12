@@ -1,8 +1,6 @@
 parameters:
     locale: en
     nseck: newpsel_key201306
-    domain: www.newpsel.com
-    base_url: https://%domain%
 
     database_driver:   pdo_mysql
     database_host:     127.0.0.1
