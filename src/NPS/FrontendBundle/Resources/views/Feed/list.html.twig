@@ -19,13 +19,13 @@
                         {% for userFeed in userFeeds %}
                             <tr>
                                 <td class="td-star" style="padding-left: 14px">
-                                    <a href="{{ url('feed_edit', {'feed_id': userFeed.id}) }}" class="no-link icon-pencil" ></a>
+                                    <a href="{{ path('feed_edit', {'feed_id': userFeed.id}) }}" class="no-link icon-pencil" ></a>
                                 </td>
                                 <td class="td-star">
-                                    <a href="{{ url('feed_delete', {'feed_id': userFeed.id}) }}" class="no-link icon-trash" ></a>
+                                    <a href="{{ path('feed_delete', {'feed_id': userFeed.id}) }}" class="no-link icon-trash" ></a>
                                 </td>
                                 <td class="inbox-message">
-                                    <a class="list-item" href="{{ url('feed_edit', {'feed_id': userFeed.id}) }}" >{{ userFeed.title }}</a>
+                                    <a class="list-item" href="{{ path('feed_edit', {'feed_id': userFeed.id}) }}" >{{ userFeed.title }}</a>
                                 </td>
                             </tr>
                         {% endfor %}

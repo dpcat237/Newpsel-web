@@ -41,20 +41,20 @@
                             <tr>
                                 <td class="list-item-btn">
                                     <i class="btn readAction{% if userItem.unread %} icon-check-empty{% else %} icon-check{% endif %}"
-                                        data-url="{{ url('mark_read', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}"
+                                        data-url="{{ path('mark_read', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}"
                                         data-id="{{ userItem.id }}" title="{{ '_Read_unread'|trans }}" ></i>
                                     <i class="btn starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}"
-                                        data-url="{{ url('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
+                                        data-url="{{ path('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
                                     <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                                     <ul class="dropdown-menu">
                                         {% for label in labels %}
-                                            <li><a class="addLabelAction" data-url="{{ url('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
+                                            <li><a class="addLabelAction" data-url="{{ path('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
                                                    data-id="{{ label.id }}">{{ label.name }}</a></li>
                                         {% endfor %}
                                     </ul>
                                 </td>
                                 <td class="inbox-message">
-                                    <a id="itemText-id-{{ userItem.id }}" class="list-item{% if userItem.unread %} bold{% endif %}" href="{{ url('item_view', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}">{{ item.title|raw }}</a>
+                                    <a id="itemText-id-{{ userItem.id }}" class="list-item{% if userItem.unread %} bold{% endif %}" href="{{ path('item_view', {'user_feed_id': userFeedId, 'user_item_id': userItem.id}) }}">{{ item.title|raw }}</a>
                                 </td>
                                 <td class="center dateColumn">{{ item.humanDateAdd }}</td>
                             </tr>

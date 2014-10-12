@@ -95,11 +95,6 @@
     filter='uglifyjs2'
     %}
     <script src="{{ asset_url }}" type="text/javascript"></script>
-    <script>
-        jsUrl.URL_HOMEPAGE = "{{ url("homepage") }}";
-        jsUrl.URL_SUBSCRIBE_FEED = "{{ url("feed_add") }}";
-        jsUrl.URL_CREATE_LABEL = "{{ url("label_create") }}";
-    </script>
     {% endjavascripts %}
 {% endblock foot_script %}
 </body>

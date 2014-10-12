@@ -19,10 +19,10 @@
 
 
     <div class="" style="height: 43% !important;">
-        {#<a href="{{ url("homepage") }}" class="nav-header {% if app.request.get('_route') == 'homepage' %}selected{% endif %}" >
+        {#<a href="{{ path("homepage") }}" class="nav-header {% if app.request.get('_route') == 'homepage' %}selected{% endif %}" >
             <i class="icon-home"></i>{{ '_Home'|trans }}
         </a>#}
-        <a href="{{ url("items_stared_list") }}" class="nav-header {% if app.request.get('_route') == 'items_stared_list' %}selected{% endif %}" ><i class="icon-star"></i>{{ '_Starred'|trans }}</a>
+        <a href="{{ path("items_stared_list") }}" class="nav-header {% if app.request.get('_route') == 'items_stared_list' %}selected{% endif %}" ><i class="icon-star"></i>{{ '_Starred'|trans }}</a>
         <a class="nav-header mOptAction {% if app.request.get('_route') == 'items_later_list' %}selected{% endif %}" data-sebmenu="mLabelsList">
             <i class="icon-tags"></i>{{ '_Labels'|trans }}<span class="label sidebar-label label-info"><i class="icon-angle-down"></i></span>
         </a>

@@ -7,12 +7,12 @@
             <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>
             <div class="block-body">
                 <div class="btn-group">
-                    <a class="btn icon-circle-arrow-left" href="{{ url('items_stared_list') }}" title="{{ '_Go_back'|trans }}"></a>
-                    <a class="btn icon-star" href="{{ url('unread_to_stared_list', {'user_item_id': userItem.id}) }}" title="{{ '_Mark_unfavorite'|trans }}"></a>
+                    <a class="btn icon-circle-arrow-left" href="{{ path('items_stared_list') }}" title="{{ '_Go_back'|trans }}"></a>
+                    <a class="btn icon-star" href="{{ path('unread_to_stared_list', {'user_item_id': userItem.id}) }}" title="{{ '_Mark_unfavorite'|trans }}"></a>
                     <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                     <ul class="dropdown-menu">
                         {% for label in labels %}
-                            <li><a class="addLabelAction" data-url="{{ url('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
+                            <li><a class="addLabelAction" data-url="{{ path('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
                                    data-id="{{ label.id }}">{{ label.name }}</a></li>
                         {% endfor %}
                     </ul>

@@ -21,17 +21,17 @@
                 <ul class="dropdown-menu block-dark account">
                     {#<li class="first"><a tabindex="-1" href="#"><i class="icon-user"></i> {% trans %}Your profile{% endtrans %}</a></li>
                     <li class="first"><a tabindex="-1" href="#"><i class="icon-cogs"></i> {% trans %}Settings{% endtrans %}</a></li>#}
-                    {#<li class="first"><a tabindex="-1" href="{{ url("user_preferences") }}"><i class="icon-wrench"></i> {{ '_Settings'|trans }}</a></li>#}
-                    <li class="first"><a tabindex="-1" href="{{ url("feeds_list") }}"><i class="icon-rss" style="padding-right: 14px;"></i>{{ '_Manage_feeds'|trans }}</a></li>
-                    <li class=""><a tabindex="-1" href="{{ url("filters_list") }}"><i class="icon-filter" style="padding-right: 14px;"></i>{{ '_Manage_filters'|trans }}</a></li>
-                    <li class=""><a tabindex="-1" href="{{ url("labels_list") }}"><i class="icon-tags"></i>{{ '_Manage_labels'|trans }}</a></li>
-                    <li class="first"><a tabindex="-1" href="{{ url("preference_imp_exp") }}"><i class="icon-exchange"></i>{{ '_Import_export'|trans }}</a></li>
-                    <li class="last"><a tabindex="-1" href="{{ url("logout") }}"><i class="icon-signout"></i>{{ '_Logout'|trans }}</a></li>
+                    {#<li class="first"><a tabindex="-1" href="{{ path("user_preferences") }}"><i class="icon-wrench"></i> {{ '_Settings'|trans }}</a></li>#}
+                    <li class="first"><a tabindex="-1" href="{{ path("feeds_list") }}"><i class="icon-rss" style="padding-right: 14px;"></i>{{ '_Manage_feeds'|trans }}</a></li>
+                    <li class=""><a tabindex="-1" href="{{ path("filters_list") }}"><i class="icon-filter" style="padding-right: 14px;"></i>{{ '_Manage_filters'|trans }}</a></li>
+                    <li class=""><a tabindex="-1" href="{{ path("labels_list") }}"><i class="icon-tags"></i>{{ '_Manage_labels'|trans }}</a></li>
+                    <li class="first"><a tabindex="-1" href="{{ path("preference_imp_exp") }}"><i class="icon-exchange"></i>{{ '_Import_export'|trans }}</a></li>
+                    <li class="last"><a tabindex="-1" href="{{ path("logout") }}"><i class="icon-signout"></i>{{ '_Logout'|trans }}</a></li>
                 </ul>
             </li>
 
 
         </ul>
-        <a class="brand" href="{{ url("welcome") }}"><span class="title">{% trans %}Newpsel{% endtrans %}</span> <span class="logo"></span></a>
+        <a class="brand" href="{{ path("welcome") }}"><span class="title">{% trans %}Newpsel{% endtrans %}</span> <span class="logo"></span></a>
     </div>
 </div>

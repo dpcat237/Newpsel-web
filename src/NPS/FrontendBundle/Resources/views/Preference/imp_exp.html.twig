@@ -10,7 +10,7 @@
                     - {{ '_From'|trans }} <a href="http://feedly.com/index.html#opml" target="_blank">Feedly</a>
                 </p>
                 <br>
-                <form name="opml_import" action="{{ url('opml_import') }}" method="post" enctype="multipart/form-data">
+                <form name="opml_import" action="{{ path('opml_import') }}" method="post" enctype="multipart/form-data">
                     <div class="input-prepend">
                         {{ form_widget(opml_form.opml_file) }}
                     </div>
@@ -25,7 +25,7 @@
             <br>
             <p class="block-heading">{{ '_OPML_export'|trans }}</p>
             <div class="block-body">
-                <form name="opml_export" action="{{ url('opml_export') }}" method="get">
+                <form name="opml_export" action="{{ path('opml_export') }}" method="get">
                     <span id="validate-basic-form-valid">
                         <input type="submit" class="btn  btn-primary" value="{{ '_Download'|trans }}">
                     </span>
@@ -35,7 +35,7 @@
             <br>
             <p class="block-heading">{{ '_GetPocket_import'|trans }}</p>
             <div class="block-body">
-                <form name="pocket_import" method="post" action="{{ url('import_getpocket_request') }}" class="wizard" {{ form_enctype(pocket_form) }}>
+                <form name="pocket_import" method="post" action="{{ path('import_getpocket_request') }}" class="wizard" {{ form_enctype(pocket_form) }}>
                     <div class="input-prepend">
                         <span class="add"><i class="icon-tag"></i></span>
                         {{ form_widget(pocket_form.tag, { 'attr' : {'placeholder':'_Tag', 'title':'_Pocket_tag_explanation1'|trans~'\n'~'_Pocket_tag_explanation2'|trans~'\n'~'_Pocket_tag_explanation3'|trans }} ) }}
@@ -69,7 +69,7 @@
             <div class="block-body">
                 <p>{{ '_Instapaper_explanation'|trans }}</p>
                 <br>
-                <form name="instapaper_import" method="post" action="{{ url('import_instapaper') }}" class="wizard" {{ form_enctype(instapaper_form) }}>
+                <form name="instapaper_import" method="post" action="{{ path('import_instapaper') }}" class="wizard" {{ form_enctype(instapaper_form) }}>
                     <div class="input-prepend">
                         <span class="add"><i class="icon-tag"></i></span>
                         {{ form_widget(instapaper_form.later, { 'attr' : {'title':'_Import_to_later_explanation' }}) }}
@@ -92,7 +92,7 @@
             <div class="block-body">
                 <p>{{ '_Readability_explanation'|trans|raw }}</p>
                 <br>
-                <form name="readability_import" method="post" action="{{ url('import_readability') }}" class="wizard" {{ form_enctype(readability_form) }}>
+                <form name="readability_import" method="post" action="{{ path('import_readability') }}" class="wizard" {{ form_enctype(readability_form) }}>
                     <div class="input-prepend">
                         <span class="add"><i class="icon-tag"></i></span>
                         {{ form_widget(readability_form.later, { 'attr' : {'title':'_Import_to_later_explanation' }}) }}

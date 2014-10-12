@@ -2,7 +2,7 @@
     <ul id="mLabelsList" class="nav nav-list">
         {% for label in labels %}
             <li>
-                <a href="{{ url("items_later_list", {'label_id':label.id}) }}">
+                <a href="{{ path("items_later_list", {'label_id':label.id}) }}">
                     {% if menuAll %}
                         {% set val = 1 %}
                         {% for labelCount in labelsCount %}

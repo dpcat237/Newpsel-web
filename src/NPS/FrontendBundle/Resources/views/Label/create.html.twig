@@ -1,4 +1,4 @@
-<form data-validate='parsley' action='{{ url('label_create') }}' id='create-label-form' class='form' method='post'>
+<form data-validate='parsley' action='{{ path('label_create') }}' id='create-label-form' class='form' method='post'>
     <input id='label_name' type='text' name='label' data-trigger='change' data-required='true' data-type='text' placeholder='{% trans %}Write a name{% endtrans %}'>
     <button id='labelSubmit' class='btn btn-primary' >{% trans %}Create{% endtrans %}</button>
 </form>

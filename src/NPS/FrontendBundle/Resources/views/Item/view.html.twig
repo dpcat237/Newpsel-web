@@ -7,14 +7,14 @@
             <p class="block-heading"><a href="{{ item.link }}" target="_blank">{{ item.title|raw }}</a></p>
             <div class="block-body">
                 <div class="btn-group">
-                    <a class="btn icon-circle-arrow-left" href="{{ url('items_list', {'user_feed_id': app.request.get('user_feed_id')}) }}" title="{{ '_Go_back'|trans }}"></a>
-                    <a class="btn icon-check" href="{{ url('unread_to_list', {'user_feed_id': app.request.get('user_feed_id'), 'user_item_id': userItem.id}) }}" title="{{ '_Unread'|trans }}"></a>
+                    <a class="btn icon-circle-arrow-left" href="{{ path('items_list', {'user_feed_id': app.request.get('user_feed_id')}) }}" title="{{ '_Go_back'|trans }}"></a>
+                    <a class="btn icon-check" href="{{ path('unread_to_list', {'user_feed_id': app.request.get('user_feed_id'), 'user_item_id': userItem.id}) }}" title="{{ '_Unread'|trans }}"></a>
                     <i class="btn starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}"
-                       data-url="{{ url('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
+                       data-url="{{ path('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
                     <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                     <ul class="dropdown-menu">
                         {% for label in labels %}
-                            <li><a class="addLabelAction" data-url="{{ url('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
+                            <li><a class="addLabelAction" data-url="{{ path('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
                                    data-id="{{ label.id }}">{{ label.name }}</a></li>
                         {% endfor %}
                     </ul>

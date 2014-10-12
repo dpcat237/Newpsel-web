@@ -5,7 +5,7 @@
         <div class="block span12 inbox">
             <div class="block-body">
                 <div class="inbox-filter">
-                    <a href="{{ url('filter_create') }}" class="btn">
+                    <a href="{{ path('filter_create') }}" class="btn">
                         <i class="icon-plus"></i>
                     </a>
                 </div>
@@ -16,10 +16,10 @@
                         {% for filter in filters %}
                             <tr>
                                 <td class="td-star" style="padding-left: 14px">
-                                    <a href="{{ url('filter_edit', {'filter_id': filter.id}) }}" class="no-link icon-pencil" ></a>
+                                    <a href="{{ path('filter_edit', {'filter_id': filter.id}) }}" class="no-link icon-pencil" ></a>
                                 </td>
                                 <td class="td-star">
-                                    <a href="{{ url('filter_delete', {'filter_id': filter.id}) }}" class="no-link icon-trash" ></a>
+                                    <a href="{{ path('filter_delete', {'filter_id': filter.id}) }}" class="no-link icon-trash" ></a>
                                 </td>
                                 <td class="inbox-message">
                                     <a class="list-item" href="#" >{{ filter.name }}</a>

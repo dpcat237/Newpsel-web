@@ -5,7 +5,7 @@
         <div class="block span12 inbox">
             <div class="block-body">
                 <div class="inbox-filter">
-                    <a href="{# {{ url('label_new') }} #}#" class="btn add-label show-tip" rel="popover" title="{{ '_Create_label'|trans }}"
+                    <a href="{# {{ path('label_new') }} #}#" class="btn add-label show-tip" rel="popover" title="{{ '_Create_label'|trans }}"
                        data-content="{% include "NPSFrontendBundle:Label:create.html.twig" %}" data-html="true">
                         <i class="icon-plus"></i>
                     </a>
@@ -20,15 +20,15 @@
                         {% for label in labels %}
                             <tr>
                                 <td class="td-star" style="padding-left: 14px">
-                                    <a href="{{ url('label_edit', {'id': label.id}) }}" class="no-link icon-pencil" ></a>
+                                    <a href="{{ path('label_edit', {'id': label.id}) }}" class="no-link icon-pencil" ></a>
                                 </td>
                                 <td class="td-star">
                                     {% if not label.basic %}
-                                        <a href="{{ url('label_delete', {'label_id': label.id}) }}" class="no-link icon-trash" ></a>
+                                        <a href="{{ path('label_delete', {'label_id': label.id}) }}" class="no-link icon-trash" ></a>
                                     {% endif %}
                                 </td>
                                 <td class="inbox-message">
-                                    <a class="list-item" href="{{ url('label_edit', {'id': label.id}) }}" >{{ label.name }}</a>
+                                    <a class="list-item" href="{{ path('label_edit', {'id': label.id}) }}" >{{ label.name }}</a>
                                 </td>
                             </tr>
                         {% endfor %}

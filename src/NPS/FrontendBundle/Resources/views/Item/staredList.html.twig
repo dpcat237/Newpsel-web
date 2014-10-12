@@ -11,21 +11,21 @@
                         {% set item = userItem.item %}
                         <tr>
                             <td class="list-item-btn">
-                                <i class="btn showLink icon-external-link" data-url="{{ url('mark_stared_read', {'user_item_id': userItem.id}) }}"
+                                <i class="btn showLink icon-external-link" data-url="{{ path('mark_stared_read', {'user_item_id': userItem.id}) }}"
                                    data-externallink="{{ item.link }}" data-id="{{ userItem.id }}" title="{{ '_Show_in_tab'|trans }}" ></i>
                                 <i id="itemStar-id-{{ userItem.id }}" class="btn starAction{% if userItem.isStared %} icon-star{% else %} icon-star-empty{% endif %}"
-                                   data-url="{{ url('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
+                                   data-url="{{ path('mark_star', {'user_item_id': userItem.id}) }}" title="{{ '_Favorite_unfavorite'|trans }}" ></i>
                                 <a class="btn icon-tag dropdown-toggle" data-toggle="dropdown" href="#" title="{{ '_Set_label'|trans }}"></a>
                                 <ul class="dropdown-menu">
                                     {% for label in labels %}
-                                        <li><a class="addLabelAction" data-url="{{ url('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
+                                        <li><a class="addLabelAction" data-url="{{ path('item_add_label', {'user_item_id': userItem.id, 'label_id': label.id}) }}"
                                                data-id="{{ label.id }}">{{ label.name }}</a></li>
                                     {% endfor %}
                                 </ul>
                             </td>
                             <td class="inbox-message">
                                 <a id="itemText-id-{{ userItem.id }}" class="list-item{% if userItem.stared %} bold{% endif %}"
-                                   href="{{ url('item_stared_view', {'user_item_id': userItem.id}) }}">
+                                   href="{{ path('item_stared_view', {'user_item_id': userItem.id}) }}">
                                     {{ item.title|raw }}
                                 </a>
                             </td>

@@ -18,7 +18,7 @@
                     </div>
                     <hr class="hr-dark">
 
-                    <form data-validate="parsley" action="{{ url("sign_up") }}" id="sign-form" class="form-dark" method="post">
+                    <form data-validate="parsley" action="{{ path("sign_up") }}" id="sign-form" class="form-dark" method="post">
                         <div class="input-prepend">
                             <span class="add-dark"><i class="icon-envelope"></i></span>
                             {{ form_widget(form.email, { 'attr' : {'data-required':'true', 'data-type':'email', 'placeholder':'_Email' }} ) }}
@@ -50,7 +50,7 @@
                     </form>#}
                     <div class="clearfix"></div>
                     <hr class="hr-dark">
-                    <p class="para-account">{{ '_Already_account'|trans }} <a href="{{ url("sign_in") }}">{{ '_Sign_in'|trans }}</a></p>
+                    <p class="para-account">{{ '_Already_account'|trans }} <a href="{{ path("sign_in") }}">{{ '_Sign_in'|trans }}</a></p>
                 </div>
             </div>
         </div>
