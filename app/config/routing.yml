@@ -2,35 +2,43 @@ chicplace_web:
     resource: "@NPSFrontendBundle/Controller"
     prefix:   /web
     type:     annotation
+    schemes: [https]
 
 welcome:
     pattern: /
     defaults: { _controller: "NPSFrontendBundle:Default:index"}
+    schemes: [https]
 
 privacy_policy:
     pattern: /privacypolicy
     defaults: { _controller: "NPSFrontendBundle:Default:privacyPolicy"}
+    schemes: [https]
 
 nps_api:
     resource: "@NPSApiBundle/Resources/config/routing.yml"
     prefix:   /api
+    schemes: [https]
 
 #hwi/oauth-bundle
 hwi_oauth_redirect:
     resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
     prefix:   /connect
+    schemes: [https]
 
 hwi_oauth_login:
     resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
     prefix:   /login
+    schemes: [https]
 
 sign_in:
     path: /sign_in
     defaults: { _controller: "NPSFrontendBundle:User:login"}
+    schemes: [https]
 
 sign_up:
     path: /sign_up
     defaults: { _controller: "NPSFrontendBundle:User:signup"}
+    schemes: [https]
 
 facebook_login:
     pattern: /login/check-facebook
@@ -46,6 +54,7 @@ twitter_login:
 
 logout:
     path:   /logout
+    schemes: [https]
 
 page_not_found:
     path:  "/{notfounduri}"
