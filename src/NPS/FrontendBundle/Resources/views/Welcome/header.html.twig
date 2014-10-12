@@ -2,7 +2,7 @@
     <div class="container">
         <!-- Logo -->
         <h1>
-            <a href="{{ url('welcome') }}" id="logo">
+            <a href="{{ path('welcome') }}" id="logo">
                 <img class="logo-link" src="{{ asset('bundles/npsfrontend/images/logo_50.png') }}" alt="{{ '_Title'|trans }}" />
             </a>
         </h1>
@@ -10,9 +10,9 @@
         <!-- Nav -->
         <nav id="nav">
             <ul>
-                <li class="active"><a href="{{ url('welcome') }}">{{ '_Home'|trans }}</a></li>
-                <li class="active"><a href="{{ url('sign_up') }}">{{ '_Sign_up'|trans }}</a></li>
-                <li class="active"><a href="{{ url('sign_in') }}">{{ '_Sign_in'|trans }}</a></li>
+                <li class="active"><a href="{{ path('welcome') }}">{{ '_Home'|trans }}</a></li>
+                <li class="active"><a href="{{ path('sign_up') }}">{{ '_Sign_up'|trans }}</a></li>
+                <li class="active"><a href="{{ path('sign_in') }}">{{ '_Sign_in'|trans }}</a></li>
             </ul>
         </nav>
     </div>
