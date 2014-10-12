@@ -98,9 +98,9 @@
     %}
     <script src="{{ asset_url }}" type="text/javascript"></script>
     <script>
-        jsUrl.URL_HOMEPAGE = "{{ url("homepage") }}";
-        jsUrl.URL_SUBSCRIBE_FEED = "{{ url("feed_add") }}";
-        jsUrl.URL_CREATE_LABEL = "{{ url("label_create") }}";
+        jsUrl.URL_HOMEPAGE = "https://www.newpsel.com{{ path("homepage") }}";
+        jsUrl.URL_SUBSCRIBE_FEED = "https://www.newpsel.com{{ path("feed_add") }}";
+        jsUrl.URL_CREATE_LABEL = "https://www.newpsel.com{{ path("label_create") }}";
     </script>
     {% endjavascripts %}
 {% endblock foot_script %}
