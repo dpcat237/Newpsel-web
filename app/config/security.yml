@@ -28,9 +28,9 @@ security:
                 target: /
             oauth:
                 resource_owners:
-                    google: "/login/check-google"
+                    google:   "%base_url%/login/check-google"
                     facebook: "/login/check-facebook"
-                    twitter: "/login/check-twitter"
+                    twitter:  "/login/check-twitter"
                 login_path: /sign_in
                 failure_path: /sign_in
                 oauth_user_provider:
@@ -47,7 +47,6 @@ security:
         welcome:
             path: /*
             roles: IS_AUTHENTICATED_ANONYMOUSLY
-            requires_channel: https
         api_area:
             path: /api/.*
             roles: IS_AUTHENTICATED_ANONYMOUSLY
