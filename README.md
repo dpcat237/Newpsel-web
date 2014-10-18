@@ -6,7 +6,7 @@ Newpsel made with idea to help be more productive interacting with interesting t
 Related repositories
 -------------
 
-* [Android app](https://github.com/dpcat237/Newpsel-web)
+* [Android app](https://github.com/dpcat237/Newpsel-android)
 * [Chrome extension](https://github.com/dpcat237/Newpsel-chrome-extension)
 * [Chrome app](https://github.com/dpcat237/Newpsel-chrome-app)
 
