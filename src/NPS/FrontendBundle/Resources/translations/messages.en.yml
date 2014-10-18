@@ -2,7 +2,7 @@
 _Title: Newpsel
 _title: newpsel
 _web_url: www.newpsel.com
-_web_description: newpsel: be more productive selecting, reading, listening, sharing news.
+_web_description: newpsel: be more productive selecting, reading, listening to, and sharing news.
 _web_description_full: Newpsel (News Personal Selector) is news reader which will help you be more productive. You will spend less time selecting, reading, listening, sharing news and much more.
 _web_keywords: news, information, reader, blog, rss, feed, read it later, save for later, read later, dictate news, listen news, text to voice, news player
 _web_email: newpsel@gmail.com
@@ -13,32 +13,32 @@ _Go_back: Go back
 #*** Welcome page ***
 _Sign_in: Sign in
 _Sign_up: Sign up
-_Title_explanation: News Personal Selector
-_Short_explanation: Be more productive selecting, reading, listening and sharing news.
-_Section1_header: Newpsel: News Personal Selector
-_Section1_text: Newpsel made with idea to help be more productive interacting with interesting to your articles. For this propose the application is simple visually to have few interactions for your actions but in another hand it have advanced functionalities and configurations. It implements feeds reader, save for later functionality and dictation of articles as music player.
+_Title_explanation: Personal News Selector
+_Short_explanation: Be more productive selecting, reading, listening to, and sharing news.
+_Section1_header: Newpsel: Personal News Selector
+_Section1_text: Newpsel is made to help you interact with your news more productively.  It is a simple interface for advanced functionality.  It reads RSS feeds, saves them for later, and automatically dictates them.
 _Section2_header: Applications
 _Google_Play_alt: Get it on Google Play
 _Chrome_Store_alt: Available in the Chrome web store
-_Section3_header: Help to this project
-_Section3_text: Newpsel it's personal project opened to public. You can show your interest in make it better by donation.
+_Section3_header: Help this project
+_Section3_text: Newpsel is a personal project opened to public. You can show your interest in making it better by donating.
 _Donate: Donate
 _PayPal_alt: PayPal - The safer, easier way to pay online!
 _Features: Features
 _Feature1_header: Import your data
-_Feature1_text: You can easily import your RSS Feeds from an OPML export from your current service like Feedly. Also you can import your data from Pocket, Instapaper and Readability.
-_Feature2_header: Save to later
-_Feature2_text: Save easily articles with Chrome extension, Android app or shared from other apps.
-_Feature3_header: Listen articles
-_Feature3_text: Android application dictate individually each article, news titles and saved artiles like music player. Also you can control this from Android Wear device.
+_Feature1_text: You can easily import your RSS Feeds from an OPML export from your current service (e.g. Feedly). Also you can import your data from Pocket, Instapaper and Readability.
+_Feature2_header: Save for later
+_Feature2_text: Easily save articles with Chrome extension, Android app or shared from other apps.
+_Feature3_header: Listen to articles
+_Feature3_text: The Android application dictates each article or news item like music player. You can control this from an Android Wear device.
 _Feature4_header: Full-text search
-_Feature4_text: Our system search for complet article content and detect his language to be able be dictated automatically.
+_Feature4_text: Our system automatically detects article language for ditation.
 _Feature5_header: Content filters
-_Feature5_text: You can set filters for feed content to be added directly to some label like for dictation.
+_Feature5_text: Configurable lables and filters for feed content.
 _Feature6_header: Works offline
-_Feature6_text: Android application store the data in your device to be accessible offline.
+_Feature6_text: The Android application stores the data in your device for offline accessibility.
 _Connect_with_us: Connect with us
-_Connect_with_us_text: Any opinion, suggestion, issue report will be very appreciated
+_Connect_with_us_text: Any opinions, suggestions, or issue reports will be very appreciated.
 _Facebook: Facebook
 _Google_plus: Google+
 _Design: Design
