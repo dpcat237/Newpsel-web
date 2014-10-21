@@ -333,7 +333,7 @@ foreach (self::$fileKeys as $k) {
 unset($files[$k]);
 }
 foreach (array_keys($data['name']) as $key) {
-$files[$key] = $this->fixPhpFilesArray(array('error'=> $data['error'][$key],'name'=> $data['name'][$key],'type'=> $data['type'][$key],'tmp_name'=> $data['tmp_name'][$key],'size'=> $data['size'][$key]
+$files[$key] = $this->fixPhpFilesArray(array('error'=> $data['error'][$key],'name'=> $data['name'][$key],'type'=> $data['type'][$key],'tmp_name'=> $data['tmp_name'][$key],'size'=> $data['size'][$key],
 ));
 }
 return $files;
@@ -367,12 +367,12 @@ $authorizationHeader = $this->parameters['HTTP_AUTHORIZATION'];
 $authorizationHeader = $this->parameters['REDIRECT_HTTP_AUTHORIZATION'];
 }
 if (null !== $authorizationHeader) {
-if (0 === stripos($authorizationHeader,'basic')) {
-$exploded = explode(':', base64_decode(substr($authorizationHeader, 6)));
+if (0 === stripos($authorizationHeader,'basic ')) {
+$exploded = explode(':', base64_decode(substr($authorizationHeader, 6)), 2);
 if (count($exploded) == 2) {
 list($headers['PHP_AUTH_USER'], $headers['PHP_AUTH_PW']) = $exploded;
 }
-} elseif (empty($this->parameters['PHP_AUTH_DIGEST']) && (0 === stripos($authorizationHeader,'digest'))) {
+} elseif (empty($this->parameters['PHP_AUTH_DIGEST']) && (0 === stripos($authorizationHeader,'digest '))) {
 $headers['PHP_AUTH_DIGEST'] = $authorizationHeader;
 $this->parameters['PHP_AUTH_DIGEST'] = $authorizationHeader;
 }
@@ -844,7 +844,7 @@ $host = $this->server->get('SERVER_ADDR','');
 }
 }
 $host = strtolower(preg_replace('/:\d+$/','', trim($host)));
-if ($host && !preg_match('/^\[?(?:[a-zA-Z0-9-:\]_]+\.?)+$/', $host)) {
+if ($host &&''!== preg_replace('/(?:^\[)?[a-zA-Z0-9-:\]_]+\.?/','', $host)) {
 throw new \UnexpectedValueException(sprintf('Invalid Host "%s"', $host));
 }
 if (count(self::$trustedHostPatterns) > 0) {
@@ -933,6 +933,10 @@ $this->defaultLocale = $locale;
 if (null === $this->locale) {
 $this->setPhpDefaultLocale($locale);
 }
+}
+public function getDefaultLocale()
+{
+return $this->defaultLocale;
 }
 public function setLocale($locale)
 {
@@ -1329,9 +1333,9 @@ $headers->set('Content-Type', $mimeType);
 }
 $charset = $this->charset ?:'UTF-8';
 if (!$headers->has('Content-Type')) {
-$headers->set('Content-Type','text/html; charset='. $charset);
+$headers->set('Content-Type','text/html; charset='.$charset);
 } elseif (0 === stripos($headers->get('Content-Type'),'text/') && false === stripos($headers->get('Content-Type'),'charset')) {
-$headers->set('Content-Type', $headers->get('Content-Type') .'; charset='. $charset);
+$headers->set('Content-Type', $headers->get('Content-Type').'; charset='.$charset);
 }
 if ($headers->has('Transfer-Encoding')) {
 $headers->remove('Content-Length');
@@ -1652,12 +1656,14 @@ public function isNotModified(Request $request)
 if (!$request->isMethodSafe()) {
 return false;
 }
-$lastModified = $request->headers->get('If-Modified-Since');
 $notModified = false;
+$lastModified = $this->headers->get('Last-Modified');
+$modifiedSince = $request->headers->get('If-Modified-Since');
 if ($etags = $request->getEtags()) {
-$notModified = (in_array($this->getEtag(), $etags) || in_array('*', $etags)) && (!$lastModified || $this->headers->get('Last-Modified') == $lastModified);
-} elseif ($lastModified) {
-$notModified = $lastModified == $this->headers->get('Last-Modified');
+$notModified = in_array($this->getEtag(), $etags) || in_array('*', $etags);
+}
+if ($modifiedSince && $lastModified) {
+$notModified = strtotime($modifiedSince) >= strtotime($lastModified) && (!$etags || $notModified);
 }
 if ($notModified) {
 $this->setNotModified();
@@ -2258,11 +2264,11 @@ protected $booted = false;
 protected $name;
 protected $startTime;
 protected $loadClassCache;
-const VERSION ='2.5.4-DEV';
-const VERSION_ID ='20504';
+const VERSION ='2.5.6-DEV';
+const VERSION_ID ='20506';
 const MAJOR_VERSION ='2';
 const MINOR_VERSION ='5';
-const RELEASE_VERSION ='4';
+const RELEASE_VERSION ='6';
 const EXTRA_VERSION ='DEV';
 public function __construct($environment, $debug)
 {
