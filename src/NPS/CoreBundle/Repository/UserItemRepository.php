@@ -166,11 +166,15 @@ class UserItemRepository extends EntityRepository
      */
     public function getUnreadFeedItems($userId, $begin = 0, $limit = 300)
     {
+        $itemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
+        $userFeedTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserFeed')->getTableName();
         $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
-        $sql = "SELECT ui.id AS ui_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id
+        $query = "SELECT ui.id AS ui_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id
             FROM ".$userItemTable." ui
-            WHERE ui.shared=false AND ui.unread=true AND ui.user_id=".$userId." LIMIT ".$begin.",".$limit.";";
-        $query = $this->getEntityManager()->getConnection()->executeQuery($sql);
+            LEFT JOIN ".$itemTable." i1_ ON ui.item_id = i1_.id
+            LEFT JOIN ".$userFeedTable." f2_ ON i1_.feed_id = f2_.feed_id AND ui.user_id = f2_.user_id
+            WHERE ui.shared=false AND ui.unread=true AND ui.user_id=".$userId." AND f2_.deleted=0 ORDER BY ui.item_id DESC LIMIT ".$begin.",".$limit.";";
+        $query = $this->getEntityManager()->getConnection()->executeQuery($query);
 
         return $query->fetchAll();
     }
