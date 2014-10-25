@@ -43,8 +43,6 @@
         "jquery/jquery": "1.*",
         "undf/angularjsbundle" :"dev-master#3628ecf",
         "ezyang/htmlpurifier": "4.6.*",
-        "symfony/dom-crawler": "2.*",
-        "fabpot/goutte": "2.*",
         "symfony/process": "2.*",
         "mattsches/version-eye-bundle": "dev-master",
         "mmoreram/rsqueue-bundle": "dev-master",
