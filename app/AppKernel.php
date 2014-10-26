@@ -32,6 +32,8 @@ class AppKernel extends Kernel
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new FOS\RestBundle\FOSRestBundle(),
+            new Dpcat237\LanguageDetectBundle\Dpcat237LanguageDetectBundle(),
+            new Dpcat237\CrawlerBundle\Dpcat237CrawlerBundle(),
             //new FOS\ElasticaBundle\FOSElasticaBundle(),
             //new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),

@@ -7,15 +7,12 @@
     },
     "repositories": [
         {
-            "type": "package",
-            "package": {
-                "name": "jquery/jquery",
-                "version": "1.9.1",
-                "dist": {
-                    "url": "http://code.jquery.com/jquery-1.9.1.js",
-                    "type": "file"
-                }
-            }
+            "type": "vcs",
+            "url": "https://dpcat237@bitbucket.org/dpcat237/crawlerbundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://dpcat237@bitbucket.org/dpcat237/languagedetectbundle.git"
         }
     ],
     "require": {
@@ -53,7 +50,9 @@
         "duellsy/pockpack": "dev-master",
         "hwi/oauth-bundle": "0.4.*@dev",
         "friendsofsymfony/rest-bundle": "dev-master",
-        "jms/serializer-bundle": "dev-master"
+        "jms/serializer-bundle": "dev-master",
+        "dpcat237/crawlerbundle": "dev-master",
+        "dpcat237/languagedetectbundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

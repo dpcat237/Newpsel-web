@@ -1,8 +1,8 @@
 <?php
 namespace NPS\CoreBundle\Services;
 
+use Dpcat237\LanguageDetectBundle\Library\LanguageDetect;
 use Eko\GoogleTranslateBundle\Translate\Method\Detector;
-use NPS\CoreBundle\Services\LanguageDetect\LanguageDetect;
 
 /**
  * QueueLauncherService

@@ -24,7 +24,7 @@ services:
             rs_queue.producer: @rs_queue.producer
 
     nps.manager.crawler:
-        class: NPS\CoreBundle\Services\CrawlerManager
+        class: Dpcat237\CrawlerBundle\Library\Crawler
 
     nps.manager.filter:
         class: NPS\CoreBundle\Services\FilteringManager

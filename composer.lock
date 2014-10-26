@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9600d1b15b94a1d2e5a542c90941b9c2",
+    "hash": "c410e5f52093b564f2016558c6d6f0ed",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -421,12 +421,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "fbd498469af2793962227c6d6e5f9d23d510a929"
+                "reference": "d8a96fcfbe8fcdc3572a6110ddf67151bd7b3001"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/fbd498469af2793962227c6d6e5f9d23d510a929",
-                "reference": "fbd498469af2793962227c6d6e5f9d23d510a929",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/d8a96fcfbe8fcdc3572a6110ddf67151bd7b3001",
+                "reference": "d8a96fcfbe8fcdc3572a6110ddf67151bd7b3001",
                 "shasum": ""
             },
             "require": {
@@ -484,7 +484,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2014-10-21 01:25:16"
+            "time": "2014-10-23 22:19:26"
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -840,6 +840,65 @@
                 "orm"
             ],
             "time": "2014-10-06 13:23:31"
+        },
+        {
+            "name": "dpcat237/crawlerbundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://dpcat237@bitbucket.org/dpcat237/crawlerbundle.git",
+                "reference": "5980eb8cbe65436bb30211e59708a9f0b4dfa3bc"
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/framework-bundle": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dpcat237\\CrawlerBundle\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Denys Pasishnyi"
+                }
+            ],
+            "description": "Crawler",
+            "keywords": [
+                "crawler"
+            ],
+            "time": "2014-10-26 06:19:14"
+        },
+        {
+            "name": "dpcat237/languagedetectbundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://dpcat237@bitbucket.org/dpcat237/languagedetectbundle.git",
+                "reference": "442d1640aaca499a3b3d59407615dfd90a8f7e98"
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/framework-bundle": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dpcat237\\LanguageDetectBundle\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Denys Pasishnyi"
+                }
+            ],
+            "description": "LanguageDetect",
+            "keywords": [
+                "detect",
+                "language"
+            ],
+            "time": "2014-10-26 05:38:55"
         },
         {
             "name": "duellsy/pockpack",
@@ -1858,9 +1917,9 @@
             ],
             "authors": [
                 {
-                    "name": "Johannes Schmitt",
+                    "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1905,9 +1964,9 @@
             ],
             "authors": [
                 {
-                    "name": "Johannes Schmitt",
+                    "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -2560,12 +2619,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "f835cd21e472683a9d251131f8c89ba18ed506c7"
+                "reference": "d0a9acbad0643726453e901d9d49c14e13de9f86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/f835cd21e472683a9d251131f8c89ba18ed506c7",
-                "reference": "f835cd21e472683a9d251131f8c89ba18ed506c7",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/d0a9acbad0643726453e901d9d49c14e13de9f86",
+                "reference": "d0a9acbad0643726453e901d9d49c14e13de9f86",
                 "shasum": ""
             },
             "require": {
@@ -2624,7 +2683,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2014-10-21 09:22:09"
+            "time": "2014-10-21 20:10:18"
         },
         {
             "name": "mopa/bootstrap-bundle",
@@ -2872,9 +2931,9 @@
             ],
             "authors": [
                 {
-                    "name": "Johannes Schmitt",
+                    "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -2986,12 +3045,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ruflin/Elastica.git",
-                "reference": "0d2400bdba9adbaa15004fd4e7ccc80562e139a3"
+                "reference": "e1163b19ee5f56a61b522a72e71ee1eb6732ccad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ruflin/Elastica/zipball/0d2400bdba9adbaa15004fd4e7ccc80562e139a3",
-                "reference": "0d2400bdba9adbaa15004fd4e7ccc80562e139a3",
+                "url": "https://api.github.com/repos/ruflin/Elastica/zipball/e1163b19ee5f56a61b522a72e71ee1eb6732ccad",
+                "reference": "e1163b19ee5f56a61b522a72e71ee1eb6732ccad",
                 "shasum": ""
             },
             "require": {
@@ -3037,7 +3096,7 @@
                 "client",
                 "search"
             ],
-            "time": "2014-10-13 20:12:05"
+            "time": "2014-10-22 10:44:07"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -3592,12 +3651,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "27d717e7f0ca05f236f24047a6e50f9eebf51bc7"
+                "reference": "0f4993bd2a41a32d83655523f29f146837b8a52c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/27d717e7f0ca05f236f24047a6e50f9eebf51bc7",
-                "reference": "27d717e7f0ca05f236f24047a6e50f9eebf51bc7",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/0f4993bd2a41a32d83655523f29f146837b8a52c",
+                "reference": "0f4993bd2a41a32d83655523f29f146837b8a52c",
                 "shasum": ""
             },
             "require": {
@@ -3697,7 +3756,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-10-14 17:21:03"
+            "time": "2014-10-24 08:21:46"
         },
         {
             "name": "twbs/bootstrap",
@@ -3705,12 +3764,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "b4c4072679943773a7582daa63f545ba818fa627"
+                "reference": "v2.3.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/b4c4072679943773a7582daa63f545ba818fa627",
-                "reference": "b4c4072679943773a7582daa63f545ba818fa627",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/v2.3.2",
+                "reference": "v2.3.2",
                 "shasum": ""
             },
             "type": "library",
@@ -3731,13 +3790,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fabpot/Twig-extensions.git",
-                "reference": "b092fb785ef82eb99132deadaf8ca1823a4d75dd"
+                "url": "https://github.com/twigphp/Twig-extensions.git",
+                "reference": "b06ba18ad98c012a0015cd63cc5b8b00480fc198"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig-extensions/zipball/b092fb785ef82eb99132deadaf8ca1823a4d75dd",
-                "reference": "b092fb785ef82eb99132deadaf8ca1823a4d75dd",
+                "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/b06ba18ad98c012a0015cd63cc5b8b00480fc198",
+                "reference": "b06ba18ad98c012a0015cd63cc5b8b00480fc198",
                 "shasum": ""
             },
             "require": {
@@ -3771,12 +3830,12 @@
                 }
             ],
             "description": "Common additional features for Twig that do not directly belong in core",
-            "homepage": "https://github.com/fabpot/Twig-extensions",
+            "homepage": "http://twig.sensiolabs.org/doc/extensions/index.html",
             "keywords": [
                 "i18n",
                 "text"
             ],
-            "time": "2014-08-08 06:16:10"
+            "time": "2014-10-22 06:01:14"
         },
         {
             "name": "twig/twig",
@@ -3784,12 +3843,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "27d1e21064b3743cb82f89434359535471ca2bfe"
+                "reference": "f8b6e918a7d8e073efe14cbed7ae02df40ef19ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/27d1e21064b3743cb82f89434359535471ca2bfe",
-                "reference": "27d1e21064b3743cb82f89434359535471ca2bfe",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/f8b6e918a7d8e073efe14cbed7ae02df40ef19ed",
+                "reference": "f8b6e918a7d8e073efe14cbed7ae02df40ef19ed",
                 "shasum": ""
             },
             "require": {
@@ -3824,7 +3883,7 @@
                 },
                 {
                     "name": "Twig Team",
-                    "homepage": "https://github.com/fabpot/Twig/graphs/contributors",
+                    "homepage": "http://twig.sensiolabs.org/contributors",
                     "role": "Contributors"
                 }
             ],
@@ -3833,7 +3892,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2014-10-21 05:41:30"
+            "time": "2014-10-23 15:29:03"
         },
         {
             "name": "undf/angularjsbundle",
@@ -3989,7 +4048,9 @@
         "duellsy/pockpack": 20,
         "hwi/oauth-bundle": 20,
         "friendsofsymfony/rest-bundle": 20,
-        "jms/serializer-bundle": 20
+        "jms/serializer-bundle": 20,
+        "dpcat237/crawlerbundle": 20,
+        "dpcat237/languagedetectbundle": 20
     },
     "prefer-stable": false,
     "platform": {
