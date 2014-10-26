@@ -2,17 +2,17 @@
 namespace NPS\CoreBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use Dpcat237\CrawlerBundle\Library\Crawler;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\Repository\ItemRepository;
 use NPS\CoreBundle\Services\LanguageDetectService;
-use NPS\CoreBundle\Services\CrawlerManager;
 
 class FeedListener
 {
     /**
-     * @var CrawlerManager
+     * @var Crawler
      */
     private $crawler;
 
@@ -40,9 +40,9 @@ class FeedListener
      * @param ItemRepository        $itemRepository   Item Repository
      * @param LanguageDetectService $languageDetector LanguageDetectService
      * @param EntityManager         $entityManager    Entity Manager
-     * @param CrawlerManager        $crawler          CrawlerManager
+     * @param Crawler               $crawler          Crawler
      */
-    public function __construct(ItemRepository $itemRepository, LanguageDetectService $languageDetector, EntityManager $entityManager, CrawlerManager $crawler)
+    public function __construct(ItemRepository $itemRepository, LanguageDetectService $languageDetector, EntityManager $entityManager, Crawler $crawler)
     {
         $this->crawler = $crawler;
         $this->itemRepository = $itemRepository;

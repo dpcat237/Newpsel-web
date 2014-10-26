@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Dpcat237\CrawlerBundle\Library\Crawler;
 use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Constant\RedisConstants;
 use NPS\CoreBundle\Entity\Item;
@@ -13,7 +14,6 @@ use Predis\Client;
 use NPS\CoreBundle\Entity\LaterItem,
     NPS\CoreBundle\Entity\User,
     NPS\CoreBundle\Entity\UserFeed;
-use NPS\CoreBundle\Services\CrawlerManager;
 use NPS\CoreBundle\Services\QueueLauncherService;
 
 /**
@@ -27,7 +27,7 @@ class LaterItemService
     private $cache;
 
     /**
-     * @var CrawlerManager
+     * @var Crawler
      */
     private $crawler;
 
@@ -61,10 +61,10 @@ class LaterItemService
      * @param Registry             $doctrine Doctrine Registry
      * @param Client               $cache    Client
      * @param UserItemService      $userItem UserItemService
-     * @param CrawlerManager       $crawler  CrawlerManager
+     * @param Crawler              $crawler  Crawler
      * @param QueueLauncherService $queue    QueueLauncherService
      */
-    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem, CrawlerManager $crawler, QueueLauncherService $queue)
+    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem, Crawler $crawler, QueueLauncherService $queue)
     {
         $this->cache = $cache;
         $this->crawler = $crawler;

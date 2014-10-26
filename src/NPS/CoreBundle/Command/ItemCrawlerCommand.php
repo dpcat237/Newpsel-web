@@ -3,7 +3,6 @@ namespace NPS\CoreBundle\Command;
 
 use Guzzle\Http\Exception\CurlException;
 use NPS\CoreBundle\Constant\QueueConstants;
-use NPS\CoreBundle\Services\CrawlerManager;
 use Predis\Client;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Input\InputInterface,
@@ -28,7 +27,7 @@ class ItemCrawlerCommand extends ConsumerCommand
     private $cache;
 
     /**
-     * @var CrawlerManager
+     * @var Crawler
      */
     private $crawler;
 
