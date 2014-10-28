@@ -8,11 +8,11 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://dpcat237@bitbucket.org/dpcat237/crawlerbundle.git"
+            "url": "git@bitbucket.org:dpcat237/crawlerbundle.git"
         },
         {
             "type": "vcs",
-            "url": "https://dpcat237@bitbucket.org/dpcat237/languagedetectbundle.git"
+            "url": "git@bitbucket.org:dpcat237/languagedetectbundle.git"
         }
     ],
     "require": {
