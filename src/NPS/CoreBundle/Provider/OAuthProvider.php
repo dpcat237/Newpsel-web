@@ -8,7 +8,6 @@ use NPS\CoreBundle\NPSCoreEvents;
 use NPS\CoreBundle\Repository\UserRepository;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 use NPS\CoreBundle\Entity\User;
-use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 
 /**
  * Class OAuthProvider
@@ -45,7 +44,7 @@ class OAuthProvider extends OAuthUserProvider
      * @param EncoderFactory $encoderFactory EncoderFactory
      * @param string         $salt           salt key
      */
-    public function __construct(UserRepository $userRepo, ContainerAwareEventDispatcher $eventDispatcher, EncoderFactory $encoderFactory, $salt)
+    public function __construct(UserRepository $userRepo, $eventDispatcher, EncoderFactory $encoderFactory, $salt)
     {
         $this->encoderFactory = $encoderFactory;
         $this->eventDispatcher = $eventDispatcher;

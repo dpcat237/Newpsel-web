@@ -31,6 +31,10 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+        $crw = $this->get('nps.manager.crawler');
+        $url = 'www.mobile-review.com/articles/2014/birulki-301.shtml';
+        echo 'tut: '.$crw->getFullArticle($url); exit;
+
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }

@@ -34,3 +34,4 @@ web/js/
 
 # Other files
 app/SymfonyRequirements.php
+components/

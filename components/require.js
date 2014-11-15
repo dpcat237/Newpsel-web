@@ -2021,7 +2021,7 @@ var components = {
     "packages": [
         {
             "name": "jquery",
-            "main": "jquery-build.js"
+            "main": "jquery-built.js"
         }
     ],
     "baseUrl": "components"
