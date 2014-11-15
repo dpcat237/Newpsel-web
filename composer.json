@@ -18,6 +18,7 @@
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.5.*",
+        "symfony/process": "2.*",
         "doctrine/orm": "2.4.*",
         "doctrine/doctrine-bundle": "1.3.*",
         "twig/extensions": "1.*",
@@ -36,12 +37,10 @@
         "snc/redis-bundle": "1.1.*",
         "leafo/lessphp": "0.4.*",
         "mopa/bootstrap-bundle": "2.3.*",
-        "twbs/bootstrap": "2.3.2",
-        "jquery/jquery": "1.*",
+        "twbs/bootstrap": "2.3.*",
+        "components/jquery": "1.*",
         "undf/angularjsbundle" :"dev-master#3628ecf",
         "ezyang/htmlpurifier": "4.6.*",
-        "symfony/process": "2.*",
-        "mattsches/version-eye-bundle": "dev-master",
         "mmoreram/rsqueue-bundle": "dev-master",
         "friendsofsymfony/elastica-bundle": "3.0.*@dev",
         "eko/googletranslatebundle": "dev-master",
@@ -52,7 +51,8 @@
         "friendsofsymfony/rest-bundle": "dev-master",
         "jms/serializer-bundle": "dev-master",
         "dpcat237/crawlerbundle": "dev-master",
-        "dpcat237/languagedetectbundle": "dev-master"
+        "dpcat237/languagedetectbundle": "dev-master",
+        "kbariotis/feedly-api": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
