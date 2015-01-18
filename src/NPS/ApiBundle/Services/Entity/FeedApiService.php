@@ -173,6 +173,7 @@ class FeedApiService
                 if ($dbFeed['api_id'] != $apiFeed['api_id']) {
                     continue;
                 }
+                $apiFeed['title'] = utf8_encode($apiFeed['title']);
 
                 //deleted notify API
                 if ($dbFeed['deleted']) {
