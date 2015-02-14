@@ -159,14 +159,16 @@ class LaterItemRepository extends EntityRepository
     public function syncViewedLaterItems($laterItems)
     {
         $query = "START TRANSACTION; ";
-        $laterItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:LaterItem')->getTableName();
+        $laterItemTable = $this->getClassMetadata()->getTableName();
+        $currentTime = time();
 
         foreach ($laterItems as $itemData) {
-            $query.= "UPDATE ".$laterItemTable." SET unread=".$itemData['is_unread']." WHERE id=".$itemData['api_id']."; ";
+            $query.= "UPDATE ".$laterItemTable." SET unread=".$itemData['is_unread'].
+                ", date_up=".$currentTime." WHERE id=".$itemData['api_id']."; ";
         }
         $query .= "COMMIT;";
 
-        $this->getEntityManager()->getConnection()->executeQuery($query);
+        $this->getEntityManager()->getConnection()->exec($query);
     }
 
     /**
