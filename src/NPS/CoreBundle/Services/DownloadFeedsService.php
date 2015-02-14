@@ -199,7 +199,7 @@ class DownloadFeedsService
      */
     protected function checkDataChanged(Feed $feed)
     {
-        $currentHash = sha1_file($feed->getUrl());
+        $currentHash = sha1_file($feed->getUrl()); //TODO: add try catch and notify to user
         if ($currentHash == $this->redis->hget(self::REDIS_KEY, "feed_".$feed->getId()."_data_hash")) {
             $this->feedHistoryS->dataIsSame($feed);
 
