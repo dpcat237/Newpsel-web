@@ -3,6 +3,7 @@
 namespace NPS\CoreBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use NPS\CoreBundle\Constant\DBConstants;
 
 /**
  * UserItemRepository
@@ -89,14 +90,16 @@ class UserItemRepository extends EntityRepository
     public function syncViewedItems($userItems)
     {
         $query = "START TRANSACTION; ";
-        $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
+        $userItemTable = $this->getClassMetadata()->getTableName();
+        $currentTime = time();
 
         foreach ($userItems as $itemData) {
-            $query.= "UPDATE ".$userItemTable." SET stared=".$itemData['is_stared'].", unread=".$itemData['is_unread']." WHERE id=".$itemData['ui_id']."; ";
+            $query.= "UPDATE ".$userItemTable." SET stared=".$itemData['is_stared'].", unread=".$itemData['is_unread'].
+                ", date_up=".$currentTime." WHERE id=".$itemData['ui_id']."; ";
         }
         $query .= "COMMIT;";
 
-        $this->getEntityManager()->getConnection()->executeQuery($query);
+        $this->getEntityManager()->getConnection()->exec($query);
     }
 
     /**
@@ -174,7 +177,7 @@ class UserItemRepository extends EntityRepository
             LEFT JOIN ".$itemTable." i1_ ON ui.item_id = i1_.id
             LEFT JOIN ".$userFeedTable." f2_ ON i1_.feed_id = f2_.feed_id AND ui.user_id = f2_.user_id
             WHERE ui.shared=false AND ui.unread=true AND ui.user_id=".$userId." AND f2_.deleted=0 ORDER BY ui.item_id DESC LIMIT ".$begin.",".$limit.";";
-        $query = $this->getEntityManager()->getConnection()->executeQuery($query);
+        $query = $this->getEntityManager()->getConnection()->exec($query);
 
         return $query->fetchAll();
     }
@@ -230,13 +233,14 @@ class UserItemRepository extends EntityRepository
     public function markAllRead($userId, $feedId)
     {
         $query = "START TRANSACTION; ";
-        $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
-        $itemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
+        $userItemTable = $this->getClassMetadata()->getTableName();
+        $itemTable = DBConstants::ITEM_TABLE;
+
         $query.= "UPDATE ".$userItemTable." ui
             LEFT JOIN ".$itemTable." i ON ui.item_id = i.id
             SET unread=false WHERE ui.user_id=".$userId." AND i.feed_id=".$feedId." AND ui.unread=true;";
         $query .= "COMMIT;";
 
-        $this->getEntityManager()->getConnection()->executeQuery($query);
+        $this->getEntityManager()->getConnection()->exec($query);
     }
 }
