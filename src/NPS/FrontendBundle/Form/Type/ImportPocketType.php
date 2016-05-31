@@ -4,7 +4,9 @@ namespace NPS\FrontendBundle\Form\Type;
 
 use NPS\CoreBundle\Constant\ImportConstants;
 use NPS\CoreBundle\Services\Entity\LaterService;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -40,7 +42,7 @@ class ImportPocketType extends AbstractType
                 'label' => '_Tag',
                 'required' => false
             ))
-            ->add('favorite', 'choice', array(
+            ->add('favorite', ChoiceType::class, array(
                 'label' => '_Favorite',
                 'choices'   => array(
                     ImportConstants::FAVORITE_ALL => '_All',
@@ -51,7 +53,7 @@ class ImportPocketType extends AbstractType
                 'empty_value' => false,
                 'required' => false
             ))
-            ->add('contentType', 'choice', array(
+            ->add('contentType', ChoiceType::class, array(
                 'label' => '_Content_type',
                 'choices'   => array(
                     ImportConstants::CONTENT_ALL => '_All',
@@ -62,7 +64,7 @@ class ImportPocketType extends AbstractType
                 'empty_value' => false,
                 'required' => false
             ))
-            ->add('later', 'entity', array(
+            ->add('later', EntityType::class, array(
                 'class' => 'NPSCoreBundle:Later',
                 'query_builder' => $this->laterService->getUserLabelsQuery(),
                 'required' => true,
@@ -75,7 +77,7 @@ class ImportPocketType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'pocket_import';
     }

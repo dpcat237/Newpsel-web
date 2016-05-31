@@ -3,7 +3,6 @@
 namespace NPS\FrontendBundle\Controller;
 
 use JMS\SecurityExtraBundle\Annotation\Secure;
-use NPS\CoreBundle\Constant\SessionConstants;
 use NPS\CoreBundle\Event\UserSignUpEvent;
 use NPS\CoreBundle\NPSCoreEvents;
 use NPS\FrontendBundle\Form\Type\ChangePasswordType;
@@ -14,8 +13,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\RedirectResponse,
     Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken,
-    Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use NPS\CoreBundle\Entity\User;
@@ -23,6 +21,7 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\FrontendBundle\Form\Type\PreferenceEditType,
     NPS\FrontendBundle\Form\Type\SignInType,
     NPS\FrontendBundle\Form\Type\SignUpType;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class UserController
@@ -44,12 +43,10 @@ class UserController extends Controller
      */
     public function editPreferencesAction(Request $request)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $route = $this->container->get('router')->generate('user_preferences');
         $preference = $user->getPreference();
-        $labelsQuery = $this->get('nps.entity.later')->getUserLabelsQuery();
-        $formType = new PreferenceEditType($labelsQuery);
-        $form = $this->createForm($formType, $preference);
+        $form = $this->createForm($this->get('nps.form.type.preference'), $preference);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
@@ -77,7 +74,6 @@ class UserController extends Controller
      */
     protected function processLoginForm(Form $form)
     {
-
         $email = $form->get('email')->getData();
         $password = $form->get('password')->getData();
 
@@ -124,14 +120,13 @@ class UserController extends Controller
      */
     public function loginAction(Request $request)
     {
-        if ($this->get('security.context')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
 
         $checkForm = false;
         $user = new User();
-        $formType = new SignInType($user);
-        $form = $this->createForm($formType, $user);
+        $form = $this->createForm(SignInType::class, $user);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
@@ -144,7 +139,7 @@ class UserController extends Controller
 
         if ($request->getMethod() == 'POST' && !$checkForm) {
             //login is not correct, set AUTH_ERROR in context, display login page
-            $request->attributes->set(SecurityContext::AUTHENTICATION_ERROR, true);
+            $request->attributes->set(Security::AUTHENTICATION_ERROR, true);
         }
 
         $viewData = array(
@@ -168,8 +163,7 @@ class UserController extends Controller
     {
         $errors = false;
         $user = new User();
-        $formType = new SignUpType($user);
-        $form = $this->createForm($formType, $user);
+        $form = $this->createForm(SignUpType::class, $user);
         $viewData = array (
             'form' => $form->createView(),
             'errors' => $errors
@@ -208,7 +202,7 @@ class UserController extends Controller
         //ok is true by default
         $ok = true;
         //invalidate current token
-        $this->get('security.context')->setToken(null);
+        $this->get('security.token_storage')->setToken(null);
         $this->get('request')->getSession()->invalidate();
         // Only enabled users allowed. Set to true after activation code confirm e-mail.
         if ($user->isEnabled()) {
@@ -250,8 +244,7 @@ class UserController extends Controller
      */
     public function recoverPasswordAction(Request $request)
     {
-        $formType = new RecoverPasswordType();
-        $form = $this->createForm($formType);
+        $form = $this->createForm(RecoverPasswordType::class);
         $viewData = array (
             'form' => $form->createView(),
             'sent' => false
@@ -280,9 +273,7 @@ class UserController extends Controller
      */
     public function newPasswordAction(Request $request)
     {
-        $formType = new ChangePasswordType();
-        $form = $this->createForm($formType);
-
+        $form = $this->createForm(ChangePasswordType::class);
         if ($request->getMethod() != 'POST') {
             $viewData = array (
                 'form' => $form->createView(),

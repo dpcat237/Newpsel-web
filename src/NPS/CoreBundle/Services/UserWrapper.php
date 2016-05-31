@@ -1,41 +1,40 @@
 <?php
+
 namespace NPS\CoreBundle\Services;
 
 use NPS\CoreBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use HWI\Bundle\OAuthBundle\Security\Core\Authentication\Token\OAuthToken;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * UserWrapper
  */
 class UserWrapper
 {
-    /**
-     * @var SecurityContext
-     */
-    private $security;
-
-    /**
-     * @var Session
-     */
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+    /** @var TokenStorageInterface */
+    private $tokenStorage;
+    /** @var Session */
     private $session;
-
-    /**
-     * @var User
-     */
+    /** @var User */
     private $user;
 
-
     /**
-     * @param SecurityContext $security SecurityContext
-     * @param Session         $session Session
+     * UserWrapper constructor.
+     *
+     * @param TokenStorageInterface         $tokenStorage
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param Session                       $session
      */
-    public function __construct(SecurityContext $security, Session $session)
+    public function __construct(TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authorizationChecker, Session $session)
     {
-        $this->security = $security;
-        $this->session = $session;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->session              = $session;
+        $this->tokenStorage         = $tokenStorage;
     }
 
     /**
@@ -51,12 +50,12 @@ class UserWrapper
 
         //create new token
         $token = new UsernamePasswordToken($user, null, 'secured_area', $user->getRoles());
-        $this->security->setToken($token);
+        $this->tokenStorage->setToken($token);
         //roles
         $roles = $user->getRoles();
         foreach ($roles as &$role) {
             //check that each role was granted correctly
-            $ok = ($this->security->isGranted($role));
+            $ok = ($this->authorizationChecker->isGranted($role));
         }
         if ($ok) {
             //serialize token and put it on session
@@ -78,10 +77,12 @@ class UserWrapper
             return;
         }
 
-        if ($this->security->getToken() instanceof UsernamePasswordToken || $this->security->getToken() instanceof OAuthToken) {
-            $this->user = $this->security->getToken()->getUser();
-        } else if (is_object($this->security->getToken()) && $this->security->getToken()->getUser() instanceof User) {
-            $this->user = $this->security->getToken()->getUser();
+        if ($this->tokenStorage->getToken() instanceof UsernamePasswordToken || $this->tokenStorage->getToken() instanceof OAuthToken) {
+            $this->user = $this->tokenStorage->getToken()->getUser();
+        } else {
+            if (is_object($this->tokenStorage->getToken()) && $this->tokenStorage->getToken()->getUser() instanceof User) {
+                $this->user = $this->tokenStorage->getToken()->getUser();
+            }
         }
     }
 

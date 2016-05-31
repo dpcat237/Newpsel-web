@@ -2,6 +2,7 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -35,15 +36,23 @@ class ImportReadabilityType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('later', 'entity', array(
-                'class' => 'NPSCoreBundle:Later',
-                'query_builder' => $this->laterService->getUserLabelsQuery(),
-                'required' => true,
-                'multiple' => false,
-            ))
-            ->add('json_file', 'file', array(
-                'required' => true,
-            ));
+            ->add(
+                'later',
+                EntityType::class,
+                array(
+                    'class'         => 'NPSCoreBundle:Later',
+                    'query_builder' => $this->laterService->getUserLabelsQuery(),
+                    'required'      => true,
+                    'multiple'      => false,
+                )
+            )
+            ->add(
+                'json_file',
+                'file',
+                array(
+                    'required' => true,
+                )
+            );
     }
 
     /**
@@ -51,7 +60,7 @@ class ImportReadabilityType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'readability_import';
     }

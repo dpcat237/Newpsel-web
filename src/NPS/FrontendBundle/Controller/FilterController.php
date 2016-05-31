@@ -31,7 +31,7 @@ class FilterController extends Controller
      */
     public function listAction()
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $filterRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Filter');
         $filters = $filterRepo->findByUser($user);
 
@@ -56,7 +56,7 @@ class FilterController extends Controller
      */
     public function createAction(Request $request)
     {
-        if (!$this->get('security.context')->getToken()->getUser() instanceof User) {
+        if (!$this->getUser() instanceof User) {
             return new RedirectResponse($this->container->get('router')->generate('logout'));
         }
 
@@ -138,7 +138,7 @@ class FilterController extends Controller
      */
     public function deleteAction(Filter $filter)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $route = $this->container->get('router')->generate('filters_list');
         if ($filter->getUserId() != $user->getId()) {
             return new RedirectResponse($route);

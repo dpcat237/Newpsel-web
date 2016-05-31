@@ -2,6 +2,8 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,15 +38,23 @@ class ImportInstapaperType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('later', 'entity', array(
-                'class' => 'NPSCoreBundle:Later',
-                'query_builder' => $this->laterService->getUserLabelsQuery(),
-                'required' => true,
-                'multiple' => false,
-            ))
-            ->add('csv_file', 'file', array(
-                'required' => true,
-            ));
+            ->add(
+                'later',
+                EntityType::class,
+                array(
+                    'class'         => 'NPSCoreBundle:Later',
+                    'query_builder' => $this->laterService->getUserLabelsQuery(),
+                    'required'      => true,
+                    'multiple'      => false,
+                )
+            )
+            ->add(
+                'csv_file',
+                FileType::class,
+                array(
+                    'required' => true,
+                )
+            );
     }
 
     /**
@@ -52,13 +62,18 @@ class ImportInstapaperType extends AbstractType
      */
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $metadata->addPropertyConstraint('csv_file', new Assert\File(array(
-            'maxSize' => '10000k',
-            'mimeTypes' => array(
-                'text/csv'
-            ),
-            'mimeTypesMessage' => '_Invalid_csv',
-        )));
+        $metadata->addPropertyConstraint(
+            'csv_file',
+            new Assert\File(
+                array(
+                    'maxSize'          => '10000k',
+                    'mimeTypes'        => array(
+                        'text/csv'
+                    ),
+                    'mimeTypesMessage' => '_Invalid_csv',
+                )
+            )
+        );
     }
 
     /**
@@ -66,7 +81,7 @@ class ImportInstapaperType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'instapaper_import';
     }

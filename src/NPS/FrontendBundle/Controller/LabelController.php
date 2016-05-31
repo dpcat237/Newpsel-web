@@ -30,7 +30,7 @@ class LabelController extends Controller
      */
     public function menuAction()
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
         $menuAll = $this->get('nps.entity.later')->getMenuAll($user->getId());
         if ($menuAll) {
@@ -61,7 +61,7 @@ class LabelController extends Controller
      */
     public function listAction()
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
         $labels = $labelRepo->getUserLabel($user->getId());
 
@@ -85,7 +85,7 @@ class LabelController extends Controller
      */
     public function createAction(Request $request)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $labelRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:Later');
         $labelRepo->createLabel($user, $request->get('label'));
         $route = $this->container->get('router')->generate('labels_list');
@@ -110,7 +110,7 @@ class LabelController extends Controller
      */
     public function deleteAction(Later $label)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $route = $this->container->get('router')->generate('labels_list');
         if ($label->getUserId() == $user->getId() && !$label->isBasic()) {
             $this->get('nps.entity.later')->removeLabel($label);
@@ -138,12 +138,11 @@ class LabelController extends Controller
      */
     public function editAction(Request $request, Later $label)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $route = $this->container->get('router')->generate('labels_list');
 
         if ($label->getUserId() == $user->getId()) {
-            $formType = new LaterEditType($label);
-            $form = $this->createForm($formType, $label);
+            $form = $this->createForm(LaterEditType::class, $label);
 
             if ($request->getMethod() == 'POST') {
                 $form->handleRequest($request);
@@ -176,7 +175,7 @@ class LabelController extends Controller
      */
     public function changeAllFeedsStatusAction()
     {
-        $this->get('nps.entity.later')->changeMenuAll($this->get('security.context')->getToken()->getUser()->getId());
+        $this->get('nps.entity.later')->changeMenuAll($this->getUser()->getId());
 
         return new RedirectResponse($this->container->get('router')->generate('labels_list'));
     }

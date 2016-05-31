@@ -198,6 +198,10 @@ _Logout: Logout
 
 _Edit_shared_later: Select label (in it will be saved shared links from mobile device)
 
+#Home
+home:
+  title: Home
+
 #*** Form ***
 _Name: Name
 _Submit: Submit
@@ -274,7 +278,12 @@ _Readability_import: Import from Readability
 _Readability_explanation: To export your Readability articles log into your account and go to "tools" or click to this <a target="_blank" href="https://www.readability.com/tools/">link</a>. At the end of the page click to "Export your data" button. Readability will send you an email with link to download a file.
 
 #*** Feed ***
-_Show_all_feeds_menu: Show all feeds in the menu
+feed:
+  add_url: Add feed url
+  show_all_menu: Show all feeds in the menu
+  subscribe: Subscribe
+  cancel: Cancel
+  add: Add
 
 #*** Label ***
 _Show_all_labels_menu: Show all labels in the menu

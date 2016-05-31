@@ -2,62 +2,58 @@
 namespace NPS\CoreBundle\Services;
 
 use Symfony\Bridge\Monolog\Logger;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * NotificationManager
  */
 class NotificationManager
 {
-    /**
-     * @var Logger
-     */
+    /** @var Logger */
     private $logger;
-
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $session;
-
-    /**
-     * @var Translator
-     */
+    /** @var TranslatorInterface */
     private $translator;
 
-
     /**
-     * @param Logger     $logger     Logger
-     * @param Session    $session    Session
-     * @param Translator $translator Translator
+     * NotificationManager constructor.
+     *
+     * @param Logger              $logger
+     * @param Session             $session
+     * @param TranslatorInterface $translator
      */
-    public function __construct(Logger $logger, Session $session, Translator $translator)
+    public function __construct(Logger $logger, Session $session, TranslatorInterface $translator)
     {
-        $this->logger = $logger;
-        $this->session = $session;
+        $this->logger     = $logger;
+        $this->session    = $session;
         $this->translator = $translator;
     }
 
     /**
      * Get proper data end create flash message
-     * @param $messageCode
+     *
+     * @param      $messageCode
      * @param null $type
      */
     public function setFlashMessage($messageCode, $type = null)
     {
-        $type = ($type)?: $this->getType(substr($messageCode, 0, 1));
-        $message = (is_numeric($messageCode))? 'notification_'.$messageCode : $messageCode;
+        $type    = ($type) ?: $this->getType(substr($messageCode, 0, 1));
+        $message = (is_numeric($messageCode)) ? 'notification_' . $messageCode : $messageCode;
         $this->session->getFlashBag()->add($type, $message);
     }
 
     /**
      * Set type of message
+     *
      * @param string $code
      *
      * @return string
      */
-    private function getType($code){
-        switch ($code){
+    private function getType($code)
+    {
+        switch ($code) {
             case 1:
                 $type = 'success';
                 break;

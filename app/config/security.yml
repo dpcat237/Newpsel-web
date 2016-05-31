@@ -36,7 +36,7 @@ security:
                 oauth_user_provider:
                     service: ib_user.oauth_user_provider
             remember_me:
-                key:      "%nseck%"
+                secret:      "%nseck%"
                 lifetime: 31536000 # 365 days in seconds
                 always_remember_me: true
                 remember_me_parameter: _remember_me

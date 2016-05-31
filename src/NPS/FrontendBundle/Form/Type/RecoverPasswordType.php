@@ -3,6 +3,7 @@
 namespace NPS\FrontendBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -19,9 +20,13 @@ class RecoverPasswordType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', 'email', array(
-                'required' => true
-            ));
+            ->add(
+                'email',
+                EmailType::class,
+                array(
+                    'required' => true
+                )
+            );
     }
 
     /**
@@ -29,7 +34,7 @@ class RecoverPasswordType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'recoverPassword';
     }

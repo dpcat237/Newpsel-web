@@ -2,10 +2,10 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -14,13 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ImportOpmlType extends AbstractType
 {
     /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-    }
-
-    /**
      * Buildform function
      *
      * @param FormBuilderInterface $builder the formBuilder
@@ -28,9 +21,13 @@ class ImportOpmlType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('opml_file', 'file', array(
-            'required' => true,
-        ));
+        $builder->add(
+            'opml_file',
+            FileType::class,
+            array(
+                'required' => true,
+            )
+        );
     }
 
     /**
@@ -38,13 +35,18 @@ class ImportOpmlType extends AbstractType
      */
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $metadata->addPropertyConstraint('opml_file', new Assert\File(array(
-            'maxSize' => '1024k',
-            'mimeTypes' => array(
-                'text/x-opml+xml'
-            ),
-            'mimeTypesMessage' => '_Invalid_opml',
-        )));
+        $metadata->addPropertyConstraint(
+            'opml_file',
+            new Assert\File(
+                array(
+                    'maxSize'          => '1024k',
+                    'mimeTypes'        => array(
+                        'text/x-opml+xml'
+                    ),
+                    'mimeTypesMessage' => '_Invalid_opml',
+                )
+            )
+        );
     }
 
     /**
@@ -52,7 +54,7 @@ class ImportOpmlType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'opml_import';
     }

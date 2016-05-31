@@ -1,17 +1,17 @@
 <div id="modalAddFeed" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalAddFeedLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="modalAddFeedLabel">{% trans %}Subscribe{% endtrans %}</h3>
+        <h3 id="modalAddFeedLabel">{{ 'feed.subscribe' | trans }}</h3>
     </div>
     <div class="modal-body">
         <form data-validate="parsley" action="" id="subscribe-form" class="form">
             <div class="input-prepend">
-                <input id="subscribe_feed" type="text" name="feed" data-trigger="change" data-required="true" data-type="url" placeholder="{% trans %}Add feed url{% endtrans %}">
+                <input id="subscribe_feed" type="text" name="feed" data-trigger="change" data-required="true" data-type="url" placeholder="{{ 'feed.add_url' | trans }}">
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans %}Cancel{% endtrans %}</button>
-        <button id='subscribeSubmit' class="btn btn-primary" >{% trans %}Add{% endtrans %}</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{ 'feed.cancel' | trans }}</button>
+        <button id='subscribeSubmit' class="btn btn-primary" >{{ 'feed.add' }}</button>
     </div>
 </div>

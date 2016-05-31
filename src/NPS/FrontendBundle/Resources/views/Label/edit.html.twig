@@ -5,7 +5,7 @@
         <div class="block span12">
             <div class="block-body">
                     <div>
-                        <form id="editLater" method="post" action="{{ path('label_edit', {'id': label.id}) }}" class="wizard" {{ form_enctype(form) }}>
+                        <form id="editLater" method="post" action="{{ path('label_edit', {'id': label.id}) }}" class="wizard" {{ form_start(form) }}>
                             <div class="input-prepend">
                                 <span class="add"><i class="icon-edit"></i></span>
                                 {{ form_widget(form.name, { 'attr' : {'placeholder':'Name' }} ) }}

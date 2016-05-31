@@ -40,7 +40,7 @@ class ItemController extends Controller
      */
     public function listAction(UserFeed $userFeed)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getByFeedUser($user->getId(), $userFeed->getFeedId());
         $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
@@ -68,7 +68,7 @@ class ItemController extends Controller
      */
     public function listReadAction(UserFeed $userFeed)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getByFeedUser($user->getId(), $userFeed->getFeedId(), false);
         $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
@@ -96,7 +96,7 @@ class ItemController extends Controller
      */
     public function markAllReadAction(UserFeed $userFeed)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->markAllRead($user->getId(), $userFeed->getFeedId());
 
         return new RedirectResponse($this->container->get('router')->generate('items_list_read', array('user_feed_id' => $userFeed->getId())));
@@ -116,7 +116,7 @@ class ItemController extends Controller
      */
     public function laterListAction(Later $label)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($label->getUserId() == $user->getId()) {
             $labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
             $itemsList = $labelItemRepo->getItems($label->getId());
@@ -146,7 +146,7 @@ class ItemController extends Controller
      */
     public function laterListReadAction(Later $label)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($label->getUserId() == $user->getId()) {
             $labelItemRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:LaterItem');
             $itemsList = $labelItemRepo->getItems($label->getId(), false);
@@ -178,7 +178,7 @@ class ItemController extends Controller
      */
     public function viewAction(UserItem $userItem, UserFeed $userFeed)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($user->getId() != $userItem->getUserId()) {
             $route = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getFeedId()));
 
@@ -210,7 +210,7 @@ class ItemController extends Controller
      */
     public function viewLaterAction(LaterItem $laterItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
             $laterItemService = $this->get('nps.entity.later_item');
             $laterItemService->readItem($laterItem);
@@ -242,7 +242,7 @@ class ItemController extends Controller
     public function readAction(Request $request, UserItem $userItem)
     {
         $status = $request->get('status');
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($user->getId() != $userItem->getUserId()) {
 
             return new JsonResponse(false);
@@ -272,7 +272,7 @@ class ItemController extends Controller
      */
     public function unreadToListAction(Request $request, UserItem $userItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($user->getId() == $userItem->getUserId()) {
             $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isUnread", "setUnread", EntityConstants::STATUS_UNREAD);
         }
@@ -294,7 +294,7 @@ class ItemController extends Controller
      */
     public function unreadToLaterListAction(Request $request, LaterItem $laterItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
             $this->get('nps.entity.later_item')->makeLaterRead($laterItem, EntityConstants::STATUS_UNREAD);
         }
@@ -315,7 +315,7 @@ class ItemController extends Controller
      */
     public function readLaterAction(LaterItem $laterItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($laterItem->getLater()->getUserId() == $user->getId()) {
             $this->get('nps.entity.later_item')->makeLaterRead($laterItem);
 
@@ -342,7 +342,7 @@ class ItemController extends Controller
      */
     public function starAction(UserItem $userItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($user->getId() != $userItem->getUserId()) {
 
             return new JsonResponse(false);
@@ -374,7 +374,7 @@ class ItemController extends Controller
      */
     public function addLabelAction(UserItem $userItem, Later $later)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($user->getId() != $userItem->getUserId()) {
             return new JsonResponse(false);
         }
@@ -398,7 +398,7 @@ class ItemController extends Controller
      */
     public function staredShowInTabAction(UserItem $userItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($userItem->getUserId() == $user->getId()) {
             $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_READ);
 
@@ -421,7 +421,7 @@ class ItemController extends Controller
      */
     public function staredListAction()
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $userItems = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem')->getStaredItems($user->getId());
         $labels = $this->getDoctrine()->getRepository('NPSCoreBundle:Later')->getUserLabel($user->getId());
 
@@ -448,7 +448,7 @@ class ItemController extends Controller
      */
     public function viewStaredAction(UserItem $userItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($user->getId() != $userItem->getUserId()) {
             $route = $this->container->get('router')->generate('items_stared_list');
 
@@ -478,7 +478,7 @@ class ItemController extends Controller
      */
     public function unreadToStaredListAction(UserItem $userItem)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         if ($userItem->getUserId() == $user->getId()) {
             $this->get('nps.entity.user_item')->changeUserItemStatus($userItem, "isStared", "setStared", EntityConstants::STATUS_READ);
         }

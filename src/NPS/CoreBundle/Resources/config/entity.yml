@@ -2,17 +2,17 @@ services:
     nps.abstract.entity:
         class: NPS\CoreBundle\Services\Entity\AbstractEntityService
         arguments:
-            doctrine:     @doctrine
-            user_wrapper: @nps.wrapper.user
-            notification: @nps.manager.notification
+            doctrine:     "@doctrine"
+            user_wrapper: "@nps.wrapper.user"
+            notification: "@nps.manager.notification"
 
     nps.entity.feed:
         class: NPS\CoreBundle\Services\Entity\FeedService
         arguments:
-            doctrine:     @doctrine
-            server_cache: @snc_redis.default
-            user_wrapper: @nps.wrapper.user
-            notification: @nps.manager.notification
+            doctrine:     "@doctrine"
+            server_cache: "@snc_redis.default"
+            user_wrapper: "@nps.wrapper.user"
+            notification: "@nps.manager.notification"
 
     feed_history:
         class: NPS\CoreBundle\Services\Entity\FeedHistoryService
@@ -25,37 +25,37 @@ services:
     item:
         class: NPS\CoreBundle\Services\Entity\ItemService
         arguments:
-            doctrine:     @doctrine
-            server_cache: @snc_redis.default
-            filter:       @nps.manager.filter
-            later_item:   @nps.entity.later_item
-            queue:        @nps.launcher.queue
+            doctrine:     "@doctrine"
+            server_cache: "@snc_redis.default"
+            filter:       "@nps.manager.filter"
+            later_item:   "@nps.entity.later_item"
+            queue:        "@nps.launcher.queue"
 
     nps.entity.later:
         class: NPS\CoreBundle\Services\Entity\LaterService
         arguments:
-            doctrine:     @doctrine
-            server_cache: @snc_redis.default
-            user_wrapper: @nps.wrapper.user
-            notification: @nps.manager.notification
+            doctrine:     "@doctrine"
+            server_cache: "@snc_redis.default"
+            user_wrapper: "@nps.wrapper.user"
+            notification: "@nps.manager.notification"
 
     nps.entity.later_item:
         class: NPS\CoreBundle\Services\Entity\LaterItemService
         arguments:
-            doctrine:     @doctrine
-            server_cache: @snc_redis.default
-            user_item:    @nps.entity.user_item
-            crawler:      @nps.manager.crawler
-            queue:        @nps.launcher.queue
+            doctrine:     "@doctrine"
+            server_cache: "@snc_redis.default"
+            user_item:    "@nps.entity.user_item"
+            crawler:      "@nps.manager.crawler"
+            queue:        "@nps.launcher.queue"
 
     nps.entity.user:
         class: NPS\CoreBundle\Services\Entity\UserService
         arguments:
-            doctrine:      @doctrine
-            user_wrapper:  @nps.wrapper.user
-            notification:  @nps.manager.notification
-            server_cache:  @snc_redis.default
-            notifications: @user.notifications
+            doctrine:      "@doctrine"
+            user_wrapper:  "@nps.wrapper.user"
+            notification:  "@nps.manager.notification"
+            server_cache:  "@snc_redis.default"
+            notifications: "@user.notifications"
 
     nps.entity.user_item:
         class: NPS\CoreBundle\Services\Entity\UserItemService

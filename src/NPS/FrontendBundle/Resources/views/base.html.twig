@@ -5,11 +5,11 @@
     <title>{{ '_Title' | trans }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="{{ '_web_description'|trans }}">
-    <meta name="author" content="Denys Pasishnyi">
     <meta name="google-site-verification" content="NOrkRbFGgCRtd4_-nZo-ebpUferY159G0p7la358cjg" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/bmatznerfontawesome/css/font-awesome.min.css') }}" />
     {% block head_style %}
         {# Original Bootstrap styles, generated via LESS, by braincrafted/bootstrap-bundle #}
-        {% stylesheets  output='bundles/npsfrontend/css/*.css' 'css/bootstrap.css' %}
+        {% stylesheets  output='bundles/npsfrontend/css/*.css' 'css/bootstrap/bootstrap.css' %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
         {% endstylesheets %}
 
@@ -27,9 +27,9 @@
         {% endstylesheets %}
 
         {% javascripts
-        'http://html5shim.googlecode.com/svn/trunk/html5.js'
+        'js/html5shiv/html5shiv.js'
         '@NPSFrontendBundle/Resources/public/js/jquery/jquery-1.10.2.js'
-        'js/bootstrap.js'
+        'js/bootstrap/bootstrap.js'
         '@NPSFrontendBundle/Resources/public/js/lib/fullcalendar/fullcalendar.min.js'
         '@NPSFrontendBundle/Resources/public/js/lib/pnotify/jquery.pnotify.min.js'
         '@NPSFrontendBundle/Resources/public/js/lib/justgage/justgage.1.0.1.js'

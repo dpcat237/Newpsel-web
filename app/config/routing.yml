@@ -4,11 +4,11 @@ chicplace_web:
     type:     annotation
 
 welcome:
-    pattern: /
+    path: /
     defaults: { _controller: "NPSFrontendBundle:Default:index"}
 
 privacy_policy:
-    pattern: /privacypolicy
+    path: /privacypolicy
     defaults: { _controller: "NPSFrontendBundle:Default:privacyPolicy"}
 
 nps_api:
@@ -33,15 +33,15 @@ sign_up:
     defaults: { _controller: "NPSFrontendBundle:User:signup"}
 
 facebook_login:
-    pattern: /login/check-facebook
+    path: /login/check-facebook
     schemes: [https]
 
 google_login:
-    pattern: /login/check-google
+    path: /login/check-google
     schemes: [https]
 
 twitter_login:
-    pattern: /login/check-twitter
+    path: /login/check-twitter
     schemes:  [https]
 
 logout:

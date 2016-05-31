@@ -1,92 +1,87 @@
 #Default
 homepage:
-    pattern:  /
+    path:  /
     defaults: { _controller: NPSFrontendBundle:Default:index }
 
 login:
-    pattern:  /login
+    path:  /login
     defaults: { _controller: NPSFrontendBundle:Default:login }
-    requirements:
-        _method: GET
+    methods: [GET]
 
 login_process:
-    pattern:  /login
+    path:  /login
     defaults: { _controller: NPSFrontendBundle:Default:processLogin }
-    requirements:
-        _method: POST
+    methods: [POST]
 
 login_check:
-    pattern:  /login_check
+    path:  /login_check
     defaults: { _controller: NPSFrontendBundle:Default:loginCheck }
-    requirements:
-        _method: GET
+    methods: [GET]
 
 logout:
-    pattern:  /logout
+    path:  /logout
 
 signup_process:
-    pattern:  /signup
+    path:  /signup
     defaults: { _controller: NPSFrontendBundle:Default:signupProcess }
-    requirements:
-        _method: POST
+    methods: [POST]
 
 signup:
-    pattern:  /signup
+    path:  /signup
     defaults: { _controller: NPSFrontendBundle:Default:signup }
-    requirements:
-        _method: GET
+    methods: [GET]
 
 
 #Item
 items:
-    pattern:  /items/{id}
+    path:  /items/{id}
     defaults: { _controller: NPSFrontendBundle:Item:list, id: 0 }
     requirements:
       id: \d+
 
 item:
-    pattern:  /item/{id}
+    path:  /item/{id}
     defaults: { _controller: NPSFrontendBundle:Item:view }
     requirements:
       id: \d+
 
 item_read:
-    pattern:  /item_read/{feedId}/{itemId}
+    path:  /item_read/{feedId}/{itemId}
     defaults: { _controller: NPSFrontendBundle:Item:read }
     requirements:
       id: \d+
 
 item_starred:
-    pattern:  /item_starred/{feedId}/{itemId}
+    path:  /item_starred/{feedId}/{itemId}
     defaults: { _controller: NPSFrontendBundle:Item:star }
     requirements:
       id: \d+
 
 #Feed
 feeds:
-    pattern:  /feeds
+    path:  /feeds
     defaults: { _controller: NPSFrontendBundle:Feed:list }
 
 feeds_sync:
-    pattern:  /feeds_sync
+    path:  /feeds_sync
     defaults: { _controller: NPSFrontendBundle:Feed:sync }
 
 feed_edit_process:
-    pattern:  /feed_edit/{id}
+    path:  /feed_edit/{id}
     defaults: { _controller: NPSFrontendBundle:Feed:editProcess, id: 0 }
+    methods: [POST]
     requirements:
       id: \d+
-      _method: POST
 
 feed_edit:
-    pattern:  /feed_edit/{id}
+    path:  /feed_edit/{id}
     defaults: { _controller: NPSFrontendBundle:Feed:edit, id: 0 }
+    methods: [GET]
     requirements:
       id: \d+
-      _method: GET
 
 feed_enabled:
-    pattern:  /feed_enabled/{id}
+    path:  /feed_enabled/{id}
     defaults: { _controller: NPSFrontendBundle:Feed:enabledState }
     requirements:
       id: \d+

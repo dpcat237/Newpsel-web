@@ -1,41 +1,30 @@
 <?php
+
 namespace NPS\CoreBundle\Services;
 
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Swift_SmtpTransport;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractEmailNotificationService
 {
-    /**
-     * @var TwigEngine
-     */
+    /** @var TwigEngine */
     protected $templating;
-
-    /**
-     * @var Translator
-     */
+    /** @var TranslatorInterface */
     protected $translator;
-
-    /**
-     * @var $entityManager EntityManager
-     */
+    /** @var $entityManager EntityManager */
     protected $entityManager;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $emailSender = 'newpsel@gmail.com';
 
-
     /**
-     * All email notification services need this
+     * AbstractEmailNotificationService constructor.
      *
-     * @param TwigEngine   $templating TwigEngine
-     * @param Translator   $translator Translator
+     * @param TwigEngine          $templating
+     * @param TranslatorInterface $translator
      */
-    public function __construct(TwigEngine $templating, Translator $translator)
+    public function __construct(TwigEngine $templating, TranslatorInterface $translator)
     {
         $this->templating = $templating;
         $this->translator = $translator;

@@ -2,11 +2,11 @@ services:
     api.secure.service:
         class: NPS\ApiBundle\Services\SecureService
         arguments:
-            doctrine:     @doctrine
-            server_cache: @snc_redis.default
+            doctrine:     "@doctrine"
+            server_cache: "@snc_redis.default"
 
     nps.api.gcm.service:
         class: NPS\ApiBundle\Services\GcmService
         arguments:
-            gcm:               @endroid.gcm
-            device_repository: @=service("doctrine.orm.entity_manager").getRepository("NPSCoreBundle:Device")
+            gcm:               "@endroid.gcm.client"
+            device_repository: "@=service('doctrine.orm.entity_manager').getRepository('NPSCoreBundle:Device')"

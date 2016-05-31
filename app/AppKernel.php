@@ -23,7 +23,6 @@ class AppKernel extends Kernel
             new Snc\RedisBundle\SncRedisBundle(),
             new Mmoreram\RSQueueBundle\RSQueueBundle(),
             new Undf\AngularJsBundle\UndfAngularJsBundle(),
-            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new NPS\CoreBundle\NPSCoreBundle(),
             new NPS\FrontendBundle\NPSFrontendBundle(),
             new NPS\ApiBundle\NPSApiBundle(),
@@ -34,8 +33,8 @@ class AppKernel extends Kernel
             new FOS\RestBundle\FOSRestBundle(),
             new Dpcat237\LanguageDetectBundle\Dpcat237LanguageDetectBundle(),
             new Dpcat237\CrawlerBundle\Dpcat237CrawlerBundle(),
+            new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
             //new FOS\ElasticaBundle\FOSElasticaBundle(),
-            //new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),
             //new JMS\SerializerBundle\JMSSerializerBundle()
         );

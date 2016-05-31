@@ -36,22 +36,22 @@ class FeedController extends Controller
      */
     public function menuAction()
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user         = $this->getUser();
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
-        $menuAll = $this->get('nps.entity.feed')->getMenuAll($user->getId());
+        $menuAll      = $this->get('nps.entity.feed')->getMenuAll($user->getId());
         if ($menuAll) {
-            $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
+            $feedsList  = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
             $feedsCount = $userFeedRepo->getUserFeedsForMenu($user->getId());
         } else {
-            $feedsList = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
+            $feedsList  = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
             $feedsCount = array();
         }
 
 
-        $response = array (
-            'userFeeds' => $feedsList,
+        $response = array(
+            'userFeeds'      => $feedsList,
             'userFeedsCount' => $feedsCount,
-            'menuAll'   => $menuAll
+            'menuAll'        => $menuAll
         );
 
         return $response;
@@ -59,6 +59,7 @@ class FeedController extends Controller
 
     /**
      * Create process form of feeds
+     *
      * @param Request $request
      *
      * @return Response
@@ -70,10 +71,10 @@ class FeedController extends Controller
     {
         $error = false;
         if (!$request->get('feed')) {
-            $result = NotificationHelper::ERROR;
+            $result      = NotificationHelper::ERROR;
             $itemListUrl = '';
         } else {
-            $user = $this->get('security.context')->getToken()->getUser();
+            $user          = $this->getUser();
             $downloadFeeds = $this->get('download_feeds');
             list($feed, $error) = $downloadFeeds->addFeed($request->get('feed'), $user);
         }
@@ -81,14 +82,14 @@ class FeedController extends Controller
         if ($error) {
             $this->get('system_notification')->setMessage($error);
         } else {
-            $result = NotificationHelper::OK;
-            $userFeed = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $feed->getId());
+            $result      = NotificationHelper::OK;
+            $userFeed    = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $feed->getId());
             $itemListUrl = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()), true);
 
             //notify other devices about modification
             $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
         }
-        $response = array (
+        $response = array(
             'result' => $result,
             'url'    => $itemListUrl
         );
@@ -98,6 +99,7 @@ class FeedController extends Controller
 
     /**
      * Edit user's feed
+     *
      * @param Request  $request
      * @param UserFeed $userFeed
      *
@@ -111,15 +113,13 @@ class FeedController extends Controller
      */
     public function editAction(Request $request, UserFeed $userFeed)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user  = $this->getUser();
         $route = $this->container->get('router')->generate('feeds_list');
         if ($userFeed->getUserId() != $user->getId()) {
             return new RedirectResponse($route);
         }
 
-        $formType = new UserFeedEditType($userFeed);
-        $form = $this->createForm($formType, $userFeed);
-
+        $form = $this->createForm(UserFeedEditType::class, $userFeed);
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
             $this->get('nps.entity.feed')->saveFormUserFeed($form);
@@ -131,8 +131,8 @@ class FeedController extends Controller
         }
 
         $viewData = array(
-            'title' => 'Edit feed',
-            'form' => $form->createView(),
+            'title'    => 'Edit feed',
+            'form'     => $form->createView(),
             'userFeed' => $userFeed
         );
 
@@ -142,6 +142,7 @@ class FeedController extends Controller
 
     /**
      * Delete feed
+     *
      * @param UserFeed $userFeed
      *
      * @return RedirectResponse
@@ -153,7 +154,7 @@ class FeedController extends Controller
      */
     public function deleteAction(UserFeed $userFeed)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user  = $this->getUser();
         $route = $this->container->get('router')->generate('feeds_list');
         if ($userFeed->getUserId() != $user->getId()) {
             return new RedirectResponse($route);
@@ -178,14 +179,14 @@ class FeedController extends Controller
      */
     public function listAction()
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user         = $this->getUser();
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserFeed');
-        $userFeeds = $userFeedRepo->getUserFeeds($user->getId());
+        $userFeeds    = $userFeedRepo->getUserFeeds($user->getId());
 
         $viewData = array(
             'userFeeds' => $userFeeds,
-            'title' => 'Feeds management',
-            'menuAll' => $this->get('nps.entity.feed')->getMenuAll($user->getId())
+            'title'     => 'Feeds management',
+            'menuAll'   => $this->get('nps.entity.feed')->getMenuAll($user->getId())
         );
 
         return $viewData;
@@ -199,7 +200,7 @@ class FeedController extends Controller
      */
     public function changeAllFeedsStatusAction()
     {
-        $this->get('nps.entity.feed')->changeMenuAll($this->get('security.context')->getToken()->getUser()->getId());
+        $this->get('nps.entity.feed')->changeMenuAll($this->getUser()->getId());
 
         return new RedirectResponse($this->container->get('router')->generate('feeds_list'));
     }

@@ -2,23 +2,28 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use NPS\CoreBundle\Entity\Later;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Type for a feed edit profile form
+ * Class LaterEditType
+ *
+ * @package NPS\FrontendBundle\Form\Type
  */
 class LaterEditType extends AbstractType
 {
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'NPS\CoreBundle\Entity\Later',
-        ));
+        $resolver->setDefaults(
+            array(
+                'data_class' => Later::class,
+            )
+        );
     }
 
     /**
@@ -37,7 +42,7 @@ class LaterEditType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'editLater';
     }

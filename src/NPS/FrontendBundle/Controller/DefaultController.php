@@ -2,7 +2,6 @@
 
 namespace NPS\FrontendBundle\Controller;
 
-use NPS\FrontendBundle\Form\Type\ImportOpmlType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +30,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        if ($this->get('security.context')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->container->get('router')->generate('homepage'));
         }
 

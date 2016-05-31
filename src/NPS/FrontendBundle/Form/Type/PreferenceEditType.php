@@ -2,38 +2,43 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use NPS\CoreBundle\Entity\Preference;
+use NPS\CoreBundle\Services\Entity\LaterService;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Type for a feed edit profile form
+ * Class PreferenceEditType
+ *
+ * @package NPS\FrontendBundle\Form\Type
  */
 class PreferenceEditType extends AbstractType
 {
-    /**
-     * @var string
-     */
-    private $labelsQuery;
+    /** @var LaterService */
+    private $laterService;
 
     /**
-     * Constructor
+     * PreferenceEditType constructor.
      *
-     * @param string $labelsQuery user labels query
+     * @param LaterService $laterService
      */
-    public function __construct($labelsQuery)
+    public function __construct(LaterService $laterService)
     {
-        $this->labelsQuery = $labelsQuery;
+        $this->laterService = $laterService;
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'NPS\CoreBundle\Entity\Preference',
-        ));
+        $resolver->setDefaults(
+            array(
+                'data_class' => Preference::class,
+            )
+        );
     }
 
     /**
@@ -44,11 +49,15 @@ class PreferenceEditType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('sharedLater', 'entity', array(
-            'class' => 'NPSCoreBundle:Later',
-            'query_builder' => $this->labelsQuery,
-            'label' => '_Edit_shared_later',
-            'required' => true)
+        $builder->add(
+            'sharedLater',
+            EntityType::class,
+            array(
+                'class'         => 'NPSCoreBundle:Later',
+                'query_builder' => $this->laterService->getUserLabelsQuery(),
+                'label'         => '_Edit_shared_later',
+                'required'      => true
+            )
         );
     }
 
@@ -57,7 +66,7 @@ class PreferenceEditType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'editPreference';
     }

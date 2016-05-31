@@ -5,7 +5,7 @@
         <div class="block span12">
             <div class="block-body">
                     <div>
-                        <form id="editUserPreferences" method="post" action="{{ path('user_preferences') }}" class="wizard" {{ form_enctype(form) }}>
+                        <form id="editUserPreferences" method="post" action="{{ path('user_preferences') }}" class="wizard" {{ form_start(form) }}>
 
                             <span id="validate-basic-form-valid">
                                 {{ form_row(form._token) }}

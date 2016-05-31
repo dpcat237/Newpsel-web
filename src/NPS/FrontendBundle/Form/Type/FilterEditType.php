@@ -2,11 +2,13 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use NPS\CoreBundle\Entity\Filter;
 use NPS\CoreBundle\Services\Entity\FeedService,
     NPS\CoreBundle\Services\Entity\LaterService;
@@ -43,19 +45,19 @@ class FilterEditType extends AbstractType
      */
     public function __construct(array $filters, FeedService $feed, LaterService $laterService)
     {
-        $this->filters = $filters;
-        $this->feed = $feed;
+        $this->filters      = $filters;
+        $this->feed         = $feed;
         $this->laterService = $laterService;
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'NPS\CoreBundle\Entity\Filter',
-        ));
+        $resolver->setDefaults(
+            ['data_class' => 'NPS\CoreBundle\Entity\Filter']
+        );
     }
 
     /**
@@ -66,40 +68,58 @@ class FilterEditType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder)
-        {
-            $data = $event->getData();
-            if ($data instanceof Filter) {
-                if ($data->getId()) {
-                    $this->created = true;
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($builder) {
+                $data = $event->getData();
+                if ($data instanceof Filter) {
+                    if ($data->getId()) {
+                        $this->created = true;
+                    }
                 }
             }
-        });
+        );
 
 
         $builder
-            ->add('name', null, array(
-                'label' => 'Name',
-                'required' => true
-            ))
-            ->add('type', 'choice', array(
-                'choices' => $this->filters,
-                'multiple' => false,
-                'required' => true,
-            ))
-            ->add('feeds', 'entity', array(
-                'class' => 'NPSCoreBundle:Feed',
-                'query_builder' => $this->feed->getUserActiveFeedsQuery(),
-                'required' => true,
-                'multiple' => true,
-                'by_reference' => false,
-            ))
-            ->add('later', 'entity', array(
-                'class' => 'NPSCoreBundle:Later',
-                'query_builder' => $this->laterService->getUserLabelsQuery(),
-                'required' => false,
-                'multiple' => false,
-            ));
+            ->add(
+                'name',
+                null,
+                array(
+                    'label'    => 'Name',
+                    'required' => true
+                )
+            )
+            ->add(
+                'type',
+                ChoiceType::class,
+                array(
+                    'choices'  => $this->filters,
+                    'multiple' => false,
+                    'required' => true,
+                )
+            )
+            ->add(
+                'feeds',
+                EntityType::class,
+                array(
+                    'class'         => 'NPSCoreBundle:Feed',
+                    'query_builder' => $this->feed->getUserActiveFeedsQuery(),
+                    'required'      => true,
+                    'multiple'      => true,
+                    'by_reference'  => false,
+                )
+            )
+            ->add(
+                'later',
+                EntityType::class,
+                array(
+                    'class'         => 'NPSCoreBundle:Later',
+                    'query_builder' => $this->laterService->getUserLabelsQuery(),
+                    'required'      => false,
+                    'multiple'      => false,
+                )
+            );
     }
 
     /**
@@ -107,7 +127,7 @@ class FilterEditType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'editFilter';
     }

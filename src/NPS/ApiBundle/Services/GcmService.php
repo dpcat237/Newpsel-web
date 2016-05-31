@@ -1,7 +1,7 @@
 <?php
 namespace NPS\ApiBundle\Services;
 
-use Endroid\Gcm\Gcm;
+use Endroid\Gcm\Client;
 use NPS\ApiBundle\Constant\SyncConstants;
 use NPS\CoreBundle\Repository\DeviceRepository;
 
@@ -18,15 +18,17 @@ class GcmService
     private $deviceRepo;
 
     /**
-     * @var Gcm
+     * @var Client
      */
     private $gcm;
 
     /**
-     * @param Gcm              $gcm        Google Central Messaging Service
-     * @param DeviceRepository $deviceRepo DeviceRepository
+     * GcmService constructor.
+     *
+     * @param Client           $gcm
+     * @param DeviceRepository $deviceRepo
      */
-    public function __construct(Gcm $gcm, DeviceRepository $deviceRepo)
+    public function __construct(Client $gcm, DeviceRepository $deviceRepo)
     {
         $this->deviceRepo = $deviceRepo;
         $this->gcm = $gcm;

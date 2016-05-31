@@ -1,101 +1,85 @@
 #Chrome extension
 chrome_add:
-    pattern:  /chrome/add/
+    path:  /chrome/add/
     defaults: { _controller: NPSApiBundle:Chrome:addPage }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 chrome_labels:
-    pattern:  /chrome/labels/
+    path:  /chrome/labels/
     defaults: { _controller: NPSApiBundle:Chrome:getLabels }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 chrome_login:
-    pattern:  /chrome/login/
+    path:  /chrome/login/
     defaults: { _controller: NPSApiBundle:Chrome:login }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 chrome_request:
-    pattern:  /chrome/request/
+    path:  /chrome/request/
     defaults: { _controller: NPSApiBundle:Chrome:requestKey }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 #GCM
 gcm_add_id:
-    pattern:  /gcm/add_id/
+    path:  /gcm/add_id/
     defaults: { _controller: NPSApiBundle:Gcm:addRegistrationId }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 #Feed
 api_sync_feeds:
-    pattern:  /sync_feeds/
+    path:  /sync_feeds/
     defaults: { _controller: NPSApiBundle:Feed:syncFeeds }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 api_add_feed:
-    pattern:  /add_feed/
+    path:  /add_feed/
     defaults: { _controller: NPSApiBundle:Feed:addFeed }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 #Item
 api_sync_unread:
-    pattern:  /sync_unread/
+    path:  /sync_unread/
     defaults: { _controller: NPSApiBundle:Item:syncItems }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 api_sync_later_items:
-    pattern:  /sync_later_items/
+    path:  /sync_later_items/
     defaults: { _controller: NPSApiBundle:LaterItems:syncLaterItems }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 #Label
 api_sync_labels:
-    pattern:  /sync_labels/
+    path:  /sync_labels/
     defaults: { _controller: NPSApiBundle:Label:syncLabels }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 api_sync_later:
-    pattern:  /sync_later/
+    path:  /sync_later/
     defaults: { _controller: NPSApiBundle:LaterItems:syncLater }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 api_sync_dictate_items:
-    pattern:  /sync_dictate_items/
+    path:  /sync_dictate_items/
     defaults: { _controller: NPSApiBundle:LaterItems:syncDictateItems }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 api_sync_shared:
-    pattern:  /sync_shared/
+    path:  /sync_shared/
     defaults: { _controller: NPSApiBundle:LaterItems:syncShared }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 #User
 api_login:
-    pattern:  /login/
+    path:  /login/
     defaults: { _controller: NPSApiBundle:User:login }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 api_sign_up:
-    pattern:  /sign_up/
+    path:  /sign_up/
     defaults: { _controller: NPSApiBundle:User:signUp }
-    requirements:
-      _method: POST
+    methods: [POST]
 
 api_password_recovery:
-    pattern:  /password_recovery/
+    path:  /password_recovery/
     defaults: { _controller: NPSApiBundle:User:recoveryPassword }
-    requirements:
-      _method: POST
+    methods: [POST]

@@ -4,17 +4,17 @@ services:
       tags:
           - { name: kernel.event_listener, event: nps.feed.created, method: onFeedCreated }
       arguments:
-          item_repository:   @=service("doctrine.orm.entity_manager").getRepository("NPSCoreBundle:Item")
-          language_detector: @nps.detector.language
-          entity_manager:    @doctrine.orm.entity_manager
-          crawler:           @nps.manager.crawler
+          item_repository:   "@=service('doctrine.orm.entity_manager').getRepository('NPSCoreBundle:Item')"
+          language_detector: "@nps.detector.language"
+          entity_manager:    "@doctrine.orm.entity_manager"
+          crawler:           "@nps.manager.crawler"
 
     nps.listener.user:
       class: NPS\CoreBundle\EventListener\UserListener
       tags:
           - { name: kernel.event_listener, event: nps.user.signup, method: onUserSignUp }
       arguments:
-          user_service: @nps.entity.user
+          user_service: "@nps.entity.user"
 
 #**External services **
     gedmo.listener.timestampable:
@@ -22,4 +22,4 @@ services:
           tags:
               - { name: doctrine.event_subscriber, connection: default }
           calls:
-              - [ setAnnotationReader, [ @annotation_reader ] ]
+              - [ setAnnotationReader, [ "@annotation_reader" ] ]

@@ -167,7 +167,7 @@ endroid_gcm:
     api_key: %google_developer_key%
 
 hwi_oauth:
-    firewall_name: secured_area
+    firewall_names: [secured_area]
     resource_owners:
         google:
             type:          google

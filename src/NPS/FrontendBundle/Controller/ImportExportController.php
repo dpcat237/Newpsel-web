@@ -40,8 +40,7 @@ class ImportExportController extends Controller
      */
     public function impExpAction()
     {
-        $opmlType = new ImportOpmlType();
-        $opmlForm = $this->createForm($opmlType);
+        $opmlForm = $this->createForm(ImportOpmlType::class);
 
         $pocketType = $this->get('nps.form.type.import.pocket');
         $pocketForm = $this->createForm($pocketType);
@@ -75,8 +74,7 @@ class ImportExportController extends Controller
      */
     public function importOpmlAction(Request $request)
     {
-        $opmlType = new ImportOpmlType();
-        $opmlForm = $this->createForm($opmlType);
+        $opmlForm = $this->createForm(ImportOpmlType::class);
         $opmlForm->handleRequest($request);
         $opmlFile = $opmlForm->getData()['opml_file'];
 
@@ -99,7 +97,7 @@ class ImportExportController extends Controller
             return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
 
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $downloadFeeds = $this->get('download_feeds');
         foreach ($feedList->getItems() as $item) {
             if ($item->getType() == 'category') {
@@ -126,7 +124,7 @@ class ImportExportController extends Controller
     public function exportOpmlAction()
     {
         $filename = "newpsel.opml";
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserFeed');
         $userFeeds = $userFeedRepo->getUserFeeds($user->getId());
 
@@ -222,7 +220,7 @@ class ImportExportController extends Controller
             return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
 
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $labelId = $session->get(ImportConstants::SESSION_LABEL_ID);
         $items = ImportHelper::preparePocketItems($list);
         $this->get('nps.entity.later_item')->prepareToImport($user->getId(), $labelId, $items);
@@ -256,7 +254,7 @@ class ImportExportController extends Controller
             return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
 
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $items = ImportHelper::prepareInstapaperItems(ImportHelper::csvToArray($instapaperFile->getRealPath()));
         if (count($items) < 1) {
             $request->getSession()->getFlashBag()->add('error', '_Invalid_quantity');
@@ -295,7 +293,7 @@ class ImportExportController extends Controller
             return new RedirectResponse($this->get('router')->generate('preference_imp_exp'));
         }
 
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         $items = ImportHelper::prepareReadabilityItems(json_decode(file_get_contents($readabilityFile->getRealPath()), true));
         if (count($items) < 1) {
             $request->getSession()->getFlashBag()->add('error', '_Invalid_quantity');

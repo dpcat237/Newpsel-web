@@ -2,23 +2,30 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use NPS\CoreBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Type for a feed edit profile form
+ * Class SignInType
+ *
+ * @package NPS\FrontendBundle\Form\Type
  */
 class SignInType extends AbstractType
 {
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'NPS\CoreBundle\Entity\User',
-        ));
+        $resolver->setDefaults(
+            array(
+                'data_class' => User::class,
+            )
+        );
     }
 
     /**
@@ -30,12 +37,20 @@ class SignInType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', 'email', array(
-                'required' => true
-            ))
-            ->add('password', 'password', array(
-                'required' => true
-            ));
+            ->add(
+                'email',
+                EmailType::class,
+                array(
+                    'required' => true
+                )
+            )
+            ->add(
+                'password',
+                PasswordType::class,
+                array(
+                    'required' => true
+                )
+            );
     }
 
     /**
@@ -43,7 +58,7 @@ class SignInType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'signIn';
     }

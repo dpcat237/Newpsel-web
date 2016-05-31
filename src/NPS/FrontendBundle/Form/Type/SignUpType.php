@@ -2,10 +2,14 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use NPS\CoreBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
@@ -15,13 +19,15 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class SignUpType extends AbstractType
 {
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'NPS\CoreBundle\Entity\User',
-        ));
+        $resolver->setDefaults(
+            array(
+                'data_class' => User::class,
+            )
+        );
     }
 
     /**
@@ -33,26 +39,38 @@ class SignUpType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', 'email', array(
-                'label' => '_Your_email'
-            ))
-            ->add('password', 'repeated', array(
-                'type' => 'password',
-                'invalid_message' => '_passwords_match',
-                'options' => array('attr' => array('class' => 'password-field')),
-                'required' => true,
-                'first_options'  => array('label' => '_Password'),
-                'second_options' => array('label' => '_Confirm_password'),
-            ))
-            ->add('enabled', 'hidden', array('data' => 1));
+            ->add(
+                'email',
+                EmailType::class,
+                array(
+                    'label' => '_Your_email'
+                )
+            )
+            ->add(
+                'password',
+                RepeatedType::class,
+                array(
+                    'type'            => 'password',
+                    'invalid_message' => '_passwords_match',
+                    'options'         => array('attr' => array('class' => 'password-field')),
+                    'required'        => true,
+                    'first_options'   => array('label' => '_Password'),
+                    'second_options'  => array('label' => '_Confirm_password'),
+                )
+            )
+            ->add('enabled', HiddenType::class, array('data' => 1));
     }
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $metadata->addConstraint(new UniqueEntity(array(
-            'fields'  => 'email',
-            'message' => '_Email_exists',
-        )));
+        $metadata->addConstraint(
+            new UniqueEntity(
+                array(
+                    'fields'  => 'email',
+                    'message' => '_Email_exists',
+                )
+            )
+        );
 
         $metadata->addPropertyConstraint('email', new Assert\Email());
     }
@@ -62,7 +80,7 @@ class SignUpType extends AbstractType
      *
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'signUp';
     }
