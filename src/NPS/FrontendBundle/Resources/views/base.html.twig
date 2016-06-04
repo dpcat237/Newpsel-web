@@ -10,13 +10,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/npsfrontend/css/bootstrap/bootstrap.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/npsfrontend/css/bootstrap/bootstrap-responsive.min.css') }}" />
     {% block head_style %}
-        {# Original Bootstrap styles, generated via LESS, by braincrafted/bootstrap-bundle #}
-        {% stylesheets  output='bundles/npsfrontend/css/*.css' %}
-        <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
-        {% endstylesheets %}
-
         {# Customized Bootstrap application styles, generated via LESS #}
-        {% stylesheets debug=false filter='lessphp' output='bundles/npsfrontend/css/*.css'
+        {% stylesheets debug=false filter='lessphp'
             '@NPSFrontendBundle/Resources/public/less/flat/_all.less'
             '@NPSFrontendBundle/Resources/public/less/polaris/polaris.less'
 
@@ -29,9 +24,9 @@
         {% endstylesheets %}
 
         {% javascripts
-        'js/html5shiv/html5shiv.js'
+        '@NPSFrontendBundle/Resources/public/js/html5shiv/html5shiv.js'
         '@NPSFrontendBundle/Resources/public/js/jquery/jquery-1.10.2.js'
-        'js/bootstrap/bootstrap.js'
+        '@NPSFrontendBundle/Resources/public/js/bootstrap/bootstrap.min.js'
         '@NPSFrontendBundle/Resources/public/js/lib/fullcalendar/fullcalendar.min.js'
         '@NPSFrontendBundle/Resources/public/js/lib/pnotify/jquery.pnotify.min.js'
         '@NPSFrontendBundle/Resources/public/js/lib/justgage/justgage.1.0.1.js'
@@ -62,8 +57,7 @@
         '@NPSFrontendBundle/Resources/public/js/mycustomset.undfangular.js'
         '@NPSFrontendBundle/Resources/public/js/functions.angular.js'
 
-        filter="angularjs, uglifyjs2"
-        output="bundles/npsfrontend/js/*.js" %}
+        filter="angularjs, uglifyjs2" %}
         <script src="{{ asset_url }}" type="text/javascript" ></script>
         {% endjavascripts %}
 
@@ -94,10 +88,7 @@
 {% block body %}{% endblock body %}
 {% block javascripts %}{% endblock javascripts %}
 {% block foot_script %}
-    {%- javascripts output='js/*.js'
-    '@NPSFrontendBundle/Resources/public/js/analytics.js'
-    filter='uglifyjs2'
-    %}
+    {%- javascripts '@NPSFrontendBundle/Resources/public/js/analytics.js' filter='uglifyjs2' %}
     <script src="{{ asset_url }}" type="text/javascript"></script>
     <script>
         jsUrl.URL_HOMEPAGE = "https://www.newpsel.com{{ path("homepage") }}";

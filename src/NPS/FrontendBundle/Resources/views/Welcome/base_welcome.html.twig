@@ -34,7 +34,7 @@
 
     {% block head_style %}
         {# Customized Bootstrap application styles, generated via LESS #}
-        {% stylesheets debug=false filter='lessphp' output='bundles/npsfrontend/css/*.css'
+        {% stylesheets debug=false filter='lessphp' output='css/compiled/welcome.css'
             '@NPSFrontendBundle/Resources/public/less/welcome/skel.less'
             '@NPSFrontendBundle/Resources/public/less/welcome/style.less'
             '@NPSFrontendBundle/Resources/public/less/welcome/ie/v8.less'
@@ -52,7 +52,7 @@
             '@NPSFrontendBundle/Resources/public/js/welcome/jquery.cookieBar.js'
 
             filter="uglifyjs2"
-            output="bundles/npsfrontend/js/*.js" %}
+             %}
             <script src="{{ asset_url }}" type="text/javascript" ></script>
             <script type="text/javascript">
                 $(document).ready(function() {
@@ -90,7 +90,7 @@
 {% block body %}{% endblock body %}
 {% block javascripts %}{% endblock javascripts %}
 {% block foot_script %}
-    {%- javascripts output='js/*.js'
+    {%- javascripts
     '@NPSFrontendBundle/Resources/public/js/analytics.js'
     filter='uglifyjs2'
     %}

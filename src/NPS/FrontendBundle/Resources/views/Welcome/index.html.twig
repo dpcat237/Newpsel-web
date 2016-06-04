@@ -24,12 +24,3 @@
         {% include "NPSFrontendBundle:Welcome:footer.html.twig" %}
     {% endblock %}
 {% endblock body %}
-
-{% block foot_script %}
-    {%- javascripts output='js/*.js'
-    '@NPSFrontendBundle/Resources/public/js/analytics.js'
-    filter='?uglifyjs2'
-    %}
-    <script src="{{ asset_url }}" type="text/javascript"></script>
-    {% endjavascripts %}
-{% endblock foot_script %}
