@@ -1,1 +1,0 @@
-$(document).ready(function(){addLabelAction.init();createLabel.init();navScrollbar.init();readAction.init();showExternalLink.init();showSubmenu.init();staredAction.init();subscribeFeed.init();validGenericForm.init();$("input").iCheck({checkboxClass:"icheckbox_polaris",radioClass:"iradio_polaris",increaseArea:"-10"})});
