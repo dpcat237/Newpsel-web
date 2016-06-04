@@ -7,9 +7,11 @@
     <meta name="description" content="{{ '_web_description'|trans }}">
     <meta name="google-site-verification" content="NOrkRbFGgCRtd4_-nZo-ebpUferY159G0p7la358cjg" />
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/bmatznerfontawesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/npsfrontend/css/bootstrap/bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/npsfrontend/css/bootstrap/bootstrap-responsive.min.css') }}" />
     {% block head_style %}
         {# Original Bootstrap styles, generated via LESS, by braincrafted/bootstrap-bundle #}
-        {% stylesheets  output='bundles/npsfrontend/css/*.css' 'css/bootstrap/bootstrap.css' %}
+        {% stylesheets  output='bundles/npsfrontend/css/*.css' %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
         {% endstylesheets %}
 
