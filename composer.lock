@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a1a01cfe55a58b769643ffd929abce2e",
-    "content-hash": "86de035fed386ac44752b55035f4d770",
+    "hash": "251804bbf221ff80c3d9e37a94c92c68",
+    "content-hash": "f08bfe4f7385380261406d0b9297f1a6",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -586,16 +586,16 @@
         },
         {
             "name": "doctrine/doctrine-bundle",
-            "version": "1.6.2",
+            "version": "1.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "e9c2ccf573b59b7cea566390f34254fed3c20ed9"
+                "reference": "fd51907c6c76acaa8a5234822a4f901c1500afc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/e9c2ccf573b59b7cea566390f34254fed3c20ed9",
-                "reference": "e9c2ccf573b59b7cea566390f34254fed3c20ed9",
+                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/fd51907c6c76acaa8a5234822a4f901c1500afc1",
+                "reference": "fd51907c6c76acaa8a5234822a4f901c1500afc1",
                 "shasum": ""
             },
             "require": {
@@ -612,13 +612,14 @@
                 "phpunit/phpunit": "~4",
                 "satooshi/php-coveralls": "~0.6.1",
                 "symfony/phpunit-bridge": "~2.7|~3.0",
+                "symfony/property-info": "~2.8|~3.0",
                 "symfony/validator": "~2.2|~3.0",
                 "symfony/yaml": "~2.2|~3.0",
                 "twig/twig": "~1.10"
             },
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle.",
-                "symfony/web-profiler-bundle": "to use the data collector"
+                "symfony/web-profiler-bundle": "To use the data collector."
             },
             "type": "symfony-bundle",
             "extra": {
@@ -661,7 +662,7 @@
                 "orm",
                 "persistence"
             ],
-            "time": "2016-01-10 17:21:44"
+            "time": "2016-04-21 19:55:56"
         },
         {
             "name": "doctrine/doctrine-cache-bundle",
@@ -3025,16 +3026,16 @@
         },
         {
             "name": "mmoreram/rsqueue-bundle",
-            "version": "v1.2.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmoreram/RSQueueBundle.git",
-                "reference": "533ae1bcab0716a0e13304abfc889e1e4c6d6afb"
+                "reference": "0038d4aa6b7f5168c9452a54b5db79dce64bc138"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmoreram/RSQueueBundle/zipball/533ae1bcab0716a0e13304abfc889e1e4c6d6afb",
-                "reference": "533ae1bcab0716a0e13304abfc889e1e4c6d6afb",
+                "url": "https://api.github.com/repos/mmoreram/RSQueueBundle/zipball/0038d4aa6b7f5168c9452a54b5db79dce64bc138",
+                "reference": "0038d4aa6b7f5168c9452a54b5db79dce64bc138",
                 "shasum": ""
             },
             "require": {
@@ -3079,7 +3080,7 @@
                 "rsqueue",
                 "symfony"
             ],
-            "time": "2016-01-22 19:09:58"
+            "time": "2016-05-18 15:18:50"
         },
         {
             "name": "monolog/monolog",
@@ -3367,6 +3368,66 @@
                 "set"
             ],
             "time": "2014-03-11 13:46:42"
+        },
+        {
+            "name": "phpmailer/phpmailer",
+            "version": "v5.2.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPMailer/PHPMailer.git",
+                "reference": "d0186171b28af4f06ac2ad8a84a8f3d6cbc3ba6c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/d0186171b28af4f06ac2ad8a84a8f3d6cbc3ba6c",
+                "reference": "d0186171b28af4f06ac2ad8a84a8f3d6cbc3ba6c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.0.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "*",
+                "phpunit/phpunit": "4.7.*"
+            },
+            "suggest": {
+                "league/oauth2-google": "Needed for Google XOAUTH2 authentication"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "class.phpmailer.php",
+                    "class.phpmaileroauth.php",
+                    "class.phpmaileroauthgoogle.php",
+                    "class.smtp.php",
+                    "class.pop3.php",
+                    "extras/EasyPeasyICS.php",
+                    "extras/ntlm_sasl_client.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "Jim Jagielski",
+                    "email": "jimjag@gmail.com"
+                },
+                {
+                    "name": "Marcus Bointon",
+                    "email": "phpmailer@synchromedia.co.uk"
+                },
+                {
+                    "name": "Andy Prevost",
+                    "email": "codeworxtech@users.sourceforge.net"
+                },
+                {
+                    "name": "Brent R. Matzelle"
+                }
+            ],
+            "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+            "time": "2016-05-10 18:39:36"
         },
         {
             "name": "phpoption/phpoption",
@@ -3825,16 +3886,16 @@
         },
         {
             "name": "simplepie/simplepie",
-            "version": "1.4",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplepie/simplepie.git",
-                "reference": "76fe7bb32214526f7e5cff08a22aba21d45ca4d1"
+                "reference": "2f272a0ded122594923baa7d7612fe0d915b2b8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/76fe7bb32214526f7e5cff08a22aba21d45ca4d1",
-                "reference": "76fe7bb32214526f7e5cff08a22aba21d45ca4d1",
+                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/2f272a0ded122594923baa7d7612fe0d915b2b8a",
+                "reference": "2f272a0ded122594923baa7d7612fe0d915b2b8a",
                 "shasum": ""
             },
             "require": {
@@ -3875,7 +3936,7 @@
                 "feeds",
                 "rss"
             ],
-            "time": "2016-04-25 23:46:13"
+            "time": "2016-06-02 07:01:12"
         },
         {
             "name": "snc/redis-bundle",
@@ -5341,6 +5402,7 @@
         "doctrine/dbal": 0,
         "doctrine/doctrine-fixtures-bundle": 0,
         "twig/extensions": 0,
+        "symfony/swiftmailer-bundle": 0,
         "undf/angularjsbundle": 20,
         "celd/opml-import-export": 20,
         "hwi/oauth-bundle": 20,

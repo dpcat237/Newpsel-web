@@ -37,7 +37,7 @@
     "gedmo/doctrine-extensions"           : "2.4.*",
     "twig/extensions"                     : "@stable",
     "symfony/assetic-bundle"              : "2.8.*",
-    "symfony/swiftmailer-bundle"          : "2.3.*",
+    "symfony/swiftmailer-bundle"          : "@stable",
     "symfony/monolog-bundle"              : "2.*",
     "sensio/distribution-bundle"          : "4.*",
     "sensio/framework-extra-bundle"       : "3.*",
@@ -65,7 +65,8 @@
     "dpcat237/languagedetectbundle"       : "dev-master",
     "kbariotis/feedly-api"                : "1.*",
     "guzzlehttp/guzzle"                   : "5.*",
-    "bmatzner/fontawesome-bundle"         : "~4.6"
+    "bmatzner/fontawesome-bundle"         : "~4.6",
+    "phpmailer/phpmailer"                 : "~5.2"
   },
   "require-dev"      : {
     "monolog/monolog"         : "~1.11",
