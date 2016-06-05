@@ -12,7 +12,7 @@ parameters:
     mailer_transport:  gmail
     mailer_host:       ~
     mailer_user:       newpsel
-    mailer_password:   n#06p04e2013r#s
+    mailer_password:   n#06p04e2013r#sNew
 
     redis_cache_server:    redis://localhost/4
     redis_sessions_server: redis://localhost/5
