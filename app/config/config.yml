@@ -77,6 +77,8 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+    port:       465
+    encryption: ssl
 
 #SimplePie RSS
 fkr_simple_pie:
