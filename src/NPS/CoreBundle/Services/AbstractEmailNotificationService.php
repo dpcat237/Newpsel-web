@@ -3,49 +3,50 @@
 namespace NPS\CoreBundle\Services;
 
 use Swift_SmtpTransport;
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractEmailNotificationService
 {
+    const TRANSPORTER_HOST = 'smtp.gmail.com';
+    const TRANSPORTER_PORT = 465;
+    const TRANSPORTER_SECURITY = 'ssl';
+
     /** @var TwigEngine */
     protected $templating;
     /** @var TranslatorInterface */
     protected $translator;
-    /** @var $entityManager EntityManager */
-    protected $entityManager;
     /** @var string */
-    protected $emailSender = 'newpsel@gmail.com';
+    protected $emailSender;
+    /** @var string */
+    protected $senderPassword;
 
     /**
      * AbstractEmailNotificationService constructor.
      *
      * @param TwigEngine          $templating
      * @param TranslatorInterface $translator
+     * @param string              $emailSender
+     * @param string              $senderPassword
      */
-    public function __construct(TwigEngine $templating, TranslatorInterface $translator)
+    public function __construct(TwigEngine $templating, TranslatorInterface $translator, $emailSender, $senderPassword)
     {
-        $this->templating = $templating;
-        $this->translator = $translator;
+        $this->templating     = $templating;
+        $this->translator     = $translator;
+        $this->emailSender    = $emailSender;
+        $this->senderPassword = $senderPassword;
     }
 
     /**
-     * @return EntityManager
+     * Get transporter
+     *
+     * @return Swift_SmtpTransport
      */
-    public function getEntityManager()
+    protected function getTransporter()
     {
-        return $this->entityManager;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTransporter()
-    {
-        $transporter = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
+        $transporter = Swift_SmtpTransport::newInstance(self::TRANSPORTER_HOST, self::TRANSPORTER_PORT, self::TRANSPORTER_SECURITY)
             ->setUsername($this->emailSender)
-            ->setPassword('n#06p04e2013r#s');
+            ->setPassword($this->senderPassword);
 
         return $transporter;
     }

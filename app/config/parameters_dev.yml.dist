@@ -9,8 +9,6 @@ parameters:
     database_user:     root
     database_password: denysp
 
-    mailer_transport:  gmail
-    mailer_host:       ~
     mailer_user:       newpsel
     mailer_password:   n#06p04e2013r#s
 

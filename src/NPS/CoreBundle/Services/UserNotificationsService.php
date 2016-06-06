@@ -1,4 +1,5 @@
 <?php
+
 namespace NPS\CoreBundle\Services;
 
 use Swift_Mailer;
@@ -19,11 +20,8 @@ class UserNotificationsService extends AbstractEmailNotificationService
      */
     public function sendChromeKey($userEmail, $extensionKey)
     {
-        $viewData = array(
-            'key' => $extensionKey
-        );
-
-        $message = Swift_Message::newInstance()
+        $viewData = ['key' => $extensionKey];
+        $message  = Swift_Message::newInstance()
             ->setSubject($this->translator->trans('_Chrome_key_subject'))
             ->setFrom($this->emailSender)
             ->setTo($userEmail)
@@ -42,11 +40,8 @@ class UserNotificationsService extends AbstractEmailNotificationService
      */
     public function sendEmailVerification($userEmail, $activationKey)
     {
-        $viewData = array(
-            'key' => $activationKey
-        );
-
-        $message = Swift_Message::newInstance()
+        $viewData = ['key' => $activationKey];
+        $message  = Swift_Message::newInstance()
             ->setSubject($this->translator->trans('_Verify_email_subject'))
             ->setFrom($this->emailSender)
             ->setTo($userEmail)
@@ -65,11 +60,8 @@ class UserNotificationsService extends AbstractEmailNotificationService
      */
     public function sendPasswordRecovery($userEmail, $recoveryKey)
     {
-        $viewData = array(
-            'key' => $recoveryKey
-        );
-
-        $message = Swift_Message::newInstance()
+        $viewData = ['key' => $recoveryKey];
+        $message  = Swift_Message::newInstance()
             ->setSubject($this->translator->trans('_Password_recovery_subject'))
             ->setFrom($this->emailSender)
             ->setTo($userEmail)

@@ -65,8 +65,7 @@
     "dpcat237/languagedetectbundle"       : "dev-master",
     "kbariotis/feedly-api"                : "1.*",
     "guzzlehttp/guzzle"                   : "5.*",
-    "bmatzner/fontawesome-bundle"         : "~4.6",
-    "phpmailer/phpmailer"                 : "~5.2"
+    "bmatzner/fontawesome-bundle"         : "~4.6"
   },
   "require-dev"      : {
     "monolog/monolog"         : "~1.11",

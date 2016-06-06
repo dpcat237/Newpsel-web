@@ -40,11 +40,18 @@ services:
             session:    "@session"
             translator: "@translator"
 
+    notifications.abstract:
+        class: NPS\CoreBundle\Services\AbstractEmailNotificationService
+        abstract: true
+        arguments:
+            - "@templating"
+            - "@translator"
+            - "%mailer_user%"
+            - "%mailer_password%"
+
     user.notifications:
         class: NPS\CoreBundle\Services\UserNotificationsService
-        arguments:
-            templating: "@templating"
-            translator: "@translator"
+        parent: notifications.abstract
 
     nps.wrapper.user:
         class: NPS\CoreBundle\Services\UserWrapper
