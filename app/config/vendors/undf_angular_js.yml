@@ -1,0 +1,5 @@
+undf_angular_js:
+  module_sets:
+    mycustomset:
+      vendors: '*'
+      undf: [uFileUpload]

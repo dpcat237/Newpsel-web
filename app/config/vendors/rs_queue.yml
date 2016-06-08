@@ -1,0 +1,5 @@
+rs_queue:
+    queues:
+        crawler:            "queues:crawler"
+        import_later_items: "item:import"
+    serializer: ~

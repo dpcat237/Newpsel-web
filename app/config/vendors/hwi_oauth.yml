@@ -1,0 +1,17 @@
+hwi_oauth:
+    firewall_names: [secured_area]
+    resource_owners:
+        google:
+            type:          google
+            client_id:     %google_client_id%
+            client_secret: %google_client_secret%
+            scope:         "email profile"
+        facebook:
+            type:          facebook
+            client_id:     %facebook_client_id%
+            client_secret: %facebook_client_secret%
+            scope:         "basic_info email"
+        twitter:
+            type:          twitter
+            client_id:     %twitter_client_id%
+            client_secret: %twitter_client_secret%

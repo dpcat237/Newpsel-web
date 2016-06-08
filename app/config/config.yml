@@ -1,7 +1,19 @@
 imports:
     - { resource: security.yml }
     - { resource: parameters_dev.yml }
-    #- { resource: @BCCCronManagerBundle/Resources/config/assetic.yml }
+
+    - { resource: vendors/doctrine.yml }
+    - { resource: vendors/endroid_gcm.yml }
+    - { resource: vendors/eko_google_translate.yml }
+    - { resource: vendors/fkr_simple_pie.yml }
+    - { resource: vendors/fos_elastica.yml }
+    - { resource: vendors/fos_rest.yml }
+    - { resource: vendors/hwi_oauth.yml }
+    - { resource: vendors/nelmio_api_doc.yml }
+    - { resource: vendors/rs_queue.yml }
+    - { resource: vendors/snc_redis.yml }
+    - { resource: vendors/swiftmailer.yml }
+    - { resource: vendors/undf_angular_js.yml }
 
 framework:
     #esi:             ~
@@ -21,15 +33,6 @@ framework:
     session:
         name: NewpselSession
     fragments:       ~
-
-# Twig Configuration-
-twig:
-    debug:            %kernel.debug%
-    strict_variables: %kernel.debug%
-
-# braincrafted twitter bootstrap bundle
-#bc_bootstrap:
-#    less_filter: lessphp
 
 # Assetic Configuration
 assetic:
@@ -51,137 +54,7 @@ assetic:
         #yui_css:
         #    jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar
 
-
-# Doctrine Configuration
-doctrine:
-    dbal:
-        driver:   %database_driver%
-        host:     %database_host%
-        port:     %database_port%
-        dbname:   %database_name%
-        user:     %database_user%
-        password: %database_password%
-        charset:  UTF8
-        # if using pdo_sqlite as your database driver, add the path in parameters.yml
-        # e.g. database_path: %kernel.root_dir%/data/data.db3
-        # path:     %database_path%
-
-    orm:
-        auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
-
-# Swiftmailer Configuration
-swiftmailer:
-    spool:     { type: memory }
-
-#SimplePie RSS
-fkr_simple_pie:
-    cache_enabled: false
-    cache_dir: %kernel.cache_dir%/rss
-    cache_duration: 3600
-
-#snc redis bundle, requires 'predis'
-snc_redis:
-    clients:
-        default:
-            type: predis
-            alias: default
-            dsn: [ %redis_cache_server% ]
-            logging: %kernel.debug%
-            options:
-                profile: 2.4
-                connection_timeout: 10
-                connection_persistent: true
-                read_write_timeout: 30
-                iterable_multibulk: false
-                throw_errors: true
-        #save db data in redis
-        data:
-            type: predis
-            alias: data
-            dsn: [ %redis_cache_server%]
-            logging: %kernel.debug%
-        #save sessions in redis
-        session:
-            type: predis
-            alias: session
-            dsn: [ %redis_sessions_server% ]
-            logging: %kernel.debug%
-    #doctrine:
-    #    metadata_cache:
-    #        client: data
-    #        entity_manager: default          # the name of your entity_manager connection
-    #        document_manager: default        # the name of your document_manager connection
-    #    result_cache:
-    #        client: data
-    #        entity_manager: default          # you may specify multiple entity_managers [default, test, waka]
-    #    query_cache:
-    #        client: data
-    #        entity_manager: default
-    session:
-        client: session
-        prefix: session
-        use_as_default: true
-
-undf_angular_js:
-  module_sets:
-    mycustomset:
-      vendors: '*'
-      undf: [uFileUpload]
-
-rs_queue:
-    queues:
-        crawler:            "queues:crawler"
-        import_later_items: "item:import"
-    serializer: ~
-
-#fos_elastica:
-#    clients:
-#        default: { host: localhost, port: 9200 }
-#    indexes:
-#        nps_public:
-#            client: default
-#            finder: ~
-#            types:
-#                item:
-#                    mappings:
-#                        id: ~
-#                        title: {"type" : "string"}
-#                    persistence:
-#                        driver: orm # orm, mongodb, propel are available
-#                        model: NPS\CoreBundle\Entity\Item
-#                        provider: ~
-#                        finder: ~
-#                        listener: ~
-#                        model_to_elastica_transformer: ~
-#                        elastica_to_model_transformer: ~
-
-eko_google_translate:
-    api_key: %google_developer_key%
-
-endroid_gcm:
-    api_key: %google_developer_key%
-
-hwi_oauth:
-    firewall_names: [secured_area]
-    resource_owners:
-        google:
-            type:          google
-            client_id:     %google_client_id%
-            client_secret: %google_client_secret%
-            scope:         "email profile"
-        facebook:
-            type:          facebook
-            client_id:     %facebook_client_id%
-            client_secret: %facebook_client_secret%
-            scope:         "basic_info email"
-        twitter:
-            type:          twitter
-            client_id:     %twitter_client_id%
-            client_secret: %twitter_client_secret%
-
-fos_rest:
-    format_listener:
-        rules:
-            - { path: '^/api', priorities: ['json'], fallback_format: json, prefer_extension: false }
-            - { path: ^/, stop: true }
+# Twig Configuration
+twig:
+    debug:            %kernel.debug%
+    strict_variables: %kernel.debug%

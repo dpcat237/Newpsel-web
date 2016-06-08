@@ -1,0 +1,2 @@
+swiftmailer:
+    spool:     { type: memory }
