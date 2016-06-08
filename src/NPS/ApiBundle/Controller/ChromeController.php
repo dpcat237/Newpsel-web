@@ -3,8 +3,10 @@
 namespace NPS\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse,
-    Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * ChromeController
@@ -13,6 +15,22 @@ class ChromeController extends Controller
 {
     /**
      * Add new page/item to later
+     *
+     * @Rest\Post("/add")
+     * @ApiDoc(
+     *  description="Add new page/item to later",
+     *  section="Chrome area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
+     *
      * @param Request $request the current request
      *
      * @return JsonResponse
@@ -29,6 +47,22 @@ class ChromeController extends Controller
 
     /**
      * Get user's labels
+     *
+     * @Rest\Post("/labels")
+     * @ApiDoc(
+     *  description="Get user's labels",
+     *  section="Chrome area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
+     *
      * @param Request $request the current request
      *
      * @return JsonResponse
@@ -45,6 +79,22 @@ class ChromeController extends Controller
 
     /**
      * Login for Chrome extension
+     *
+     * @Rest\Post("/login")
+     * @ApiDoc(
+     *  description="Login for Chrome extension",
+     *  section="Chrome area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
+     *
      * @param Request $request the current request
      *
      * @return JsonResponse
@@ -61,6 +111,22 @@ class ChromeController extends Controller
 
     /**
      * Request key for Chrome extension
+     *
+     * @Rest\Post("/request")
+     * @ApiDoc(
+     *  description="Request a key for Chrome extension",
+     *  section="Chrome area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
+     *
      * @param Request $request the current request
      *
      * @return JsonResponse

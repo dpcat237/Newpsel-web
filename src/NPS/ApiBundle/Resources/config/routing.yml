@@ -1,85 +1,43 @@
-#Chrome extension
-chrome_add:
-    path:  /chrome/add/
-    defaults: { _controller: NPSApiBundle:Chrome:addPage }
-    methods: [POST]
+api_chrome:
+  resource: "@NPSApiBundle/Controller/ChromeController.php"
+  type:     rest
+  prefix:  /chrome
+  schemes: [https]
+  name_prefix: rest_api_v1_chrome_
 
-chrome_labels:
-    path:  /chrome/labels/
-    defaults: { _controller: NPSApiBundle:Chrome:getLabels }
-    methods: [POST]
+api_gcm:
+  resource: "@NPSApiBundle/Controller/GcmController.php"
+  type:     rest
+  prefix:  /gcm
+  schemes: [https]
+  name_prefix: rest_api_v1_gcm_
 
-chrome_login:
-    path:  /chrome/login/
-    defaults: { _controller: NPSApiBundle:Chrome:login }
-    methods: [POST]
+api_feed:
+  resource: "@NPSApiBundle/Controller/FeedController.php"
+  type:     rest
+  schemes: [https]
+  name_prefix: rest_api_v1_feed_
 
-chrome_request:
-    path:  /chrome/request/
-    defaults: { _controller: NPSApiBundle:Chrome:requestKey }
-    methods: [POST]
+api_item:
+  resource: "@NPSApiBundle/Controller/ItemController.php"
+  type:     rest
+  schemes: [https]
+  name_prefix: rest_api_v1_item_
 
-#GCM
-gcm_add_id:
-    path:  /gcm/add_id/
-    defaults: { _controller: NPSApiBundle:Gcm:addRegistrationId }
-    methods: [POST]
+api_saved_item:
+  resource: "@NPSApiBundle/Controller/LaterItemsController.php"
+  type:     rest
+  schemes: [https]
+  name_prefix: rest_api_v1_saved_item_
 
-#Feed
-api_sync_feeds:
-    path:  /sync_feeds/
-    defaults: { _controller: NPSApiBundle:Feed:syncFeeds }
-    methods: [POST]
+api_tag:
+  resource: "@NPSApiBundle/Controller/LabelController.php"
+  type:     rest
+  schemes: [https]
+  name_prefix: rest_api_v1_tag_
 
-api_add_feed:
-    path:  /add_feed/
-    defaults: { _controller: NPSApiBundle:Feed:addFeed }
-    methods: [POST]
-
-#Item
-api_sync_unread:
-    path:  /sync_unread/
-    defaults: { _controller: NPSApiBundle:Item:syncItems }
-    methods: [POST]
-
-api_sync_later_items:
-    path:  /sync_later_items/
-    defaults: { _controller: NPSApiBundle:LaterItems:syncLaterItems }
-    methods: [POST]
-
-#Label
-api_sync_labels:
-    path:  /sync_labels/
-    defaults: { _controller: NPSApiBundle:Label:syncLabels }
-    methods: [POST]
-
-api_sync_later:
-    path:  /sync_later/
-    defaults: { _controller: NPSApiBundle:LaterItems:syncLater }
-    methods: [POST]
-
-api_sync_dictate_items:
-    path:  /sync_dictate_items/
-    defaults: { _controller: NPSApiBundle:LaterItems:syncDictateItems }
-    methods: [POST]
-
-api_sync_shared:
-    path:  /sync_shared/
-    defaults: { _controller: NPSApiBundle:LaterItems:syncShared }
-    methods: [POST]
-
-#User
-api_login:
-    path:  /login/
-    defaults: { _controller: NPSApiBundle:User:login }
-    methods: [POST]
-
-api_sign_up:
-    path:  /sign_up/
-    defaults: { _controller: NPSApiBundle:User:signUp }
-    methods: [POST]
-
-api_password_recovery:
-    path:  /password_recovery/
-    defaults: { _controller: NPSApiBundle:User:recoveryPassword }
-    methods: [POST]
+api_user:
+  resource: "@NPSApiBundle/Controller/UserController.php"
+  type:     rest
+  schemes: [https]
+  name_prefix: rest_api_v1_user_

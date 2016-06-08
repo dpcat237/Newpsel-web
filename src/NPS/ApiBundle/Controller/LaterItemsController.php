@@ -4,6 +4,9 @@ namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Request\ParamFetcher;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Class LaterItemsController
@@ -14,6 +17,21 @@ class LaterItemsController extends ApiController
 {
     /**
      * Sync new later items assigned to labels
+     *
+     * @Rest\Post("/sync_later")
+     * @ApiDoc(
+     *  description="Sync new later items assigned to labels",
+     *  section="Saved articles area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
      *
      * @param Request $request the current request
      *
@@ -34,6 +52,21 @@ class LaterItemsController extends ApiController
     /**
      * Sync later items
      *
+     * @Rest\Post("/sync_later_items")
+     * @ApiDoc(
+     *  description="Sync later items",
+     *  section="Saved articles area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
+     *
      * @param Request $request the current request
      *
      * @return JsonResponse
@@ -53,6 +86,21 @@ class LaterItemsController extends ApiController
     /**
      * Sync shared items to create later items
      *
+     * @Rest\Post("/sync_shared")
+     * @ApiDoc(
+     *  description="Sync shared items to create later items",
+     *  section="Saved articles area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
+     *
      * @param Request $request the current request
      *
      * @return string
@@ -71,6 +119,21 @@ class LaterItemsController extends ApiController
 
     /**
      * Sync later items to be dictated; from specific label
+     *
+     * @Rest\Post("/sync_dictate_items")
+     * @ApiDoc(
+     *  description="ync later items to be dictated;",
+     *  section="Saved articles area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
      *
      * @param Request $request the current request
      *

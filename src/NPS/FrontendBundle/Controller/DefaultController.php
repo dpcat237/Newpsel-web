@@ -61,6 +61,15 @@ class DefaultController extends Controller
      */
     public function homeAction()
     {
+        /*$user = $this->getUser();
+        $itemService = $this->get('api.item.service');
+        $cooo = $itemService->getUnreadItems($user->getId(), [], 40);*/
+
+
+
+        echo 'tut: h ok'; exit;
+
+
         return array();
     }
 

@@ -4,6 +4,9 @@ namespace NPS\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Request\ParamFetcher;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * ItemController
@@ -11,7 +14,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class ItemController extends ApiController
 {
     /**
-     * Sync items
+     * Sync articles
+     *
+     * TODO: http://symfony.com/doc/master/bundles/FOSRestBundle/1-setting_up_the_bundle.html
+     *
+     * @Rest\Post("/sync_unread")
+     * @ApiDoc(
+     *  description="List of unread articles",
+     *  section="Article area",
+     *  resource=true,
+     *  statusCodes={
+     *      200="Successfully",
+     *      401="Authentication failed",
+     *      405="Bad request method"
+     *  },
+     *  authentication=true,
+     *  authenticationRoles={"ROLE_USER"},
+     *  tags={"experimental"}
+     * )
      *
      * @param Request $request the current request
      *
@@ -26,6 +46,6 @@ class ItemController extends ApiController
             return $this->plainResponse($responseData['error']);
         }
 
-        return new JsonResponse($responseData['items']);
+        return $responseData['items'];
     }
 }
