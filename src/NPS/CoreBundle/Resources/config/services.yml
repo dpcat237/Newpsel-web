@@ -5,7 +5,7 @@ services:
     download_feeds:
         class: NPS\CoreBundle\Services\DownloadFeedsService
         arguments:
-            doctrine:         "@doctrine"
+            doctrine:         "@doctrine.orm.entity_manager"
             simple_pie:       "@fkr_simple_pie.rss"
             redis:            "@snc_redis.default"
             feed:             "@nps.entity.feed"

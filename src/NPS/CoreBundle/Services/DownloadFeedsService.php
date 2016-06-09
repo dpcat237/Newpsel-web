@@ -1,21 +1,23 @@
 <?php
+
 namespace NPS\CoreBundle\Services;
 
+use Doctrine\ORM\EntityManager;
 use Exception;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
 use Predis\Client;
-use SimplePie,
-    SimplePie_Item;
-use NPS\CoreBundle\Entity\Feed,
-    NPS\CoreBundle\Entity\Item,
-    NPS\CoreBundle\Entity\User;
+use SimplePie;
+use SimplePie_Item;
+use NPS\CoreBundle\Entity\Feed;
+use NPS\CoreBundle\Entity\Item;
+use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Services\Entity\FeedService,
-    NPS\CoreBundle\Services\Entity\FeedHistoryService,
-    NPS\CoreBundle\Services\Entity\ItemService;
-use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
+use NPS\CoreBundle\Services\Entity\FeedService;
+use NPS\CoreBundle\Services\Entity\FeedHistoryService;
+use NPS\CoreBundle\Services\Entity\ItemService;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * DownloadFeedsService
@@ -24,80 +26,66 @@ class DownloadFeedsService
 {
     CONST REDIS_KEY = 'feed';
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $countNewItems;
-
-    /**
-     * @var Doctrine
-     */
-    private $doctrine;
-
-    /**
-     * @var Entity Manager
-     */
+    /** @var EntityManager */
     private $entityManager;
 
-    /**
-     * @var Last process error
-     */
+    /** @var string Last process error */
     private $error = null;
 
-    /**
-     * @var ContainerAwareEventDispatcher
-     */
+    /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    /**
-     * @var FeedService
-     */
+    /** @var FeedService */
     private $feedS;
 
-    /**
-     * @var FeedHistoryService
-     */
+    /** @var FeedHistoryService */
     private $feedHistoryS;
 
-    /**
-     * @var ItemService
-     */
+    /** @var ItemService */
     private $itemS;
 
-    /**
-     * @var SimplePie RSS
-     */
+    /** @var SimplePie RSS */
     private $rss;
 
-    /**
-     * @var Redis Client
-     */
+    /** @var Client Redis */
     private $redis;
 
 
     /**
-     * @param Registry                      $doctrine         Doctrine Registry
-     * @param SimplePie                     $rss              SimplePie
-     * @param Client                        $redis            Redis Client
-     * @param FeedService                   $feed             FeedService
-     * @param ItemService                   $itemS            ItemService
-     * @param FeedHistoryService            $feedHistoryS     FeedHistoryService
-     * @param ContainerAwareEventDispatcher $eventDispatcher  ContainerAwareEventDispatcher
+     * DownloadFeedsService constructor.
+     *
+     * @param EntityManager            $entityManager
+     * @param SimplePie                $rss
+     * @param Client                   $redis
+     * @param FeedService              $feed
+     * @param ItemService              $itemS
+     * @param FeedHistoryService       $feedHistoryS
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(Registry $doctrine, SimplePie $rss, Client $redis, FeedService $feed, ItemService $itemS, FeedHistoryService $feedHistoryS, ContainerAwareEventDispatcher $eventDispatcher)
+    public function __construct(
+        EntityManager $entityManager,
+        SimplePie $rss,
+        Client $redis,
+        FeedService $feed,
+        ItemService $itemS,
+        FeedHistoryService $feedHistoryS,
+        EventDispatcherInterface $eventDispatcher
+    )
     {
-        $this->doctrine = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
+        $this->entityManager   = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
-        $this->rss = $rss;
-        $this->redis = $redis;
-        $this->feedS = $feed;
-        $this->itemS = $itemS;
-        $this->feedHistoryS = $feedHistoryS;
+        $this->rss             = $rss;
+        $this->redis           = $redis;
+        $this->feedS           = $feed;
+        $this->itemS           = $itemS;
+        $this->feedHistoryS    = $feedHistoryS;
     }
 
     /**
      * Create feed if necessary and subscribe to it
+     *
      * @param string $url
      * @param User   $user
      *
@@ -152,7 +140,7 @@ class DownloadFeedsService
      * Add or update existing item
      *
      * @param SimplePie_Item $itemData
-     * @param Feed $feed
+     * @param Feed           $feed
      */
     protected function addUpdateItem(SimplePie_Item $itemData, Feed $feed)
     {
@@ -183,7 +171,7 @@ class DownloadFeedsService
         }
 
         $newItems = $this->getItemToSync($feed);
-        if(count($newItems)) {
+        if (count($newItems)) {
             $this->addNewItems($feed, $newItems);
         }
 
@@ -199,13 +187,21 @@ class DownloadFeedsService
      */
     protected function checkDataChanged(Feed $feed)
     {
-        $currentHash = sha1_file($feed->getUrl()); //TODO: add try catch and notify to user
-        if ($currentHash == $this->redis->hget(self::REDIS_KEY, "feed_".$feed->getId()."_data_hash")) {
+        try {
+            $currentHash = sha1_file($feed->getUrl());
+        } catch (Exception $e) {
             $this->feedHistoryS->dataIsSame($feed);
 
             return false;
         }
-        $this->redis->hset(self::REDIS_KEY, "feed_".$feed->getId()."_data_hash", $currentHash);
+
+
+        if ($currentHash == $this->redis->hget(self::REDIS_KEY, "feed_" . $feed->getId() . "_data_hash")) {
+            $this->feedHistoryS->dataIsSame($feed);
+
+            return false;
+        }
+        $this->redis->hset(self::REDIS_KEY, "feed_" . $feed->getId() . "_data_hash", $currentHash);
 
         return true;
     }
@@ -213,7 +209,7 @@ class DownloadFeedsService
     /**
      * Create new feed, subscribe an user and update feed's data
      *
-     * @param $url
+     * @param      $url
      * @param User $user
      *
      * @return Feed|null
@@ -255,11 +251,13 @@ class DownloadFeedsService
 
     /**
      * Create feed entity and persist it
+     *
      * @param $url
      *
      * @return Feed
      */
-    private function createFeedProcess($url){
+    private function createFeedProcess($url)
+    {
         $feed = null;
 
         try {
@@ -269,7 +267,7 @@ class DownloadFeedsService
                 $feed->setUrl($url);
                 $feed->setUrlHash(sha1($url));
                 $feed->setTitle($this->rss->get_title());
-                $web = ($this->rss->get_link())? $this->rss->get_link() : $this->rss->feed_url;
+                $web = ($this->rss->get_link()) ? $this->rss->get_link() : $this->rss->feed_url;
                 $feed->setWebsite($web);
                 $this->entityManager->persist($feed);
             } else {
@@ -284,6 +282,7 @@ class DownloadFeedsService
 
     /**
      * Get new items since last sync of feed
+     *
      * @param array   $items
      * @param integer $dateSync
      *
@@ -325,13 +324,14 @@ class DownloadFeedsService
 
     /**
      * Get last 25 items for new feed
+     *
      * @param array $items
      *
      * @return array
      */
     private function getLasItemsSync($items)
     {
-        $c = 0;
+        $c        = 0;
         $newItems = array();
         foreach ($items as $item) {
             $newItems[] = $item;
@@ -346,6 +346,7 @@ class DownloadFeedsService
 
     /**
      * Fix url
+     *
      * @param string $url
      *
      * @return array
@@ -354,7 +355,7 @@ class DownloadFeedsService
     {
         if (strpos($url, '://') === false) {
             $url = 'http://' . $url;
-        } else if (substr($url, 0, 5) == 'feed:') {
+        } elseif (substr($url, 0, 5) == 'feed:') {
             $url = 'http:' . substr($url, 5);
         }
 
@@ -386,6 +387,7 @@ class DownloadFeedsService
 
     /**
      * Remove unnecessary characters from url
+     *
      * @param $url
      *
      * @return string
@@ -399,9 +401,10 @@ class DownloadFeedsService
 
         return $url;
     }
-    
+
     /**
      * Validete feed's url
+     *
      * @param string $url
      *
      * @return array
