@@ -33,6 +33,8 @@ class LaterItemsController extends ApiController
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request the current request
      *
      * @return string
@@ -66,6 +68,8 @@ class LaterItemsController extends ApiController
      *  authenticationRoles={"ROLE_USER"},
      *  tags={"experimental"}
      * )
+     *
+     * @Rest\View
      *
      * @param Request $request the current request
      *
@@ -101,6 +105,8 @@ class LaterItemsController extends ApiController
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request the current request
      *
      * @return string
@@ -134,6 +140,8 @@ class LaterItemsController extends ApiController
      *  authenticationRoles={"ROLE_USER"},
      *  tags={"experimental"}
      * )
+     *
+     * @Rest\View
      *
      * @param Request $request the current request
      *

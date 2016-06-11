@@ -32,6 +32,8 @@ class UserController extends ApiController
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request the current request
      *
      * @return Response
@@ -63,6 +65,8 @@ class UserController extends ApiController
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request
      *
      * @return Response
@@ -93,6 +97,8 @@ class UserController extends ApiController
      *  authenticationRoles={"ROLE_USER"},
      *  tags={"experimental"}
      * )
+     *
+     * @Rest\View
      *
      * @param Request $request
      *
