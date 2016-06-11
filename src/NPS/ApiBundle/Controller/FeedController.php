@@ -31,20 +31,22 @@ class FeedController extends ApiController
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request the current request
      *
-     * @return JsonResponse | string
+     * @return JsonResponse
      */
     public function syncFeedsAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
-        $feedService = $this->get('api.feed.service');
+        $json         = json_decode($request->getContent(), true);
+        $feedService  = $this->get('api.feed.service');
         $responseData = $feedService->syncFeeds($json['appKey'], $json['feeds']);
         if ($responseData['error']) {
-            return $this->plainResponse($responseData['error']);
+            return $responseData['error'];
         }
 
-        return new JsonResponse($responseData['feeds']);
+        return $responseData['feeds'];
     }
 
     /**
@@ -65,16 +67,18 @@ class FeedController extends ApiController
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request
      *
-     * @return JsonResponse | string
+     * @return JsonResponse
      */
     public function addFeedAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
-        $feedService = $this->get('api.feed.service');
+        $json         = json_decode($request->getContent(), true);
+        $feedService  = $this->get('api.feed.service');
         $responseData = $feedService->addFeed($json['appKey'], $json['feed_url']);
 
-        return new JsonResponse($responseData);
+        return $responseData;
     }
 }

@@ -6,8 +6,12 @@ fos_rest:
     routing_loader:
         default_format: json
         include_format: false
+    service:
+        serializer: serializer
     serializer:
         serialize_null: true
+    view:
+        view_response_listener: true
     exception:
         enabled: true
         messages:

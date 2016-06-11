@@ -32,17 +32,18 @@ class GcmController extends Controller
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request the current request
      *
      * @return JsonResponse
      */
     public function addRegistrationIdAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
+        $json          = json_decode($request->getContent(), true);
         $deviceService = $this->get('api.device.service');
-        $responseData = $deviceService->updateGcmId($json['appKey'], $json['gcm_id']);
-        $response = new JsonResponse($responseData);
+        $responseData  = $deviceService->updateGcmId($json['appKey'], $json['gcm_id']);
 
-        return $response;
+        return $responseData;
     }
 }

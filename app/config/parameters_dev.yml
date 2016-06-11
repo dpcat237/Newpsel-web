@@ -12,8 +12,8 @@ parameters:
     mailer_user:       newpsel
     mailer_password:   n#06p04e2013r#s
 
-    redis_cache_server:    redis://redis/4
-    redis_sessions_server: redis://redis/5
+    redis_cache_server:    redis://localhost/4
+    redis_sessions_server: redis://localhost/5
 
     google_developer_key: AIzaSyCR7kFwJEvGR9LMGNUtgQko9G7791Nh218
     google_client_id:     8108991373-3pelt7s1pevojlhikoapq09bhldlknhf.apps.googleusercontent.com

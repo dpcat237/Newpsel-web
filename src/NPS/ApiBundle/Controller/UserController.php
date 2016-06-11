@@ -38,11 +38,11 @@ class UserController extends ApiController
      */
     public function loginAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
+        $json          = json_decode($request->getContent(), true);
         $deviceService = $this->get('api.device.service');
-        $responseData = $deviceService->loginApi($json['appKey'], $json['email'], $json['password']);
+        $responseData  = $deviceService->loginApi($json['appKey'], $json['email'], $json['password']);
 
-        return $this->plainResponse($responseData);
+        return $responseData;
     }
 
     /**
@@ -69,11 +69,11 @@ class UserController extends ApiController
      */
     public function signUpAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
+        $json          = json_decode($request->getContent(), true);
         $deviceService = $this->get('api.device.service');
-        $responseData = $deviceService->signUpApi($json['appKey'], $json['email'], $json['password']);
+        $responseData  = $deviceService->signUpApi($json['appKey'], $json['email'], $json['password']);
 
-        return $this->plainResponse($responseData);
+        return $responseData;
     }
 
     /**
@@ -100,10 +100,10 @@ class UserController extends ApiController
      */
     public function recoveryPasswordAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
+        $json        = json_decode($request->getContent(), true);
         $userService = $this->get('nps.entity.user');
         $userService->requestRecoverPassword($json['email']);
 
-        return $this->plainResponse(NotificationHelper::OK);
+        return NotificationHelper::OK;
     }
 }

@@ -16,8 +16,6 @@ class ItemController extends ApiController
     /**
      * Sync articles
      *
-     * TODO: http://symfony.com/doc/master/bundles/FOSRestBundle/1-setting_up_the_bundle.html
-     *
      * @Rest\Post("/sync_unread")
      * @ApiDoc(
      *  description="List of unread articles",
@@ -33,17 +31,19 @@ class ItemController extends ApiController
      *  tags={"experimental"}
      * )
      *
+     * @Rest\View
+     *
      * @param Request $request the current request
      *
      * @return JsonResponse
      */
     public function syncItemsAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
-        $itemService = $this->get('api.item.service');
+        $json         = json_decode($request->getContent(), true);
+        $itemService  = $this->get('api.item.service');
         $responseData = $itemService->syncItems($json['appKey'], $json['items'], $json['limit']);
         if ($responseData['error']) {
-            return $this->plainResponse($responseData['error']);
+            return $responseData['error'];
         }
 
         return $responseData['items'];
