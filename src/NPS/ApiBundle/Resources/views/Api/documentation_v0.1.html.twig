@@ -822,4 +822,49 @@
   "email":"test@email.com"
 }
 </code></pre></div><div class="tab-pane" id="user_password_recovery_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>100
-</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#article_sync">/article/sync</a></li><li><a href="#feed_add">/feed/add</a></li><li><a href="#feed_sync">/feed/sync</a></li><li><a href="#gcm_add_id">/gcm/add_id</a></li><li><a href="#saved_article_add_saved">/saved_article/add_saved</a></li><li><a href="#saved_article_add_shared">/saved_article/add_shared</a></li><li><a href="#saved_article_sync">/saved_article/sync</a></li><li><a href="#saved_article_dictation_sync">/saved_article/dictation/sync</a></li><li><a href="#tag_sync">/tag/sync</a></li><li><a href="#user_login">/user/login</a></li><li><a href="#user_register">/user/register</a></li><li><a href="#user_password_recovery">/user/password_recovery</a></li></ul></div></div></div></div></body></html>
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_preview" class="panel-title">/user/preview</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_preview"><span class="parent"></span>/user/preview</a> <span class="methods"><a href="#user_preview_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_preview" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_preview_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Register device without user data for preview</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_preview_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/preview</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register device without user data for preview</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_preview_post_request" data-toggle="tab">Request</a></li><li><a href="#user_preview_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_preview_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "appKey"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey":"[B@18d4580"
+}
+</code></pre></div><div class="tab-pane" id="user_preview_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p><h2>HTTP status code <a href="http://httpstatus.es/409" target="_blank">409</a></h2><p>Execution had some conflict between received data and exists data.</p><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  "code": 409,
+  "message": "User with this email exists",
+  "errors": null
+}
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_preview_register" class="panel-title">/user/preview/register</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_preview_register"><span class="parent"></span>/user/preview/register</a> <span class="methods"><a href="#user_preview_register_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_preview_register" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_preview_register_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Register user data for preview user</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_preview_register_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/preview/register</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register user data for preview user</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_preview_register_post_request" data-toggle="tab">Request</a></li><li><a href="#user_preview_register_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_preview_register_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>device-key</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "email",
+    "password"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "email":"test@email.com",
+  "password":"asdfasdfwer5476fg65"
+}
+</code></pre></div><div class="tab-pane" id="user_preview_register_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p><h2>HTTP status code <a href="http://httpstatus.es/409" target="_blank">409</a></h2><p>Execution had some conflict between received data and exists data.</p><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  "code": 409,
+  "message": "User with this email exists",
+  "errors": null
+}
+</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#article_sync">/article/sync</a></li><li><a href="#feed_add">/feed/add</a></li><li><a href="#feed_sync">/feed/sync</a></li><li><a href="#gcm_add_id">/gcm/add_id</a></li><li><a href="#saved_article_add_saved">/saved_article/add_saved</a></li><li><a href="#saved_article_add_shared">/saved_article/add_shared</a></li><li><a href="#saved_article_sync">/saved_article/sync</a></li><li><a href="#saved_article_dictation_sync">/saved_article/dictation/sync</a></li><li><a href="#tag_sync">/tag/sync</a></li><li><a href="#user_login">/user/login</a></li><li><a href="#user_register">/user/register</a></li><li><a href="#user_password_recovery">/user/password_recovery</a></li><li><a href="#user_preview">/user/preview</a></li><li><a href="#user_preview_register">/user/preview/register</a></li></ul></div></div></div></div></body></html>
