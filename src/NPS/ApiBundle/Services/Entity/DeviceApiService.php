@@ -1,72 +1,64 @@
 <?php
+
 namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use NPS\ApiBundle\Services\SecureService;
+use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Event\UserSignUpEvent;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\NPSCoreEvents;
+use NPS\CoreBundle\Repository\DeviceRepository;
 use NPS\CoreBundle\Services\UserNotificationsService;
-use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 
 /**
- * DeviceApiService
+ * Class DeviceApiService
+ *
+ * @package NPS\ApiBundle\Services\Entity
  */
 class DeviceApiService
 {
-    /**
-     * @var $doctrine Doctrine
-     */
-    private $doctrine;
+    /** @var EntityManager */
+    protected $entityManager;
+
+    /** @var DeviceRepository */
+    protected $deviceRepository;
+
+    /** @var UserNotificationsService */
+    protected $userNotification;
+
+    /** @var $secure SecureService */
+    protected $secure;
+
+    /** @var UserApiService */
+    protected $userService;
 
     /**
-     * @var EncoderFactory
+     * DeviceApiService constructor.
+     *
+     * @param EntityManager            $entityManager
+     * @param SecureService            $secure
+     * @param UserNotificationsService $userNotification
+     * @param UserApiService           $userService
      */
-    private $encoderFactory;
-
-    /**
-     * @var ContainerAwareEventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var UserNotificationsService
-     */
-    private $userNotification;
-
-    /**
-     * @var string
-     */
-    private $salt;
-
-    /**
-     * @var $secure SecureService
-     */
-    private $secure;
-
-
-    /**
-     * @param Registry                      $doctrine         Doctrine Registry
-     * @param SecureService                 $secure           SecureService
-     * @param EncoderFactory                $encoderFactory   EncoderFactory
-     * @param UserNotificationsService      $userNotification UserNotificationsService
-     * @param ContainerAwareEventDispatcher $eventDispatcher  ContainerAwareEventDispatcher
-     * @param string                        $salt             salt key
-     */
-    public function __construct(Registry $doctrine, SecureService $secure, EncoderFactory $encoderFactory, UserNotificationsService $userNotification, ContainerAwareEventDispatcher $eventDispatcher, $salt)
+    public function __construct(
+        EntityManager $entityManager,
+        SecureService $secure,
+        UserNotificationsService $userNotification,
+        UserApiService $userService
+    )
     {
-        $this->doctrine = $doctrine;
-        $this->encoderFactory = $encoderFactory;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->salt = $salt;
-        $this->secure = $secure;
+        $this->entityManager    = $entityManager;
+        $this->secure           = $secure;
         $this->userNotification = $userNotification;
+        $this->userService      = $userService;
+        $this->deviceRepository = $entityManager->getRepository(Device::class);
     }
 
     /**
      * Do login for Chrome Api
+     *
      * @param $appKey
      *
      * @return array
@@ -114,16 +106,14 @@ class DeviceApiService
     public function requestAppKey($email)
     {
         $response = false;
-        $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-        $user = $userRepo->findOneByEmail($email);
-        if($user instanceof User){
-            $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');
+        $user     = $this->userService->findByEmail($email);
+        if ($user instanceof User) {
             $extensionKey = substr(hash("sha1", uniqid(rand(), true)), 0, 16);
 
             //send email to user with new key
             $this->userNotification->sendChromeKey($user->getEmail(), $extensionKey);
             //save new key for extension
-            $deviceRepo->createDevice($extensionKey, $user);
+            $this->deviceRepository->createDevice($extensionKey, $user);
 
             $response = true;
         }
@@ -135,43 +125,42 @@ class DeviceApiService
     }
 
     /**
-     * Sign up for app api
+     * Register user device
      *
      * @param string $appKey
      * @param string $email
      * @param string $password
-     *
-     * @return string
      */
-    public function signUpApi($appKey, $email, $password = '')
+    public function registerUserDevice($appKey, $email, $password = '')
     {
-        $newPassword = '';
-        $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-        list($error, $user) = $userRepo->checkUserExists($email);
+        $user = $this->userService->registerUser($email, $password);
+        $this->deviceRepository->createDevice($appKey, $user);
+        $this->secure->saveTemporaryKey("device_" . $appKey, $user->getId());
+    }
 
-        if ($user instanceof User && $error && $password) {
-            return NotificationHelper::ERROR_EMAIL_EXISTS;
-        }
+    /**
+     * Create preview user and new device
+     *
+     * @param string $appKey
+     */
+    public function registerPreviewDevice($appKey)
+    {
+        $user = $this->userService->createPreviewUser();
+        $this->deviceRepository->createDevice($appKey, $user);
+        $this->secure->saveTemporaryKey("device_" . $appKey, $user->getId());
+    }
 
-        if (!$password && !$user instanceof User) {
-            $encoder = $this->encoderFactory->getEncoder(new User());
-            $newPassword = $encoder->encodePassword(md5(uniqid()), $this->salt);
-            $newPassword = substr($newPassword, 0, 16);
-        }
-
-        if (!$user instanceof User) {
-            $password =($password)? $password : $newPassword;
-            $user = $userRepo->createUser($email, $password);
-
-            $userSignUpEvent = new UserSignUpEvent($user);
-            $this->eventDispatcher->dispatch(NPSCoreEvents::USER_SIGN_UP, $userSignUpEvent);
-        }
-
-        $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');
-        $deviceRepo->createDevice($appKey, $user);
-        $this->secure->saveTemporaryKey("device_".$appKey, $user->getId());
-
-        return NotificationHelper::OK;
+    /**
+     * Add data to preview user
+     *
+     * @param string $appKey
+     * @param string $email
+     * @param string $password
+     */
+    public function addPreviewUserData($appKey, $email, $password)
+    {
+        $user = $this->secure->getUserByDevice($appKey);
+        $this->userService->addDataPreviewUser($user, $email, $password);
     }
 
     /**
@@ -185,15 +174,14 @@ class DeviceApiService
     public function updateGcmId($appKey, $gcmId)
     {
         $error = false;
-        $user = $this->secure->getUserByDevice($appKey);
+        $user  = $this->secure->getUserByDevice($appKey);
         if (!$user instanceof User) {
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
         if (!$error) {
-            $deviceRepo = $this->doctrine->getRepository('NPSCoreBundle:Device');
-            $deviceRepo->removeLogOutDevices($appKey, $gcmId);
-            $deviceRepo->updateGcmId($appKey, $gcmId);
+            $this->deviceRepository->removeLogOutDevices($appKey, $gcmId);
+            $this->deviceRepository->updateGcmId($appKey, $gcmId);
         }
 
         $responseData = array(

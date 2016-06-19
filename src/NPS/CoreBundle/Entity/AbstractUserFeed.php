@@ -2,15 +2,14 @@
 
 namespace NPS\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use NPS\CoreBundle\Entity\UserItem;
-use NPS\CoreBundle\Entity\UserFeed;
-use NPS\CoreBundle\Entity\AbstractUser;
 
 /**
- * AbstractUserFeed
+ * Class AbstractUserFeed
  *
+ * @package NPS\CoreBundle\Entity
  */
 abstract class AbstractUserFeed extends AbstractUser
 {
@@ -43,11 +42,12 @@ abstract class AbstractUserFeed extends AbstractUser
     {
         $this->userItems = new ArrayCollection();
         $this->userFeeds = new ArrayCollection();
-        $this->laters = new ArrayCollection();
+        $this->laters    = new ArrayCollection();
     }
 
     /**
      * Add userItem
+     *
      * @param UserItem $userItem
      *
      * @return User
@@ -81,6 +81,7 @@ abstract class AbstractUserFeed extends AbstractUser
 
     /**
      * Add userFeed
+     *
      * @param UserFeed $userFeed
      *
      * @return User
@@ -113,6 +114,7 @@ abstract class AbstractUserFeed extends AbstractUser
 
     /**
      * Set subscribed
+     *
      * @param \boolean $subscribed
      *
      * @return User
@@ -136,6 +138,7 @@ abstract class AbstractUserFeed extends AbstractUser
 
     /**
      * Add Later
+     *
      * @param Later $later
      *
      * @return User

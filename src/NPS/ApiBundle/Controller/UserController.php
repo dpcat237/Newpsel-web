@@ -2,7 +2,9 @@
 
 namespace NPS\ApiBundle\Controller;
 
+use NPS\ApiBundle\Services\Entity\DeviceApiService;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use NPS\CoreBundle\Services\Entity\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -25,9 +27,8 @@ class UserController extends ApiController
      */
     public function loginAction(Request $request)
     {
-        $json          = json_decode($request->getContent(), true);
-        $deviceService = $this->get('api.device.service');
-        $responseData  = $deviceService->loginApi($json['appKey'], $json['email'], $json['password']);
+        $json         = json_decode($request->getContent(), true);
+        $responseData = $this->getDeviceService()->loginApi($json['appKey'], $json['email'], $json['password']);
 
         return $responseData;
     }
@@ -44,11 +45,10 @@ class UserController extends ApiController
      */
     public function signUpAction(Request $request)
     {
-        $json          = json_decode($request->getContent(), true);
-        $deviceService = $this->get('api.device.service');
-        $responseData  = $deviceService->signUpApi($json['appKey'], $json['email'], $json['password']);
+        $json = json_decode($request->getContent(), true);
+        $this->getDeviceService()->registerUserDevice($json['appKey'], $json['email'], $json['password']);
 
-        return $responseData;
+        return;
     }
 
     /**
@@ -63,10 +63,56 @@ class UserController extends ApiController
      */
     public function recoveryPasswordAction(Request $request)
     {
-        $json        = json_decode($request->getContent(), true);
-        $userService = $this->get('nps.entity.user');
-        $userService->requestRecoverPassword($json['email']);
+        $json = json_decode($request->getContent(), true);
+        $this->getUserService()->requestRecoverPassword($json['email']);
 
         return NotificationHelper::OK;
+    }
+
+    /**
+     * Register device without user data for preview
+     *
+     * @Rest\Post("/preview")
+     * @Rest\View
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function previewAction(Request $request)
+    {
+        $this->getDeviceService()->registerPreviewDevice($this->getDeviceKey($request));
+    }
+
+    /**
+     * Register user data for preview user
+     *
+     * @Rest\Post("/preview/register")
+     * @Rest\View
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function registerPreviewAction(Request $request)
+    {
+        $json = json_decode($request->getContent(), true);
+        $this->getDeviceService()->addPreviewUserData($this->getDeviceKey($request), $json['email'], $json['password']);
+    }
+
+    /**
+     * @return DeviceApiService
+     */
+    protected function getDeviceService()
+    {
+        return $this->get('api.device.service');
+    }
+
+    /**
+     * @return UserService
+     */
+    protected function getUserService()
+    {
+        return $this->get('nps.entity.user');
     }
 }

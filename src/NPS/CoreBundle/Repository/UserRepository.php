@@ -22,15 +22,16 @@ class UserRepository extends EntityRepository
      *
      * @return int|User
      */
-    public function checkLogin($email, $password, $salt){
+    public function checkLogin($email, $password, $salt)
+    {
         $user = $this->findOneByEmail($email);
         if (!$user instanceof User) {
             return NotificationHelper::ERROR_LOGIN_DATA;
         }
 
-        $appKey = sha1($salt."_".$user->getPassword());
+        $appKey = sha1($salt . "_" . $user->getPassword());
 
-        return ($password == $appKey)? $user : NotificationHelper::ERROR_LOGIN_DATA;
+        return ($password == $appKey) ? $user : NotificationHelper::ERROR_LOGIN_DATA;
     }
 
     /**
@@ -54,18 +55,21 @@ class UserRepository extends EntityRepository
     /**
      * Create User
      *
-     * @param string $email
-     * @param string $password
+     * @param string  $email
+     * @param string  $password
+     * @param boolean $preview
      *
      * @return User
      */
-    public function createUser($email, $password)
+    public function createUser($email, $password, $preview = false)
     {
-        $entityManager = $this->getEntityManager();
         $user = new User();
         $user->setEmail($email);
         $user->setPassword($password);
         $user->setRegistered(true);
+        $user->setPreview($preview);
+
+        $entityManager = $this->getEntityManager();
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -74,6 +78,7 @@ class UserRepository extends EntityRepository
 
     /**
      * Subscribe email to newsletter
+     *
      * @param $email
      */
     public function subscribeToNewsletter($email)

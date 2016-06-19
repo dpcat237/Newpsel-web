@@ -4,6 +4,7 @@ namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Repository\UserRepository;
 use NPS\CoreBundle\Services\UserNotificationsService;
 use Predis\Client;
@@ -185,7 +186,7 @@ class UserService extends AbstractEntityService
      */
     public function setPreferenceNewUser(User $user)
     {
-        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
+        $laterRepo = $this->entityManager->getRepository(Later::class);
         $readLater = $laterRepo->createLabel($user, 'Read later', true);
         $laterRepo->createLabel($user, 'Watch later', true);
 

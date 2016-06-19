@@ -30,6 +30,8 @@ class User extends AbstractUserFeed
     protected $preference;
 
     /**
+     * difference between subscribed in welcome page and registered
+     *
      * @var boolean
      * @ORM\Column(name="registered", type="boolean")
      */
@@ -40,6 +42,13 @@ class User extends AbstractUserFeed
      */
     protected $filters;
 
+    /**
+     * User which use app without registration
+     *
+     * @var boolean
+     * @ORM\Column(name="preview", type="boolean")
+     */
+    protected $preview = false;
 
     /**
      * Constructor
@@ -52,6 +61,7 @@ class User extends AbstractUserFeed
 
     /**
      * Add devices
+     *
      * @param Device $device
      *
      * @return User
@@ -85,7 +95,8 @@ class User extends AbstractUserFeed
 
     /**
      * Set registered
-     * @param \boolean $registered
+     *
+     * @param boolean $registered
      *
      * @return User
      */
@@ -99,11 +110,35 @@ class User extends AbstractUserFeed
     /**
      * Is registered
      *
-     * @return \int
+     * @return boolean
      */
     public function isRegistered()
     {
         return $this->registered;
+    }
+
+    /**
+     * Set preview
+     *
+     * @param boolean $preview
+     *
+     * @return User
+     */
+    public function setPreview($preview)
+    {
+        $this->preview = $preview;
+
+        return $this;
+    }
+
+    /**
+     * Is preview user
+     *
+     * @return boolean
+     */
+    public function isPreview()
+    {
+        return $this->preview;
     }
 
     /**
@@ -118,6 +153,7 @@ class User extends AbstractUserFeed
 
     /**
      * Set the preference
+     *
      * @param Preference $preference
      */
     public function setPreference(Preference $preference)
