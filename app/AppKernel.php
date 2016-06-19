@@ -34,6 +34,7 @@ class AppKernel extends Kernel
             new Dpcat237\LanguageDetectBundle\Dpcat237LanguageDetectBundle(),
             new Dpcat237\CrawlerBundle\Dpcat237CrawlerBundle(),
             new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
+            new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle()
             //new FOS\ElasticaBundle\FOSElasticaBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),
             //new JMS\SerializerBundle\JMSSerializerBundle()
