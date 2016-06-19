@@ -31,7 +31,6 @@ class AppKernel extends Kernel
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new FOS\RestBundle\FOSRestBundle(),
-            new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new Dpcat237\LanguageDetectBundle\Dpcat237LanguageDetectBundle(),
             new Dpcat237\CrawlerBundle\Dpcat237CrawlerBundle(),
             new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),

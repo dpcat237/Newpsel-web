@@ -1,5 +1,0 @@
-nelmio_api_doc:
-  sandbox:
-    request_format:
-      formats:                            # default is `json` and `xml`,
-        json: application/json          # override to add custom formats or disable

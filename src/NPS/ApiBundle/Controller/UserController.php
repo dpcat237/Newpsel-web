@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Request\ParamFetcher;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * UserController
@@ -15,23 +14,9 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 class UserController extends ApiController
 {
     /**
-     * Login
+     * User login
      *
      * @Rest\Post("/login")
-     * @ApiDoc(
-     *  description="Login",
-     *  section="User area",
-     *  resource=true,
-     *  statusCodes={
-     *      200="Successfully",
-     *      401="Authentication failed",
-     *      405="Bad request method"
-     *  },
-     *  authentication=true,
-     *  authenticationRoles={"ROLE_USER"},
-     *  tags={"experimental"}
-     * )
-     *
      * @Rest\View
      *
      * @param Request $request the current request
@@ -48,23 +33,9 @@ class UserController extends ApiController
     }
 
     /**
-     * Sign up an user
+     * Register an user
      *
-     * @Rest\Post("/sign_up")
-     * @ApiDoc(
-     *  description="Sign up",
-     *  section="User area",
-     *  resource=true,
-     *  statusCodes={
-     *      200="Successfully",
-     *      401="Authentication failed",
-     *      405="Bad request method"
-     *  },
-     *  authentication=true,
-     *  authenticationRoles={"ROLE_USER"},
-     *  tags={"experimental"}
-     * )
-     *
+     * @Rest\Post("/register")
      * @Rest\View
      *
      * @param Request $request
@@ -84,20 +55,6 @@ class UserController extends ApiController
      * Request password recovery
      *
      * @Rest\Post("/password_recovery")
-     * @ApiDoc(
-     *  description="Request password recovery",
-     *  section="User area",
-     *  resource=true,
-     *  statusCodes={
-     *      200="Successfully",
-     *      401="Authentication failed",
-     *      405="Bad request method"
-     *  },
-     *  authentication=true,
-     *  authenticationRoles={"ROLE_USER"},
-     *  tags={"experimental"}
-     * )
-     *
      * @Rest\View
      *
      * @param Request $request

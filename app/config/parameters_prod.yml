@@ -1,6 +1,7 @@
 parameters:
     locale: en
     nseck: newpsel_key201306
+    base_host: newpsel.com
 
     database_driver:   pdo_mysql
     database_host:     127.0.0.1

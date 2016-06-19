@@ -5,6 +5,11 @@ api_chrome:
   schemes: [https]
   name_prefix: rest_api_v1_chrome_
 
+api_doc:
+  resource: "@NPSApiBundle/Controller/ApiController.php"
+  type:     annotation
+  schemes: [https]
+
 api_gcm:
   resource: "@NPSApiBundle/Controller/GcmController.php"
   type:     rest
@@ -15,29 +20,34 @@ api_gcm:
 api_feed:
   resource: "@NPSApiBundle/Controller/FeedController.php"
   type:     rest
+  prefix:  /feed
   schemes: [https]
   name_prefix: rest_api_v1_feed_
 
 api_item:
   resource: "@NPSApiBundle/Controller/ItemController.php"
   type:     rest
+  prefix:  /article
   schemes: [https]
   name_prefix: rest_api_v1_item_
 
 api_saved_item:
   resource: "@NPSApiBundle/Controller/LaterItemsController.php"
   type:     rest
+  prefix:  /saved_article
   schemes: [https]
   name_prefix: rest_api_v1_saved_item_
 
 api_tag:
   resource: "@NPSApiBundle/Controller/LabelController.php"
   type:     rest
+  prefix:  /tag
   schemes: [https]
   name_prefix: rest_api_v1_tag_
 
 api_user:
   resource: "@NPSApiBundle/Controller/UserController.php"
   type:     rest
+  prefix:  /user
   schemes: [https]
   name_prefix: rest_api_v1_user_

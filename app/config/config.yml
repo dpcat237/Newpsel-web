@@ -9,7 +9,6 @@ imports:
     - { resource: vendors/fos_elastica.yml }
     - { resource: vendors/fos_rest.yml }
     - { resource: vendors/hwi_oauth.yml }
-    - { resource: vendors/nelmio_api_doc.yml }
     - { resource: vendors/rs_queue.yml }
     - { resource: vendors/snc_redis.yml }
     - { resource: vendors/swiftmailer.yml }

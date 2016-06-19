@@ -1,0 +1,825 @@
+<!DOCTYPE HTML><html><head><title>Newpsel API documentation</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="https://github.com/kevinrenskers/raml2html 2.4.0"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/default.min.css"><script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script><script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script><script type="text/javascript">
+    $(document).ready(function() {
+      $('.page-header pre code, .top-resource-description pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+
+      $('[data-toggle]').click(function() {
+        var selector = $(this).data('target') + ' pre code';
+        $(selector).each(function(i, block) {
+          hljs.highlightBlock(block);
+        });
+      });
+
+      // open modal on hashes like #_action_get
+      $(window).bind('hashchange', function(e) {
+        var anchor_id = document.location.hash.substr(1); //strip #
+        var element = $('#' + anchor_id);
+
+        // do we have such element + is it a modal?  --> show it
+        if (element.length && element.hasClass('modal')) {
+          element.modal('show');
+        }
+      });
+
+      // execute hashchange on first page load
+      $(window).trigger('hashchange');
+
+      // remove url fragment on modal hide
+      $('.modal').on('hidden.bs.modal', function() {
+        try {
+          if (history && history.replaceState) {
+            history.replaceState({}, '', '#');
+          }
+        } catch(e) {}
+      });
+    });
+  </script><style>
+    .hljs {
+      background: transparent;
+    }
+    .parent {
+      color: #999;
+    }
+    .list-group-item > .badge {
+      float: none;
+      margin-right: 6px;
+    }
+    .panel-title > .methods {
+      float: right;
+    }
+    .badge {
+      border-radius: 0;
+      text-transform: uppercase;
+      width: 70px;
+      font-weight: normal;
+      color: #f3f3f6;
+      line-height: normal;
+    }
+    .badge_get {
+      background-color: #63a8e2;
+    }
+    .badge_post {
+      background-color: #6cbd7d;
+    }
+    .badge_put {
+      background-color: #22bac4;
+    }
+    .badge_delete {
+      background-color: #d26460;
+    }
+    .badge_patch {
+      background-color: #ccc444;
+    }
+    .list-group, .panel-group {
+      margin-bottom: 0;
+    }
+    .panel-group .panel+.panel-white {
+      margin-top: 0;
+    }
+    .panel-group .panel-white {
+      border-bottom: 1px solid #F5F5F5;
+      border-radius: 0;
+    }
+    .panel-white:last-child {
+      border-bottom-color: white;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+    .panel-white .panel-heading {
+      background: white;
+    }
+    .tab-pane ul {
+      padding-left: 2em;
+    }
+    .tab-pane h2 {
+      font-size: 1.2em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #ddd;
+    }
+    .tab-pane h3 {
+      font-size: 1.1em;
+    }
+    .tab-content {
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+    }
+    #sidebar {
+      margin-top: 30px;
+      padding-right: 5px;
+      overflow: auto;
+      height: 90%;
+    }
+    .top-resource-description {
+      border-bottom: 1px solid #ddd;
+      background: #fcfcfc;
+      padding: 15px 15px 0 15px;
+      margin: -15px -15px 10px -15px;
+    }
+    .resource-description {
+      border-bottom: 1px solid #fcfcfc;
+      background: #fcfcfc;
+      padding: 15px 15px 0 15px;
+      margin: -15px -15px 10px -15px;
+    }
+    .resource-description p:last-child {
+      margin: 0;
+    }
+    .list-group .badge {
+      float: left;
+    }
+    .method_description {
+      margin-left: 85px;
+    }
+    .method_description p:last-child {
+      margin: 0;
+    }
+    .list-group-item {
+      cursor: pointer;
+    }
+    .list-group-item:hover {
+      background-color: #f5f5f5;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="{{ asset('favicon-196x196.png') }}" sizes="196x196">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-160x160.png') }}" sizes="160x160">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-16x16.png') }}" sizes="16x16">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
+</head><body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>Newpsel API documentation <small>version v0.1</small></h1><p>http://api.newpsel.com</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="article_sync" class="panel-title">/article/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_article_sync"><span class="parent"></span>/article/sync</a> <span class="methods"><a href="#article_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_article_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#article_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync list of unread articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="article_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/article/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync list of unread articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#article_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#article_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="article_sync_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "integer"
+    },
+    "items": {
+      "type": "object",
+      "properties": {
+        "is_unread": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "is_read": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ui_id": {
+                "type": "integer"
+              },
+              "is_stared": {
+                "type": "boolean"
+              },
+              "is_unread": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ui_id",
+              "is_stared",
+              "is_unread"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "appKey",
+    "limit"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "@JHJKjkh489354DF",
+  "limit": 300,
+  "items": {
+    "is_unread": [
+      {
+        "id" : 123
+      }
+    ],
+    "is_read": [
+      {
+        "ui_id": 231,
+        "is_stared": true,
+        "is_unread": false
+      }
+    ]
+  }
+}
+</code></pre></div><div class="tab-pane" id="article_sync_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><p>Return anread article</p><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+{
+    "api_id": "352696",
+    "feed_id": "2",
+    "title": "Black Caucus urges Airbnb to take reports of racism seriously",
+    "link": "http://feedproxy.google.com/~r/Techcrunch/~3/otWhXNRzs8A/",
+    "content": "Article content",
+    "date_add": 1466103671,
+    "language": "en",
+    "ui_id": 359068,
+    "is_stared": false,
+    "is_unread": true
+  },
+  {
+    "api_id": "352697",
+    "feed_id": "2",
+    "title": "11 of the coolest video game trailers from E3",
+    "link": "http://feedproxy.google.com/~r/Techcrunch/~3/9V2mGAjuP6g/",
+    "content": "Article content",
+    "date_add": 1466103274,
+    "language": "en",
+    "ui_id": 359069,
+    "is_stared": false,
+    "is_unread": true
+  }
+]
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="feed_add" class="panel-title">/feed/add</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_feed_add"><span class="parent"></span>/feed/add</a> <span class="methods"><a href="#feed_add_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_feed_add" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#feed_add_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Subscribe user to the feed</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="feed_add_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/feed/add</h4></div><div class="modal-body"><div class="alert alert-info"><p>Subscribe user to the feed</p></div><ul class="nav nav-tabs"><li class="active"><a href="#feed_add_post_request" data-toggle="tab">Request</a></li><li><a href="#feed_add_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="feed_add_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "feed_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "appKey",
+    "feed_url"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "[B@b2c8305",
+  "feed_url": "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
+}
+</code></pre></div><div class="tab-pane" id="feed_add_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>["100"]
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="feed_sync" class="panel-title">/feed/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_feed_sync"><span class="parent"></span>/feed/sync</a> <span class="methods"><a href="#feed_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_feed_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#feed_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync list feeds</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="feed_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/feed/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync list feeds</p></div><ul class="nav nav-tabs"><li class="active"><a href="#feed_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#feed_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="feed_sync_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "feeds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "api_id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "date_up": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "api_id",
+          "title",
+          "status",
+          "date_up"
+        ]
+      }
+    }
+  },
+  "required": [
+    "appKey",
+    "feeds"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "[B@b2c8305",
+  "feeds": [
+      {
+        "id" : 1,
+        "api_id" : 31,
+        "title" : "New Scientist",
+        "status" : 2,
+        "date_up" : 1406627684
+      }
+  ]
+}
+</code></pre></div><div class="tab-pane" id="feed_sync_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+  {
+   "api_id": "16",
+   "title": "Nettuts+",
+   "website": "http://net.tutsplus.com/",
+   "favicon": "http://g.etfv.co/http%3A%2F%2Fnet.tutsplus.com%2F",
+   "date_up": 1407516417,
+   "deleted": false,
+   "status": 2
+ },
+ {
+   "api_id": "17",
+   "title": "New Scientist",
+   "website": "http://www.newscientist.com/",
+   "favicon": "http://g.etfv.co/http%3A%2F%2Fwww.newscientist.com%2F",
+   "date_up": 1383666183,
+   "deleted": false,
+   "status": 2
+ }
+]
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="gcm_add_id" class="panel-title">/gcm/add_id</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_gcm_add_id"><span class="parent"></span>/gcm/add_id</a> <span class="methods"><a href="#gcm_add_id_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_gcm_add_id" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#gcm_add_id_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync list feeds</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="gcm_add_id_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/gcm/add_id</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync list feeds</p></div><ul class="nav nav-tabs"><li class="active"><a href="#gcm_add_id_post_request" data-toggle="tab">Request</a></li><li><a href="#gcm_add_id_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="gcm_add_id_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "gcm_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "appKey",
+    "gcm_id"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "[B@b2c8305",
+  "gcm_id": "rtyerty5367df567gfyjfgyu567fghj56657"
+}
+</code></pre></div><div class="tab-pane" id="gcm_add_id_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{"error":false}
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="saved_article_add_saved" class="panel-title">/saved_article/add_saved</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_saved_article_add_saved"><span class="parent"></span>/saved_article/add_saved</a> <span class="methods"><a href="#saved_article_add_saved_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_saved_article_add_saved" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#saved_article_add_saved_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Add saved articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="saved_article_add_saved_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/saved_article/add_saved</h4></div><div class="modal-body"><div class="alert alert-info"><p>Add saved articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#saved_article_add_saved_post_request" data-toggle="tab">Request</a></li><li><a href="#saved_article_add_saved_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="saved_article_add_saved_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "laterItems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "integer"
+          },
+          "label_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "item_id",
+          "label_id"
+        ]
+      }
+    }
+  },
+  "required": [
+    "appKey",
+    "laterItems"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "[B@b2c8305",
+  "laterItems": [
+      {
+        "item_id" : 1,
+        "label_id" : 31
+      },
+      {
+        "item_id" : 2,
+        "label_id" : 31
+      }
+  ]
+}
+</code></pre></div><div class="tab-pane" id="saved_article_add_saved_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>["100"]
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="saved_article_add_shared" class="panel-title">/saved_article/add_shared</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_saved_article_add_shared"><span class="parent"></span>/saved_article/add_shared</a> <span class="methods"><a href="#saved_article_add_shared_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_saved_article_add_shared" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#saved_article_add_shared_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Add shared articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="saved_article_add_shared_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/saved_article/add_shared</h4></div><div class="modal-body"><div class="alert alert-info"><p>Add shared articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#saved_article_add_shared_post_request" data-toggle="tab">Request</a></li><li><a href="#saved_article_add_shared_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="saved_article_add_shared_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "sharedItems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label_api_id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label_api_id",
+          "title",
+          "text"
+        ]
+      }
+    }
+  },
+  "required": [
+    "appKey",
+    "sharedItems"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "[B@b2c8305",
+  "sharedItems": [
+      {
+        "label_api_id" : 1,
+        "title" : "New York Times",
+        "text" : "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
+      }
+  ]
+}
+</code></pre></div><div class="tab-pane" id="saved_article_add_shared_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>100
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="saved_article_sync" class="panel-title">/saved_article/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_saved_article_sync"><span class="parent"></span>/saved_article/sync</a> <span class="methods"><a href="#saved_article_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_saved_article_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#saved_article_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync saved articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="saved_article_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/saved_article/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync saved articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#saved_article_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#saved_article_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="saved_article_sync_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "integer"
+    },
+    "later_items": {
+      "type": "object",
+      "properties": {
+        "is_unread": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "api_id": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "api_id"
+            ]
+          }
+        },
+        "is_read": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "api_id": {
+                "type": "integer"
+              },
+              "is_unread": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "api_id",
+              "is_unread"
+            ]
+          }
+        }
+      }
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "api_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "api_id"
+        ]
+      }
+    }
+  },
+  "required": [
+    "appKey",
+    "later_items",
+    "labels",
+    "limit"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "@JHJKjkh489354DF",
+  "limit": 50,
+  "later_items": {
+    "is_unread": [
+      {
+        "api_id" : 123
+      }
+    ],
+    "is_read": [
+      {
+        "api_id": 231,
+        "is_unread": false
+      }
+    ]
+  },
+  "labels": [
+      {
+        "api_id" : 31
+      }
+  ]
+}
+</code></pre></div><div class="tab-pane" id="saved_article_sync_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+  {
+    "api_id": "53467",
+    "item_id": "351302",
+    "feed_id": "2",
+    "later_id": "1418",
+    "is_unread": true,
+    "date_add": 1465622119,
+    "language": "en",
+    "item_language": null,
+    "link": "http://feedproxy.google.com/~r/Techcrunch/~3/Fm1IjoW9Xqc/",
+    "title": "Tesla’s weird week",
+    "content": "Contant"
+  },
+  {
+    "api_id": "52062",
+    "item_id": "327980",
+    "feed_id": "1",
+    "later_id": "1418",
+    "is_unread": true,
+    "date_add": 1457913654,
+    "language": "es",
+    "item_language": null,
+    "link": "http://feedproxy.google.com/~r/WwwhatsNew/~3/2CWYNIHmNWI/",
+    "title": "La tabla periódica de los plugins más populares de WordPress",
+    "content": "Contant"
+  }
+]
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="saved_article_dictation_sync" class="panel-title">/saved_article/dictation/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_saved_article_dictation_sync"><span class="parent"></span>/saved_article/dictation/sync</a> <span class="methods"><a href="#saved_article_dictation_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_saved_article_dictation_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#saved_article_dictation_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync saved articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="saved_article_dictation_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/saved_article/dictation/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync saved articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#saved_article_dictation_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#saved_article_dictation_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="saved_article_dictation_sync_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "integer"
+    },
+    "items": {
+      "type": "object",
+      "properties": {
+        "is_unread": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "api_id": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "api_id"
+            ]
+          }
+        },
+        "is_read": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "api_id": {
+                "type": "integer"
+              },
+              "is_unread": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "api_id",
+              "is_unread"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "appKey",
+    "limit"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey":"[B@18d4580",
+    "items":{
+      "is_unread": [
+        {
+          "api_id" : 123
+        }
+      ],
+      "is_read": [
+        {
+          "api_id": 231,
+          "is_unread": false
+        }
+      ]
+    },
+    "limit":25
+}
+</code></pre></div><div class="tab-pane" id="saved_article_dictation_sync_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+  {
+    "api_id": "53525",
+    "item_id": "352716",
+    "feed_id": "70",
+    "later_id": "1",
+    "is_unread": true,
+    "date_add": 1466106971,
+    "language": "en",
+    "item_language": null,
+    "link": "http://zenhabits.net/book-sale/",
+    "title": "Zen Habits Book Now For Sale",
+    "content": "Content",
+    "text": "Text of content"
+  },
+  {
+    "api_id": "53524",
+    "item_id": "352482",
+    "feed_id": "15",
+    "later_id": "1",
+    "is_unread": true,
+    "date_add": 1466035330,
+    "language": "en",
+    "item_language": null,
+    "link": "http://www.marcandangel.com/2016/06/15/7-powerful-mantras-to-stop-you-from-overreacting-and-arguing-with-people/",
+    "title": "7 Powerful Mantras to Stop You from Overreacting and Arguing with People",
+    "content": "Content",
+    "text": "Text of content"
+  }
+]
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="tag_sync" class="panel-title">/tag/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_tag_sync"><span class="parent"></span>/tag/sync</a> <span class="methods"><a href="#tag_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_tag_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#tag_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>List of tags</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="tag_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/tag/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>List of tags</p></div><ul class="nav nav-tabs"><li class="active"><a href="#tag_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#tag_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="tag_sync_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "api_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "date_up": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "api_id",
+          "name",
+          "status",
+          "date_up"
+        ]
+      }
+    }
+  },
+  "required": [
+    "appKey",
+    "labels"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey": "[B@b2c8305",
+  "labels": [
+      {
+        "id": 1,
+        "api_id" : 31,
+        "name": "Listen",
+        "date_up": 1406627684,
+        "status": 2
+      }
+  ]
+}
+</code></pre></div><div class="tab-pane" id="tag_sync_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
+  {
+    "api_id": "1",
+    "name": "Listen",
+    "date_up": 1406627684,
+    "status": 2
+  },
+  {
+    "api_id": "6",
+    "name": "Watch",
+    "date_up": 1408221746,
+    "status": 2
+  },
+  {
+    "api_id": "7",
+    "name": "Apps",
+    "date_up": 1421609844,
+    "status": 2
+  }
+]
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_login" class="panel-title">/user/login</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_login"><span class="parent"></span>/user/login</a> <span class="methods"><a href="#user_login_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_login" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_login_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>User login</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_login_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/login</h4></div><div class="modal-body"><div class="alert alert-info"><p>User login</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_login_post_request" data-toggle="tab">Request</a></li><li><a href="#user_login_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_login_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "appKey",
+    "email",
+    "password"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey":"[B@18d4580",
+  "email":"test@email.com",
+  "password":"asdfasdfwer5476fg65"
+}
+</code></pre></div><div class="tab-pane" id="user_login_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>100
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_register" class="panel-title">/user/register</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_register"><span class="parent"></span>/user/register</a> <span class="methods"><a href="#user_register_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_register" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_register_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Register an user</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_register_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/register</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register an user</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_register_post_request" data-toggle="tab">Request</a></li><li><a href="#user_register_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_register_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "appKey": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "appKey",
+    "email",
+    "password"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "appKey":"[B@18d4580",
+  "email":"test@email.com",
+  "password":"asdfasdfwer5476fg65"
+}
+</code></pre></div><div class="tab-pane" id="user_register_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>100
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_password_recovery" class="panel-title">/user/password_recovery</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_password_recovery"><span class="parent"></span>/user/password_recovery</a> <span class="methods"><a href="#user_password_recovery_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_password_recovery" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_password_recovery_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Request password recovery</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_password_recovery_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/password_recovery</h4></div><div class="modal-body"><div class="alert alert-info"><p>Request password recovery</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_password_recovery_post_request" data-toggle="tab">Request</a></li><li><a href="#user_password_recovery_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_password_recovery_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "email"
+  ]
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "email":"test@email.com"
+}
+</code></pre></div><div class="tab-pane" id="user_password_recovery_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>100
+</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#article_sync">/article/sync</a></li><li><a href="#feed_add">/feed/add</a></li><li><a href="#feed_sync">/feed/sync</a></li><li><a href="#gcm_add_id">/gcm/add_id</a></li><li><a href="#saved_article_add_saved">/saved_article/add_saved</a></li><li><a href="#saved_article_add_shared">/saved_article/add_shared</a></li><li><a href="#saved_article_sync">/saved_article/sync</a></li><li><a href="#saved_article_dictation_sync">/saved_article/dictation/sync</a></li><li><a href="#tag_sync">/tag/sync</a></li><li><a href="#user_login">/user/login</a></li><li><a href="#user_register">/user/register</a></li><li><a href="#user_password_recovery">/user/password_recovery</a></li></ul></div></div></div></div></body></html>

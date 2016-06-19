@@ -13,13 +13,8 @@ privacy_policy:
 
 nps_api:
     resource: "@NPSApiBundle/Resources/config/routing.yml"
+    host:     api.%base_host%
     type:     rest
-    prefix:   /api
-
-#api doocumentation
-NelmioApiDocBundle:
-    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
-    prefix:   /api/doc/v1
 
 #hwi/oauth-bundle
 hwi_oauth_redirect:
