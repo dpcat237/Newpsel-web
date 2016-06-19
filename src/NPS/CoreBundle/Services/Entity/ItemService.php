@@ -1,75 +1,74 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Repository\ItemRepository;
 use NPS\CoreBundle\Services\FilteringManager;
 use NPS\CoreBundle\Services\QueueLauncherService;
 use Predis\Client;
 use SimplePie_Item;
-use HTMLPurifier,
-    HTMLPurifier_Config;
-use NPS\CoreBundle\Entity\Feed,
-    NPS\CoreBundle\Entity\Item,
-    NPS\CoreBundle\Entity\User,
-    NPS\CoreBundle\Entity\UserItem;
+use HTMLPurifier;
+use HTMLPurifier_Config;
+use NPS\CoreBundle\Entity\Feed;
+use NPS\CoreBundle\Entity\Item;
+use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\UserItem;
+use NPS\CoreBundle\Entity\UserFeed;
 
 /**
- * ItemService
+ * Class ItemService
+ *
+ * @package NPS\CoreBundle\Services\Entity
  */
 class ItemService
 {
-    /**
-     * @var Client
-     */
-    private $cache;
+    /** @var Client */
+    protected $cache;
+
+    /** @var EntityManager */
+    protected $entityManager;
+
+    /** @var FilteringManager */
+    protected $filter;
+
+    /** @var ItemRepository */
+    protected $itemRepository;
+
+    /** @var LaterItemService */
+    protected $laterItem;
+
+    /** @var HTMLPurifier */
+    protected $purifier;
+
+    /** @var QueueLauncherService */
+    protected $queueLauncher;
 
     /**
-     * @var Doctrine
+     * ItemService constructor.
+     *
+     * @param EntityManager        $entityManager
+     * @param Client               $cache
+     * @param FilteringManager     $filter
+     * @param LaterItemService     $laterItem
+     * @param QueueLauncherService $queueLauncher
      */
-    private $doctrine;
-
-    /**
-     * @var Entity Manager
-     */
-    private $entityManager;
-
-    /**
-     * @var FilteringManager
-     */
-    private $filter;
-
-    /**
-     * @var LaterItemService
-     */
-    private $laterItem;
-
-    /**
-     * @var HTMLPurifier
-     */
-    private $purifier;
-
-    /**
-     * @var QueueLauncherService
-     */
-    private $queueLauncher;
-
-
-    /**
-     * @param Registry         $doctrine  Doctrine Registry
-     * @param Client           $cache     Client
-     * @param FilteringManager $filter    FilteringManager
-     * @param LaterItemService $laterItem LaterItemService
-     * @param QueueLauncherService $queueLauncher    QueueLauncherService
-     */
-    public function __construct(Registry $doctrine, Client $cache, FilteringManager $filter, LaterItemService $laterItem, QueueLauncherService $queueLauncher)
+    public function __construct(
+        EntityManager $entityManager,
+        Client $cache,
+        FilteringManager $filter,
+        LaterItemService $laterItem,
+        QueueLauncherService $queueLauncher
+    )
     {
-        $this->cache = $cache;
-        $this->doctrine = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
-        $this->filter = $filter;
-        $this->laterItem = $laterItem;
-        $this->queueLauncher = $queueLauncher;
+        $this->cache          = $cache;
+        $this->entityManager  = $entityManager;
+        $this->filter         = $filter;
+        $this->laterItem      = $laterItem;
+        $this->queueLauncher  = $queueLauncher;
+        $this->itemRepository = $entityManager->getRepository(Item::class);
 
         if (empty($this->purifier)) {
             $config = HTMLPurifier_Config::createDefault();
@@ -87,9 +86,8 @@ class ItemService
      */
     public function addLastItemsNewUser(User $user, Feed $feed)
     {
-        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
-        $items = $itemRepo->getLast($feed->getId());
+        $userItemRepo = $this->entityManager->getRepository(UserItem::class);
+        $items        = $this->itemRepository->getLast($feed->getId());
 
         foreach ($items as $item) {
             if (!$userItemRepo->hasItem($user->getId(), $item->getId())) {
@@ -103,7 +101,7 @@ class ItemService
      * Add new item
      *
      * @param SimplePie_Item $itemData
-     * @param Feed $feed
+     * @param Feed           $feed
      */
     public function addNewItem(SimplePie_Item $itemData, Feed $feed)
     {
@@ -121,20 +119,19 @@ class ItemService
         $this->entityManager->flush();
 
         //save temporary hash of url
-        $linkHash = RedisConstants::ITEM_URL_HASH."_".sha1($itemData->get_link());
-        $ttl = 259200; // 3 days
+        $linkHash = RedisConstants::ITEM_URL_HASH . "_" . sha1($itemData->get_link());
+        $ttl      = 259200; // 3 days
         $this->cache->setex($linkHash, $ttl, $item->getId());
         //save temporary hash of title
-        $titleHash = RedisConstants::ITEM_TITLE_HASH."_".sha1($title);
+        $titleHash = RedisConstants::ITEM_TITLE_HASH . "_" . sha1($title);
         $this->cache->setex($titleHash, $ttl, $item->getId());
 
-        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
-        $whereUsersFeeds = array(
-            'feed' => $feed->getId(),
+        $userFeedRepo    = $this->entityManager->getRepository(UserFeed::class);
+        $whereUsersFeeds = [
+            'feed'    => $feed->getId(),
             'deleted' => false
-        );
-        $usersFeeds = $userFeedRepo->findBy($whereUsersFeeds);
-
+        ];
+        $usersFeeds      = $userFeedRepo->findBy($whereUsersFeeds);
         $this->addItemToSubscribers($item, $usersFeeds);
     }
 
@@ -147,8 +144,8 @@ class ItemService
     private function addItemToSubscribers($item, $feedUsers)
     {
         foreach ($feedUsers as $feedUser) {
-            $laterId = $this->filter->checkUserFeedFilter($feedUser->getUser()->getId(), $feedUser->getFeed()->getId(), 'to.label');
-            $unread =($laterId)? false : true;
+            $laterId  = $this->filter->checkUserFeedFilter($feedUser->getUser()->getId(), $feedUser->getFeed()->getId(), 'to.label');
+            $unread   = ($laterId) ? false : true;
             $userItem = $this->addUserItem($feedUser->getUser(), $item, $unread);
             if ($laterId) {
                 $this->laterItem->addLaterItem($userItem, $laterId);
@@ -203,21 +200,20 @@ class ItemService
      *
      * @return mixed
      */
-    public function checkItemWasUpdated($link, $title) {
-        $linkHash = RedisConstants::ITEM_URL_HASH."_".sha1($link);
-        $itemId = $this->cache->get($linkHash);
+    public function checkItemWasUpdated($link, $title)
+    {
+        $linkHash = RedisConstants::ITEM_URL_HASH . "_" . sha1($link);
+        $itemId   = $this->cache->get($linkHash);
 
         if (!$itemId) {
-            $title = $this->purifier->purify($title);
-            $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
-            $titleHash = RedisConstants::ITEM_TITLE_HASH."_".sha1($title);
-            $itemId = $this->cache->get($titleHash);
+            $title     = $this->purifier->purify($title);
+            $title     = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+            $titleHash = RedisConstants::ITEM_TITLE_HASH . "_" . sha1($title);
+            $itemId    = $this->cache->get($titleHash);
         }
 
         if ($itemId) {
-            $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-
-            return $itemRepo->find($itemId);
+            return $this->itemRepository->find($itemId);
         }
 
         return null;
@@ -229,7 +225,7 @@ class ItemService
      * @param Item           $item
      * @param SimplePie_Item $itemData
      */
-    public function updateItemContent(Item $item , SimplePie_Item $itemData)
+    public function updateItemContent(Item $item, SimplePie_Item $itemData)
     {
         $item->setTitle($itemData->get_title());
         $item->setContent($itemData->get_content());

@@ -1,4 +1,5 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -6,12 +7,26 @@ use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Entity\UserItem;
+use NPS\CoreBundle\Repository\UserItemRepository;
 
 /**
- * UserItemService
+ * Class UserItemService
+ *
+ * @package NPS\CoreBundle\Services\Entity
  */
 class UserItemService extends AbstractEntityService
 {
+    /** @var UserItemRepository */
+    protected $userItemRepository;
+
+    /**
+     * @inheritdoc
+     */
+    protected function setRepository()
+    {
+        $this->userItemRepository = $this->entityManager->getRepository(UserItem::class);
+    }
+
     /**
      * Change item status
      *
@@ -25,9 +40,7 @@ class UserItemService extends AbstractEntityService
      */
     public function changeStatus(User $user, Item $item, $statusGet, $statusSet, $change = null)
     {
-        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
-        $userItem = $userItemRepo->hasItem($user->getId(), $item->getId());
-
+        $userItem = $this->userItemRepository->hasItem($user->getId(), $item->getId());
         if ($userItem instanceof UserItem) {
             $status = $this->changeUserItemStatus($userItem, $statusGet, $statusSet, $change);
 
@@ -83,7 +96,7 @@ class UserItemService extends AbstractEntityService
     {
         if ($change == EntityConstants::STATUS_UNREAD) {
             $status = true;
-        } elseif ($change == EntityConstants::STATUS_READ)  {
+        } elseif ($change == EntityConstants::STATUS_READ) {
             $status = false;
         } else {
             if ($userItem->$statusGet()) { //change current status

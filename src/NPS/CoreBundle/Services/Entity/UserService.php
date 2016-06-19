@@ -1,15 +1,15 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Constant\RedisConstants;
-use NPS\CoreBundle\Services\NotificationManager;
+use NPS\CoreBundle\Repository\UserRepository;
 use NPS\CoreBundle\Services\UserNotificationsService;
-use NPS\CoreBundle\Services\UserWrapper;
 use Predis\Client;
 use Symfony\Component\Form\Form;
-use NPS\CoreBundle\Entity\User,
-    NPS\CoreBundle\Entity\Preference;
+use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\Preference;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
@@ -17,32 +17,42 @@ use NPS\CoreBundle\Helper\NotificationHelper;
  */
 class UserService extends AbstractEntityService
 {
-    /**
-     * @var Client
-     */
-    private $cache;
+    /** @var Client */
+    protected $cache;
+
+    /** @var UserNotificationsService */
+    protected $userNotification;
+
+    /** @var UserRepository */
+    protected $userRepository;
 
     /**
-     * @var UserNotificationsService
+     * @param Client $cache
      */
-    private $userNotification;
-
-    /**
-     * @param Registry                 $doctrine         Registry
-     * @param UserWrapper              $userWrapper      UserWrapper
-     * @param NotificationManager      $notification     NotificationManager
-     * @param Client                   $cache            Client
-     * @param UserNotificationsService $userNotification UserNotificationsService
-     */
-    public function __construct(Registry $doctrine, UserWrapper $userWrapper, NotificationManager $notification, Client $cache, UserNotificationsService $userNotification)
+    public function setRedis(Client $cache)
     {
-        parent::__construct($doctrine, $userWrapper, $notification);
         $this->cache = $cache;
+    }
+
+    /**
+     * @param UserNotificationsService $userNotification
+     */
+    public function setNotificationManager(UserNotificationsService $userNotification)
+    {
         $this->userNotification = $userNotification;
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function setRepository()
+    {
+        $this->userRepository = $this->entityManager->getRepository(User::class);
+    }
+
+    /**
      * Save form of user preferences to data base
+     *
      * @param Form $form
      */
     public function saveFormPreferences(Form $form)
@@ -65,18 +75,18 @@ class UserService extends AbstractEntityService
      */
     public function saveFormUser(Form $form, $nseck)
     {
-        $check = $this->checkFormUser($form);
-        $user = $check['user'];
+        $check     = $this->checkFormUser($form);
+        $user      = $check['user'];
         $existUser = $check['existUser'];
         if (!$check['errors'] && $existUser instanceof User) {
-            $password = sha1($nseck."_".$user->getPassword());
+            $password = sha1($nseck . "_" . $user->getPassword());
             $this->newUserSets($existUser, $password);
 
             return array($existUser, $check['errors']);
         }
 
         if (!$check['errors'] && strlen($user->getEmail()) > 2) {
-            $password = sha1($nseck."_".$user->getPassword());
+            $password = sha1($nseck . "_" . $user->getPassword());
             $this->newUserSets($user, $password);
         }
 
@@ -102,13 +112,13 @@ class UserService extends AbstractEntityService
     /**
      * Set email activation code to cache
      *
-     * @param int    $userId
+     * @param int $userId
      */
     private function setVerifyCode($userId)
     {
         $activationCode = sha1(microtime());
-        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$activationCode, 2592000, $userId); //7 days life
-        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE.'_'.$userId, 2592000, $activationCode); //7 days life
+        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE . '_' . $activationCode, 2592000, $userId); //7 days life
+        $this->cache->setex(RedisConstants::USER_ACTIVATION_CODE . '_' . $userId, 2592000, $activationCode); //7 days life
     }
 
     /**
@@ -120,13 +130,13 @@ class UserService extends AbstractEntityService
      */
     public function getUserByVerifyCode($activationCode)
     {
-        $redisKey = RedisConstants::USER_ACTIVATION_CODE.'_'.$activationCode;
-        $userId = $this->cache->get($redisKey);
+        $redisKey = RedisConstants::USER_ACTIVATION_CODE . '_' . $activationCode;
+        $userId   = $this->cache->get($redisKey);
         if (!$userId) {
             return null;
         }
 
-        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->find($userId);
+        $user = $this->userRepository->find($userId);
         if (!$user instanceof User) {
             return null;
         }
@@ -140,29 +150,29 @@ class UserService extends AbstractEntityService
 
     /**
      * Check user registration form
+     *
      * @param Form $form Form
      *
      * @return array
      */
     protected function checkFormUser(Form $form)
     {
-        $error = false;
+        $error     = false;
         $existUser = null;
-        $user = $form->getData();
+        $user      = $form->getData();
         if (!$form->isValid() || !$user instanceof User) {
             $this->notification->setFlashMessage(NotificationHelper::ALERT_FORM_DATA);
             $errors = true;
         }
 
         if (empty($error)) {
-            $userRepo = $this->doctrine->getRepository('NPSCoreBundle:User');
-            list($error, $existUser) = $userRepo->checkUserExists($user->getEmail());
+            list($error, $existUser) = $this->userRepository->checkUserExists($user->getEmail());
         }
 
         $response = array(
-            'errors' => $error,
-            'user'   => $user,
-            'existUser'   => $existUser
+            'errors'    => $error,
+            'user'      => $user,
+            'existUser' => $existUser
         );
 
         return $response;
@@ -194,7 +204,7 @@ class UserService extends AbstractEntityService
      */
     public function sendVerificationEmail(User $user)
     {
-        $redisKey = RedisConstants::USER_ACTIVATION_CODE.'_'.$user->getId();
+        $redisKey       = RedisConstants::USER_ACTIVATION_CODE . '_' . $user->getId();
         $activationCode = $this->cache->get($redisKey);
         $this->userNotification->sendEmailVerification($user->getEmail(), $activationCode);
     }
@@ -206,13 +216,13 @@ class UserService extends AbstractEntityService
      */
     public function requestRecoverPassword($email)
     {
-        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->findOneByEmail($email);
+        $user = $this->userRepository->findOneByEmail($email);
         if (!$user instanceof User) {
             return;
         }
 
         $recoveryCode = sha1(microtime());
-        $this->cache->setex(RedisConstants::USER_PASSWORD_RECOVERY.'_'.$recoveryCode, 2592000, $user->getId()); //7 days life
+        $this->cache->setex(RedisConstants::USER_PASSWORD_RECOVERY . '_' . $recoveryCode, 2592000, $user->getId()); //7 days life
         $this->userNotification->sendPasswordRecovery($user->getEmail(), $recoveryCode);
     }
 
@@ -227,13 +237,13 @@ class UserService extends AbstractEntityService
      */
     public function newRecoveryPassword($nseck, $recoveryCode, $password)
     {
-        $userId = $this->cache->get(RedisConstants::USER_PASSWORD_RECOVERY.'_'.$recoveryCode);
-        $user = $this->doctrine->getRepository('NPSCoreBundle:User')->find($userId);
+        $userId = $this->cache->get(RedisConstants::USER_PASSWORD_RECOVERY . '_' . $recoveryCode);
+        $user   = $this->userRepository->find($userId);
         if (!$user instanceof User) {
             return null;
         }
 
-        $password = sha1($nseck."_".$password);
+        $password = sha1($nseck . "_" . $password);
         $user->setPassword($password);
         $this->entityManager->persist($user);
         $this->entityManager->flush();

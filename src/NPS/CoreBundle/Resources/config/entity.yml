@@ -2,17 +2,15 @@ services:
     nps.abstract.entity:
         class: NPS\CoreBundle\Services\Entity\AbstractEntityService
         arguments:
-            doctrine:     "@doctrine"
+            doctrine:     "@doctrine.orm.entity_manager"
             user_wrapper: "@nps.wrapper.user"
             notification: "@nps.manager.notification"
 
     nps.entity.feed:
         class: NPS\CoreBundle\Services\Entity\FeedService
-        arguments:
-            doctrine:     "@doctrine"
-            server_cache: "@snc_redis.default"
-            user_wrapper: "@nps.wrapper.user"
-            notification: "@nps.manager.notification"
+        parent: nps.abstract.entity
+        calls:
+            - [setRedis, ["@snc_redis.default"]]
 
     feed_history:
         class: NPS\CoreBundle\Services\Entity\FeedHistoryService
@@ -25,7 +23,7 @@ services:
     item:
         class: NPS\CoreBundle\Services\Entity\ItemService
         arguments:
-            doctrine:     "@doctrine"
+            doctrine:     "@doctrine.orm.entity_manager"
             server_cache: "@snc_redis.default"
             filter:       "@nps.manager.filter"
             later_item:   "@nps.entity.later_item"
@@ -33,16 +31,14 @@ services:
 
     nps.entity.later:
         class: NPS\CoreBundle\Services\Entity\LaterService
-        arguments:
-            doctrine:     "@doctrine"
-            server_cache: "@snc_redis.default"
-            user_wrapper: "@nps.wrapper.user"
-            notification: "@nps.manager.notification"
+        parent: nps.abstract.entity
+        calls:
+            - [setRedis, ["@snc_redis.default"]]
 
     nps.entity.later_item:
         class: NPS\CoreBundle\Services\Entity\LaterItemService
         arguments:
-            doctrine:     "@doctrine"
+            doctrine:     "@doctrine.orm.entity_manager"
             server_cache: "@snc_redis.default"
             user_item:    "@nps.entity.user_item"
             crawler:      "@nps.manager.crawler"
@@ -50,12 +46,10 @@ services:
 
     nps.entity.user:
         class: NPS\CoreBundle\Services\Entity\UserService
-        arguments:
-            doctrine:      "@doctrine"
-            user_wrapper:  "@nps.wrapper.user"
-            notification:  "@nps.manager.notification"
-            server_cache:  "@snc_redis.default"
-            notifications: "@user.notifications"
+        parent: nps.abstract.entity
+        calls:
+            - [setRedis, ["@snc_redis.default"]]
+            - [setNotificationManager, ["@user.notifications"]]
 
     nps.entity.user_item:
         class: NPS\CoreBundle\Services\Entity\UserItemService

@@ -1,37 +1,43 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Repository\LaterRepository;
 use Predis\Client;
-use NPS\CoreBundle\Services\NotificationManager;
-use NPS\CoreBundle\Services\UserWrapper;
 use Symfony\Component\Form\Form;
 use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
- * LaterService
+ * Class LaterService
+ *
+ * @package NPS\CoreBundle\Services\Entity
  */
 class LaterService extends AbstractEntityService
 {
-    /**
-     * @var Client
-     */
-    private $cache;
+    /** @var Client */
+    protected $cache;
 
+    /** @var LaterRepository */
+    protected $tagRepository;
 
     /**
-     * @param Registry            $doctrine     Registry
-     * @param Client              $cache     Client
-     * @param UserWrapper         $userWrapper  UserWrapper
-     * @param NotificationManager $notification NotificationManager
+     * @param Client $cache
      */
-    public function __construct(Registry $doctrine, Client $cache, UserWrapper $userWrapper, NotificationManager $notification)
+    public function setRedis(Client $cache)
     {
-        parent::__construct($doctrine, $userWrapper, $notification);
         $this->cache = $cache;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function setRepository()
+    {
+        $this->tagRepository = $this->entityManager->getRepository(Later::class);
     }
 
     /**
@@ -41,10 +47,7 @@ class LaterService extends AbstractEntityService
      */
     public function getUserLabelsQuery()
     {
-        $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-        $query = $labelRepo->getUserLabelsQuery($this->userWrapper->getCurrentUser()->getId());
-
-        return $query;
+        return $this->tagRepository->getUserLabelsQuery($this->userWrapper->getCurrentUser()->getId());
     }
 
     /**
@@ -55,7 +58,7 @@ class LaterService extends AbstractEntityService
     public function removeLabel(Later $label)
     {
         //set to cache that label was deleted to notify API
-        $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED."_".$label->getUserId());
+        $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED . "_" . $label->getUserId());
         if (empty($deletedLabels)) {
             $deletedLabels[] = $label->getId();
         } else {
@@ -65,13 +68,14 @@ class LaterService extends AbstractEntityService
             }
         }
         $deletedLabels = implode(',', $deletedLabels);
-        $this->cache->set(RedisConstants::LABEL_DELETED."_".$label->getUserId(), $deletedLabels);
+        $this->cache->set(RedisConstants::LABEL_DELETED . "_" . $label->getUserId(), $deletedLabels);
 
         $this->removeObject($label);
     }
 
     /**
      * Save form of user label to data base
+     *
      * @param Form $form
      */
     public function saveFormLabel(Form $form)
@@ -88,7 +92,7 @@ class LaterService extends AbstractEntityService
      * Create new Label
      *
      * @param User $user
-     * @param $name
+     * @param      $name
      * @param null $dateUp
      *
      * @return Later
@@ -114,9 +118,9 @@ class LaterService extends AbstractEntityService
      */
     public function changeMenuAll($userId)
     {
-        $value = $this->cache->get(RedisConstants::LABEL_MENU_ALL."_".$userId);
-        $value = ($value == 1)? 0 : 1;
-        $this->cache->set(RedisConstants::LABEL_MENU_ALL."_".$userId, $value);
+        $value = $this->cache->get(RedisConstants::LABEL_MENU_ALL . "_" . $userId);
+        $value = ($value == 1) ? 0 : 1;
+        $this->cache->set(RedisConstants::LABEL_MENU_ALL . "_" . $userId, $value);
     }
 
     /**
@@ -128,8 +132,8 @@ class LaterService extends AbstractEntityService
      */
     public function getMenuAll($userId)
     {
-        $value = $this->cache->get(RedisConstants::LABEL_MENU_ALL."_".$userId);
+        $value = $this->cache->get(RedisConstants::LABEL_MENU_ALL . "_" . $userId);
 
-        return ($value == 1)? true : false;
+        return ($value == 1) ? true : false;
     }
 }

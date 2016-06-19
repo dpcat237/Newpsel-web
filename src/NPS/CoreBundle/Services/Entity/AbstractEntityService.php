@@ -1,47 +1,46 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Exception;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Services\NotificationManager,
     NPS\CoreBundle\Services\UserWrapper;
 
 /**
- * AbstractEntityService
+ * Class AbstractEntityService
+ *
+ * @package NPS\CoreBundle\Services\Entity
  */
 abstract class AbstractEntityService
 {
-    /**
-     * @var Registry
-     */
-    protected  $doctrine;
-
-    /**
-     * @var Entity Manager
-     */
+    /** @var EntityManager */
     protected $entityManager;
 
-    /**
-     * @var NotificationManager
-     */
+    /** @var NotificationManager */
     protected $notification;
 
-
     /**
-     * @param Registry            $doctrine     Registry
-     * @param UserWrapper         $userWrapper  UserWrapper
-     * @param NotificationManager $notification NotificationManager
+     * AbstractEntityService constructor.
+     *
+     * @param EntityManager       $entityManager
+     * @param UserWrapper         $userWrapper
+     * @param NotificationManager $notification
      */
-    public function __construct(Registry $doctrine, UserWrapper $userWrapper, NotificationManager $notification)
+    public function __construct(EntityManager $entityManager, UserWrapper $userWrapper, NotificationManager $notification)
     {
-        $this->doctrine = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
-        $this->userWrapper = $userWrapper;
-        $this->notification = $notification;
+        $this->entityManager = $entityManager;
+        $this->userWrapper   = $userWrapper;
+        $this->notification  = $notification;
+        $this->setRepository();
     }
 
     /**
      * Remove object function
+     *
      * @param $object
      */
     public function removeObject($object)
@@ -52,7 +51,8 @@ abstract class AbstractEntityService
 
     /**
      * Save object to data base
-     * @param $object
+     *
+     * @param      $object
      * @param bool $notify
      */
     public function saveObject($object, $notify = false)
@@ -63,11 +63,18 @@ abstract class AbstractEntityService
             if ($notify) {
                 $this->notification->setFlashMessage(NotificationHelper::SAVED_OK);
             }
-        } catch (\Exception $e) {
-            $this->notification->setLog(__METHOD__.' '.$e->getMessage(), 'err');
+        } catch (Exception $e) {
+            $this->notification->setLog(__METHOD__ . ' ' . $e->getMessage(), 'err');
             if ($notify) {
                 $this->notification->setFlashMessage(NotificationHelper::ERROR_TRY_AGAIN);
             }
         }
     }
+
+    /**
+     * Set own repository
+     *
+     * @return EntityRepository
+     */
+    abstract protected function setRepository();
 }

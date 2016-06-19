@@ -1,38 +1,49 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
 use NPS\CoreBundle\Constant\RedisConstants;
-use NPS\CoreBundle\Services\NotificationManager;
-use NPS\CoreBundle\Services\UserWrapper;
+use NPS\CoreBundle\Repository\FeedRepository;
+use NPS\CoreBundle\Repository\UserFeedRepository;
 use Symfony\Component\Form\Form;
-use NPS\CoreBundle\Entity\Feed,
-    NPS\CoreBundle\Entity\User,
-    NPS\CoreBundle\Entity\UserFeed;
+use NPS\CoreBundle\Entity\Feed;
+use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Predis\Client;
 
 /**
- * FeedService
+ * Class FeedService
+ *
+ * @package NPS\CoreBundle\Services\Entity
  */
 class FeedService extends AbstractEntityService
 {
-    /**
-     * @var Client
-     */
-    private $cache;
+    /** @var Client */
+    protected $cache;
 
+    /** @var FeedRepository */
+    protected $feedRepository;
+
+    /** @var UserFeedRepository */
+    protected $userFeedRepository;
 
     /**
-     * @param Registry            $doctrine     Registry
-     * @param Client              $cache     Client
-     * @param UserWrapper         $userWrapper  UserWrapper
-     * @param NotificationManager $notification NotificationManager
+     * @param Client $cache
      */
-    public function __construct(Registry $doctrine, Client $cache, UserWrapper $userWrapper, NotificationManager $notification)
+    public function setRedis(Client $cache)
     {
-        parent::__construct($doctrine, $userWrapper, $notification);
         $this->cache = $cache;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function setRepository()
+    {
+        $this->feedRepository     = $this->entityManager->getRepository(Feed::class);
+        $this->userFeedRepository = $this->entityManager->getRepository(UserFeed::class);
     }
 
     /**
@@ -58,10 +69,7 @@ class FeedService extends AbstractEntityService
      */
     public function checkFeedByUrl($url)
     {
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-        $feed = $feedRepo->checkExistFeedUrl($url);
-
-        return $feed;
+        return $this->feedRepository->checkExistFeedUrl($url);
     }
 
     /**
@@ -74,12 +82,11 @@ class FeedService extends AbstractEntityService
      */
     public function getUserFeed($userId, $feedId)
     {
-        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
-        $whereUserFeed = array(
+        $whereUserFeed = [
             'feed' => $feedId,
             'user' => $userId
-        );
-        $userFeed = $userFeedRepo->findOneBy($whereUserFeed);
+        ];
+        $userFeed      = $this->userFeedRepository->findOneBy($whereUserFeed);
 
         return $userFeed;
     }
@@ -91,14 +98,12 @@ class FeedService extends AbstractEntityService
      */
     public function getUserActiveFeedsQuery()
     {
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-        $query = $feedRepo->getUserFeedsQuery($this->userWrapper->getCurrentUser()->getId());
-
-        return $query;
+        return $this->feedRepository->getUserFeedsQuery($this->userWrapper->getCurrentUser()->getId());
     }
 
     /**
      * Soft remove user's feed
+     *
      * @param UserFeed $userFeed
      */
     public function removeUserFeed(UserFeed $userFeed)
@@ -111,6 +116,7 @@ class FeedService extends AbstractEntityService
 
     /**
      * Save form of feed to data base
+     *
      * @param Form $form
      */
     public function saveFormFeed(Form $form)
@@ -125,6 +131,7 @@ class FeedService extends AbstractEntityService
 
     /**
      * Save form of feed to data base
+     *
      * @param Form $form
      */
     public function saveFormUserFeed(Form $form)
@@ -145,8 +152,7 @@ class FeedService extends AbstractEntityService
      */
     public function subscribeUser(User $user, Feed $feed)
     {
-        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
-        $feedSubscribed = $userFeedRepo->checkUserSubscribed($user->getId(), $feed->getId());
+        $feedSubscribed = $this->userFeedRepository->checkUserSubscribed($user->getId(), $feed->getId());
         if ($feedSubscribed) {
             $this->activateSubscribedUser($user, $feed);
         } else {
@@ -180,8 +186,7 @@ class FeedService extends AbstractEntityService
      */
     protected function updateFeedStatus(Feed $feed)
     {
-        $userFeedRepo = $this->entityManager->getRepository('NPSCoreBundle:UserFeed');
-        if ($userFeedRepo->countActiveSubscribers($feed->getId()) < 1) {
+        if ($this->userFeedRepository->countActiveSubscribers($feed->getId()) < 1) {
             $feed->setEnabled(false);
             $this->saveObject($feed);
         }
@@ -194,9 +199,9 @@ class FeedService extends AbstractEntityService
      */
     public function changeMenuAll($userId)
     {
-        $value = $this->cache->get(RedisConstants::FEED_MENU_ALL."_".$userId);
-        $value = ($value == 1)? 0 : 1;
-        $this->cache->set(RedisConstants::FEED_MENU_ALL."_".$userId, $value);
+        $value = $this->cache->get(RedisConstants::FEED_MENU_ALL . "_" . $userId);
+        $value = ($value == 1) ? 0 : 1;
+        $this->cache->set(RedisConstants::FEED_MENU_ALL . "_" . $userId, $value);
     }
 
     /**
@@ -208,8 +213,8 @@ class FeedService extends AbstractEntityService
      */
     public function getMenuAll($userId)
     {
-        $value = $this->cache->get(RedisConstants::FEED_MENU_ALL."_".$userId);
+        $value = $this->cache->get(RedisConstants::FEED_MENU_ALL . "_" . $userId);
 
-        return ($value == 1)? true : false;
+        return ($value == 1) ? true : false;
     }
 }

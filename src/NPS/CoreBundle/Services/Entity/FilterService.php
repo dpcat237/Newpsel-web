@@ -1,37 +1,34 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
-use NPS\CoreBundle\Entity\Filter,
-    NPS\CoreBundle\Entity\Later;
+use NPS\CoreBundle\Entity\Filter;
+use NPS\CoreBundle\Entity\Later;
 use Symfony\Bridge\Monolog\Logger;
-use Symfony\Component\Form\Form,
-    Symfony\Component\Form\FormError;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
 
 /**
- * FilterService
+ * Class FilterService
+ *
+ * @package NPS\CoreBundle\Services\Entity
  */
 class FilterService extends AbstractEntityService
 {
-    /**
-     * @var Filter
-     */
-    private $filter;
+    /** @var Filter */
+    protected $filter;
 
-    /**
-     * @var Form
-     */
-    private $formData;
+    /** @var Form */
+    protected $formData;
 
-    /**
-     * @var bool
-     */
-    private $formError = false;
+    /** @var bool */
+    protected $formError = false;
 
-    /**
-     * @var Form
-     */
-    private $form;
+    /** @var Form */
+    protected $form;
 
+    protected function setRepository()
+    { }
 
     /**
      * Process to validate filter form and create it

@@ -1,7 +1,9 @@
 <?php
+
 namespace NPS\CoreBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use Dpcat237\CrawlerBundle\Library\Crawler;
 use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Constant\RedisConstants;
@@ -11,86 +13,75 @@ use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Repository\LaterItemRepository;
 use Predis\Client;
-use NPS\CoreBundle\Entity\LaterItem,
-    NPS\CoreBundle\Entity\User,
-    NPS\CoreBundle\Entity\UserFeed;
+use NPS\CoreBundle\Entity\LaterItem;
+use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\UserFeed;
 use NPS\CoreBundle\Services\QueueLauncherService;
 
 /**
- * LaterItemService
+ * Class LaterItemService
+ *
+ * @package NPS\CoreBundle\Services\Entity
  */
 class LaterItemService
 {
-    /**
-     * @var Client
-     */
-    private $cache;
+    /** @var Client */
+    protected $cache;
+
+    /** @var Crawler */
+    protected $crawler;
+
+    /** @var EntityManager */
+    protected $entityManager;
+
+    /** @var boolean */
+    protected $import = false;
+
+    /** @var UserItemService */
+    protected $userItem;
+
+    /** @var QueueLauncherService */
+    protected $queue;
+
+    /** @var LaterItemRepository */
+    protected $laterItemRepository;
 
     /**
-     * @var Crawler
+     * LaterItemService constructor.
+     *
+     * @param EntityManager        $entityManager
+     * @param Client               $cache
+     * @param UserItemService      $userItem
+     * @param Crawler              $crawler
+     * @param QueueLauncherService $queue
      */
-    private $crawler;
-
-    /**
-     * @var Doctrine
-     */
-    private $doctrine;
-
-    /**
-     * @var Entity Manager
-     */
-    private $entityManager;
-
-    /**
-     * @var boolean
-     */
-    private $import = false;
-
-    /**
-     * @var UserItemService
-     */
-    private $userItem;
-
-    /**
-     * @var QueueLauncherService
-     */
-    private $queue;
-
-
-    /**
-     * @param Registry             $doctrine Doctrine Registry
-     * @param Client               $cache    Client
-     * @param UserItemService      $userItem UserItemService
-     * @param Crawler              $crawler  Crawler
-     * @param QueueLauncherService $queue    QueueLauncherService
-     */
-    public function __construct(Registry $doctrine, Client $cache, UserItemService $userItem, Crawler $crawler, QueueLauncherService $queue)
+    public function __construct(EntityManager $entityManager, Client $cache, UserItemService $userItem, Crawler $crawler, QueueLauncherService $queue)
     {
-        $this->cache = $cache;
-        $this->crawler = $crawler;
-        $this->doctrine = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
-        $this->userItem = $userItem;
-        $this->queue = $queue;
+        $this->cache               = $cache;
+        $this->crawler             = $crawler;
+        $this->entityManager       = $entityManager;
+        $this->userItem            = $userItem;
+        $this->queue               = $queue;
+        $this->laterItemRepository = $entityManager->getRepository(LaterItem::class);
     }
 
     /**
      * Get page title for later view
      *
      * @param LaterItem $laterItem
-     * @param User $user
+     * @param User      $user
      *
      * @return string
      */
     public function getViewTitle(LaterItem $laterItem, User $user)
     {
-        $userFeedRepo = $this->doctrine->getRepository('NPSCoreBundle:UserFeed');
+        $userFeedRepo  = $this->entityManager->getRepository(UserFeed::class);
         $whereUserFeed = array(
             'feed' => $laterItem->getUserItem()->getItem()->getFeedId(),
             'user' => $user->getId()
         );
-        $userFeed = $userFeedRepo->findOneBy($whereUserFeed);
-        $title = ($userFeed instanceof UserFeed)? $userFeed->getTitle() : $laterItem->getLater()->getName();
+        $userFeed      = $userFeedRepo->findOneBy($whereUserFeed);
+        $title         = ($userFeed instanceof UserFeed) ? $userFeed->getTitle() : $laterItem->getLater()->getName();
 
         return $title;
     }
@@ -109,7 +100,7 @@ class LaterItemService
         $this->makeLaterRead($laterItem);
         $this->userItem->changeStatus($user, $item, "isUnread", "setUnread", 2);
 
-        if ($content = $this->cache->get('crawledItem_'.$item->getId())) {
+        if ($content = $this->cache->get('crawledItem_' . $item->getId())) {
             $item->setContent($content);
         }
 
@@ -137,21 +128,21 @@ class LaterItemService
      * Get unread later items for API
      *
      * @param int   $labelId
-     * @param array $unreadItems  of unread items
-     * @param int   $limit        limit of dictations to sync
+     * @param array $unreadItems of unread items
+     * @param int   $limit       limit of dictations to sync
      *
      * @return array
      */
-    public function getUnreadItemsApi($labelId, array $unreadItems, $limit) {
-        $readItems = array();
-        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-        $totalUnread = $laterItemRepo->totalLaterUnreadItems($labelId);
-        $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
+    public function getUnreadItemsApi($labelId, array $unreadItems, $limit)
+    {
+        $readItems   = array();
+        $totalUnread = $this->laterItemRepository->totalLaterUnreadItems($labelId);
+        $unreadIds   = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
 
         //"+5" extra to don't do many loops for few items
-        $laterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, 0, $limit+5, $totalUnread);
+        $laterItems = $this->getUnreadForApiRecursive($labelId, $unreadIds, 0, $limit + 5, $totalUnread);
         if (count($unreadIds)) {
-            $readItems = $laterItemRepo->getReadItems($unreadIds);
+            $readItems = $this->laterItemRepository->getReadItems($unreadIds);
         }
         if (count($readItems)) {
             $laterItems = $this->addReadItems($laterItems, $readItems);
@@ -163,18 +154,17 @@ class LaterItemService
     /**
      * Get unread items for API
      *
-     * @param LaterItemRepository $laterItemRepo LaterItem
-     * @param int                 $labelId       later id
-     * @param array               $unreadIds     ids of unread and added to sync items
-     * @param int                 $begin         first item for query
-     * @param int                 $limit         quantity of items required by API
-     * @param int                 $totalUnread   total unread items of later
+     * @param int   $labelId     later id
+     * @param array $unreadIds   ids of unread and added to sync items
+     * @param int   $begin       first item for query
+     * @param int   $limit       quantity of items required by API
+     * @param int   $totalUnread total unread items of later
      *
      * @return array
      */
-    private function getUnreadForApiRecursive(LaterItemRepository $laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread)
+    private function getUnreadForApiRecursive($labelId, $unreadIds, $begin, $limit, $totalUnread)
     {
-        $laterItems = $laterItemRepo->getUnreadForApiByLabel($labelId, $begin, $limit);
+        $laterItems = $this->laterItemRepository->getUnreadForApiByLabel($labelId, $begin, $limit);
         if (count($unreadIds)) {
             $laterItems = ArrayHelper::filterUnreadItemsIds($laterItems, $unreadIds);
         }
@@ -182,7 +172,7 @@ class LaterItemService
         $laterItems = $this->removeShortContent($laterItems);
 
         $unreadCount = count($laterItems);
-        $begin = $begin + $limit;
+        $begin       = $begin + $limit;
         if ($unreadCount >= $limit || ($begin + 1) >= $totalUnread || $limit < 5) { //added 5 just in case to don't do a lot of loops for few items
             return $laterItems;
         }
@@ -191,8 +181,8 @@ class LaterItemService
         if (($begin + $limit) > $totalUnread) {
             $limit = $totalUnread - $begin;
         }
-        $newLaterItems = $this->getUnreadForApiRecursive($laterItemRepo, $labelId, $unreadIds, $begin, $limit, $totalUnread);
-        $laterItems = array_merge($laterItems, $newLaterItems);
+        $newLaterItems = $this->getUnreadForApiRecursive($labelId, $unreadIds, $begin, $limit, $totalUnread);
+        $laterItems    = array_merge($laterItems, $newLaterItems);
 
         return $laterItems;
     }
@@ -208,9 +198,9 @@ class LaterItemService
     {
         $laterItems = array();
         foreach ($collection as $key => $laterItem) {
-            if ($content = $this->cache->get('crawledItem_'.$laterItem['item_id'])) {
+            if ($content = $this->cache->get('crawledItem_' . $laterItem['item_id'])) {
                 $laterItem['content'] = $content;
-                $laterItems[$key] = $laterItem;
+                $laterItems[$key]     = $laterItem;
             }
         }
 
@@ -224,7 +214,8 @@ class LaterItemService
      *
      * @return array
      */
-    private function removeShortContent(array $laterItems) {
+    private function removeShortContent(array $laterItems)
+    {
         if (count($laterItems) < 1) {
             return array();
         }
@@ -236,9 +227,9 @@ class LaterItemService
                 continue;
             }
 
-            $laterItem['text'] = $text;
-            $laterItem['language'] =(strlen($laterItem['language']) == 2)? $laterItem['language'] : $laterItem['item_language'];
-            $collection[] = $laterItem;
+            $laterItem['text']     = $text;
+            $laterItem['language'] = (strlen($laterItem['language']) == 2) ? $laterItem['language'] : $laterItem['item_language'];
+            $collection[]          = $laterItem;
         }
 
         return $collection;
@@ -256,15 +247,15 @@ class LaterItemService
     private function removeUnreadContentFromText($text)
     {
         //remove html tags
-        $text = strip_tags($text);
+        $text    = strip_tags($text);
         $pattern = "#[-a-zA-Z0-9@:%_\+.~\#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~\#?&//=]*)?#si";
-        $text = preg_replace($pattern, "", $text);
+        $text    = preg_replace($pattern, "", $text);
 
         //remove long space
         $text = trim(preg_replace('/\s+/', ' ', $text));
 
         //remove &...; chars
-        $text = preg_replace("/&#?[a-z0-9]{2,8};/i","",$text);
+        $text = preg_replace("/&#?[a-z0-9]{2,8};/i", "", $text);
 
 
         return $text;
@@ -278,20 +269,21 @@ class LaterItemService
      *
      * @return array
      */
-    private function addReadItems($laterItems, $readItems) {
+    private function addReadItems($laterItems, $readItems)
+    {
         foreach ($readItems as $readItem) {
-            $item = array(
-                'api_id' => $readItem['api_id'],
-                'item_id' => 0,
-                'feed_id' => 0,
-                'later_id' => 0,
+            $item         = array(
+                'api_id'    => $readItem['api_id'],
+                'item_id'   => 0,
+                'feed_id'   => 0,
+                'later_id'  => 0,
                 'is_unread' => false,
-                'date_add' => 0,
-                'language' => "",
-                'link' => "",
-                'title' => "",
-                'content' => "",
-                'text' => ""
+                'date_add'  => 0,
+                'language'  => "",
+                'link'      => "",
+                'title'     => "",
+                'content'   => "",
+                'text'      => ""
             );
             $laterItems[] = $item;
         }
@@ -345,15 +337,15 @@ class LaterItemService
     public function importItem(User $user, $labelId, $title, $url, $dateAdd, $isArticle = 0)
     {
         $this->import = false;
-        $exists = $this->existsItem($user->getId(), $url, $labelId);
+        $exists       = $this->existsItem($user->getId(), $url, $labelId);
         if ($exists == true) {
             return;
         }
 
         $item = $exists;
         if (!$item instanceof Item) {
-            $content = ($isArticle)? $this->crawler->getFullArticle($url) : '';
-            $item = $this->createItem($title, $url, $content, $dateAdd);
+            $content = ($isArticle) ? $this->crawler->getFullArticle($url) : '';
+            $item    = $this->createItem($title, $url, $content, $dateAdd);
         }
         $userItem = $this->createUserItem($user, $item, true);
         $this->addLaterItem($userItem, $labelId);
@@ -362,20 +354,20 @@ class LaterItemService
     /**
      * Check if item already exists
      *
-     * @param int $userId
+     * @param int    $userId
      * @param string $url
      *
      * @return bool|Item|LaterItem
      */
-    private function existsItem($userId, $url) {
-        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-        $item = $itemRepo->findOneByLink($url);
+    private function existsItem($userId, $url)
+    {
+        $itemRepo = $this->entityManager->getRepository(Item::class);
+        $item     = $itemRepo->findOneByLink($url);
         if (!$item instanceof Item) {
             return false;
         }
 
-        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-        $laterItem = $laterItemRepo->getByItemId($userId, $item->getId());
+        $laterItem = $this->laterItemRepository->getByItemId($userId, $item->getId());
         if ($laterItem instanceof LaterItem && $this->import) {
             return true;
         }
@@ -403,7 +395,7 @@ class LaterItemService
         $item->setContentHash(sha1($pageUrl));
         $item->setLink($pageUrl);
         $item->setTitle($pageTitle);
-        $content = (strlen($content) > 20)? $content : $pageTitle.'...';
+        $content = (strlen($content) > 20) ? $content : $pageTitle . '...';
         $item->setContent($content);
         if ($dateAdd) {
             $item->setDateAdd($dateAdd);
@@ -443,8 +435,8 @@ class LaterItemService
      */
     public function addLaterItem(UserItem $userItem, $labelId)
     {
-        $laterRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-        $later = $laterRepo->find($labelId);
+        $laterRepo = $this->entityManager->getRepository(Later::class);
+        $later     = $laterRepo->find($labelId);
         if (!$later instanceof Later) {
             return;
         }
@@ -464,7 +456,7 @@ class LaterItemService
      */
     public function addLaterItemCheck(UserItem $userItem, Later $later)
     {
-        $laterItem = $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->laterExists($later->getId(), $userItem->getId());
+        $laterItem = $this->laterItemRepository->laterExists($later->getId(), $userItem->getId());
         if ($laterItem instanceof LaterItem) {
             $laterItem->setUnread(true);
             $this->entityManager->persist($laterItem);
@@ -495,7 +487,7 @@ class LaterItemService
                 continue;
             }
 
-            $redisKey = RedisConstants::IMPORT_LATER_ITEMS.'_'.$userId.'_'.$labelId.'_'.time().'_'.$part;
+            $redisKey = RedisConstants::IMPORT_LATER_ITEMS . '_' . $userId . '_' . $labelId . '_' . time() . '_' . $part;
             $jsonData = json_encode($items);
             $this->cache->setex($redisKey, 604800, $jsonData); //7 days life
             $this->queue->executeImportItems($redisKey);
@@ -511,18 +503,16 @@ class LaterItemService
      */
     public function syncLaterItems($userId, $items)
     {
-        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
-        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-
+        $userItemRepo = $this->entityManager->getRepository(UserItem::class);
         foreach ($items as $itemData) {
-            $itemId = $itemData['item_id'];
-            $labelId = $itemData['label_id'];
+            $itemId   = $itemData['item_id'];
+            $labelId  = $itemData['label_id'];
             $userItem = $userItemRepo->hasItem($userId, $itemId);
             if (!$userItem instanceof UserItem) {
                 continue;
             }
 
-            $laterItem = $laterItemRepo->laterExists($labelId, $userItem->getId());
+            $laterItem = $this->laterItemRepository->laterExists($labelId, $userItem->getId());
             if ($laterItem instanceof LaterItem) {
                 $laterItem->setUnread(true);
                 $this->entityManager->persist($laterItem);
