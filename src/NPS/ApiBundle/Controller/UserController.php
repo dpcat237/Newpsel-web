@@ -8,10 +8,11 @@ use NPS\CoreBundle\Services\Entity\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Request\ParamFetcher;
 
 /**
- * UserController
+ * Class UserController
+ *
+ * @package NPS\ApiBundle\Controller
  */
 class UserController extends ApiController
 {
@@ -43,12 +44,12 @@ class UserController extends ApiController
      *
      * @return Response
      */
-    public function signUpAction(Request $request)
+    public function registerAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
         $this->getDeviceService()->registerUserDevice($json['appKey'], $json['email'], $json['password']);
 
-        return NotificationHelper::OK;
+        return;
     }
 
     /**
