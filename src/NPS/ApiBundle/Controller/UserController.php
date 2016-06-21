@@ -48,7 +48,7 @@ class UserController extends ApiController
         $json = json_decode($request->getContent(), true);
         $this->getDeviceService()->registerUserDevice($json['appKey'], $json['email'], $json['password']);
 
-        return;
+        return NotificationHelper::OK;
     }
 
     /**
