@@ -11,7 +11,3 @@ hwi_oauth:
             client_id:     %facebook_client_id%
             client_secret: %facebook_client_secret%
             scope:         "basic_info email"
-        twitter:
-            type:          twitter
-            client_id:     %twitter_client_id%
-            client_secret: %twitter_client_secret%

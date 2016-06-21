@@ -30,7 +30,6 @@ security:
                 resource_owners:
                     google:   "/login/check-google"
                     facebook: "/login/check-facebook"
-                    twitter:  "/login/check-twitter"
                 login_path: /sign_in
                 failure_path: /sign_in
                 oauth_user_provider:

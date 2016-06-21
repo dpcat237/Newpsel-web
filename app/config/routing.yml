@@ -41,10 +41,6 @@ google_login:
     path: /login/check-google
     schemes: [https]
 
-twitter_login:
-    path: /login/check-twitter
-    schemes:  [https]
-
 logout:
     path:   /logout
 
