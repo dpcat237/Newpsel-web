@@ -9,19 +9,42 @@ security:
             algorithm: sha512
             iterations: 5000
             encode_as_base64: false
+        FOS\UserBundle\Model\UserInterface: sha512
+    acl:
+        connection: default
 
     role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-    #    ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_ADMIN:       [ROLE_USER, ROLE_SONATA_ADMIN]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        SONATA:
+            - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT
 
     providers:
         my_custom_hwi_provider:
             id: ib_user.oauth_user_provider
+        fos_userbundle:
+            id: fos_user.user_manager
 
     firewalls:
+        admin:
+          pattern:            /admin(.*)
+          context:            admin
+          anonymous: true
+          form_login:
+              provider:       fos_userbundle
+              login_path:     /admin/login
+              use_forward:    false
+              check_path:     /admin/login_check
+              failure_path:   null
+              default_target_path: /admin/dashboard
+          logout:
+              path:           /admin/logout
+              target:         /admin/login
+
         secured_area:
             pattern: ^/
             anonymous: true
+            context:            user
             logout: true
             logout:
                 path:   /logout
@@ -43,14 +66,16 @@ security:
                 domain:   ~ # Defaults to the current domain from $_SERVER
 
     access_control:
-        welcome:
-            path: /*
-            roles: IS_AUTHENTICATED_ANONYMOUSLY
-        api_area:
-            path: /api/.*
-            roles: IS_AUTHENTICATED_ANONYMOUSLY
-            requires_channel: https
-        web_area:
-            path: /web/.*
-            roles: ROLE_USER
-            requires_channel: https
+      - { path: /api/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: /web/, role: ROLE_USER }
+
+        # BACKEND - RULES
+      # Admin login page needs to be accessed without credential
+
+      - { path: ^/admin/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/admin/logout, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/admin/login_check, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/admin/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: /admin/, role: ROLE_SONATA_ADMIN }
+
+      - { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -11,6 +11,7 @@ imports:
     - { resource: vendors/hwi_oauth.yml }
     - { resource: vendors/rs_queue.yml }
     - { resource: vendors/snc_redis.yml }
+    - { resource: vendors/sonata_admin.yml }
     - { resource: vendors/swiftmailer.yml }
     - { resource: vendors/undf_angular_js.yml }
 

@@ -34,7 +34,24 @@ class AppKernel extends Kernel
             new Dpcat237\LanguageDetectBundle\Dpcat237LanguageDetectBundle(),
             new Dpcat237\CrawlerBundle\Dpcat237CrawlerBundle(),
             new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
-            new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle()
+            new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
+
+            /** Sonata */
+            // The admin requires some twig functions defined in the security
+            // bundle, like is_granted. Register this bundle if it wasn't the case
+            // already.
+            // These are the other bundles the SonataAdminBundle relies on
+            new Sonata\CoreBundle\SonataCoreBundle(),
+            new Sonata\BlockBundle\SonataBlockBundle(),
+            new Sonata\EasyExtendsBundle\SonataEasyExtendsBundle(),
+            new Knp\Bundle\MenuBundle\KnpMenuBundle(),
+            // And finally, the storage and SonataAdminBundle
+            new Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
+            new Sonata\AdminBundle\SonataAdminBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
+            new Sonata\UserBundle\SonataUserBundle('FOSUserBundle'),
+            new NPS\AdminBundle\NPSAdminBundle(),
+
             //new FOS\ElasticaBundle\FOSElasticaBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),
             //new JMS\SerializerBundle\JMSSerializerBundle()
