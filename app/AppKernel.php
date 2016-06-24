@@ -26,6 +26,7 @@ class AppKernel extends Kernel
             new NPS\CoreBundle\NPSCoreBundle(),
             new NPS\FrontendBundle\NPSFrontendBundle(),
             new NPS\ApiBundle\NPSApiBundle(),
+            new NPS\AdminBundle\NPSAdminBundle(),
             new Eko\GoogleTranslateBundle\EkoGoogleTranslateBundle(),
             new Endroid\Bundle\GcmBundle\EndroidGcmBundle(),
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
@@ -50,7 +51,6 @@ class AppKernel extends Kernel
             new Sonata\AdminBundle\SonataAdminBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new Sonata\UserBundle\SonataUserBundle('FOSUserBundle'),
-            new NPS\AdminBundle\NPSAdminBundle(),
 
             //new FOS\ElasticaBundle\FOSElasticaBundle(),
             //new BCC\CronManagerBundle\BCCCronManagerBundle(),

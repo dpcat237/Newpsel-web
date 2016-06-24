@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class NPSFrontendExtension extends Extension
+class NPSAdminExtension extends Extension
 {
     /**
      * {@inheritDoc}
@@ -26,6 +26,6 @@ class NPSFrontendExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         //load NPSFrontendBundle services
-
+        $loader->load('services.yml');
     }
 }
