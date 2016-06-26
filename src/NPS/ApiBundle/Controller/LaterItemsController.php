@@ -26,12 +26,10 @@ class LaterItemsController extends ApiController
      */
     public function syncLaterAction(Request $request)
     {
+        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncLaterItemsApi($json['appKey'], $json['laterItems']);
-        if ($responseData['error']) {
-            return $responseData['error'];
-        }
+        $responseData = $labelService->syncLaterItemsApi($deviceId, $json['laterItems']);
 
         return $responseData['result'];
     }
@@ -48,12 +46,10 @@ class LaterItemsController extends ApiController
      */
     public function syncSharedAction(Request $request)
     {
+        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncShared($json['appKey'], $json['sharedItems']);
-        if ($responseData['error']) {
-            return $responseData['error'];
-        }
+        $responseData = $labelService->syncShared($deviceId, $json['sharedItems']);
 
         return $responseData['result'];
     }
@@ -70,12 +66,10 @@ class LaterItemsController extends ApiController
      */
     public function syncLaterItemsAction(Request $request)
     {
+        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $itemService  = $this->get('api.later_item.service');
-        $responseData = $itemService->syncLaterItems($json['appKey'], $json['later_items'], $json['labels'], $json['limit']);
-        if ($responseData['error']) {
-            return $responseData['error'];
-        }
+        $responseData = $itemService->syncLaterItems($deviceId, $json['later_items'], $json['labels'], $json['limit']);
 
         return $responseData['later_items'];
     }
@@ -92,12 +86,10 @@ class LaterItemsController extends ApiController
      */
     public function syncDictateItemsAction(Request $request)
     {
+        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncDictateItems($json['appKey'], $json['items'], $json['limit']);
-        if ($responseData['error']) {
-            return $responseData['error'];
-        }
+        $responseData = $labelService->syncDictateItems($deviceId, $json['items'], $json['limit']);
 
         return $responseData['result'];
     }

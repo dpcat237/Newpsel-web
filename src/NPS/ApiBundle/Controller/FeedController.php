@@ -25,8 +25,9 @@ class FeedController extends ApiController
      */
     public function addFeedAction(Request $request)
     {
+        $deviceId     = $this->getDeviceId($request);
         $json = json_decode($request->getContent(), true);
-        $this->getFeedApiService()->addFeed($json['appKey'], $json['feed_url']);
+        $this->getFeedApiService()->addFeed($deviceId, $json['feed_url']);
     }
 
     /**
@@ -41,8 +42,9 @@ class FeedController extends ApiController
      */
     public function syncFeedsAction(Request $request)
     {
+        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
-        $responseData = $this->getFeedApiService()->syncFeeds($json['appKey'], $json['feeds']);
+        $responseData = $this->getFeedApiService()->syncFeeds($deviceId, $json['feeds']);
         if ($responseData['error']) {
             return $responseData['error'];
         }

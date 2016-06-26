@@ -36,13 +36,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Get device key from headers
+     * Get device ID from headers
      *
      * @param Request $request
      *
      * @return array|string
      */
-    protected function getDeviceKey(Request $request)
+    protected function getDeviceId(Request $request)
     {
         $deviceKey = $request->headers->get('device-key');
         if (!$deviceKey) {

@@ -2,16 +2,14 @@
 
 namespace NPS\ApiBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Request\ParamFetcher;
 
 /**
  * GcmController
  */
-class GcmController extends Controller
+class GcmController extends ApiController
 {
     /**
      * Add new GCM registration ID
@@ -25,9 +23,10 @@ class GcmController extends Controller
      */
     public function addRegistrationIdAction(Request $request)
     {
+        $deviceId     = $this->getDeviceId($request);
         $json          = json_decode($request->getContent(), true);
         $deviceService = $this->get('api.device.service');
-        $responseData  = $deviceService->updateGcmId($json['appKey'], $json['gcm_id']);
+        $responseData  = $deviceService->updateGcmId($deviceId, $json['gcm_id']);
 
         return $responseData;
     }

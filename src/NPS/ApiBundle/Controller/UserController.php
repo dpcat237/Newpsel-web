@@ -76,7 +76,7 @@ class UserController extends ApiController
      */
     public function previewAction(Request $request)
     {
-        $this->getDeviceService()->registerPreviewDevice($this->getDeviceKey($request));
+        $this->getDeviceService()->registerPreviewDevice($this->getDeviceId($request));
     }
 
     /**
@@ -92,7 +92,7 @@ class UserController extends ApiController
     public function registerPreviewAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $this->getDeviceService()->addPreviewUserData($this->getDeviceKey($request), $json['email'], $json['password']);
+        $this->getDeviceService()->addPreviewUserData($this->getDeviceId($request), $json['email'], $json['password']);
     }
 
     /**
