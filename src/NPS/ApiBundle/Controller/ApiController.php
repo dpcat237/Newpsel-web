@@ -44,10 +44,10 @@ class ApiController extends Controller
      */
     protected function getDeviceId(Request $request)
     {
-        $deviceKey = $request->headers->get('device-key');
+        $deviceKey = $request->headers->get('deviceId');
         if (!$deviceKey) {
             $json          = json_decode($request->getContent(), true);
-            $deviceKey =(isset($json['appKey']))? $json['appKey'] : null;
+            $deviceKey =(isset($json['deviceId']))? $json['deviceId'] : null;
         }
 
         if (!$deviceKey) {
