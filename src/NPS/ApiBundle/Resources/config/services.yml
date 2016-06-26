@@ -2,7 +2,7 @@ services:
     api.secure.service:
         class: NPS\ApiBundle\Services\SecureService
         arguments:
-            doctrine:     "@doctrine"
+            doctrine:     "@doctrine.orm.entity_manager"
             server_cache: "@snc_redis.default"
 
     nps.api.gcm.service:

@@ -1,55 +1,57 @@
 <?php
+
 namespace NPS\ApiBundle\Services;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Repository\DeviceRepository;
+use NPS\CoreBundle\Repository\UserRepository;
 use Predis\Client;
 
 /**
- * SecureService
+ * Class SecureService
+ *
+ * @package NPS\ApiBundle\Services
  */
 class SecureService
 {
-    /**
-     * @var Client
-     */
-    private $cache;
+    /** @var Client */
+    protected $cache;
+
+    /** @var DeviceRepository */
+    protected $deviceRepository;
+
+    /** @var UserRepository */
+    protected $userRepository;
 
     /**
-     * @var Doctrine
+     * SecureService constructor.
+     *
+     * @param EntityManager $entityManager
+     * @param Client        $cache
      */
-    private $doctrine;
-
-    /**
-     * @var Entity Manager
-     */
-    private $entityManager;
-
-    /**
-     * @param Registry $doctrine Doctrine Registry
-     * @param Client   $cache    Client
-     */
-    public function __construct(Registry $doctrine, Client $cache)
+    public function __construct(EntityManager $entityManager, Client $cache)
     {
-        $this->cache = $cache;
-        $this->doctrine = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
+        $this->cache            = $cache;
+        $this->deviceRepository = $entityManager->getRepository(Device::class);
+        $this->userRepository   = $entityManager->getRepository(User::class);
     }
 
     /**
      * Get device user
-     * @param string $appKey device appKey
+     *
+     * @param string $deviceId device appKey
      *
      * @return mixed
      */
-    public function getUserByDevice($appKey)
+    public function getUserByDevice($deviceId)
     {
-        if($this->checkLogged($appKey)) {
-            $userId = $this->cache->get("device_".$appKey);
-            $userRepo = $this->entityManager->getRepository('NPSCoreBundle:User');
+        if ($this->checkLogged($deviceId)) {
+            $userId = $this->cache->get("device_" . $deviceId);
 
-            return $userRepo->find($userId);
+            return $this->userRepository->find($userId);
         }
 
         return null;
@@ -58,23 +60,23 @@ class SecureService
     /**
      * Check if device is logged
      *
-     * @param string $appKey   device key
+     * @param string $deviceId device key
      * @param string $email    email
      * @param string $password password
      *
      * @return bool | User
      */
-    public function checkLogged($appKey, $email = null, $password = null)
+    public function checkLogged($deviceId, $email = null, $password = null)
     {
-        $key = $this->cache->get("device_".$appKey);
+        $key = $this->cache->get("device_" . $deviceId);
         if ($key) {
             return true;
         }
 
-        if ($this->checkLoggedCache($appKey, $email)) {
+        if ($this->checkLoggedCache($deviceId, $email)) {
             return true;
         } elseif ($password) {
-            return $this->checkLoggedDB($appKey, $email, $password);
+            return $this->checkLoggedDB($deviceId, $email, $password);
         }
 
         return false;
@@ -82,31 +84,31 @@ class SecureService
 
     /**
      * Set device to cache
-     * @param $appKey
+     *
+     * @param $deviceId
      * @param $userId
      */
-    public function saveTemporaryKey($appKey, $userId)
+    public function saveTemporaryKey($deviceId, $userId)
     {
-        $this->cache->set("device_".$appKey, $userId);
+        $this->cache->set("device_" . $deviceId, $userId);
     }
 
     /**
      * Check if logged device, in cache
      *
-     * @param $appKey
+     * @param $deviceId
      * @param $email
      *
      * @return bool
      */
-    private function checkLoggedCache($appKey, $email = null)
+    private function checkLoggedCache($deviceId, $email = null)
     {
-        $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
-        $device = $deviceRepo->findOneByAppKey($appKey);
+        $device = $this->deviceRepository->findOneByAppKey($deviceId);
         if ($device instanceof Device) {
             if ($email && $email != $device->getUser()->getEmail()) {
                 return false;
             }
-            $this->saveTemporaryKey($appKey, $device->getUserId());
+            $this->saveTemporaryKey($deviceId, $device->getUserId());
 
             return true;
         }
@@ -115,15 +117,15 @@ class SecureService
     /**
      * Check login data in data base
      *
-     * @param string $appKey   device key
+     * @param string $deviceId device key
      * @param string $email    email
      * @param string $password password
      *
      * @return bool
      */
-    private function checkLoggedDB($appKey, $email, $password)
+    private function checkLoggedDB($deviceId, $email, $password)
     {
-        $user = $this->entityManager->getRepository('NPSCoreBundle:User')->findOneByEmail($email);
+        $user = $this->userRepository->findOneByEmail($email);
         if (!$user instanceof User) {
             return false;
         }
@@ -132,9 +134,8 @@ class SecureService
             return false;
         }
 
-        $deviceRepo = $this->entityManager->getRepository('NPSCoreBundle:Device');
-        $deviceRepo->createDevice($appKey, $user);
-        $this->saveTemporaryKey($appKey, $user->getId());
+        $this->deviceRepository->createDevice($deviceId, $user);
+        $this->saveTemporaryKey($deviceId, $user->getId());
 
         return true;
     }
