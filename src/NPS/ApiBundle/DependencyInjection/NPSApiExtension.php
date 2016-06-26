@@ -22,10 +22,11 @@ class NPSApiExtension extends Extension
     {
         $apiConfiguration = new Configuration();
         $this->processConfiguration($apiConfiguration, $configs);
-        $apiLoader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $apiLoader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         //load NPSApiBundle services
         $apiLoader->load('entity.yml');
         $apiLoader->load('eventListeners.yml');
         $apiLoader->load('services.yml');
+        $apiLoader->load('transformers.yml');
     }
 }

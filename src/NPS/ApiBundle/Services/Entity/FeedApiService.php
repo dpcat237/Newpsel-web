@@ -18,7 +18,7 @@ use NPS\CoreBundle\Helper\NotificationHelper;
 class FeedApiService
 {
     /**
-     * @var Doctrine
+     * @var Registry
      */
     private $doctrine;
 

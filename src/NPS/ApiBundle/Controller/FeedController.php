@@ -2,10 +2,11 @@
 
 namespace NPS\ApiBundle\Controller;
 
+use NPS\ApiBundle\Services\Entity\FeedApiService;
+use NPS\ApiBundle\Services\Entity\SourceApiService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Request\ParamFetcher;
 
 /**
  * FeedController
@@ -24,11 +25,8 @@ class FeedController extends ApiController
      */
     public function addFeedAction(Request $request)
     {
-        $json         = json_decode($request->getContent(), true);
-        $feedService  = $this->get('api.feed.service');
-        $responseData = $feedService->addFeed($json['appKey'], $json['feed_url']);
-
-        return $responseData;
+        $json = json_decode($request->getContent(), true);
+        $this->getFeedApiService()->addFeed($json['appKey'], $json['feed_url']);
     }
 
     /**
@@ -44,12 +42,45 @@ class FeedController extends ApiController
     public function syncFeedsAction(Request $request)
     {
         $json         = json_decode($request->getContent(), true);
-        $feedService  = $this->get('api.feed.service');
-        $responseData = $feedService->syncFeeds($json['appKey'], $json['feeds']);
+        $responseData = $this->getFeedApiService()->syncFeeds($json['appKey'], $json['feeds']);
         if ($responseData['error']) {
             return $responseData['error'];
         }
 
         return $responseData['feeds'];
+    }
+
+    /**
+     * List popular sources by categories
+     *
+     * @Rest\Get("/sources")
+     * @Rest\View
+     *
+     * @param Request $request the current request
+     *
+     * @return JsonResponse
+     */
+    public function getSourcesAction(Request $request)
+    {
+        $this->getDeviceKey($request);
+        $tis = $this->getSourceApiService()->getPopularSources();
+
+        return $this->get('nps.api.source.transformer')->transformList($tis);
+    }
+
+    /**
+     * @return FeedApiService
+     */
+    protected function getFeedApiService()
+    {
+        return $this->get('api.feed.service');
+    }
+
+    /**
+     * @return SourceApiService
+     */
+    protected function getSourceApiService()
+    {
+        return $this->get('api.source.service');
     }
 }

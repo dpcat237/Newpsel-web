@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Source
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="NPS\CoreBundle\Repository\SourceCategoryRepository")
  * @ORM\Table(name="source_category")
  * @ORM\HasLifecycleCallbacks
  */

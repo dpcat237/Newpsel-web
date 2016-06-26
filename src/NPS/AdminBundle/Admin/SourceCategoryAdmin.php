@@ -18,8 +18,11 @@ class SourceCategoryAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         /** @var SourceCategory $sourceCategory */
-        $sourceCategory           = $this->getSubject();
-        $fileFieldOptions['help'] = $this->getImagePath($sourceCategory->getImageName());
+        $sourceCategory   = $this->getSubject();
+        $fileFieldOptions = [
+            'required' => false,
+            'help'     => $this->getImagePath($sourceCategory->getImageName())
+        ];
 
         $formMapper
             ->add('name')

@@ -38,6 +38,10 @@ services:
       queue:      "@nps.launcher.queue"
       label_item: "@nps.entity.later_item"
 
+  api.source.service:
+    class: NPS\ApiBundle\Services\Entity\SourceApiService
+    arguments: ["@doctrine.orm.entity_manager"]
+
   api.user.service:
     class: NPS\ApiBundle\Services\Entity\UserApiService
     arguments:

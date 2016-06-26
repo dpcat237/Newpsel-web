@@ -1,0 +1,4 @@
+services:
+  nps.api.source.transformer:
+    class: NPS\ApiBundle\DataTransformer\SourceTransformer
+    arguments: ["@request_stack"]
