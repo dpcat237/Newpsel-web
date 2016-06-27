@@ -142,13 +142,13 @@
     .list-group-item:hover {
       background-color: #f5f5f5;
     }
-  </style></head>
-<link rel="icon" type="image/png" href="{{ asset('favicon-196x196.png') }}" sizes="196x196">
-<link rel="icon" type="image/png" href="{{ asset('favicon-160x160.png') }}" sizes="160x160">
-<link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96">
-<link rel="icon" type="image/png" href="{{ asset('favicon-16x16.png') }}" sizes="16x16">
-<link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
-<body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>Newpsel API documentation <small>version v0.1</small></h1><p>http://api.newpsel.com</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="article_sync" class="panel-title">/article/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_article_sync"><span class="parent"></span>/article/sync</a> <span class="methods"><a href="#article_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_article_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#article_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync list of unread articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="article_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/article/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync list of unread articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#article_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#article_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="article_sync_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  </style>
+  <link rel="icon" type="image/png" href="{{ asset('favicon-196x196.png') }}" sizes="196x196">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-160x160.png') }}" sizes="160x160">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-16x16.png') }}" sizes="16x16">
+  <link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
+</head><body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>Newpsel API documentation <small>version v0.1</small></h1><p>http://api.newpsel.com</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="article_sync" class="panel-title">/article/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_article_sync"><span class="parent"></span>/article/sync</a> <span class="methods"><a href="#article_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_article_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#article_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync list of unread articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="article_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/article/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync list of unread articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#article_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#article_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="article_sync_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
@@ -436,7 +436,6 @@
     }
   },
   "required": [
-    "appKey",
     "sharedItems"
   ]
 }
@@ -729,13 +728,10 @@
     "status": 2
   }
 ]
-</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_login" class="panel-title">/user/login</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_login"><span class="parent"></span>/user/login</a> <span class="methods"><a href="#user_login_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_login" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_login_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>User login</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_login_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/login</h4></div><div class="modal-body"><div class="alert alert-info"><p>User login</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_login_post_request" data-toggle="tab">Request</a></li><li><a href="#user_login_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_login_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+</code></pre></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_login" class="panel-title">/user/login</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_login"><span class="parent"></span>/user/login</a> <span class="methods"><a href="#user_login_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_login" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_login_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>User login</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_login_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/login</h4></div><div class="modal-body"><div class="alert alert-info"><p>User login</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_login_post_request" data-toggle="tab">Request</a></li><li><a href="#user_login_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_login_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "deviceId": {
-      "type": "string"
-    },
     "email": {
       "type": "string"
     },
@@ -744,23 +740,18 @@
     }
   },
   "required": [
-    "deviceId",
     "email",
     "password"
   ]
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
-  "deviceId":"[B@18d4580",
   "email":"test@email.com",
   "password":"asdfasdfwer5476fg65"
 }
-</code></pre></div><div class="tab-pane" id="user_login_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_register" class="panel-title">/user/register</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_register"><span class="parent"></span>/user/register</a> <span class="methods"><a href="#user_register_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_register" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_register_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Register an user</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_register_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/register</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register an user</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_register_post_request" data-toggle="tab">Request</a></li><li><a href="#user_register_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_register_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+</code></pre></div><div class="tab-pane" id="user_login_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_register" class="panel-title">/user/register</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_register"><span class="parent"></span>/user/register</a> <span class="methods"><a href="#user_register_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_register" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_register_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Register an user</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_register_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/register</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register an user</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_register_post_request" data-toggle="tab">Request</a></li><li><a href="#user_register_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_register_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "deviceId": {
-      "type": "string"
-    },
     "email": {
       "type": "string"
     },
@@ -769,13 +760,11 @@
     }
   },
   "required": [
-    "deviceId",
     "email",
     "password"
   ]
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
-  "deviceId":"[B@18d4580",
   "email":"test@email.com",
   "password":"asdfasdfwer5476fg65"
 }
@@ -794,22 +783,7 @@
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
   "email":"test@email.com"
 }
-</code></pre></div><div class="tab-pane" id="user_password_recovery_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_preview" class="panel-title">/user/preview</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_preview"><span class="parent"></span>/user/preview</a> <span class="methods"><a href="#user_preview_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_preview" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_preview_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Register device without user data for preview</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_preview_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/preview</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register device without user data for preview</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_preview_post_request" data-toggle="tab">Request</a></li><li><a href="#user_preview_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_preview_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "deviceId": {
-      "type": "string"
-    }
-  },
-  "required": [
-    "deviceId"
-  ]
-}
-</code></pre><p><strong>Example</strong>:</p><pre><code>{
-  "deviceId":"[B@18d4580"
-}
-</code></pre></div><div class="tab-pane" id="user_preview_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p><h2>HTTP status code <a href="http://httpstatus.es/409" target="_blank">409</a></h2><p>Execution had some conflict between received data and exists data.</p><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+</code></pre></div><div class="tab-pane" id="user_password_recovery_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="user_preview" class="panel-title">/user/preview</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_user_preview"><span class="parent"></span>/user/preview</a> <span class="methods"><a href="#user_preview_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_user_preview" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#user_preview_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Register device without user data for preview</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="user_preview_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/user/preview</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register device without user data for preview</p></div><ul class="nav nav-tabs"><li class="active"><a href="#user_preview_post_request" data-toggle="tab">Request</a></li><li><a href="#user_preview_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="user_preview_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul></div><div class="tab-pane" id="user_preview_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p><h2>HTTP status code <a href="http://httpstatus.es/409" target="_blank">409</a></h2><p>Execution had some conflict between received data and exists data.</p><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
   "code": 409,
   "message": "User with this email exists",
   "errors": null

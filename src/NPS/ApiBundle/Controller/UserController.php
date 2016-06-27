@@ -29,7 +29,7 @@ class UserController extends ApiController
     public function loginAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $this->getDeviceService()->loginApi($json['appKey'], $json['email'], $json['password']);
+        $this->getDeviceService()->loginApi($this->getDeviceId($request), $json['email'], $json['password']);
     }
 
     /**
@@ -45,7 +45,7 @@ class UserController extends ApiController
     public function registerAction(Request $request)
     {
         $json = json_decode($request->getContent(), true);
-        $this->getDeviceService()->registerUserDevice($json['appKey'], $json['email'], $json['password']);
+        $this->getDeviceService()->registerUserDevice($this->getDeviceId($request), $json['email'], $json['password']);
     }
 
     /**
