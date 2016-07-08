@@ -20,7 +20,7 @@ class SourceCategoryAdmin extends AbstractAdmin
         /** @var SourceCategory $sourceCategory */
         $sourceCategory   = $this->getSubject();
         $fileFieldOptions = [
-            'required' => false,
+            'required' => true,
             'help'     => $this->getImagePath($sourceCategory->getImageName())
         ];
 
