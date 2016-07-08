@@ -25,9 +25,25 @@ class FeedController extends ApiController
      */
     public function addFeedAction(Request $request)
     {
-        $deviceId     = $this->getDeviceId($request);
-        $json = json_decode($request->getContent(), true);
+        $deviceId = $this->getDeviceId($request);
+        $json     = json_decode($request->getContent(), true);
         $this->getFeedApiService()->addFeed($deviceId, $json['feed_url']);
+    }
+
+    /**
+     * Edit feed title
+     *
+     * @Rest\Post("/edit")
+     * @Rest\View
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function editFeedAction(Request $request)
+    {
+        $json = json_decode($request->getContent(), true);
+        $this->getFeedApiService()->editFeed($this->getDeviceUser($request), $json['feed_id'], $json['feed_title']);
     }
 
     /**
@@ -53,6 +69,22 @@ class FeedController extends ApiController
     }
 
     /**
+     * Unsubscribe from feed
+     *
+     * @Rest\Delete("/{id}/delete")
+     * @Rest\View
+     *
+     * @param int     $id
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteFeedAction($id, Request $request)
+    {
+        $this->getFeedApiService()->unsubscribeFeed($this->getDeviceUser($request), $id);
+    }
+
+    /**
      * List popular sources by categories
      *
      * @Rest\Get("/sources")
@@ -64,10 +96,10 @@ class FeedController extends ApiController
      */
     public function getSourcesAction(Request $request)
     {
-        $this->getDeviceKey($request);
-        $tis = $this->getSourceApiService()->getPopularSources();
+        $this->getDeviceId($request);
+        $sources = $this->getSourceApiService()->getPopularSources();
 
-        return $this->get('nps.api.source.transformer')->transformList($tis);
+        return $this->get('nps.api.source.transformer')->transformList($sources);
     }
 
     /**

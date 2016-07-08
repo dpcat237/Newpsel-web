@@ -1,7 +1,10 @@
 <?php
+
 namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
+use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Event\FeedModifiedEvent;
 use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use NPS\ApiBundle\Services\SecureService;
@@ -13,52 +16,52 @@ use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
- * FeedApiService
+ * Class FeedApiService
+ *
+ * @package NPS\ApiBundle\Services\Entity
  */
 class FeedApiService
 {
-    /**
-     * @var Registry
-     */
-    private $doctrine;
+    /** @var DownloadFeedsService */
+    protected $downloadFeeds;
 
-    /**
-     * @var DownloadFeedsService
-     */
-    private $downloadFeeds;
+    /** @var ContainerAwareEventDispatcher */
+    protected $eventDispatcher;
 
-    /**
-     * @var ContainerAwareEventDispatcher
-     */
-    private $eventDispatcher;
+    /** @var Registry */
+    protected $feedRepository;
 
-    /**
-     * @var SecureService
-     */
-    private $secure;
+    /** @var SecureService */
+    protected $secure;
 
-    /**
-     * @var Boolean
-     */
-    private $modified = false;
+    /** @var Boolean */
+    protected $modified = false;
 
 
     /**
-     * @param Registry                      $doctrine        Doctrine Registry
-     * @param SecureService                 $secure          SecureService
-     * @param DownloadFeedsService          $downloadFeeds   DownloadFeedsService
-     * @param ContainerAwareEventDispatcher $eventDispatcher ContainerAwareEventDispatcher
+     * FeedApiService constructor.
+     *
+     * @param EntityManager                 $entityManager
+     * @param SecureService                 $secure
+     * @param DownloadFeedsService          $downloadFeeds
+     * @param ContainerAwareEventDispatcher $eventDispatcher
      */
-    public function __construct(Registry $doctrine, SecureService $secure, DownloadFeedsService $downloadFeeds, ContainerAwareEventDispatcher $eventDispatcher)
+    public function __construct(
+        EntityManager $entityManager,
+        SecureService $secure,
+        DownloadFeedsService $downloadFeeds,
+        ContainerAwareEventDispatcher $eventDispatcher
+    )
     {
-        $this->doctrine = $doctrine;
-        $this->downloadFeeds = $downloadFeeds;
+        $this->feedRepository  = $entityManager->getRepository(Feed::class);
+        $this->downloadFeeds   = $downloadFeeds;
         $this->eventDispatcher = $eventDispatcher;
-        $this->secure = $secure;
+        $this->secure          = $secure;
     }
 
     /**
      * Add feed for api
+     *
      * @param string $appKey
      * @param string $feedUrl
      *
@@ -77,10 +80,29 @@ class FeedApiService
             return NotificationHelper::ERROR_WRONG_FEED;
         }
 
-        //notify other devices about modification
         $this->eventDispatcher->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
 
         return NotificationHelper::OK;
+    }
+
+    /**
+     * Change feed title
+     *
+     * @param User   $user
+     * @param int    $feedId
+     * @param string $feedTitle
+     */
+    public function editFeed(User $user, $feedId, $feedTitle)
+    {
+        $feed = $this->feedRepository->find($feedId);
+        $feed->setTitle($feedTitle);
+        $this->feedRepository->getEntityManager()->flush($feed);
+        $this->eventDispatcher->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
+    }
+    
+    public function unsubscribeFeed(User $user, $feedId)
+    {
+        
     }
 
     /**
@@ -101,14 +123,14 @@ class FeedApiService
             $error = NotificationHelper::ERROR_NO_LOGGED;
         }
 
-        if (!$error){
-            $dbFeeds = $this->doctrine->getRepository('NPSCoreBundle:Feed')->getUserFeedsApi($user->getId());
-            $feeds = $this->processFeedsSync($dbFeeds, $apiFeeds, $user);
+        if (!$error) {
+            $dbFeeds = $this->feedRepository->getUserFeedsApi($user->getId());
+            $feeds   = $this->processFeedsSync($dbFeeds, $apiFeeds, $user);
         }
-        $responseData = array(
+        $responseData = [
             'error' => $error,
             'feeds' => $feeds,
-        );
+        ];
 
         return $responseData;
     }
@@ -124,7 +146,7 @@ class FeedApiService
      */
     private function processFeedsSync(array $dbFeeds, array $apiFeeds, $user)
     {
-        $feeds = array();
+        $feeds          = array();
         $this->modified = false;
         //first sync to device
         if (!count($apiFeeds)) {
@@ -133,7 +155,7 @@ class FeedApiService
                     continue;
                 }
                 $dbFeed['status'] = EntityConstants::STATUS_NEW;
-                $feeds[] = $dbFeed;
+                $feeds[]          = $dbFeed;
             }
 
             return $feeds;
@@ -164,7 +186,7 @@ class FeedApiService
      */
     private function compareSyncApiDb(array $dbFeeds, array $apiFeeds)
     {
-        $feeds = array();
+        $feeds    = array();
         $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
 
         foreach ($dbFeeds as $dbFeed) {
@@ -178,8 +200,8 @@ class FeedApiService
                 //deleted notify API
                 if ($dbFeed['deleted']) {
                     $apiFeed['status'] = EntityConstants::STATUS_DELETED;
-                    $feeds[] = $apiFeed;
-                    $found = true;
+                    $feeds[]           = $apiFeed;
+                    $found             = true;
                     break;
                 }
 
@@ -202,7 +224,7 @@ class FeedApiService
             }
             if (!$found) {
                 $dbFeed['status'] = EntityConstants::STATUS_NEW;
-                $feeds[] = $dbFeed;
+                $feeds[]          = $dbFeed;
             }
         }
 
@@ -222,7 +244,7 @@ class FeedApiService
     {
         if ($dbFeed['date_up'] > $apiFeed['date_up']) {
             $dbFeed['status'] = EntityConstants::STATUS_CHANGED;
-            $dbFeed['id'] = $apiFeed['id'];
+            $dbFeed['id']     = $apiFeed['id'];
 
             return $dbFeed;
         }

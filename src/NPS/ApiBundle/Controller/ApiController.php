@@ -44,16 +44,30 @@ class ApiController extends Controller
      */
     protected function getDeviceId(Request $request)
     {
-        $deviceKey = $request->headers->get('deviceId');
-        if (!$deviceKey) {
+        $deviceId = $request->headers->get('deviceId');
+        if (!$deviceId) {
             $json          = json_decode($request->getContent(), true);
-            $deviceKey =(isset($json['deviceId']))? $json['deviceId'] : null;
+            $deviceId =(isset($json['deviceId']))? $json['deviceId'] : null;
         }
 
-        if (!$deviceKey) {
+        if (!$deviceId) {
             throw new UnauthorizedException();
         }
 
-        return $deviceKey;
+        return $deviceId;
+    }
+
+    /**
+     * Get user from device ID
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     */
+    protected function getDeviceUser(Request $request)
+    {
+        $deviceId = $this->getDeviceId($request);
+
+        return $this->get('api.secure.service')->getUserByDevice($deviceId);
     }
 }
