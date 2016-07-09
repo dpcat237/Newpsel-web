@@ -7,6 +7,7 @@ use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\Event\FeedModifiedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
 use NPS\FrontendBundle\Form\Type\ImportOpmlType;
+use NPS\FrontendBundle\Services\Entity\FeedFrontendService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template,
@@ -17,8 +18,8 @@ use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Entity\Feed,
-    NPS\CoreBundle\Entity\UserFeed;
+use NPS\CoreBundle\Entity\Feed;
+use NPS\CoreBundle\Entity\UserFeed;
 use NPS\FrontendBundle\Form\Type\UserFeedEditType;
 
 /**
@@ -38,7 +39,7 @@ class FeedController extends Controller
     {
         $user         = $this->getUser();
         $userFeedRepo = $this->getDoctrine()->getRepository('NPSCoreBundle:UserItem');
-        $menuAll      = $this->get('nps.entity.feed')->getMenuAll($user->getId());
+        $menuAll      = $this->getFeedFrontendService()->getMenuAll($user->getId());
         if ($menuAll) {
             $feedsList  = $userFeedRepo->getUserFeedsForMenu($user->getId(), $menuAll);
             $feedsCount = $userFeedRepo->getUserFeedsForMenu($user->getId());
@@ -83,7 +84,7 @@ class FeedController extends Controller
             $this->get('system_notification')->setMessage($error);
         } else {
             $result      = NotificationHelper::OK;
-            $userFeed    = $this->get('nps.entity.feed')->getUserFeed($user->getId(), $feed->getId());
+            $userFeed    = $this->getFeedFrontendService()->getUserFeed($user->getId(), $feed->getId());
             $itemListUrl = $this->container->get('router')->generate('items_list', array('user_feed_id' => $userFeed->getId()), true);
 
             //notify other devices about modification
@@ -122,7 +123,7 @@ class FeedController extends Controller
         $form = $this->createForm(UserFeedEditType::class, $userFeed);
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
-            $this->get('nps.entity.feed')->saveFormUserFeed($form);
+            $this->getFeedFrontendService()->saveFormUserFeed($form);
 
             //notify other devices about modification
             $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
@@ -160,7 +161,7 @@ class FeedController extends Controller
             return new RedirectResponse($route);
         }
 
-        $this->get('nps.entity.feed')->removeUserFeed($userFeed);
+        $this->getFeedFrontendService()->removeUserFeed($userFeed);
 
         //notify other devices about modification
         $this->get('event_dispatcher')->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
@@ -186,7 +187,7 @@ class FeedController extends Controller
         $viewData = array(
             'userFeeds' => $userFeeds,
             'title'     => 'Feeds management',
-            'menuAll'   => $this->get('nps.entity.feed')->getMenuAll($user->getId())
+            'menuAll'   => $this->getFeedFrontendService()->getMenuAll($user->getId())
         );
 
         return $viewData;
@@ -200,8 +201,18 @@ class FeedController extends Controller
      */
     public function changeAllFeedsStatusAction()
     {
-        $this->get('nps.entity.feed')->changeMenuAll($this->getUser()->getId());
+        $this->getFeedFrontendService()->changeMenuAll($this->getUser()->getId());
 
         return new RedirectResponse($this->container->get('router')->generate('feeds_list'));
+    }
+
+    /**
+     * Get FeedFrontendService
+     *
+     * @return FeedFrontendService
+     */
+    protected function getFeedFrontendService()
+    {
+        return $this->get('nps.frontend.entity.feed');
     }
 }

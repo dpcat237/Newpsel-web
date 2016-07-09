@@ -8,7 +8,7 @@ services:
             doctrine:         "@doctrine.orm.entity_manager"
             simple_pie:       "@fkr_simple_pie.rss"
             redis:            "@snc_redis.default"
-            feed:             "@nps.entity.feed"
+            feed:             "@nps.frontend.entity.feed"
             item:             "@item"
             feed_history:     "@feed_history"
             event_dispatcher: "@event_dispatcher"

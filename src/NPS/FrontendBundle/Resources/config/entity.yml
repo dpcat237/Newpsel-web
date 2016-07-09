@@ -1,0 +1,11 @@
+services:
+  nps.frontend.abstract.entity:
+    class: NPS\FrontendBundle\Services\Entity\AbstractEntityFrontendService
+    arguments: ["@nps.wrapper.user", "@nps.manager.notification"]
+
+  nps.frontend.entity.feed:
+    class: NPS\FrontendBundle\Services\Entity\FeedFrontendService
+    parent: "nps.frontend.abstract.entity"
+    calls:
+      - [setFeedService, ["@nps.entity.feed"]]
+      - [setRedis, ["@snc_redis.default"]]

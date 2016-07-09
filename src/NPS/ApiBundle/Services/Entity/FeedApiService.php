@@ -3,14 +3,13 @@
 namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
 use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Event\FeedModifiedEvent;
+use NPS\CoreBundle\Services\Entity\FeedService;
 use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\NPSCoreEvents;
-use NPS\CoreBundle\Repository\FeedRepository;
 use NPS\CoreBundle\Services\DownloadFeedsService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
@@ -28,8 +27,8 @@ class FeedApiService
     /** @var ContainerAwareEventDispatcher */
     protected $eventDispatcher;
 
-    /** @var Registry */
-    protected $feedRepository;
+    /** @var FeedService */
+    protected $feedService;
 
     /** @var SecureService */
     protected $secure;
@@ -41,19 +40,19 @@ class FeedApiService
     /**
      * FeedApiService constructor.
      *
-     * @param EntityManager                 $entityManager
+     * @param FeedService                   $feedService
      * @param SecureService                 $secure
      * @param DownloadFeedsService          $downloadFeeds
      * @param ContainerAwareEventDispatcher $eventDispatcher
      */
     public function __construct(
-        EntityManager $entityManager,
+        FeedService $feedService,
         SecureService $secure,
         DownloadFeedsService $downloadFeeds,
         ContainerAwareEventDispatcher $eventDispatcher
     )
     {
-        $this->feedRepository  = $entityManager->getRepository(Feed::class);
+        $this->feedService     = $feedService;
         $this->downloadFeeds   = $downloadFeeds;
         $this->eventDispatcher = $eventDispatcher;
         $this->secure          = $secure;
@@ -94,15 +93,20 @@ class FeedApiService
      */
     public function editFeed(User $user, $feedId, $feedTitle)
     {
-        $feed = $this->feedRepository->find($feedId);
-        $feed->setTitle($feedTitle);
-        $this->feedRepository->getEntityManager()->flush($feed);
+        $this->feedService->editUserFeed($user->getId(), $feedId, $feedTitle);
         $this->eventDispatcher->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
     }
-    
+
+    /**
+     * Soft remove user's feed
+     *
+     * @param User $user
+     * @param int  $feedId
+     */
     public function unsubscribeFeed(User $user, $feedId)
     {
-        
+        $userFeed = $this->feedService->getUserFeed($user->getId(), $feedId);
+        $this->feedService->removeUserFeed($userFeed);
     }
 
     /**
@@ -124,7 +128,7 @@ class FeedApiService
         }
 
         if (!$error) {
-            $dbFeeds = $this->feedRepository->getUserFeedsApi($user->getId());
+            $dbFeeds = $this->feedService->getUserFeedsApi($user->getId());
             $feeds   = $this->processFeedsSync($dbFeeds, $apiFeeds, $user);
         }
         $responseData = [
@@ -186,8 +190,7 @@ class FeedApiService
      */
     private function compareSyncApiDb(array $dbFeeds, array $apiFeeds)
     {
-        $feeds    = array();
-        $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
+        $feeds = array();
 
         foreach ($dbFeeds as $dbFeed) {
             $found = false;
@@ -213,7 +216,7 @@ class FeedApiService
                 }
 
                 //compare changes
-                $changedLabel = $this->processChangedFeed($dbFeed, $apiFeed, $feedRepo);
+                $changedLabel = $this->processChangedFeed($dbFeed, $apiFeed);
                 if (!empty($changedLabel)) {
                     $feeds[] = $changedLabel;
                 }
@@ -234,13 +237,12 @@ class FeedApiService
     /**
      * Compare last update dates and update feed in proper place
      *
-     * @param array          $dbFeed
-     * @param array          $apiFeed
-     * @param FeedRepository $feedRepo
+     * @param array $dbFeed
+     * @param array $apiFeed
      *
      * @return null
      */
-    private function processChangedFeed($dbFeed, $apiFeed, FeedRepository $feedRepo)
+    private function processChangedFeed($dbFeed, $apiFeed)
     {
         if ($dbFeed['date_up'] > $apiFeed['date_up']) {
             $dbFeed['status'] = EntityConstants::STATUS_CHANGED;
@@ -249,7 +251,7 @@ class FeedApiService
             return $dbFeed;
         }
         if ($dbFeed['date_up'] < $apiFeed['date_up']) {
-            $feedRepo->updateFeed($apiFeed['api_id'], $apiFeed['title'], $apiFeed['date_up']);
+            $this->feedService->updateUserFeed($apiFeed['api_id'], $apiFeed['title'], $apiFeed['date_up']);
             $this->modified = true;
 
             return null;

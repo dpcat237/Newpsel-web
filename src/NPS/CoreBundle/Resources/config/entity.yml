@@ -8,9 +8,7 @@ services:
 
     nps.entity.feed:
         class: NPS\CoreBundle\Services\Entity\FeedService
-        parent: nps.abstract.entity
-        calls:
-            - [setRedis, ["@snc_redis.default"]]
+        arguments: ["@doctrine.orm.entity_manager"]
 
     feed_history:
         class: NPS\CoreBundle\Services\Entity\FeedHistoryService
