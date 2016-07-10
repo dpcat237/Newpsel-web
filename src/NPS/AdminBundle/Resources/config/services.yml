@@ -1,4 +1,13 @@
 services:
+  newpsel.admin.feedback:
+    class: NPS\AdminBundle\Admin\FeedbackAdmin
+    tags:
+      - { name: sonata.admin, manager_type: orm, group: "Customer", label: "Feedbacks" }
+    arguments:
+        - ~
+        - NPS\CoreBundle\Entity\Feedback
+        - ~
+
   newpsel.admin.source:
     class: NPS\AdminBundle\Admin\SourceAdmin
     tags:

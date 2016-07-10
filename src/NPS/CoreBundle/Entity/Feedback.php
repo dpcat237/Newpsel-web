@@ -101,4 +101,12 @@ class Feedback extends AbstractEntity
     {
         return $this->text;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title;
+    }
 }
