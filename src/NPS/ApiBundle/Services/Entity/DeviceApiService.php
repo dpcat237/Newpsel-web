@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\Device;
+use NPS\CoreBundle\Entity\Feedback;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Repository\DeviceRepository;
@@ -54,6 +55,24 @@ class DeviceApiService
         $this->userNotification = $userNotification;
         $this->userService      = $userService;
         $this->deviceRepository = $entityManager->getRepository(Device::class);
+    }
+
+    /**
+     * Add feedback
+     *
+     * @param string $email
+     * @param string $title
+     * @param string $text
+     */
+    public function addFeedback($email, $title, $text)
+    {
+        $feedback = new Feedback();
+        $feedback
+            ->setEmail($email)
+            ->setTitle($title)
+            ->setText($text);
+        $this->entityManager->persist($feedback);
+        $this->entityManager->flush($feedback);
     }
 
     /**

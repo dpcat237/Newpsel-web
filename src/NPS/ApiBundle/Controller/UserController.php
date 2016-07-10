@@ -96,6 +96,22 @@ class UserController extends ApiController
     }
 
     /**
+     * Add user feedback
+     *
+     * @Rest\Post("/feedback")
+     * @Rest\View
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function feedbackAction(Request $request)
+    {
+        $json = json_decode($request->getContent(), true);
+        $this->getDeviceService()->addFeedback($json['email'], $json['title'], $json['text']);
+    }
+
+    /**
      * @return DeviceApiService
      */
     protected function getDeviceService()
