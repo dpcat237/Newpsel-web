@@ -58,6 +58,18 @@ class FilterService
     }
 
     /**
+     * Get filters of user
+     *
+     * @param User $user
+     *
+     * @return Filter[]
+     */
+    public function getFiltersByUser(User $user)
+    {
+        return $this->filterRepository->findByUser($user);
+    }
+
+    /**
      * Remove user's filter
      *
      * @param Filter $filter

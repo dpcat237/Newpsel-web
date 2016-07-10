@@ -280,7 +280,7 @@ class Filter extends AbstractEntity
     /**
      * Get filter feeds
      *
-     * @return ArrayCollection of FilterFeed
+     * @return FilterFeed[]
      */
     public function getFilterFeeds()
     {

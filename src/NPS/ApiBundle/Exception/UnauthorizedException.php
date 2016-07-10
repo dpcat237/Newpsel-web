@@ -19,7 +19,7 @@ class UnauthorizedException extends HttpException
      */
     public function __construct($message = null)
     {
-        $message = ($message)?:'No device key';
+        $message = ($message)?:'No device key or is wrong';
         parent::__construct(Response::HTTP_UNAUTHORIZED, $message, null, [], 0);
     }
 }

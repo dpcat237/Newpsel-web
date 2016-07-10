@@ -59,4 +59,12 @@ class FilterApiService
             $this->feedService->getFeedsByIds($feedIds)
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUserFilters(User $user)
+    {
+        return $this->filterService->getFiltersByUser($user);
+    }
 }

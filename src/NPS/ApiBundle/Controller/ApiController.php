@@ -4,6 +4,7 @@ namespace NPS\ApiBundle\Controller;
 
 use Exception;
 use NPS\ApiBundle\Exception\UnauthorizedException;
+use NPS\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class ApiController extends Controller
     {
         $headers = ['Content-Type' => 'text/html'];
         try {
-            $content = $this->container->get('templating')->render('NPSApiBundle:Api:documentation_'.$version.'.html.twig', []);
+            $content = $this->container->get('templating')->render('NPSApiBundle:Api:documentation_' . $version . '.html.twig', []);
         } catch (Exception $e) {
             throw $this->createNotFoundException();
         }
@@ -41,13 +42,14 @@ class ApiController extends Controller
      * @param Request $request
      *
      * @return array|string
+     * @throws UnauthorizedException
      */
     protected function getDeviceId(Request $request)
     {
         $deviceId = $request->headers->get('deviceId');
         if (!$deviceId) {
-            $json          = json_decode($request->getContent(), true);
-            $deviceId =(isset($json['deviceId']))? $json['deviceId'] : null;
+            $json     = json_decode($request->getContent(), true);
+            $deviceId = (isset($json['deviceId'])) ? $json['deviceId'] : null;
         }
 
         if (!$deviceId) {
@@ -62,12 +64,18 @@ class ApiController extends Controller
      *
      * @param Request $request
      *
-     * @return mixed
+     * @return User
+     * @throws UnauthorizedException
      */
     protected function getDeviceUser(Request $request)
     {
         $deviceId = $this->getDeviceId($request);
+        $user     = $this->get('api.secure.service')->getUserByDevice($deviceId);
 
-        return $this->get('api.secure.service')->getUserByDevice($deviceId);
+        if (!$user instanceof User) {
+            throw new UnauthorizedException();
+        }
+
+        return $user;
     }
 }

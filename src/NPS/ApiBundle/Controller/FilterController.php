@@ -2,6 +2,7 @@
 
 namespace NPS\ApiBundle\Controller;
 
+use NPS\ApiBundle\DataTransformer\UserFiltersTransformer;
 use NPS\ApiBundle\Services\Entity\FilterApiService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +29,23 @@ class FilterController extends ApiController
     {
         $json = json_decode($request->getContent(), true);
         $this->getFilterApiService()->automaticallyToDictation($this->getDeviceUser($request), $json['feeds']);
+    }
+
+    /**
+     * List filters
+     *
+     * @Rest\Get("/list")
+     * @Rest\View
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function listFiltersAction(Request $request)
+    {
+        return UserFiltersTransformer::transformList(
+            $this->getFilterApiService()->getUserFilters($this->getDeviceUser($request))
+        );
     }
 
     /**
