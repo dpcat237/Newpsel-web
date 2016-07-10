@@ -2,132 +2,59 @@
 
 namespace NPS\CoreBundle\Services\Entity;
 
+use Doctrine\ORM\EntityManager;
+use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\Filter;
 use NPS\CoreBundle\Entity\Later;
-use Symfony\Bridge\Monolog\Logger;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormError;
+use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Repository\FilterRepository;
 
 /**
  * Class FilterService
  *
  * @package NPS\CoreBundle\Services\Entity
  */
-class FilterService extends AbstractEntityService
+class FilterService
 {
-    /** @var Filter */
-    protected $filter;
+    use EntityServiceTrait;
 
-    /** @var Form */
-    protected $formData;
-
-    /** @var bool */
-    protected $formError = false;
-
-    /** @var Form */
-    protected $form;
-
-    protected function setRepository()
-    { }
+    /** @var FilterRepository */
+    protected $filterRepository;
 
     /**
-     * Process to validate filter form and create it
+     * FeedService constructor.
      *
-     * @param Form $form
+     * @param EntityManager $entityManager
      */
-    public function createFilter(Form $form)
+    public function __construct(EntityManager $entityManager)
     {
-        $this->form = $form;
-        $this->formData = $form->getData();
-        $this->checkFilterForm();
-
-        if ($this->formError) {
-            return;
-        }
-
-        $this->filter = null;
-        $this->createFilterObject();
-        $this->entityManager->flush();
+        $this->entityManager    = $entityManager;
+        $this->filterRepository = $entityManager->getRepository(Filter::class);
     }
 
     /**
      * Create filter in principal data base
+     *
+     * @param User   $user
+     * @param string $type
+     * @param string $name
+     * @param Later  $tag
+     * @param Feed[] $feeds
      */
-    private function createFilterObject()
+    public function createFilterFeeds(User $user, $type, $name, $tag, $feeds)
     {
         $filter = new Filter();
-        $filter->setType($this->formData->getType());
-        $filter->setUser($this->userWrapper->getCurrentUser());
-        $filter->setName($this->formData->getName());
-        $filter->setLater($this->formData->getLater());
-        foreach ($this->formData->getFeeds() as $feed) {
+        $filter
+            ->setType($type)
+            ->setUser($user)
+            ->setName($name)
+            ->setLater($tag);
+        foreach ($feeds as $feed) {
             $filter->addFeed($feed);
         }
 
         $this->entityManager->persist($filter);
-        $this->filter = $filter;
-    }
-
-    /**
-     * Check form for different filters
-     */
-    private function checkFilterForm()
-    {
-        $this->formError = false;
-        switch ($this->formData->getType()) {
-            case 'to.label':
-                $this->checkFormToLabel();
-                break;
-        }
-    }
-
-    /**
-     * Check that are all required data for filter "to.label"
-     */
-    private function checkFormToLabel()
-    {
-        if (!$this->formData->getLater() instanceof Later) {
-            $error = new FormError($this->notification->trans('_Error_select_label'));
-            $this->form->get('later')->addError($error);
-            $this->formError = true;
-        }
-    }
-
-    /**
-     * Process to validate filter form and edit it
-     *
-     * @param Filter $filter
-     * @param Form   $form
-     */
-    public function editFilter(Filter $filter, Form $form)
-    {
-        $this->form = $form;
-        $this->formData = $form->getData();
-        $this->checkFilterForm();
-
-        if ($this->formError) {
-            return;
-        }
-
-        $this->filter = $filter;
-        $this->editFilterObject();
         $this->entityManager->flush();
-    }
-
-    /**
-     * Create filter in principal data base
-     *
-     * @return boolean
-     */
-    private function editFilterObject()
-    {
-        if ($this->filter->getName() != $this->formData->getName()) {
-            $this->filter->setName($this->formData->getName());
-        }
-
-        if ($this->filter->getLater()->getId() != $this->formData->getLater()->getId()) {
-            $this->filter->setLater($this->formData->getLater());
-        }
     }
 
     /**

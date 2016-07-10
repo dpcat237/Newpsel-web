@@ -15,6 +15,10 @@ services:
       download_feeds:   "@download_feeds"
       event_dispatcher: "@event_dispatcher"
 
+  api.filter.service:
+    class: NPS\ApiBundle\Services\Entity\FilterApiService
+    arguments: ["@nps.entity.filter", "@nps.entity.feed"]
+
   api.item.service:
     class: NPS\ApiBundle\Services\Entity\ItemApiService
     arguments:

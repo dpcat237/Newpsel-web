@@ -15,6 +15,7 @@ class FeedRepository extends EntityRepository
 {
     /**
      * Check if already exists this feed in data base
+     *
      * @param string $url
      *
      * @return Feed
@@ -22,9 +23,27 @@ class FeedRepository extends EntityRepository
     public function checkExistFeedUrl($url)
     {
         $urlHash = sha1($url);
-        $feed = $this->findOneByUrlHash($urlHash);
+        $feed    = $this->findOneByUrlHash($urlHash);
 
         return $feed;
+    }
+
+    /**
+     * Get feeds by ids
+     *
+     * @param array $feedIds
+     *
+     * @return Feed[]
+     */
+    public function getFeedsByIds($feedIds)
+    {
+        $query = $this->createQueryBuilder('f');
+        $query
+            ->add('where', $query->expr()->in('f.id', $feedIds))
+            ->andWhere('f.enabled = :enabled')
+            ->getQuery();
+
+        return $query->getResult();
     }
 
     /**
@@ -34,7 +53,7 @@ class FeedRepository extends EntityRepository
      */
     public function getFeedsToUpdateData()
     {
-        $query = $this->createQueryBuilder('f')
+        $query          = $this->createQueryBuilder('f')
             ->where('f.enabled = :enabled')
             ->andWhere('(f.dateSync + f.syncInterval) <= :currentTime')
             ->orderBy('f.syncInterval', 'ASC')
@@ -69,13 +88,14 @@ class FeedRepository extends EntityRepository
 
     /**
      * Get user's feeds list
+     *
      * @param $userId
      *
      * @return mixed
      */
     public function getUserFeeds($userId)
     {
-        $query = $this->createQueryBuilder('f')
+        $query          = $this->createQueryBuilder('f')
             ->join('f.userFeeds', 'uf')
             ->join('uf.user', 'u')
             ->where('u.id = :userId')

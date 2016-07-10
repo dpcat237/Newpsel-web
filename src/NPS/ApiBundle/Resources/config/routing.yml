@@ -24,6 +24,13 @@ api_feed:
   schemes: [https]
   name_prefix: rest_api_v1_feed_
 
+api_filter:
+  resource: "@NPSApiBundle/Controller/FilterController.php"
+  type:     rest
+  prefix:  /filter
+  schemes: [https]
+  name_prefix: rest_api_v1_filter_
+
 api_item:
   resource: "@NPSApiBundle/Controller/ItemController.php"
   type:     rest

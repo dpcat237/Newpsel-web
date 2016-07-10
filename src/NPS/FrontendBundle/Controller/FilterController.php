@@ -4,6 +4,7 @@ namespace NPS\FrontendBundle\Controller;
 
 use NPS\CoreBundle\Entity\Filter;
 use NPS\CoreBundle\Entity\User;
+use NPS\FrontendBundle\Services\Entity\FilterFrontendService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -65,7 +66,7 @@ class FilterController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            $filterService = $this->get('nps.entity.filter');
+            $filterService = $this->getFilterFrontendService();
             $filterService->createFilter($form);
             $route = $this->container->get('router')->generate('filters_list');
 
@@ -108,7 +109,7 @@ class FilterController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            $filterService = $this->get('nps.entity.filter');
+            $filterService = $this->getFilterFrontendService();
             $filterService->editFilter($filter, $form);
             $route = $this->container->get('router')->generate('filters_list');
 
@@ -144,8 +145,18 @@ class FilterController extends Controller
             return new RedirectResponse($route);
         }
 
-        $this->get('nps.entity.filter')->removeFilter($filter);
+        $this->getFilterFrontendService()->removeFilter($filter);
 
         return new RedirectResponse($route);
+    }
+
+    /**
+     * Get FilterFrontendService
+     *
+     * @return FilterFrontendService
+     */
+    protected function getFilterFrontendService()
+    {
+        return $this->get('nps.frontend.entity.filter');
     }
 }

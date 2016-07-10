@@ -17,6 +17,17 @@ class Filter extends AbstractEntity
 {
     use EnabledTrait;
 
+    const FILTER_TO_TAG = 'to.label';
+
+    /**
+     * Filters with translation
+     *
+     * @var array
+     */
+    public static $filterTypes = [
+        self::FILTER_TO_TAG => '_Save_to_label',
+    ];
+
     /**
      * @var string
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
@@ -59,7 +70,7 @@ class Filter extends AbstractEntity
      */
     public function __construct()
     {
-        $this->feeds = new ArrayCollection();
+        $this->feeds       = new ArrayCollection();
         $this->filterFeeds = new ArrayCollection();
     }
 
@@ -73,14 +84,14 @@ class Filter extends AbstractEntity
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -284,5 +295,37 @@ class Filter extends AbstractEntity
     public function emptyFilterFeeds()
     {
         $this->filterFeeds = new ArrayCollection();
+    }
+
+    /**
+     * Check that name is different
+     *
+     * @param string $newName
+     *
+     * @return bool
+     */
+    public function nameIsDifferent($newName)
+    {
+        if ($this->getName() != $newName) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check that tag is different
+     *
+     * @param int $tagId
+     *
+     * @return bool
+     */
+    public function tagIsDifferent($tagId)
+    {
+        if ($this->getLater()->getId() != $tagId) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -315,7 +315,7 @@ class LaterItemApiService
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
         }
         if (empty($error)) {
-            $result = $this->laterItem->getUnreadItemsApi($user->getPreference()->getReadLaterId(), $unreadItems, $limit);
+            $result = $this->laterItem->getUnreadItemsApi($user->getPreference()->getDictationTagId(), $unreadItems, $limit);
         }
         $responseData = array(
             'error' => $error,

@@ -2,6 +2,7 @@
 
 namespace NPS\FrontendBundle\Form\Type;
 
+use NPS\FrontendBundle\Services\Entity\FeedFrontendService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -10,43 +11,29 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use NPS\CoreBundle\Entity\Filter;
-use NPS\CoreBundle\Services\Entity\FeedService,
-    NPS\CoreBundle\Services\Entity\LaterService;
+use NPS\CoreBundle\Services\Entity\LaterService;
 
 /**
  * Type for a feed edit profile form
  */
 class FilterEditType extends AbstractType
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $created = false;
 
-    /**
-     * @var FeedService
-     */
-    private $feed;
+    /** @var FeedFrontendService */
+    private $feedService;
 
-    /**
-     * @var array
-     */
-    private $filters;
-
-    /**
-     * @var LaterService
-     */
+    /** @var LaterService */
     private $laterService;
 
     /**
-     * @param array        $filters      defined array of filters
-     * @param FeedService  $feed         FeedService
-     * @param LaterService $laterService LaterService
+     * @param FeedFrontendService $feedService
+     * @param LaterService        $laterService
      */
-    public function __construct(array $filters, FeedService $feed, LaterService $laterService)
+    public function __construct(FeedFrontendService $feedService, LaterService $laterService)
     {
-        $this->filters      = $filters;
-        $this->feed         = $feed;
+        $this->feedService  = $feedService;
         $this->laterService = $laterService;
     }
 
@@ -80,7 +67,6 @@ class FilterEditType extends AbstractType
             }
         );
 
-
         $builder
             ->add(
                 'name',
@@ -93,18 +79,18 @@ class FilterEditType extends AbstractType
             ->add(
                 'type',
                 ChoiceType::class,
-                array(
-                    'choices'  => $this->filters,
+                [
+                    'choices'  => Filter::$filterTypes,
                     'multiple' => false,
                     'required' => true,
-                )
+                ]
             )
             ->add(
                 'feeds',
                 EntityType::class,
                 array(
                     'class'         => 'NPSCoreBundle:Feed',
-                    'query_builder' => $this->feed->getUserActiveFeedsQuery(),
+                    'query_builder' => $this->feedService->getUserActiveFeedsQuery(),
                     'required'      => true,
                     'multiple'      => true,
                     'by_reference'  => false,

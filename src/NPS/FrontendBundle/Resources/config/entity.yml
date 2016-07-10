@@ -9,3 +9,9 @@ services:
     calls:
       - [setFeedService, ["@nps.entity.feed"]]
       - [setRedis, ["@snc_redis.default"]]
+
+  nps.frontend.entity.filter:
+    class: NPS\FrontendBundle\Services\Entity\FilterFrontendService
+    parent: "nps.frontend.abstract.entity"
+    calls:
+      - [setFilterService, ["@nps.entity.filter"]]

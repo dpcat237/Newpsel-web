@@ -23,7 +23,7 @@ class User extends AbstractUserFeed
     protected $devices;
 
     /**
-     * @var integer
+     * @var Preference
      * @ORM\OneToOne(targetEntity="Preference", inversedBy="user")
      * @ORM\JoinColumn(name="preference_id", referencedColumnName="id")
      */
@@ -149,6 +149,16 @@ class User extends AbstractUserFeed
     public function getPreference()
     {
         return $this->preference;
+    }
+
+    /**
+     * Get user premium type
+     *
+     * @return string
+     */
+    public function getPremiumType()
+    {
+        return $this->preference->getPremium();
     }
 
     /**

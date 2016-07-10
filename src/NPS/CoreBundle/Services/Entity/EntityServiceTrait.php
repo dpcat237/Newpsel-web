@@ -29,4 +29,15 @@ trait EntityServiceTrait
             $this->entityManager->flush();
         }
     }
+
+    /**
+     * Remove object function
+     *
+     * @param $object
+     */
+    public function removeObject($object)
+    {
+        $this->entityManager->remove($object);
+        $this->entityManager->flush($object);
+    }
 }

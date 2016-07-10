@@ -187,11 +187,11 @@ class UserService extends AbstractEntityService
     public function setPreferenceNewUser(User $user)
     {
         $laterRepo = $this->entityManager->getRepository(Later::class);
-        $readLater = $laterRepo->createLabel($user, 'Read later', true);
-        $laterRepo->createLabel($user, 'Watch later', true);
+        $dictationTag = $laterRepo->createLabel($user, 'Listen later', true);
+        //$laterRepo->createLabel($user, 'Watch later', true);
 
         $preference = new Preference();
-        $preference->setReadLater($readLater);
+        $preference->setDictationTag($dictationTag);
         $this->entityManager->persist($preference);
 
         $user->setPreference($preference);

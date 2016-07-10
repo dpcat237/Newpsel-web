@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Preference extends AbstractEntity
 {
+    const PREMIUM_NO = 'no';
+    const PREMIUM_SUBSCRIPTION_NORMAL = 'subscription_normal';
+
     /**
      * @ORM\OneToOne(targetEntity="User", mappedBy="preference")
      **/
@@ -25,39 +28,72 @@ class Preference extends AbstractEntity
      */
     protected $readLater;
 
+    /**
+     * @var string
+     * @ORM\Column(name="premium", type="string", length=255, nullable=false)
+     */
+    protected $premium = self::PREMIUM_NO;
 
     /**
-     * Get the readLater
+     * Get dictation tag
      *
      * @return Later
      */
-    public function getReadLater()
+    public function getDictationTag()
     {
         return $this->readLater;
     }
 
     /**
-     * Set the readLater
+     * Set dictation tag
+     *
      * @param Later $readLater
+     *
+     * @return $this
      */
-    public function setReadLater(Later $readLater)
+    public function setDictationTag(Later $readLater)
     {
         $this->readLater = $readLater;
+
+        return $this;
     }
 
     /**
-     * Get the readLater id
+     * Get dictation tag id
      *
      * @return integer id
      */
-    public function getReadLaterId()
+    public function getDictationTagId()
     {
-        if (is_object($this->getReadLater())) {
-            $readLaterId = $this->getReadLater()->getId();
-        } else {
-            $readLaterId = 0;
+        $readLaterId = 0;
+        if (is_object($this->getDictationTag())) {
+            $readLaterId = $this->getDictationTag()->getId();
         }
 
         return $readLaterId;
+    }
+
+    /**
+     * Get premium type
+     *
+     * @return string
+     */
+    public function getPremium()
+    {
+        return $this->premium;
+    }
+
+    /**
+     * Set premium type
+     *
+     * @param $premiumType
+     *
+     * @return $this
+     */
+    public function setPremium($premiumType)
+    {
+        $this->premium = $premiumType;
+
+        return $this;
     }
 }

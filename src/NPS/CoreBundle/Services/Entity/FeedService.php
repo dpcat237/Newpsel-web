@@ -77,6 +77,14 @@ class FeedService
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getFeedsByIds($feedIds)
+    {
+        return $this->feedRepository->getFeedsByIds($feedIds);
+    }
+
+    /**
      * Get UserFeed object
      *
      * @param int $userId
