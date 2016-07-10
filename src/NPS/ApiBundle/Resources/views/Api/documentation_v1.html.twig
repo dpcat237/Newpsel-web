@@ -148,7 +148,7 @@
   <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96">
   <link rel="icon" type="image/png" href="{{ asset('favicon-16x16.png') }}" sizes="16x16">
   <link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
-</head><body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>Newpsel API documentation <small>version v0.1</small></h1><p>http://api.newpsel.com</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="article_sync" class="panel-title">/article/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_article_sync"><span class="parent"></span>/article/sync</a> <span class="methods"><a href="#article_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_article_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#article_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync list of unread articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="article_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/article/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync list of unread articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#article_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#article_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="article_sync_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+</head><body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>Newpsel API documentation <small>version v1</small></h1><p>http://api.newpsel.com</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="article_sync" class="panel-title">/article/sync</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_article_sync"><span class="parent"></span>/article/sync</a> <span class="methods"><a href="#article_sync_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_article_sync" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#article_sync_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Sync list of unread articles</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="article_sync_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/article/sync</h4></div><div class="modal-body"><div class="alert alert-info"><p>Sync list of unread articles</p></div><ul class="nav nav-tabs"><li class="active"><a href="#article_sync_post_request" data-toggle="tab">Request</a></li><li><a href="#article_sync_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="article_sync_post_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
@@ -407,7 +407,7 @@
 </code></pre></div><div class="tab-pane" id="filter_add_feed_to_dictation_post_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><p>Method executed successfully and return and empty response.</p></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="filter_add_list" class="panel-title">/filter/add/list</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_filter_add_list"><span class="parent"></span>/filter/add/list</a> <span class="methods"><a href="#filter_add_list_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_filter_add_list" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#filter_add_list_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get user filters list (Premium)</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="filter_add_list_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent"></span>/filter/add/list</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get user filters list (Premium)</p></div><ul class="nav nav-tabs"><li class="active"><a href="#filter_add_list_get_request" data-toggle="tab">Request</a></li><li><a href="#filter_add_list_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="filter_add_list_get_request"><h3>Headers</h3><ul><li><strong>Content-Type</strong>: <em>required (string)</em><p>MIME type of document being served.</p><p><strong>Example</strong>:</p><pre>application/json</pre></li><li><strong>deviceId</strong>: <em>required (string)</em><p>Device unique identifier</p><p><strong>Example</strong>:</p><pre>[@Bfgdg324</pre></li></ul></div><div class="tab-pane" id="filter_add_list_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
   {
    "id": "1",
-   "type": "to.label",
+   "type": "feed_to_tag",
    "tag_id": 4,
    "feeds": [2, 3, 7]
  }
@@ -432,7 +432,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "laterItems": {
+    "tagItems": {
       "type": "array",
       "items": {
         "type": "object",
@@ -440,30 +440,30 @@
           "item_id": {
             "type": "integer"
           },
-          "label_id": {
+          "tag_id": {
             "type": "integer"
           }
         },
         "required": [
           "item_id",
-          "label_id"
+          "tag_id"
         ]
       }
     }
   },
   "required": [
-    "laterItems"
+    "tagItems"
   ]
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
-  "laterItems": [
+  "tagItems": [
       {
         "item_id" : 1,
-        "label_id" : 31
+        "tag_id" : 31
       },
       {
         "item_id" : 2,
-        "label_id" : 31
+        "tag_id" : 31
       }
   ]
 }
@@ -477,7 +477,7 @@
       "items": {
         "type": "object",
         "properties": {
-          "label_api_id": {
+          "tag_api_id": {
             "type": "integer"
           },
           "title": {
@@ -491,7 +491,7 @@
           }
         },
         "required": [
-          "label_api_id",
+          "tag_api_id",
           "title",
           "text"
         ]
@@ -505,7 +505,7 @@
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
   "sharedItems": [
       {
-        "label_api_id" : 1,
+        "tag_api_id" : 1,
         "title" : "New York Times",
         "text" : "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
       }
@@ -519,7 +519,7 @@
     "limit": {
       "type": "integer"
     },
-    "later_items": {
+    "tag_items": {
       "type": "object",
       "properties": {
         "is_unread": {
@@ -556,7 +556,7 @@
         }
       }
     },
-    "labels": {
+    "tags": {
       "type": "array",
       "items": {
         "type": "object",
@@ -572,14 +572,14 @@
     }
   },
   "required": [
-    "later_items",
-    "labels",
+    "tag_items",
+    "tags",
     "limit"
   ]
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
   "limit": 50,
-  "later_items": {
+  "tag_items": {
     "is_unread": [
       {
         "api_id" : 123
@@ -592,7 +592,7 @@
       }
     ]
   },
-  "labels": [
+  "tags": [
       {
         "api_id" : 31
       }
@@ -603,7 +603,7 @@
     "api_id": "53467",
     "item_id": "351302",
     "feed_id": "2",
-    "later_id": "1418",
+    "tag_id": "1418",
     "is_unread": true,
     "date_add": 1465622119,
     "language": "en",
@@ -616,7 +616,7 @@
     "api_id": "52062",
     "item_id": "327980",
     "feed_id": "1",
-    "later_id": "1418",
+    "tag_id": "1418",
     "is_unread": true,
     "date_add": 1457913654,
     "language": "es",
@@ -696,7 +696,7 @@
     "api_id": "53525",
     "item_id": "352716",
     "feed_id": "70",
-    "later_id": "1",
+    "tag_id": "1",
     "is_unread": true,
     "date_add": 1466106971,
     "language": "en",
@@ -710,7 +710,7 @@
     "api_id": "53524",
     "item_id": "352482",
     "feed_id": "15",
-    "later_id": "1",
+    "tag_id": "1",
     "is_unread": true,
     "date_add": 1466035330,
     "language": "en",
@@ -725,7 +725,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "labels": {
+    "tags": {
       "type": "array",
       "items": {
         "type": "object",
@@ -757,11 +757,11 @@
     }
   },
   "required": [
-    "labels"
+    "tags"
   ]
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
-  "labels": [
+  "tags": [
       {
         "id": 1,
         "api_id" : 31,

@@ -29,7 +29,7 @@ class LaterItemsController extends ApiController
         $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncLaterItemsApi($deviceId, $json['laterItems']);
+        $responseData = $labelService->syncLaterItemsApi($deviceId, $json['tagItems']);
 
         return $responseData['result'];
     }
@@ -69,13 +69,13 @@ class LaterItemsController extends ApiController
         $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $itemService  = $this->get('api.later_item.service');
-        $responseData = $itemService->syncLaterItems($deviceId, $json['later_items'], $json['labels'], $json['limit']);
+        $responseData = $itemService->syncLaterItems($deviceId, $json['tag_items'], $json['tags'], $json['limit']);
 
-        return $responseData['later_items'];
+        return $responseData['tag_items'];
     }
 
     /**
-     * Sync later items to be dictated; from specific label
+     * Sync saved items to be dictated; from specific tag
      *
      * @Rest\Post("/dictation/sync")
      * @Rest\View

@@ -70,14 +70,14 @@ class FilterFrontendService extends AbstractEntityFrontendService
     {
         $this->formError = false;
         switch ($this->formData->getType()) {
-            case 'to.label':
+            case Filter::FILTER_FEED_TO_TAG:
                 $this->checkFormToLabel();
                 break;
         }
     }
 
     /**
-     * Check that are all required data for filter "to.label"
+     * Check that are all required data for filter Filter::FILTER_FEED_TO_TAG
      */
     private function checkFormToLabel()
     {

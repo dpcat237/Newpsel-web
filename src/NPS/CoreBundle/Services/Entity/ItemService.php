@@ -5,6 +5,7 @@ namespace NPS\CoreBundle\Services\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Entity\Filter;
 use NPS\CoreBundle\Repository\ItemRepository;
 use NPS\CoreBundle\Services\FilteringManager;
 use NPS\CoreBundle\Services\QueueLauncherService;
@@ -144,7 +145,7 @@ class ItemService
     private function addItemToSubscribers($item, $feedUsers)
     {
         foreach ($feedUsers as $feedUser) {
-            $laterId  = $this->filter->checkUserFeedFilter($feedUser->getUser()->getId(), $feedUser->getFeed()->getId(), 'to.label');
+            $laterId  = $this->filter->checkUserFeedFilter($feedUser->getUser()->getId(), $feedUser->getFeed()->getId(), Filter::FILTER_FEED_TO_TAG);
             $unread   = ($laterId) ? false : true;
             $userItem = $this->addUserItem($feedUser->getUser(), $item, $unread);
             if ($laterId) {

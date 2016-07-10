@@ -114,7 +114,7 @@ class LaterItemApiService
 
         $responseData = array(
             'error' => $error,
-            'later_items' => $result,
+            'tag_items' => $result,
         );
 
         return $responseData;
@@ -188,18 +188,18 @@ class LaterItemApiService
     /**
      * Add read items which came as unread from api
      *
-     * @param array $laterItems
+     * @param array $tagItems
      * @param array $readItems
      *
      * @return array
      */
-    private function addReadItems($laterItems, $readItems) {
+    private function addReadItems($tagItems, $readItems) {
         foreach ($readItems as $readItem) {
             $item = array(
                 'api_id' => $readItem['api_id'],
                 'item_id' => 0,
                 'feed_id' => 0,
-                'later_id' => 0,
+                'tag_id' => 0,
                 'is_unread' => false,
                 'date_add' => 0,
                 'language' => "",
@@ -207,21 +207,21 @@ class LaterItemApiService
                 'title' => "",
                 'content' => ""
             );
-            $laterItems[] = $item;
+            $tagItems[] = $item;
         }
 
-        return $laterItems;
+        return $tagItems;
     }
 
     /**
-     * Sync later item from API to database to be read later
+     * Sync tag item from API to database to be read later
      *
      * @param array $appKey     login key
-     * @param array $laterItems selected items to be read later
+     * @param array $tagItems selected items to be read later
      *
      * @return array
      */
-    public function syncLaterItemsApi($appKey, $laterItems)
+    public function syncLaterItemsApi($appKey, $tagItems)
     {
         $error = false;
         $result = false;
@@ -232,8 +232,8 @@ class LaterItemApiService
             $result = NotificationHelper::ERROR_NO_LOGGED;
         }
 
-        if (empty($error) && is_array($laterItems) && count($laterItems)){
-            $this->laterItem->syncLaterItems($user->getId(), $laterItems);
+        if (empty($error) && is_array($tagItems) && count($tagItems)){
+            $this->laterItem->syncLaterItems($user->getId(), $tagItems);
             //get complete content for partial articles
             $this->queueLauncher->executeCrawling($user->getId());
 
@@ -286,7 +286,7 @@ class LaterItemApiService
     public function addSharedItems(User $user, $sharedItems)
     {
         foreach ($sharedItems as $sharedItem) {
-            $this->laterItem->addPageToLater($user, $sharedItem['label_api_id'], $sharedItem['title'], $sharedItem['text'], true);
+            $this->laterItem->addPageToLater($user, $sharedItem['tag_api_id'], $sharedItem['title'], $sharedItem['text'], true);
         }
     }
 

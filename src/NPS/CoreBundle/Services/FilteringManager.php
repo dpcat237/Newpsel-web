@@ -2,6 +2,7 @@
 namespace NPS\CoreBundle\Services;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use NPS\CoreBundle\Entity\Filter;
 use Predis\Client;
 use Symfony\Bridge\Monolog\Logger;
 
@@ -67,11 +68,11 @@ class FilteringManager
      *
      * @param int    $userId
      * @param int    $feedId
-     * @param string $filterName
+     * @param string $filterType
      *
      * @return bool
      */
-    public function checkUserFeedFilter($userId, $feedId, $filterName)
+    public function checkUserFeedFilter($userId, $feedId, $filterType)
     {
         $cacheKey = 'nps.filter-user-filter.feed#'.$userId;
         $feedsData = $this->redis->get($cacheKey);
@@ -80,9 +81,9 @@ class FilteringManager
             return false;
         }
 
-        $feedsFilters = $this->getFeedFilterCache($feedId, $filterName);
+        $feedsFilters = $this->getFeedFilterCache($feedId, $filterType);
         foreach ($feedsFilters as $feedsFilter) {
-            if ($feedsFilter['user_id'] == $userId && $filterName == 'to.label') {
+            if ($feedsFilter['user_id'] == $userId && $filterType == Filter::FILTER_FEED_TO_TAG) {
                 return $feedsFilter['later_id'];
             }
 
@@ -102,7 +103,7 @@ class FilteringManager
      */
     private function setFeedFilterCache($feedData)
     {
-        $cacheKey = 'nps.filter-to.label-feed#'.$feedData['id'];
+        $cacheKey = 'nps.filter-'.Filter::FILTER_FEED_TO_TAG.'-feed#'.$feedData['id'];
         $this->redis->del($cacheKey);
 
         foreach ($feedData['filterFeeds'] as $filterFeed) {
@@ -163,7 +164,7 @@ class FilteringManager
     public function updateFilterCache()
     {
         $feedRepo = $this->doctrine->getRepository('NPSCoreBundle:Feed');
-        $feeds = $feedRepo->getFeedsFiltersForCache('to.label');
+        $feeds = $feedRepo->getFeedsFiltersForCache(Filter::FILTER_FEED_TO_TAG);
 
         foreach ($feeds as $feed) {
             $this->setFeedFilterCache($feed);

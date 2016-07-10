@@ -17,7 +17,7 @@ class Filter extends AbstractEntity
 {
     use EnabledTrait;
 
-    const FILTER_TO_TAG = 'to.label';
+    const FILTER_FEED_TO_TAG = 'feed_to_tag';
 
     /**
      * Filters with translation
@@ -25,7 +25,7 @@ class Filter extends AbstractEntity
      * @var array
      */
     public static $filterTypes = [
-        self::FILTER_TO_TAG => '_Save_to_label',
+        self::FILTER_FEED_TO_TAG => '_Save_to_label',
     ];
 
     /**

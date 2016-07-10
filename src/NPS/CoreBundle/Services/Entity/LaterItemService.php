@@ -276,7 +276,7 @@ class LaterItemService
                 'api_id'    => $readItem['api_id'],
                 'item_id'   => 0,
                 'feed_id'   => 0,
-                'later_id'  => 0,
+                'tag_id'  => 0,
                 'is_unread' => false,
                 'date_add'  => 0,
                 'language'  => "",
@@ -506,7 +506,7 @@ class LaterItemService
         $userItemRepo = $this->entityManager->getRepository(UserItem::class);
         foreach ($items as $itemData) {
             $itemId   = $itemData['item_id'];
-            $labelId  = $itemData['label_id'];
+            $labelId  = $itemData['tag_id'];
             $userItem = $userItemRepo->hasItem($userId, $itemId);
             if (!$userItem instanceof UserItem) {
                 continue;

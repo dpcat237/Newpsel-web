@@ -53,7 +53,7 @@ class FilterApiService
 
         $this->filterService->createFilterFeeds(
             $user,
-            Filter::FILTER_TO_TAG,
+            Filter::FILTER_FEED_TO_TAG,
             'Feeds to dictation',
             $user->getPreference()->getDictationTag(),
             $this->feedService->getFeedsByIds($feedIds)

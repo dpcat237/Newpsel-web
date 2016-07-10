@@ -78,7 +78,7 @@ class LaterItemRepository extends EntityRepository
     public function getUnreadForApiByLabel($laterId, $begin = 0, $limit = 50)
     {
         $query = $this->createQueryBuilder('li')
-            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title')
+            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id tag_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title')
             ->leftJoin('li.userItem', 'ui')
             ->leftJoin('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
@@ -108,7 +108,7 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('li');
         $query
-            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
+            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id tag_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
             ->join('li.userItem', 'ui')
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
