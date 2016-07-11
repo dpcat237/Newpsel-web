@@ -7,6 +7,7 @@ use Exception;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use NPS\CoreBundle\Event\FeedCreatedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
+use NPS\FrontendBundle\Services\Entity\FeedFrontendService;
 use Predis\Client;
 use SimplePie;
 use SimplePie_Item;
@@ -14,7 +15,6 @@ use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Entity\Item;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
-use NPS\CoreBundle\Services\Entity\FeedService;
 use NPS\CoreBundle\Services\Entity\FeedHistoryService;
 use NPS\CoreBundle\Services\Entity\ItemService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -37,7 +37,7 @@ class DownloadFeedsService
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    /** @var FeedService */
+    /** @var FeedFrontendService */
     private $feedS;
 
     /** @var FeedHistoryService */
@@ -59,7 +59,7 @@ class DownloadFeedsService
      * @param EntityManager            $entityManager
      * @param SimplePie                $rss
      * @param Client                   $redis
-     * @param FeedService              $feed
+     * @param FeedFrontendService      $feed
      * @param ItemService              $itemS
      * @param FeedHistoryService       $feedHistoryS
      * @param EventDispatcherInterface $eventDispatcher
@@ -68,7 +68,7 @@ class DownloadFeedsService
         EntityManager $entityManager,
         SimplePie $rss,
         Client $redis,
-        FeedService $feed,
+        FeedFrontendService $feed,
         ItemService $itemS,
         FeedHistoryService $feedHistoryS,
         EventDispatcherInterface $eventDispatcher

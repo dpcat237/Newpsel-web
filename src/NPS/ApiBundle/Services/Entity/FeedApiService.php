@@ -3,16 +3,15 @@
 namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use NPS\CoreBundle\Entity\Feed;
 use NPS\CoreBundle\Event\FeedModifiedEvent;
 use NPS\CoreBundle\Services\Entity\FeedService;
-use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\NPSCoreEvents;
 use NPS\CoreBundle\Services\DownloadFeedsService;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\NotificationHelper;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class FeedApiService
@@ -24,7 +23,7 @@ class FeedApiService
     /** @var DownloadFeedsService */
     protected $downloadFeeds;
 
-    /** @var ContainerAwareEventDispatcher */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
     /** @var FeedService */
@@ -36,20 +35,19 @@ class FeedApiService
     /** @var Boolean */
     protected $modified = false;
 
-
     /**
      * FeedApiService constructor.
      *
-     * @param FeedService                   $feedService
-     * @param SecureService                 $secure
-     * @param DownloadFeedsService          $downloadFeeds
-     * @param ContainerAwareEventDispatcher $eventDispatcher
+     * @param FeedService              $feedService
+     * @param SecureService            $secure
+     * @param DownloadFeedsService     $downloadFeeds
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         FeedService $feedService,
         SecureService $secure,
         DownloadFeedsService $downloadFeeds,
-        ContainerAwareEventDispatcher $eventDispatcher
+        EventDispatcherInterface $eventDispatcher
     )
     {
         $this->feedService     = $feedService;
