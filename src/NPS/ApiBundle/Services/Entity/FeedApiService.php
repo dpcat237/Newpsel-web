@@ -59,27 +59,19 @@ class FeedApiService
     /**
      * Add feed for api
      *
-     * @param string $appKey
+     * @param User   $user
      * @param string $feedUrl
      *
      * @return array
      */
-    public function addFeed($appKey, $feedUrl)
+    public function addFeed(User $user, $feedUrl)
     {
-        $user = $this->secure->getUserByDevice($appKey);
-        if ($user instanceof User) {
-            list($feed, $error) = $this->downloadFeeds->addFeed($feedUrl, $user);
-        } else {
-            return NotificationHelper::ERROR_NO_LOGGED;
-        }
-
+        list($feed, $error) = $this->downloadFeeds->addFeed($feedUrl, $user);
         if ($error) {
             return NotificationHelper::ERROR_WRONG_FEED;
         }
 
         $this->eventDispatcher->dispatch(NPSCoreEvents::FEED_MODIFIED, new FeedModifiedEvent($user->getId()));
-
-        return NotificationHelper::OK;
     }
 
     /**
@@ -110,20 +102,15 @@ class FeedApiService
     /**
      * Get feed to sync with api
      *
-     * @param string $appKey
-     * @param array  $apiFeeds
+     * @param User  $user
+     * @param array $apiFeeds
      *
      * @return array
      */
-    public function syncFeeds($appKey, array $apiFeeds)
+    public function syncFeeds(User $user, array $apiFeeds)
     {
         $error = false;
         $feeds = array();
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-        }
 
         if (!$error) {
             $dbFeeds = $this->feedService->getUserFeedsApi($user->getId());

@@ -42,17 +42,17 @@ class LaterItemApiService
 
 
     /**
-     * @param Registry             $doctrine         Doctrine Registry
-     * @param SecureService        $secure           SecureService
-     * @param QueueLauncherService $queueLauncher    QueueLauncherService
-     * @param LaterItemService     $laterItem LaterItemService
+     * @param Registry             $doctrine      Doctrine Registry
+     * @param SecureService        $secure        SecureService
+     * @param QueueLauncherService $queueLauncher QueueLauncherService
+     * @param LaterItemService     $laterItem     LaterItemService
      */
     public function __construct(Registry $doctrine, SecureService $secure, QueueLauncherService $queueLauncher, LaterItemService $laterItem)
     {
-        $this->doctrine = $doctrine;
+        $this->doctrine      = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
-        $this->laterItem = $laterItem;
-        $this->secure = $secure;
+        $this->laterItem     = $laterItem;
+        $this->secure        = $secure;
         $this->queueLauncher = $queueLauncher;
     }
 
@@ -69,7 +69,7 @@ class LaterItemApiService
     public function addPage($appKey, $labelId, $webTitle, $webUrl)
     {
         $response = false;
-        $user = $this->secure->getUserByDevice($appKey);
+        $user     = $this->secure->getUserByDevice($appKey);
         if ($user instanceof User) {
             $this->laterItem->addPageToLater($user, $labelId, $webTitle, $webUrl, true);
             $response = true;
@@ -86,23 +86,17 @@ class LaterItemApiService
     /**
      * Sync viewed later items and download unread later items
      *
-     * @param string $appKey app/device key
-     * @param array  $items  array of all items from API with basic information
-     * @param array  $labels array of labels from which sync items
-     * @param int    $limit  max quantity of items to sync
+     * @param User  $user
+     * @param array $items  array of all items from API with basic information
+     * @param array $labels array of labels from which sync items
+     * @param int   $limit  max quantity of items to sync
      *
      * @return array
      */
-    public function syncLaterItems($appKey, $items, $labels, $limit)
+    public function syncLaterItems(User $user, $items, $labels, $limit)
     {
-        $error = false;
+        $error  = false;
         $result = array();
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
         list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
@@ -113,7 +107,7 @@ class LaterItemApiService
         }
 
         $responseData = array(
-            'error' => $error,
+            'error'     => $error,
             'tag_items' => $result,
         );
 
@@ -127,16 +121,17 @@ class LaterItemApiService
      * @param array $unreadItems
      * @param int   $limit
      *+
+     *
      * @return array
      */
     protected function getUnreadItems(array $labels, array $unreadItems, $limit)
     {
-        $readItems = array();
+        $readItems     = array();
         $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
-        $unreadIds = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
-        $labelsIds = ArrayHelper::getIdsFromArray($labels, 'api_id');
-        $totalUnread = $laterItemRepo->totalUnreadLabelsItems($labelsIds);
-        $items = $this->getUnreadItemsIdsRecursive($laterItemRepo, $labelsIds, $unreadIds, 0, $limit+5, $totalUnread); //"+5" extra to don't do many loops for few items
+        $unreadIds     = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
+        $labelsIds     = ArrayHelper::getIdsFromArray($labels, 'api_id');
+        $totalUnread   = $laterItemRepo->totalUnreadLabelsItems($labelsIds);
+        $items         = $this->getUnreadItemsIdsRecursive($laterItemRepo, $labelsIds, $unreadIds, 0, $limit + 5, $totalUnread); //"+5" extra to don't do many loops for few items
 
         if (count($unreadIds)) {
             $readItems = $laterItemRepo->getReadItems($unreadIds);
@@ -152,11 +147,11 @@ class LaterItemApiService
      * Get unread later items recursively
      *
      * @param LaterItemRepository $laterItemRepo
-     * @param array               $labelsIds     array of labels ids from which sync items
-     * @param array               $unreadIds     still unread items ids from api
-     * @param int                 $begin         position from which begin limit in query
-     * @param int                 $limit         limit of items for query
-     * @param int                 $total         total unread items in data base
+     * @param array               $labelsIds array of labels ids from which sync items
+     * @param array               $unreadIds still unread items ids from api
+     * @param int                 $begin     position from which begin limit in query
+     * @param int                 $limit     limit of items for query
+     * @param int                 $total     total unread items in data base
      *
      * @return array
      */
@@ -169,7 +164,7 @@ class LaterItemApiService
 
         $unreadItems = ArrayHelper::filterUnreadItemsIds($unreadItems, $unreadIds);
         $unreadCount = count($unreadItems);
-        $begin = $begin + $limit;
+        $begin       = $begin + $limit;
 
         if ($unreadCount >= $limit || ($begin + 1) >= $total || $limit < 5) { //added 5 just in case to don't do a lot of loops for few items
             return $unreadItems;
@@ -180,7 +175,7 @@ class LaterItemApiService
             $limit = $total - $begin;
         }
         $moreUnreadItems = $this->getUnreadItemsIdsRecursive($laterItemRepo, $labelsIds, $unreadIds, $begin, $limit, $total);
-        $unreadItems = array_merge($unreadItems, $moreUnreadItems);
+        $unreadItems     = array_merge($unreadItems, $moreUnreadItems);
 
         return $unreadItems;
     }
@@ -193,19 +188,20 @@ class LaterItemApiService
      *
      * @return array
      */
-    private function addReadItems($tagItems, $readItems) {
+    private function addReadItems($tagItems, $readItems)
+    {
         foreach ($readItems as $readItem) {
-            $item = array(
-                'api_id' => $readItem['api_id'],
-                'item_id' => 0,
-                'feed_id' => 0,
-                'tag_id' => 0,
+            $item       = array(
+                'api_id'    => $readItem['api_id'],
+                'item_id'   => 0,
+                'feed_id'   => 0,
+                'tag_id'    => 0,
                 'is_unread' => false,
-                'date_add' => 0,
-                'language' => "",
-                'link' => "",
-                'title' => "",
-                'content' => ""
+                'date_add'  => 0,
+                'language'  => "",
+                'link'      => "",
+                'title'     => "",
+                'content'   => ""
             );
             $tagItems[] = $item;
         }
@@ -216,23 +212,16 @@ class LaterItemApiService
     /**
      * Sync tag item from API to database to be read later
      *
-     * @param array $appKey     login key
+     * @param User  $user
      * @param array $tagItems selected items to be read later
      *
      * @return array
      */
-    public function syncLaterItemsApi($appKey, $tagItems)
+    public function syncLaterItemsApi(User $user, $tagItems)
     {
-        $error = false;
+        $error  = false;
         $result = false;
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-            $result = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
-        if (empty($error) && is_array($tagItems) && count($tagItems)){
+        if (empty($error) && is_array($tagItems) && count($tagItems)) {
             $this->laterItem->syncLaterItems($user->getId(), $tagItems);
             //get complete content for partial articles
             $this->queueLauncher->executeCrawling($user->getId());
@@ -240,7 +229,7 @@ class LaterItemApiService
             $result = NotificationHelper::OK;
         }
         $responseData = array(
-            'error' => $error,
+            'error'  => $error,
             'result' => $result,
         );
 
@@ -249,28 +238,22 @@ class LaterItemApiService
 
     /**
      * Sync shared item from api
-     * @param $appKey
-     * @param $sharedItems
+     *
+     * @param User  $user
+     * @param array $sharedItems
      *
      * @return array
      */
-    public function syncShared($appKey, $sharedItems)
+    public function syncShared(User $user, $sharedItems)
     {
-        $error = false;
+        $error  = false;
         $result = false;
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-            $result = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
-        if (empty($error) && is_array($sharedItems) && count($sharedItems)){
+        if (empty($error) && is_array($sharedItems) && count($sharedItems)) {
             $this->addSharedItems($user, $sharedItems);
             $result = NotificationHelper::OK;
         }
         $responseData = array(
-            'error' => $error,
+            'error'  => $error,
             'result' => $result,
         );
 
@@ -293,23 +276,16 @@ class LaterItemApiService
     /**
      * Sync later item to API and update the reviewed items
      *
-     * @param array $appKey       login key
+     * @param User  $user
      * @param array $dictateItems items for dictation
      * @param int   $limit        limit of dictations to sync
      *
      * @return array
      */
-    public function syncDictateItems($appKey, $dictateItems, $limit)
+    public function syncDictateItems(User $user, $dictateItems, $limit)
     {
-        $error = false;
+        $error  = false;
         $result = array();
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-            $result = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
         list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
@@ -318,7 +294,7 @@ class LaterItemApiService
             $result = $this->laterItem->getUnreadItemsApi($user->getPreference()->getDictationTagId(), $unreadItems, $limit);
         }
         $responseData = array(
-            'error' => $error,
+            'error'  => $error,
             'result' => $result,
         );
 

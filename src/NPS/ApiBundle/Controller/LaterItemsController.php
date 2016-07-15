@@ -26,10 +26,9 @@ class LaterItemsController extends ApiController
      */
     public function syncLaterAction(Request $request)
     {
-        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncLaterItemsApi($deviceId, $json['tagItems']);
+        $responseData = $labelService->syncLaterItemsApi($this->getDeviceUser($request), $json['tagItems']);
 
         return $responseData['result'];
     }
@@ -46,10 +45,9 @@ class LaterItemsController extends ApiController
      */
     public function syncSharedAction(Request $request)
     {
-        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncShared($deviceId, $json['sharedItems']);
+        $responseData = $labelService->syncShared($this->getDeviceUser($request), $json['sharedItems']);
 
         return $responseData['result'];
     }
@@ -66,10 +64,9 @@ class LaterItemsController extends ApiController
      */
     public function syncLaterItemsAction(Request $request)
     {
-        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $itemService  = $this->get('api.later_item.service');
-        $responseData = $itemService->syncLaterItems($deviceId, $json['tag_items'], $json['tags'], $json['limit']);
+        $responseData = $itemService->syncLaterItems($this->getDeviceUser($request), $json['tag_items'], $json['tags'], $json['limit']);
 
         return $responseData['tag_items'];
     }
@@ -86,10 +83,9 @@ class LaterItemsController extends ApiController
      */
     public function syncDictateItemsAction(Request $request)
     {
-        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncDictateItems($deviceId, $json['items'], $json['limit']);
+        $responseData = $labelService->syncDictateItems($this->getDeviceUser($request), $json['items'], $json['limit']);
 
         return $responseData['result'];
     }

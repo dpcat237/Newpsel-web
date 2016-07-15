@@ -30,35 +30,29 @@ class ItemApiService
 
 
     /**
-     * @param Registry      $doctrine    Doctrine Registry
-     * @param SecureService $secure      SecureService
+     * @param Registry      $doctrine Doctrine Registry
+     * @param SecureService $secure   SecureService
      */
     public function __construct(Registry $doctrine, SecureService $secure)
     {
-        $this->doctrine = $doctrine;
+        $this->doctrine      = $doctrine;
         $this->entityManager = $this->doctrine->getManager();
-        $this->secure = $secure;
+        $this->secure        = $secure;
     }
 
     /**
      * Sync viewed items and download unread items
      *
-     * @param string $appKey app/device key
-     * @param array  $items  array of all items from API with basic information
-     * @param int    $limit  max quantity of items to sync
+     * @param User  $user
+     * @param array $items array of all items from API with basic information
+     * @param int   $limit max quantity of items to sync
      *
      * @return array
      */
-    public function syncItems($appKey, $items, $limit)
+    public function syncItems(User $user, $items, $limit)
     {
-        $error = false;
+        $error  = false;
         $result = array();
-
-        $user = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
         list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->doctrine->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($readItems);
@@ -83,21 +77,22 @@ class ItemApiService
      * @param array $unreadItems
      * @param int   $limit
      *+
+     *
      * @return array
      */
     protected function getUnreadItems($userId, array $unreadItems, $limit)
     {
-        $readItems = array();
-        $itemRepo = $this->doctrine->getRepository('NPSCoreBundle:Item');
-        $userItemRepo = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
-        $unreadIds = ArrayHelper::getIdsFromArray($unreadItems);
-        $totalUnread = $userItemRepo->totalUnreadFeedItems($userId);
-        $unreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 0, $limit+5, $totalUnread); //"+5" extra to don't do many loops for few items
+        $readItems      = array();
+        $itemRepo       = $this->doctrine->getRepository('NPSCoreBundle:Item');
+        $userItemRepo   = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
+        $unreadIds      = ArrayHelper::getIdsFromArray($unreadItems);
+        $totalUnread    = $userItemRepo->totalUnreadFeedItems($userId);
+        $unreadItems    = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 0, $limit + 5, $totalUnread); //"+5" extra to don't do many loops for few items
         $unreadItemsIds = ArrayHelper::getIdsFromArray($unreadItems, 'item_id');
-        $items = array();
+        $items          = array();
         if (count($unreadItemsIds)) {
             $itemsAlone = $itemRepo->getUnreadApi($unreadItemsIds);
-            $items = $this->mergeUserItemsWithItems($unreadItems, $itemsAlone);
+            $items      = $this->mergeUserItemsWithItems($unreadItems, $itemsAlone);
         }
 
         if (count($unreadIds)) {
@@ -114,11 +109,11 @@ class ItemApiService
      * Get unread items recursively
      *
      * @param UserItemRepository $userItemRepo
-     * @param int                $userId       user id
-     * @param array              $unreadIds    still unread items ids from api
-     * @param int                $begin        position from which begin limit in query
-     * @param int                $limit        limit of items for query
-     * @param int                $total        total unread items in data base
+     * @param int                $userId    user id
+     * @param array              $unreadIds still unread items ids from api
+     * @param int                $begin     position from which begin limit in query
+     * @param int                $limit     limit of items for query
+     * @param int                $total     total unread items in data base
      *
      * @return array
      */
@@ -131,7 +126,7 @@ class ItemApiService
 
         $unreadItems = ArrayHelper::filterUnreadItemsIds($unreadItems, $unreadIds, 'item_id');
         $unreadCount = count($unreadItems);
-        $begin = $begin + $limit;
+        $begin       = $begin + $limit;
 
         if ($unreadCount >= $limit || ($begin + 1) >= $total || $limit < 5) { //added 5 just in case to don't do a lot of loops for few items
             return $unreadItems;
@@ -142,7 +137,7 @@ class ItemApiService
             $limit = $total - $begin;
         }
         $moreUnreadItems = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, $begin, $limit, $total);
-        $unreadItems = array_merge($unreadItems, $moreUnreadItems);
+        $unreadItems     = array_merge($unreadItems, $moreUnreadItems);
 
         return $unreadItems;
     }
@@ -161,10 +156,10 @@ class ItemApiService
         foreach ($items as $item) {
             foreach ($unreadItems as $key => $unreadItem) {
                 if ($item['api_id'] == $unreadItem['item_id']) {
-                    $item['ui_id'] = (int) $unreadItem['ui_id'];
-                    $item['is_stared'] = ($unreadItem['is_stared'])? true : false;
-                    $item['is_unread'] = ($unreadItem['is_unread'])? true : false;
-                    $newItems[] = $item;
+                    $item['ui_id']     = (int) $unreadItem['ui_id'];
+                    $item['is_stared'] = ($unreadItem['is_stared']) ? true : false;
+                    $item['is_unread'] = ($unreadItem['is_unread']) ? true : false;
+                    $newItems[]        = $item;
                     unset($unreadItems[$key]);
                 }
             }
@@ -184,17 +179,17 @@ class ItemApiService
     private function addReadItems($items, $readItems)
     {
         foreach ($readItems as $readItem) {
-            $item = array(
-                'api_id' => $readItem['api_id'],
-                'ui_id' => 0,
-                'feed_id' => 0,
+            $item    = array(
+                'api_id'    => $readItem['api_id'],
+                'ui_id'     => 0,
+                'feed_id'   => 0,
                 'is_stared' => false,
                 'is_unread' => false,
-                'date_add' => 0,
-                'language' => "",
-                'link' => "",
-                'title' => "",
-                'content' => ""
+                'date_add'  => 0,
+                'language'  => "",
+                'link'      => "",
+                'title'     => "",
+                'content'   => ""
             );
             $items[] = $item;
         }

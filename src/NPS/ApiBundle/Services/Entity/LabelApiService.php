@@ -97,20 +97,15 @@ class LabelApiService
     /**
      * Sync labels
      *
-     * @param string $appKey
-     * @param array  $apiLabels
+     * @param User  $user
+     * @param array $apiLabels
      *
      * @return array
      */
-    public function syncLabels($appKey, array $apiLabels)
+    public function syncLabels(User $user, array $apiLabels)
     {
         $error  = false;
         $labels = array();
-        $user   = $this->secure->getUserByDevice($appKey);
-        if (!$user instanceof User) {
-            $error = NotificationHelper::ERROR_NO_LOGGED;
-        }
-
         if (empty($error)) {
             $dbLabels = $this->doctrine->getRepository('NPSCoreBundle:Later')->getUserLabelsApi($user->getId());
             $labels   = $this->processLabelsSync($dbLabels, $apiLabels, $user);

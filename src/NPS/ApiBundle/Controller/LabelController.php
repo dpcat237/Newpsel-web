@@ -24,10 +24,9 @@ class LabelController extends ApiController
      */
     public function syncLabelsAction(Request $request)
     {
-        $deviceId     = $this->getDeviceId($request);
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.label.service');
-        $responseData = $labelService->syncLabels($deviceId, $json['labels']);
+        $responseData = $labelService->syncLabels($this->getDeviceUser($request), $json['labels']);
         if ($responseData['error']) {
             return $responseData['error'];
         }
