@@ -4,6 +4,7 @@ namespace NPS\ApiBundle\Services;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use NPS\ApiBundle\Exception\PasswordException;
 use NPS\CoreBundle\Entity\Device;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Repository\DeviceRepository;
@@ -131,7 +132,7 @@ class SecureService
         }
 
         if ($user->getPassword() != $password) {
-            return false;
+            throw new PasswordException();
         }
 
         $this->deviceRepository->createDevice($deviceId, $user);

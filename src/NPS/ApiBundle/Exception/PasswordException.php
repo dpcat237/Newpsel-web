@@ -6,11 +6,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
- * Class UserExistsException
+ * Class PasswordException
  *
  * @package NPS\ApiBundle\Exception
  */
-class UserExistsException extends HttpException
+class PasswordException extends HttpException
 {
     /**
      * UnauthorizedException constructor.
@@ -19,7 +19,7 @@ class UserExistsException extends HttpException
      */
     public function __construct($message = null)
     {
-        $message = ($message) ?: 'User with this email exists';
-        parent::__construct(Response::HTTP_CONFLICT, $message, null, [], 0);
+        $message = ($message) ?: 'Wrong password';
+        parent::__construct(Response::HTTP_PRECONDITION_FAILED, $message, null, [], 0);
     }
 }
