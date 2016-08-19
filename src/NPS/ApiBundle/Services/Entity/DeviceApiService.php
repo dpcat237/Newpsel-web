@@ -153,8 +153,11 @@ class DeviceApiService
     public function registerUserDevice($appKey, $email, $password = '')
     {
         $user = $this->userService->registerUser($email, $password);
-        $this->deviceRepository->createDevice($appKey, $user);
-        $this->secure->saveTemporaryKey("device_" . $appKey, $user->getId());
+        $device = $this->deviceRepository->findDevice($appKey);
+        if (!$device instanceof Device) {
+            $this->deviceRepository->createDevice($appKey, $user);
+            $this->secure->saveTemporaryKey("device_" . $appKey, $user->getId());
+        }
     }
 
     /**

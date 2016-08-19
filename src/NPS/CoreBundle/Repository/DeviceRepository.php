@@ -13,6 +13,12 @@ use Doctrine\ORM\EntityRepository;
  */
 class DeviceRepository extends EntityRepository
 {
+    /**
+     * Create device
+     *
+     * @param $appKey
+     * @param $user
+     */
     public function createDevice($appKey, $user) {
         $device = new Device();
         $device->setAppKey($appKey);
@@ -21,6 +27,18 @@ class DeviceRepository extends EntityRepository
         $em = $this->getEntityManager();
         $em->persist($device);
         $em->flush();
+    }
+
+    /**
+     * Check device exists
+     *
+     * @param string $appKey
+     *
+     * @return Device
+     */
+    public function findDevice($appKey)
+    {
+        return $this->findOneByAppKey($appKey);
     }
 
     /**
