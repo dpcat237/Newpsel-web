@@ -66,9 +66,9 @@
     "kbariotis/feedly-api"                    : "1.*",
     "guzzlehttp/guzzle"                       : "5.*",
     "bmatzner/fontawesome-bundle"             : "~4.6",
-    "sonata-project/admin-bundle"             : "@stable",
-    "sonata-project/doctrine-orm-admin-bundle": "@stable",
-    "sonata-project/user-bundle"              : "@stable"
+    "sonata-project/admin-bundle"             : "3.*",
+    "sonata-project/doctrine-orm-admin-bundle": "3.*",
+    "sonata-project/user-bundle"              : "3.*"
   },
   "require-dev"      : {
     "monolog/monolog"         : "~1.11",
