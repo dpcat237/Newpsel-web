@@ -112,7 +112,7 @@ class LabelApiService
         }
         $responseData = array(
             'error'  => $error,
-            'labels' => $labels,
+            'tags' => $labels,
         );
 
         return $responseData;
