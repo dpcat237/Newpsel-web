@@ -156,44 +156,25 @@
       "type": "integer"
     },
     "items": {
-      "type": "object",
-      "properties": {
-        "is_unread": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "api_id": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "api_id"
-            ]
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "api_id": {
+            "type": "integer"
+          },
+          "is_stared": {
+            "type": "boolean"
+          },
+          "is_unread": {
+            "type": "boolean"
           }
         },
-        "is_read": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "api_id": {
-                "type": "integer"
-              },
-              "is_stared": {
-                "type": "boolean"
-              },
-              "is_unread": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "api_id",
-              "is_stared",
-              "is_unread"
-            ]
-          }
-        }
+        "required": [
+          "api_id",
+          "is_stared",
+          "is_unread"
+        ]
       }
     }
   },
@@ -203,20 +184,18 @@
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
   "limit": 300,
-  "items": {
-    "is_unread": [
-      {
-        "api_id" : 123
-      }
-    ],
-    "is_read": [
-      {
-        "api_id": 231,
-        "is_stared": true,
-        "is_unread": false
-      }
-    ]
-  }
+  "items": [
+    {
+      "api_id": 231,
+      "is_stared": true,
+      "is_unread": false
+    },
+    {
+      "api_id": 212,
+      "is_stared": false,
+      "is_unread": true
+    }
+  ]
 }
 </code></pre></div><div class="tab-pane" id="article_sync_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><p>Return anread article</p><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
 {
