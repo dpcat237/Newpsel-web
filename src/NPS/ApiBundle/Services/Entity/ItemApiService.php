@@ -1,42 +1,35 @@
 <?php
+
 namespace NPS\ApiBundle\Services\Entity;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Repository\UserItemRepository;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Helper\NotificationHelper;
 
 /**
- * ItemApiService
+ * Class ItemApiService
+ *
+ * @package NPS\ApiBundle\Services\Entity
  */
 class ItemApiService
 {
-    /**
-     * @var Doctrine Registry
-     */
-    private $doctrine;
-
-    /**
-     * @var $entityManager Entity Manager
-     */
+    /** @var $entityManager EntityManager */
     protected $entityManager;
 
-    /**
-     * @var SecureService
-     */
+    /** @var SecureService */
     private $secure;
 
-
     /**
-     * @param Registry      $doctrine Doctrine Registry
-     * @param SecureService $secure   SecureService
+     * ItemApiService constructor.
+     *
+     * @param EntityManager $entityManager
+     * @param SecureService $secure
      */
-    public function __construct(Registry $doctrine, SecureService $secure)
+    public function __construct(EntityManager $entityManager, SecureService $secure)
     {
-        $this->doctrine      = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
+        $this->entityManager = $entityManager;
         $this->secure        = $secure;
     }
 
@@ -53,9 +46,9 @@ class ItemApiService
     {
         $error  = false;
         $result = array();
-        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
+        list($unreadItems, $readItems) = ArrayHelper::splitArray($items, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
-            $this->doctrine->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($readItems);
+            $this->entityManager->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($readItems);
         }
 
         if (!$error && $limit > 1) {
@@ -76,18 +69,17 @@ class ItemApiService
      * @param int   $userId
      * @param array $unreadItems
      * @param int   $limit
-     *+
      *
      * @return array
      */
     protected function getUnreadItems($userId, array $unreadItems, $limit)
     {
         $readItems      = array();
-        $itemRepo       = $this->doctrine->getRepository('NPSCoreBundle:Item');
-        $userItemRepo   = $this->doctrine->getRepository('NPSCoreBundle:UserItem');
-        $unreadIds      = ArrayHelper::getIdsFromArray($unreadItems);
+        $itemRepo       = $this->entityManager->getRepository('NPSCoreBundle:Item');
+        $userItemRepo   = $this->entityManager->getRepository('NPSCoreBundle:UserItem');
+        $unreadIds      = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
         $totalUnread    = $userItemRepo->totalUnreadFeedItems($userId);
-        $unreadItems    = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 0, $limit + 5, $totalUnread); //"+5" extra to don't do many loops for few items
+        $unreadItems    = $this->getUnreadItemsIdsRecursive($userItemRepo, $userId, $unreadIds, 0, $limit, $totalUnread);
         $unreadItemsIds = ArrayHelper::getIdsFromArray($unreadItems, 'item_id');
         $items          = array();
         if (count($unreadItemsIds)) {
@@ -124,7 +116,7 @@ class ItemApiService
             return $unreadItems;
         }
 
-        $unreadItems = ArrayHelper::filterUnreadItemsIds($unreadItems, $unreadIds, 'item_id');
+        $unreadItems = ArrayHelper::filterUnreadItemsIds($unreadItems, $unreadIds);
         $unreadCount = count($unreadItems);
         $begin       = $begin + $limit;
 
@@ -152,14 +144,20 @@ class ItemApiService
      */
     private function mergeUserItemsWithItems($unreadItems, $items)
     {
+        //echo 'tut: '.count($unreadItems).' - '.count($items); exit;
+
         $newItems = array();
         foreach ($items as $item) {
             foreach ($unreadItems as $key => $unreadItem) {
-                if ($item['api_id'] == $unreadItem['item_id']) {
-                    $item['ui_id']     = (int) $unreadItem['ui_id'];
+                if ((array_key_exists('item_id', $item) && $item['item_id'] == $unreadItem['item_id'])
+                    || (array_key_exists('api_id', $item) && $item['api_id'] == $unreadItem['api_id'])
+                ) {
+
+                    $item['api_id']    = (int) $unreadItem['api_id'];
                     $item['is_stared'] = ($unreadItem['is_stared']) ? true : false;
                     $item['is_unread'] = ($unreadItem['is_unread']) ? true : false;
-                    $newItems[]        = $item;
+                    unset($item['item_id']);
+                    $newItems[] = $item;
                     unset($unreadItems[$key]);
                 }
             }
@@ -179,7 +177,7 @@ class ItemApiService
     private function addReadItems($items, $readItems)
     {
         foreach ($readItems as $readItem) {
-            $item    = array(
+            $item    = [
                 'api_id'    => $readItem['api_id'],
                 'ui_id'     => 0,
                 'feed_id'   => 0,
@@ -190,7 +188,7 @@ class ItemApiService
                 'link'      => "",
                 'title'     => "",
                 'content'   => ""
-            );
+            ];
             $items[] = $item;
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace NPS\CoreBundle\Helper;
 
 use Symfony\Component\Templating\Helper\Helper;
@@ -8,11 +9,8 @@ use Symfony\Component\Templating\Helper\Helper;
  */
 class ArrayHelper extends Helper
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $name = 'ArrayHelper';
-
 
     /**
      * Returns the canonical name of this helper.
@@ -25,23 +23,23 @@ class ArrayHelper extends Helper
     }
 
     /**
-     * Separate collection items in two array by boolean
+     * Split collection items in two array by key
      *
-     * @param array  $collection
-     * @param string $boolean
+     * @param array  $collections
+     * @param string $filterKey
      *
      * @return array: true, false
      */
-    static public function separateBooleanArray(array $collection, $boolean)
+    static public function splitArray(array $collections, $filterKey)
     {
-        $trueItems = array();
+        $trueItems  = array();
         $falseItems = array();
 
-        foreach ($collection as $item) {
-            if ($item[$boolean]) {
-                $trueItems[] = $item;
+        foreach ($collections as $collectionKey => $collection) {
+            if ($collectionKey == $filterKey) {
+                $trueItems = $collection;
             } else {
-                $falseItems[] = $item;
+                $falseItems = $collection;
             }
         }
 
@@ -51,7 +49,7 @@ class ArrayHelper extends Helper
     /**
      * Separate ids to array
      *
-     * @param array $collection
+     * @param array  $collection
      * @param string $key
      *
      * @return array

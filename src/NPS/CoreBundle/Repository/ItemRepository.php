@@ -51,7 +51,7 @@ class ItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('i');
         $query
-            ->select('i.id AS api_id, f.id AS feed_id, i.title, i.link, i.content, i.dateAdd AS date_add, f.language')
+            ->select('i.id AS item_id, f.id AS feed_id, i.title, i.link, i.content, i.dateAdd AS date_add, f.language')
             ->innerJoin('i.feed', 'f')
             ->add('where', $query->expr()->in('i.id', $ids))
             ->orderBy('i.dateAdd', 'DESC');
@@ -63,7 +63,7 @@ class ItemRepository extends EntityRepository
     /**
      * Get last feed items
      *
-     * @param $feedId
+     * @param int $feedId
      * @param int $limit
      *
      * @return mixed
@@ -103,7 +103,8 @@ class ItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getByFeed($feedId, $limit = 10) {
+    public function getByFeed($feedId, $limit = 10)
+    {
         $query = $this->createQueryBuilder('i')
             ->where('i.feed = :feedId')
             ->setParameter('feedId', $feedId)

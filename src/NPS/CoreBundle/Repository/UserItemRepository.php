@@ -23,14 +23,14 @@ class UserItemRepository extends EntityRepository
      */
     public function hasItem($userId, $itemId)
     {
-        $query = $this->createQueryBuilder('o')
+        $query          = $this->createQueryBuilder('o')
             ->where('o.user = :userId')
             ->andWhere('o.item = :itemId')
             ->setParameter('userId', $userId)
             ->setParameter('itemId', $itemId)
             ->getQuery();
         $itemCollection = $query->getResult();
-        $item = null;
+        $item           = null;
 
         if (count($itemCollection) > 0) {
             foreach ($itemCollection as $value) {
@@ -43,6 +43,7 @@ class UserItemRepository extends EntityRepository
 
     /**
      * Get count of unread items by user and feed
+     *
      * @param $userId
      * @param $feedId
      *
@@ -89,13 +90,13 @@ class UserItemRepository extends EntityRepository
      */
     public function syncViewedItems($userItems)
     {
-        $query = "START TRANSACTION; ";
+        $query         = "START TRANSACTION; ";
         $userItemTable = $this->getClassMetadata()->getTableName();
-        $currentTime = time();
+        $currentTime   = time();
 
         foreach ($userItems as $itemData) {
-            $query.= "UPDATE ".$userItemTable." SET stared=".$itemData['is_stared'].", unread=".$itemData['is_unread'].
-                ", date_up=".$currentTime." WHERE id=".$itemData['ui_id']."; ";
+            $query .= "UPDATE " . $userItemTable . " SET stared='" . $itemData['is_stared'] . "',
+                unread='" . $itemData['is_unread'] . "', date_up=" . $currentTime . " WHERE id=" . $itemData['api_id'] . "; ";
         }
         $query .= "COMMIT;";
 
@@ -146,7 +147,7 @@ class UserItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('ui');
         $query
-            ->select('i.id AS api_id')
+            ->select('i.id AS item_id')
             ->innerJoin('ui.item', 'i')
             ->add('where', $query->expr()->in('i.id', $itemsIds))
             ->andWhere('ui.unread = :unread')
@@ -169,15 +170,15 @@ class UserItemRepository extends EntityRepository
      */
     public function getUnreadFeedItems($userId, $begin = 0, $limit = 300)
     {
-        $itemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
+        $itemTable     = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
         $userFeedTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserFeed')->getTableName();
         $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
-        $query = "SELECT ui.id AS ui_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id
-            FROM ".$userItemTable." ui
-            LEFT JOIN ".$itemTable." i1_ ON ui.item_id = i1_.id
-            LEFT JOIN ".$userFeedTable." f2_ ON i1_.feed_id = f2_.feed_id AND ui.user_id = f2_.user_id
-            WHERE ui.shared=false AND ui.unread=true AND ui.user_id=".$userId." AND f2_.deleted=0 ORDER BY ui.item_id DESC LIMIT ".$begin.",".$limit.";";
-        $query = $this->getEntityManager()->getConnection()->executeQuery($query);
+        $query         = "SELECT ui.id AS api_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id
+            FROM " . $userItemTable . " ui
+            LEFT JOIN " . $itemTable . " i1_ ON ui.item_id = i1_.id
+            LEFT JOIN " . $userFeedTable . " f2_ ON i1_.feed_id = f2_.feed_id AND ui.user_id = f2_.user_id
+            WHERE ui.shared=false AND ui.unread=true AND ui.user_id=" . $userId . " AND f2_.deleted=0 ORDER BY ui.item_id DESC LIMIT " . $begin . "," . $limit . ";";
+        $query         = $this->getEntityManager()->getConnection()->executeQuery($query);
 
         return $query->fetchAll();
     }
@@ -232,13 +233,13 @@ class UserItemRepository extends EntityRepository
      */
     public function markAllRead($userId, $feedId)
     {
-        $query = "START TRANSACTION; ";
+        $query         = "START TRANSACTION; ";
         $userItemTable = $this->getClassMetadata()->getTableName();
-        $itemTable = DBConstants::ITEM_TABLE;
+        $itemTable     = DBConstants::ITEM_TABLE;
 
-        $query.= "UPDATE ".$userItemTable." ui
-            LEFT JOIN ".$itemTable." i ON ui.item_id = i.id
-            SET unread=false WHERE ui.user_id=".$userId." AND i.feed_id=".$feedId." AND ui.unread=true;";
+        $query .= "UPDATE " . $userItemTable . " ui
+            LEFT JOIN " . $itemTable . " i ON ui.item_id = i.id
+            SET unread=false WHERE ui.user_id=" . $userId . " AND i.feed_id=" . $feedId . " AND ui.unread=true;";
         $query .= "COMMIT;";
 
         $this->getEntityManager()->getConnection()->exec($query);

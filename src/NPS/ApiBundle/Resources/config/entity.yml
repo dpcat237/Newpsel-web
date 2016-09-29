@@ -22,7 +22,7 @@ services:
   api.item.service:
     class: NPS\ApiBundle\Services\Entity\ItemApiService
     arguments:
-      doctrine:   "@doctrine"
+      doctrine:   "@doctrine.orm.entity_manager"
       api.secure: "@api.secure.service"
 
   api.label.service:
