@@ -110,7 +110,9 @@ class UserItemRepository extends EntityRepository
 
         foreach ($userItems as $itemData) {
             $query .= "UPDATE " . $userItemTable . " SET stared='" . $itemData['is_stared'] . "',
-                unread='" . $itemData['is_unread'] . "', date_up=" . $currentTime . " WHERE id=" . $itemData['api_id'] . "; ";
+                unread='" . $itemData['is_unread'] . "', date_up='" . $currentTime . "' WHERE id='" . $itemData['api_id'] . "'; ";
+
+
         }
         $query .= "COMMIT;";
 
