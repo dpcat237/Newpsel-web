@@ -5,6 +5,7 @@ namespace NPS\CoreBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use NPS\CoreBundle\Constant\DBConstants;
 use NPS\CoreBundle\Entity\Item;
+use NPS\CoreBundle\Entity\UserItem;
 
 /**
  * UserItemRepository
@@ -26,7 +27,7 @@ class UserItemRepository extends EntityRepository
     {
         $query          = $this->createQueryBuilder('ui')
             ->where('ui.user = :userId')
-            ->andWhere('ui.id = :userItemId')
+            ->andWhere('ui.item = :userItemId')
             ->setParameter('userId', $userId)
             ->setParameter('userItemId', $itemId)
             ->getQuery();
@@ -40,6 +41,18 @@ class UserItemRepository extends EntityRepository
         }
 
         return $item;
+    }
+
+    /**
+     * Find user item by id
+     *
+     * @param int $uiId
+     *
+     * @return null|UserItem
+     */
+    public function hasItemById($uiId)
+    {
+        return $this->find($uiId);
     }
 
     /**

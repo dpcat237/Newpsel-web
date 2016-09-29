@@ -507,7 +507,7 @@ class LaterItemService
         foreach ($items as $itemData) {
             $itemId   = $itemData['item_id'];
             $labelId  = $itemData['tag_id'];
-            $userItem = $userItemRepo->hasItem($userId, $itemId);
+            $userItem = $userItemRepo->hasItemById($itemId);
             if (!$userItem instanceof UserItem) {
                 continue;
             }
