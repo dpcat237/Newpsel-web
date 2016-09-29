@@ -163,12 +163,12 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {
+              "api_id": {
                 "type": "integer"
               }
             },
             "required": [
-              "id"
+              "api_id"
             ]
           }
         },
@@ -177,7 +177,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "ui_id": {
+              "api_id": {
                 "type": "integer"
               },
               "is_stared": {
@@ -188,7 +188,7 @@
               }
             },
             "required": [
-              "ui_id",
+              "api_id",
               "is_stared",
               "is_unread"
             ]
@@ -206,12 +206,12 @@
   "items": {
     "is_unread": [
       {
-        "id" : 123
+        "api_id" : 123
       }
     ],
     "is_read": [
       {
-        "ui_id": 231,
+        "api_id": 231,
         "is_stared": true,
         "is_unread": false
       }
@@ -227,7 +227,6 @@
     "content": "Article content",
     "date_add": 1466103671,
     "language": "en",
-    "ui_id": 359068,
     "is_stared": false,
     "is_unread": true
   },
@@ -239,7 +238,6 @@
     "content": "Article content",
     "date_add": 1466103274,
     "language": "en",
-    "ui_id": 359069,
     "is_stared": false,
     "is_unread": true
   }
