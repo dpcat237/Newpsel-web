@@ -23,23 +23,23 @@ class ArrayHelper extends Helper
     }
 
     /**
-     * Split collection items in two array by key
+     * Separate collection items in two array by boolean
      *
-     * @param array  $collections
-     * @param string $filterKey
+     * @param array  $collection
+     * @param string $boolean
      *
      * @return array: true, false
      */
-    static public function splitArray(array $collections, $filterKey)
+    static public function separateBooleanArray(array $collection, $boolean)
     {
-        $trueItems  = array();
+        $trueItems = array();
         $falseItems = array();
 
-        foreach ($collections as $collectionKey => $collection) {
-            if ($collectionKey == $filterKey) {
-                $trueItems = $collection;
+        foreach ($collection as $item) {
+            if ($item[$boolean]) {
+                $trueItems[] = $item;
             } else {
-                $falseItems = $collection;
+                $falseItems[] = $item;
             }
         }
 

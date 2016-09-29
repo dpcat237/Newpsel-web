@@ -97,7 +97,7 @@ class LaterItemApiService
     {
         $error  = false;
         $result = array();
-        list($unreadItems, $readItems) = ArrayHelper::splitArray($items, 'is_unread');
+        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
         }
@@ -286,7 +286,7 @@ class LaterItemApiService
     {
         $error  = false;
         $result = array();
-        list($unreadItems, $readItems) = ArrayHelper::splitArray($dictateItems, 'is_unread');
+        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
         }

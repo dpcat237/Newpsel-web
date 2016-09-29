@@ -46,7 +46,7 @@ class ItemApiService
     {
         $error  = false;
         $result = array();
-        list($unreadItems, $readItems) = ArrayHelper::splitArray($items, 'is_unread');
+        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->entityManager->getRepository('NPSCoreBundle:UserItem')->syncViewedItems($readItems);
         }
