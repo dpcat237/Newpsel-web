@@ -4,6 +4,7 @@ namespace NPS\CoreBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use NPS\CoreBundle\Constant\DBConstants;
+use NPS\CoreBundle\Entity\Item;
 
 /**
  * UserItemRepository
@@ -16,18 +17,18 @@ class UserItemRepository extends EntityRepository
     /**
      * Check if are relation between user and item.
      *
-     * @param $userId
-     * @param $itemId
+     * @param int $userId
+     * @param int $itemId
      *
      * @return null|Item
      */
     public function hasItem($userId, $itemId)
     {
-        $query          = $this->createQueryBuilder('o')
-            ->where('o.user = :userId')
-            ->andWhere('o.item = :itemId')
+        $query          = $this->createQueryBuilder('ui')
+            ->where('ui.user = :userId')
+            ->andWhere('ui.id = :userItemId')
             ->setParameter('userId', $userId)
-            ->setParameter('itemId', $itemId)
+            ->setParameter('userItemId', $itemId)
             ->getQuery();
         $itemCollection = $query->getResult();
         $item           = null;
