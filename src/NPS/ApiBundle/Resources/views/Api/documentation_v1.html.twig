@@ -179,6 +179,7 @@
     }
   },
   "required": [
+    "items",
     "limit"
   ]
 }
@@ -497,40 +498,21 @@
       "type": "integer"
     },
     "tag_items": {
-      "type": "object",
-      "properties": {
-        "is_unread": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "api_id": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "api_id"
-            ]
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "api_id": {
+            "type": "integer"
+          },
+          "is_unread": {
+            "type": "boolean"
           }
         },
-        "is_read": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "api_id": {
-                "type": "integer"
-              },
-              "is_unread": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "api_id",
-              "is_unread"
-            ]
-          }
-        }
+        "required": [
+          "api_id",
+          "is_unread"
+        ]
       }
     },
     "tags": {
@@ -556,19 +538,16 @@
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
   "limit": 50,
-  "tag_items": {
-    "is_unread": [
-      {
-        "api_id" : 123
-      }
-    ],
-    "is_read": [
-      {
-        "api_id": 231,
-        "is_unread": false
-      }
-    ]
-  },
+  "tag_items": [
+    {
+      "api_id": 231,
+      "is_unread": false
+    },
+    {
+      "api_id": 212,
+      "is_unread": true
+    }
+  ],
   "tags": [
       {
         "api_id" : 31
@@ -611,62 +590,41 @@
       "type": "integer"
     },
     "items": {
-      "type": "object",
-      "properties": {
-        "is_unread": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "api_id": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "api_id"
-            ]
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "api_id": {
+            "type": "integer"
+          },
+          "is_unread": {
+            "type": "boolean"
           }
         },
-        "is_read": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "api_id": {
-                "type": "integer"
-              },
-              "is_unread": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "api_id",
-              "is_unread"
-            ]
-          }
-        }
+        "required": [
+          "api_id",
+          "is_unread"
+        ]
       }
     }
   },
   "required": [
+    "items",
     "limit"
   ]
 }
 </code></pre><p><strong>Example</strong>:</p><pre><code>{
-    "items":{
-      "is_unread": [
-        {
-          "api_id" : 123
-        }
-      ],
-      "is_read": [
-        {
-          "api_id": 231,
-          "is_unread": false
-        }
-      ]
+  "limit": 50,
+  "items": [
+    {
+      "api_id": 231,
+      "is_unread": false
     },
-    "limit":25
+    {
+      "api_id": 212,
+      "is_unread": true
+    }
+  ]
 }
 </code></pre></div><div class="tab-pane" id="saved_article_dictation_sync_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>[
   {
