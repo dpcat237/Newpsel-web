@@ -1,8 +1,9 @@
 <?php
 namespace NPS\ApiBundle\Services\Entity;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use NPS\ApiBundle\Services\SecureService;
+use NPS\CoreBundle\Entity\LaterItem;
 use NPS\CoreBundle\Entity\User;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Helper\NotificationHelper;
@@ -15,14 +16,7 @@ use NPS\CoreBundle\Services\QueueLauncherService;
  */
 class LaterItemApiService
 {
-    /**
-     * @var Doctrine Registry
-     */
-    private $doctrine;
-
-    /**
-     * @var $entityManager Entity Manager
-     */
+    /** @var $entityManager EntityManager */
     protected $entityManager;
 
     /**
@@ -30,30 +24,31 @@ class LaterItemApiService
      */
     private $laterItem;
 
-    /**
-     * @var SecureService
-     */
+    /** @var LaterItemRepository */
+    private $laterItemRepository;
+
+    /** @var SecureService */
     private $secure;
 
-    /**
-     * @var QueueLauncherService
-     */
+    /** @var QueueLauncherService */
     private $queueLauncher;
 
-
     /**
-     * @param Registry             $doctrine      Doctrine Registry
-     * @param SecureService        $secure        SecureService
-     * @param QueueLauncherService $queueLauncher QueueLauncherService
-     * @param LaterItemService     $laterItem     LaterItemService
+     * LaterItemApiService constructor.
+     *
+     * @param EntityManager $entityManager
+     * @param SecureService $secure
+     * @param QueueLauncherService $queueLauncher
+     * @param LaterItemService $laterItem
      */
-    public function __construct(Registry $doctrine, SecureService $secure, QueueLauncherService $queueLauncher, LaterItemService $laterItem)
+    public function __construct(EntityManager $entityManager, SecureService $secure, QueueLauncherService $queueLauncher, LaterItemService $laterItem)
     {
-        $this->doctrine      = $doctrine;
-        $this->entityManager = $this->doctrine->getManager();
+        $this->entityManager = $entityManager;
         $this->laterItem     = $laterItem;
         $this->secure        = $secure;
         $this->queueLauncher = $queueLauncher;
+
+        $this->laterItemRepository = $entityManager->getRepository(LaterItem::class);
     }
 
     /**
@@ -99,7 +94,7 @@ class LaterItemApiService
         $result = array();
         list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
-            $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
+            $this->laterItemRepository->syncViewedLaterItems($readItems);
         }
 
         if (!$error && $limit > 1) {
@@ -120,14 +115,14 @@ class LaterItemApiService
      * @param array $labels
      * @param array $unreadItems
      * @param int   $limit
-     *+
+     *
      *
      * @return array
      */
     protected function getUnreadItems(array $labels, array $unreadItems, $limit)
     {
         $readItems     = array();
-        $laterItemRepo = $this->doctrine->getRepository('NPSCoreBundle:LaterItem');
+        $laterItemRepo = $this->laterItemRepository;
         $unreadIds     = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
         $labelsIds     = ArrayHelper::getIdsFromArray($labels, 'api_id');
         $totalUnread   = $laterItemRepo->totalUnreadLabelsItems($labelsIds);
@@ -288,7 +283,7 @@ class LaterItemApiService
         $result = array();
         list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
-            $this->doctrine->getRepository('NPSCoreBundle:LaterItem')->syncViewedLaterItems($readItems);
+            $this->laterItemRepository->syncViewedLaterItems($readItems);
         }
         if (empty($error)) {
             $result = $this->laterItem->getUnreadItemsApi($user->getPreference()->getDictationTagId(), $unreadItems, $limit);

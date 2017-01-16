@@ -37,10 +37,10 @@ services:
   api.later_item.service:
     class: NPS\ApiBundle\Services\Entity\LaterItemApiService
     arguments:
-      doctrine:   "@doctrine"
-      api.secure: "@api.secure.service"
-      queue:      "@nps.launcher.queue"
-      label_item: "@nps.entity.later_item"
+      - "@doctrine.orm.entity_manager"
+      - "@api.secure.service"
+      - "@nps.launcher.queue"
+      - "@nps.entity.later_item"
 
   api.source.service:
     class: NPS\ApiBundle\Services\Entity\SourceApiService

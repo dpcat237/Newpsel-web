@@ -12,7 +12,6 @@ use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Services\Entity\LaterService;
 use NPS\CoreBundle\Entity\User;
-use NPS\CoreBundle\Helper\NotificationHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -105,15 +104,15 @@ class LabelApiService
     public function syncLabels(User $user, array $apiLabels)
     {
         $error  = false;
-        $labels = array();
+        $labels = [];
         if (empty($error)) {
             $dbLabels = $this->doctrine->getRepository('NPSCoreBundle:Later')->getUserLabelsApi($user->getId());
             $labels   = $this->processLabelsSync($dbLabels, $apiLabels, $user);
         }
-        $responseData = array(
+        $responseData = [
             'error'  => $error,
             'tags' => $labels,
-        );
+        ];
 
         return $responseData;
     }

@@ -108,16 +108,17 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('li');
         $query
-            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id later_id tag_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
+            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id tag_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
             ->join('li.userItem', 'ui')
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
             ->leftJoin('li.later', 'l')
-            ->add('where', $query->expr()->in('li.later', $labelsIds))
+            ->where("li.later IN(:labelsIds)")
             ->andWhere('li.unread = :unread')
             ->orderBy('li.id', 'DESC')
             ->setFirstResult($begin)
             ->setMaxResults($limit)
+            ->setParameter('labelsIds', $labelsIds)
             ->setParameter('unread', true);
         $query = $query->getQuery();
 
@@ -224,8 +225,9 @@ class LaterItemRepository extends EntityRepository
         $query = $this->createQueryBuilder('li');
         $query
             ->add('select', $query->expr()->count('li'))
-            ->add('where', $query->expr()->in('li.later', $labelsIds))
+            ->where("li.later IN(:labelsIds)")
             ->andWhere('li.unread = :unread')
+            ->setParameter('labelsIds', $labelsIds)
             ->setParameter('unread', true);
 
         return $query->getQuery()->getSingleScalarResult();
