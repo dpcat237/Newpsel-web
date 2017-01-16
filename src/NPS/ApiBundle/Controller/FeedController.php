@@ -57,8 +57,9 @@ class FeedController extends ApiController
      */
     public function syncFeedsAction(Request $request)
     {
-        $json         = json_decode($request->getContent(), true);
-        $responseData = $this->getFeedApiService()->syncFeeds($this->getDeviceUser($request), $json['feeds']);
+        $json = json_decode($request->getContent(), true);
+        $feeds = (isset($json['feeds'])) ? $json['feeds'] : [];
+        $responseData = $this->getFeedApiService()->syncFeeds($this->getDeviceUser($request), $feeds);
         if ($responseData['error']) {
             return $responseData['error'];
         }

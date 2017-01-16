@@ -157,25 +157,4 @@ class FeedRepository extends EntityRepository
 
         return $collection;
     }
-
-    /**
-     * Update feed data
-     *
-     * @param int    $feedId
-     * @param string $title
-     * @param int    $dateUp
-     */
-    public function updateFeed($feedId, $title, $dateUp)
-    {
-        $query = $this->createQueryBuilder('f')
-            ->update()
-            ->set('f.title', ':title')
-            ->set('f.dateUp', ':dateUp')
-            ->where('f.id = :feedId')
-            ->setParameter('feedId', $feedId)
-            ->setParameter('title', $title)
-            ->setParameter('dateUp', $dateUp)
-            ->getQuery();
-        $query->execute();
-    }
 }

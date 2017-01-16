@@ -186,6 +186,6 @@ class FeedService
      */
     public function updateUserFeed($feedId, $title, $dateUp)
     {
-        $this->feedRepository->updateFeed($feedId, $title, $dateUp);
+        $this->userFeedRepository->updateFeed($feedId, $title, $dateUp);
     }
 }

@@ -110,7 +110,7 @@ class FeedApiService
     public function syncFeeds(User $user, array $apiFeeds)
     {
         $error = false;
-        $feeds = array();
+        $feeds = [];
 
         if (!$error) {
             $dbFeeds = $this->feedService->getUserFeedsApi($user->getId());
@@ -235,11 +235,16 @@ class FeedApiService
 
             return $dbFeed;
         }
+
         if ($dbFeed['date_up'] < $apiFeed['date_up']) {
             $this->feedService->updateUserFeed($apiFeed['api_id'], $apiFeed['title'], $apiFeed['date_up']);
             $this->modified = true;
+            $dbFeed['title'] = $apiFeed['title'];
+            $dbFeed['date_up'] = $apiFeed['date_up'];
 
-            return null;
+            return $dbFeed;
         }
+
+        return null;
     }
 }

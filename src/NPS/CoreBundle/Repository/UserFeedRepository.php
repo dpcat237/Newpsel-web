@@ -75,4 +75,25 @@ class UserFeedRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    /**
+     * Update feed data
+     *
+     * @param int    $feedId
+     * @param string $title
+     * @param int    $dateUp
+     */
+    public function updateFeed($feedId, $title, $dateUp)
+    {
+        $query = $this->createQueryBuilder('uf')
+            ->update()
+            ->set('uf.title', ':title')
+            ->set('uf.dateUp', ':dateUp')
+            ->where('uf.feed = :feedId')
+            ->setParameter('feedId', $feedId)
+            ->setParameter('title', $title)
+            ->setParameter('dateUp', $dateUp)
+            ->getQuery();
+        $query->execute();
+    }
 }
