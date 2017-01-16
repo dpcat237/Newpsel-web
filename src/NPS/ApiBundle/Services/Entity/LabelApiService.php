@@ -2,8 +2,9 @@
 
 namespace NPS\ApiBundle\Services\Entity;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 use NPS\CoreBundle\Constant\RedisConstants;
+use NPS\CoreBundle\Entity\Later;
 use NPS\CoreBundle\Event\LabelModifiedEvent;
 use NPS\CoreBundle\NPSCoreEvents;
 use NPS\CoreBundle\Repository\LaterRepository;
@@ -21,8 +22,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class LabelApiService
 {
-    /** @var Registry */
-    private $doctrine;
+    /** @var $entityManager EntityManager */
+    protected $entityManager;
 
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
@@ -39,22 +40,27 @@ class LabelApiService
     /** @var Boolean */
     private $modified = false;
 
+    /** @var LaterRepository */
+    protected $tagRepository;
+
     /**
      * LabelApiService constructor.
      *
-     * @param Registry                 $doctrine
-     * @param SecureService            $secure
-     * @param LaterService             $labelService
-     * @param Client                   $cache
+     * @param EntityManager $entityManager
+     * @param SecureService $secure
+     * @param LaterService $labelService
+     * @param Client $cache
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(Registry $doctrine, SecureService $secure, LaterService $labelService, Client $cache, EventDispatcherInterface $eventDispatcher)
+    public function __construct(EntityManager $entityManager, SecureService $secure, LaterService $labelService, Client $cache, EventDispatcherInterface $eventDispatcher)
     {
-        $this->doctrine        = $doctrine;
+        $this->entityManager   = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->labelService    = $labelService;
         $this->secure          = $secure;
         $this->cache           = $cache;
+
+        $this->tagRepository = $entityManager->getRepository(Later::class);
     }
 
     /**
@@ -67,13 +73,13 @@ class LabelApiService
     public function getUserLabels($appKey)
     {
         $response = false;
-        $labels   = array();
+        $labels   = [];
         $user     = $this->secure->getUserByDevice($appKey);
         if (!$user instanceof User) {
-            $responseData = array(
+            $responseData = [
                 'response' => $response,
-                'labels'   => $labels
-            );
+                'labels'   => $labels,
+            ];
 
             return $responseData;
         }
@@ -106,7 +112,7 @@ class LabelApiService
         $error  = false;
         $labels = [];
         if (empty($error)) {
-            $dbLabels = $this->doctrine->getRepository('NPSCoreBundle:Later')->getUserLabelsApi($user->getId());
+            $dbLabels = $this->tagRepository->getUserLabelsApi($user->getId());
             $labels   = $this->processLabelsSync($dbLabels, $apiLabels, $user);
         }
         $responseData = [
@@ -128,7 +134,7 @@ class LabelApiService
      */
     private function processLabelsSync(array $dbLabels, array $apiLabels, $user)
     {
-        $labels         = array();
+        $labels         = [];
         $this->modified = false;
         //first sync to device
         if (!count($apiLabels)) {
@@ -178,11 +184,10 @@ class LabelApiService
      *
      * @param array           $dbLabel
      * @param array           $apiLabel
-     * @param LaterRepository $labelRepo
      *
      * @return null
      */
-    private function processChangedLabel($dbLabel, $apiLabel, LaterRepository $labelRepo)
+    private function processChangedLabel($dbLabel, $apiLabel)
     {
         if ($dbLabel['date_up'] > $apiLabel['date_up']) {
             $dbLabel['status'] = EntityConstants::STATUS_CHANGED;
@@ -191,11 +196,15 @@ class LabelApiService
             return $dbLabel;
         }
         if ($dbLabel['date_up'] < $apiLabel['date_up']) {
-            $labelRepo->updateLabel($apiLabel['api_id'], $apiLabel['name'], $apiLabel['date_up']);
+            $this->tagRepository->updateLabel($apiLabel['api_id'], $apiLabel['name'], $apiLabel['date_up']);
             $this->modified = true;
+            $dbLabel['name'] = $apiLabel['name'];
+            $dbLabel['date_up'] = $apiLabel['date_up'];
 
-            return null;
+            return $dbLabel;
         }
+
+        return null;
     }
 
     /**
@@ -208,9 +217,7 @@ class LabelApiService
      */
     private function compareSyncApiDb(array $dbLabels, array $apiLabels)
     {
-        $labels    = array();
-        $labelRepo = $this->doctrine->getRepository('NPSCoreBundle:Later');
-
+        $labels = [];
         foreach ($dbLabels as $dbLabel) {
             $found = false;
             foreach ($apiLabels as $keyApi => $apiLabel) {
@@ -226,7 +233,7 @@ class LabelApiService
                 }
 
                 //compare changes
-                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel, $labelRepo);
+                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel);
                 if (!empty($changedLabel)) {
                     $labels[] = $changedLabel;
                 }
@@ -241,7 +248,7 @@ class LabelApiService
             }
         }
 
-        return array($apiLabels, $labels);
+        return [$apiLabels, $labels];
     }
 
     /**
@@ -254,7 +261,7 @@ class LabelApiService
      */
     private function checkDeletedLabels(User $user, array $apiLabels)
     {
-        $labels        = array();
+        $labels        = [];
         $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED . "_" . $user->getId());
         if (empty($deletedLabels)) {
             return array($apiLabels, $labels);
@@ -282,9 +289,9 @@ class LabelApiService
      */
     public function updateLabelsTree($userId)
     {
-        $labels     = array();
+        $labels     = [];
         $redisKey   = RedisConstants::LABEL_TREE . '_' . $userId;
-        $labelsData = $this->doctrine->getRepository('NPSCoreBundle:Later')->getUserLabel($userId);
+        $labelsData = $this->tagRepository->getUserLabel($userId);
 
         //prepare labels for api
         foreach ($labelsData as $lab) {

@@ -28,11 +28,11 @@ services:
   api.label.service:
     class: NPS\ApiBundle\Services\Entity\LabelApiService
     arguments:
-      doctrine:         "@doctrine"
-      api.secure:       "@api.secure.service"
-      label:            "@nps.entity.later"
-      server_cache:     "@snc_redis.default"
-      event_dispatcher: "@event_dispatcher"
+      - "@doctrine.orm.entity_manager"
+      - "@api.secure.service"
+      - "@nps.entity.later"
+      - "@snc_redis.default"
+      - "@event_dispatcher"
 
   api.later_item.service:
     class: NPS\ApiBundle\Services\Entity\LaterItemApiService
