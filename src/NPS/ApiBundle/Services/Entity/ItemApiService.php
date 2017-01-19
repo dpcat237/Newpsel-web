@@ -42,7 +42,7 @@ class ItemApiService
      *
      * @return array
      */
-    public function syncItems(User $user, $items, $limit)
+    public function syncItems(User $user, $items, $limit = 100)
     {
         $error  = false;
         $result = array();

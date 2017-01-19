@@ -88,7 +88,7 @@ class LaterItemApiService
      *
      * @return array
      */
-    public function syncLaterItems(User $user, $items, $labels, $limit)
+    public function syncLaterItems(User $user, $items, $labels, $limit = 100)
     {
         $error  = false;
         $result = array();
