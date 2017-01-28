@@ -135,6 +135,25 @@ class LaterItemApiService
             $items = $this->addReadItems($items, $readItems);
         }
 
+        return $this->convertTagIdToArray($items);
+    }
+
+    /**
+     * @param array $items
+     *
+     * @return array
+     */
+    private function convertTagIdToArray($items)
+    {
+        if (!count($items)) {
+            return [];
+        }
+
+        foreach ($items as $key => $item) {
+            unset($items[$key]['tag_id']);
+            $items[$key]['tag_id'][]['api_id'] = $item['tag_id'];
+        }
+
         return $items;
     }
 
