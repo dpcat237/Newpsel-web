@@ -23,30 +23,6 @@ class ArrayHelper extends Helper
     }
 
     /**
-     * Separate collection items in two array by boolean
-     *
-     * @param array  $collection
-     * @param string $boolean
-     *
-     * @return array: true, false
-     */
-    static public function separateBooleanArray(array $collection, $boolean)
-    {
-        $trueItems = array();
-        $falseItems = array();
-
-        foreach ($collection as $item) {
-            if ($item[$boolean]) {
-                $trueItems[] = $item;
-            } else {
-                $falseItems[] = $item;
-            }
-        }
-
-        return array($trueItems, $falseItems);
-    }
-
-    /**
      * Separate ids to array
      *
      * @param array  $collection
@@ -54,9 +30,9 @@ class ArrayHelper extends Helper
      *
      * @return array
      */
-    static public function getIdsFromArray(array $collection, $key = 'id')
+    public static function getIdsFromArray(array $collection, $key = 'id')
     {
-        $ids = array();
+        $ids = [];
         foreach ($collection as $value) {
             $ids[] = $value[$key];
         }
@@ -73,7 +49,7 @@ class ArrayHelper extends Helper
      *
      * @return array
      */
-    static public function filterUnreadItemsIds($unreadItems, $unreadIds, $idKey = 'api_id')
+    public static function filterUnreadItemsIds($unreadItems, $unreadIds, $idKey = 'api_id')
     {
         foreach ($unreadItems as $key => $unreadItem) {
             if (in_array($unreadItem[$idKey], $unreadIds)) {
@@ -82,5 +58,87 @@ class ArrayHelper extends Helper
         }
 
         return $unreadItems;
+    }
+
+    /**
+     * @param array $collection
+     * @param string $key
+     * @param string $value
+     *
+     * @return array
+     */
+    public static function joinValuesSameKey(array $collection, $key, $value)
+    {
+        if (!count($collection)) {
+            return [];
+        }
+
+        foreach ($collection as $item) {
+            $result[$item[$key]][] = $item[$value];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $collection
+     * @param string $key
+     *
+     * @return array
+     */
+    public static function moveContendUnderKey(array $collection, $key = 'id')
+    {
+        if (!count($collection)) {
+            return [];
+        }
+
+        foreach ($collection as $item) {
+            $result[$item[$key]] = $item;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $collection
+     * @param string $key
+     *
+     * @return array
+     */
+    public static function moveContendUnderRepetitiveKey(array $collection, $key = 'id')
+    {
+        if (!count($collection)) {
+            return [];
+        }
+
+        foreach ($collection as $item) {
+            $result[$item[$key]][] = $item;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Separate collection items in two array by boolean
+     *
+     * @param array  $collection
+     * @param string $boolean
+     *
+     * @return array: true, false
+     */
+    public static function separateBooleanArray(array $collection, $boolean)
+    {
+        $trueItems = array();
+        $falseItems = array();
+
+        foreach ($collection as $item) {
+            if ($item[$boolean]) {
+                $trueItems[] = $item;
+            } else {
+                $falseItems[] = $item;
+            }
+        }
+
+        return array($trueItems, $falseItems);
     }
 }

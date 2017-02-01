@@ -498,10 +498,9 @@ class LaterItemService
     /**
      * Add later items for specific user
      *
-     * @param integer $userId
-     * @param array   $items
+     * @param array $items
      */
-    public function syncLaterItems($userId, $items)
+    public function syncLaterItems($items)
     {
         $userItemRepo = $this->entityManager->getRepository(UserItem::class);
         foreach ($items as $itemData) {

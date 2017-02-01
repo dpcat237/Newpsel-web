@@ -1,7 +1,9 @@
 <?php
+
 namespace NPS\ApiBundle\Services\Entity;
 
 use Doctrine\ORM\EntityManager;
+use NPS\ApiBundle\DataTransformer\SavedItemTransformer;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\LaterItem;
 use NPS\CoreBundle\Entity\User;
@@ -18,20 +20,17 @@ class LaterItemApiService
 {
     /** @var $entityManager EntityManager */
     protected $entityManager;
-
-    /**
-     * @var LaterItemService
-     */
+    /** @var LaterItemService */
     private $laterItem;
-
     /** @var LaterItemRepository */
     private $laterItemRepository;
-
     /** @var SecureService */
     private $secure;
-
     /** @var QueueLauncherService */
     private $queueLauncher;
+
+    private $itamTageAdd = [];
+    private $itamTageRemove = [];
 
     /**
      * LaterItemApiService constructor.
@@ -81,17 +80,19 @@ class LaterItemApiService
     /**
      * Sync viewed later items and download unread later items
      *
-     * @param User  $user
      * @param array $items  array of all items from API with basic information
      * @param array $labels array of labels from which sync items
      * @param int   $limit  max quantity of items to sync
      *
      * @return array
+     * TODO: process doesn't update API went are some tags changes with items which already exist in the device
      */
-    public function syncLaterItems(User $user, $items, $labels, $limit = 100)
+    public function syncLaterItems($items, $labels, $limit = 100)
     {
         $error  = false;
-        $result = array();
+        $result = [];
+
+        $this->syncSavedItemsTags($items);
         list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
             $this->laterItemRepository->syncViewedLaterItems($readItems);
@@ -101,10 +102,10 @@ class LaterItemApiService
             $result = $this->getUnreadItems($labels, $unreadItems, $limit);
         }
 
-        $responseData = array(
+        $responseData = [
             'error'     => $error,
             'tag_items' => $result,
-        );
+        ];
 
         return $responseData;
     }
@@ -121,7 +122,7 @@ class LaterItemApiService
      */
     protected function getUnreadItems(array $labels, array $unreadItems, $limit)
     {
-        $readItems     = array();
+        $readItems     = [];
         $laterItemRepo = $this->laterItemRepository;
         $unreadIds     = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
         $labelsIds     = ArrayHelper::getIdsFromArray($labels, 'api_id');
@@ -133,25 +134,6 @@ class LaterItemApiService
         }
         if (count($readItems)) {
             $items = $this->addReadItems($items, $readItems);
-        }
-
-        return $this->convertTagIdToArray($items);
-    }
-
-    /**
-     * @param array $items
-     *
-     * @return array
-     */
-    private function convertTagIdToArray($items)
-    {
-        if (!count($items)) {
-            return [];
-        }
-
-        foreach ($items as $key => $item) {
-            unset($items[$key]['tag_id']);
-            $items[$key]['tag_id'][]['api_id'] = $item['tag_id'];
         }
 
         return $items;
@@ -172,6 +154,8 @@ class LaterItemApiService
     private function getUnreadItemsIdsRecursive(LaterItemRepository $laterItemRepo, array $labelsIds, array $unreadIds, $begin, $limit, $total)
     {
         $unreadItems = $laterItemRepo->getUnreadForApiByLabels($labelsIds, $begin, $limit);
+        $relatedItemsTags = $this->laterItemRepository->getTagsByUserItemIds(ArrayHelper::getIdsFromArray($unreadItems, 'ui_id'));
+        $unreadItems = SavedItemTransformer::transformList($unreadItems, ArrayHelper::joinValuesSameKey($relatedItemsTags, 'ui_id', 'tag_id'));
         if (!count($unreadIds)) {
             return $unreadItems;
         }
@@ -205,18 +189,18 @@ class LaterItemApiService
     private function addReadItems($tagItems, $readItems)
     {
         foreach ($readItems as $readItem) {
-            $item       = array(
+            $item       = [
                 'api_id'    => $readItem['api_id'],
                 'item_id'   => 0,
                 'feed_id'   => 0,
-                'tag_id'    => 0,
+                'tags'    => [],
                 'is_unread' => false,
                 'date_add'  => 0,
                 'language'  => "",
                 'link'      => "",
                 'title'     => "",
                 'content'   => ""
-            );
+            ];
             $tagItems[] = $item;
         }
 
@@ -236,7 +220,7 @@ class LaterItemApiService
         $error  = false;
         $result = false;
         if (empty($error) && is_array($tagItems) && count($tagItems)) {
-            $this->laterItem->syncLaterItems($user->getId(), $tagItems);
+            $this->laterItem->syncLaterItems($tagItems);
             //get complete content for partial articles
             $this->queueLauncher->executeCrawling($user->getId());
 
@@ -313,5 +297,62 @@ class LaterItemApiService
         );
 
         return $responseData;
+    }
+
+    /**
+     * @param array $apiItem
+     * @param array $dbItemTags
+     */
+    protected function checkItemTagsDifferences(array $apiItem, array $dbItemTags)
+    {
+        $uiId = $apiItem['ui_id'];
+        $apiItemTags = $apiItem['tags'];
+        $dbTags = [];
+        foreach ($dbItemTags as $dbItemTag) {
+            if (!in_array($dbItemTag['tag_id'], $apiItemTags)) {
+                $this->itamTageRemove[] = $dbItemTag['id'];
+            }
+            $dbTags[] = $dbItemTag['tag_id'];
+        }
+
+        foreach ($apiItemTags as $apiItemTag) {
+            if (!in_array($apiItemTag, $dbTags)) {
+                $this->itamTageAdd[] = [
+                    'tag_id' => $apiItemTag,
+                    'ui_id' => $uiId
+                ];
+            }
+        }
+    }
+
+    /**
+     * @param array $items
+     */
+    protected function syncSavedItemsTags(array $items)
+    {
+        if (!count($items)) {
+            return;
+        }
+
+        $this->itamTageRemove = [];
+        $this->itamTageAdd = [];
+        $apiItems = ArrayHelper::moveContendUnderKey($items, 'ui_id');
+        $dbItems = $this->laterItemRepository->getTagsByUserItemIds(ArrayHelper::getIdsFromArray($items, 'ui_id'));
+        $dbItems = ArrayHelper::moveContendUnderRepetitiveKey($dbItems, 'ui_id');
+
+        foreach ($dbItems as $uiId => $dbItem) {
+            $apiItemTags = $apiItems[$uiId]['tags'];
+            if (count($apiItemTags)) {
+                $this->checkItemTagsDifferences($apiItems[$uiId], $dbItem);
+            }
+        }
+
+        if (count($this->itamTageRemove)) {
+            $this->laterItemRepository->removeTagItem($this->itamTageRemove);
+        }
+
+        if (count($this->itamTageAdd)) {
+            $this->laterItemRepository->insertTagItems($this->itamTageAdd);
+        }
     }
 }

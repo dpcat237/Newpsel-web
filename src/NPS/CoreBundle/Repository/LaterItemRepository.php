@@ -67,6 +67,27 @@ class LaterItemRepository extends EntityRepository
     }
 
     /**
+     * @param array $itemIds
+     *
+     * @return array
+     */
+    public function getTagsByUserItemIds($itemIds)
+    {
+        $query = $this->createQueryBuilder('ti');
+        $query
+            ->select('ti.id, t.id tag_id, ui.id ui_id')
+            ->leftJoin('ti.later', 't')
+            ->leftJoin('ti.userItem', 'ui')
+            ->where("ti.userItem IN(:userItemsIds)")
+            ->andWhere('ti.unread = :unread')
+            ->setParameter('userItemsIds', $itemIds)
+            ->setParameter('unread', true);
+        $query = $query->getQuery();
+
+        return $query->getArrayResult();
+    }
+
+    /**
      * Get unread items for api by label
      *
      * @param int $laterId
@@ -108,11 +129,10 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('li');
         $query
-            ->select('li.id AS api_id, i.id item_id, f.id feed_id, l.id tag_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
+            ->select('i.id api_id, ui.id ui_id, f.id feed_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
             ->join('li.userItem', 'ui')
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
-            ->leftJoin('li.later', 'l')
             ->where("li.later IN(:labelsIds)")
             ->andWhere('li.unread = :unread')
             ->orderBy('li.id', 'DESC')
@@ -123,6 +143,24 @@ class LaterItemRepository extends EntityRepository
         $query = $query->getQuery();
 
         return $query->getArrayResult();
+    }
+
+    /**
+     * @param array $itemsData
+     */
+    public function insertTagItems($itemsData)
+    {
+        $query = "START TRANSACTION; ";
+        $laterItemTable = $this->getClassMetadata()->getTableName();
+        $currentTime = time();
+
+        foreach ($itemsData as $itemData) {
+            $query.= "INSERT INTO ".$laterItemTable." (user_item_id, later_id, date_add, unread, date_up) 
+            VALUES(".$itemData['ui_id'].", ".$itemData['tag_id'].", ".$currentTime.", true, ".$currentTime."); ";
+        }
+        $query .= "COMMIT;";
+
+        $this->getEntityManager()->getConnection()->exec($query);
     }
 
     /**
@@ -191,6 +229,19 @@ class LaterItemRepository extends EntityRepository
         $query = $query->getQuery();
 
         return $query->getArrayResult();
+    }
+
+    /**
+     * @param array $ids
+     */
+    public function removeTagItem($ids)
+    {
+        $query = $this->createQueryBuilder('ti');
+        $query
+            ->delete()
+            ->where("ti.id IN(:ids)")
+            ->setParameter('ids', $ids);
+        $query->getQuery()->execute();
     }
 
     /**
