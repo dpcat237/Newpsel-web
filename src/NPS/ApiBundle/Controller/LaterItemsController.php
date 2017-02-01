@@ -68,7 +68,7 @@ class LaterItemsController extends ApiController
         $json         = json_decode($request->getContent(), true);
         $itemService  = $this->get('api.later_item.service');
         $items = (isset($json['tag_items'])) ? $json['tag_items'] : [];
-        $tags = (isset($json['tags'])) ? $json['tags'] : [];
+        $tags = (isset($json['return_tags'])) ? $json['return_tags'] : [];
         $limit = (isset($json['limit'])) ? $json['limit'] : [];
 
         $responseData = $itemService->syncLaterItems($items, $tags, $limit);
