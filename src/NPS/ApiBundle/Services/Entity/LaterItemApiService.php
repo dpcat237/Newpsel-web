@@ -80,58 +80,26 @@ class LaterItemApiService
     /**
      * Sync viewed later items and download unread later items
      *
-     * @param array $items  array of all items from API with basic information
-     * @param array $labels array of labels from which sync items
+     * @param array $unreadItemsIds  array of all items from API with basic information
+     * @param array $tagsIds array of labels from which sync items
      * @param int   $limit  max quantity of items to sync
      *
      * @return array
-     * TODO: process doesn't update API went are some tags changes with items which already exist in the device
      */
-    public function syncLaterItems($items, $labels, $limit = 100)
+    public function syncLaterItems($unreadItemsIds, $tagsIds, $limit = 100)
     {
-        $error  = false;
-        $result = [];
-
-        $this->syncSavedItemsTags($items);
-        list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($items, 'is_unread');
-        if (empty($error) && is_array($readItems) && count($readItems)) {
-            $this->laterItemRepository->syncViewedLaterItems($readItems);
+        if ($limit < 1 || !count($tagsIds)) {
+            return [];
         }
 
-        if (!$error && $limit > 1) {
-            $result = $this->getUnreadItems($labels, $unreadItems, $limit);
+        $readItems   = [];
+        $totalUnread = $this->laterItemRepository->totalUnreadLabelsItems($tagsIds);
+        $items       = $this->getUnreadItemsIdsRecursive($tagsIds, $unreadItemsIds, 0, $limit + 5, $totalUnread); //"+5" extra to don't do many loops for few items
+
+        if (count($unreadItemsIds)) {
+            $readItems = $this->laterItemRepository->getReadItems($unreadItemsIds);
         }
 
-        $responseData = [
-            'error'     => $error,
-            'tag_items' => $result,
-        ];
-
-        return $responseData;
-    }
-
-    /**
-     * Get unread items and mix them with read on server
-     *
-     * @param array $labels
-     * @param array $unreadItems
-     * @param int   $limit
-     *
-     *
-     * @return array
-     */
-    protected function getUnreadItems(array $labels, array $unreadItems, $limit)
-    {
-        $readItems     = [];
-        $laterItemRepo = $this->laterItemRepository;
-        $unreadIds     = ArrayHelper::getIdsFromArray($unreadItems, 'api_id');
-        $labelsIds     = ArrayHelper::getIdsFromArray($labels, 'api_id');
-        $totalUnread   = $laterItemRepo->totalUnreadLabelsItems($labelsIds);
-        $items         = $this->getUnreadItemsIdsRecursive($laterItemRepo, $labelsIds, $unreadIds, 0, $limit + 5, $totalUnread); //"+5" extra to don't do many loops for few items
-
-        if (count($unreadIds)) {
-            $readItems = $laterItemRepo->getReadItems($unreadIds);
-        }
         if (count($readItems)) {
             $items = $this->addReadItems($items, $readItems);
         }
@@ -142,27 +110,26 @@ class LaterItemApiService
     /**
      * Get unread later items recursively
      *
-     * @param LaterItemRepository $laterItemRepo
-     * @param array               $labelsIds array of labels ids from which sync items
-     * @param array               $unreadIds still unread items ids from api
-     * @param int                 $begin     position from which begin limit in query
-     * @param int                 $limit     limit of items for query
-     * @param int                 $total     total unread items in data base
+     * @param array $labelsIds array of labels ids from which sync items
+     * @param array $unreadIds still unread items ids from api
+     * @param int $begin position from which begin limit in query
+     * @param int $limit limit of items for query
+     * @param int $total total unread items in data base
      *
      * @return array
      */
-    private function getUnreadItemsIdsRecursive(LaterItemRepository $laterItemRepo, array $labelsIds, array $unreadIds, $begin, $limit, $total)
+    private function getUnreadItemsIdsRecursive(array $labelsIds, array $unreadIds, $begin, $limit, $total)
     {
-        $unreadItems = $laterItemRepo->getUnreadForApiByLabels($labelsIds, $begin, $limit);
+        $unreadItems = $this->laterItemRepository->getUnreadForApiByLabels($labelsIds, $begin, $limit);
         $relatedItemsTags = $this->laterItemRepository->getTagsByUserItemIds(ArrayHelper::getIdsFromArray($unreadItems, 'ui_id'));
         $unreadItems = SavedItemTransformer::transformList($unreadItems, ArrayHelper::joinValuesSameKey($relatedItemsTags, 'ui_id', 'tag_id'));
         if (!count($unreadIds)) {
             return $unreadItems;
         }
 
-        $unreadItems = ArrayHelper::filterUnreadItemsIds($unreadItems, $unreadIds);
+        $unreadItems = ArrayHelper::filterUnreadItemsIds($unreadItems, $unreadIds, 'ui_id');
         $unreadCount = count($unreadItems);
-        $begin       = $begin + $limit;
+        $begin += $limit;
 
         if ($unreadCount >= $limit || ($begin + 1) >= $total || $limit < 5) { //added 5 just in case to don't do a lot of loops for few items
             return $unreadItems;
@@ -172,7 +139,7 @@ class LaterItemApiService
         if (($begin + $limit) > $total) {
             $limit = $total - $begin;
         }
-        $moreUnreadItems = $this->getUnreadItemsIdsRecursive($laterItemRepo, $labelsIds, $unreadIds, $begin, $limit, $total);
+        $moreUnreadItems = $this->getUnreadItemsIdsRecursive($labelsIds, $unreadIds, $begin, $limit, $total);
         $unreadItems     = array_merge($unreadItems, $moreUnreadItems);
 
         return $unreadItems;
@@ -208,30 +175,24 @@ class LaterItemApiService
     }
 
     /**
-     * Sync tag item from API to database to be read later
+     * Sync tags items relation
      *
      * @param User  $user
      * @param array $tagItems selected items to be read later
      *
      * @return array
      */
-    public function syncLaterItemsApi(User $user, $tagItems)
+    public function syncLaterItemsApi(User $user, array $tagItems)
     {
-        $error  = false;
-        $result = false;
-        if (empty($error) && is_array($tagItems) && count($tagItems)) {
-            $this->laterItem->syncLaterItems($tagItems);
-            //get complete content for partial articles
-            $this->queueLauncher->executeCrawling($user->getId());
-
-            $result = NotificationHelper::OK;
+        if (!count($tagItems)) {
+            return [];
         }
-        $responseData = array(
-            'error'  => $error,
-            'result' => $result,
-        );
 
-        return $responseData;
+        $this->syncSavedItemsTags($tagItems);
+        //get complete content for partial articles
+        $this->queueLauncher->executeCrawling($user->getId());
+
+        return $this->getTagsItemsRelationByUIs(ArrayHelper::getIdsFromArray($tagItems, 'ui_id'));
     }
 
     /**
@@ -309,20 +270,30 @@ class LaterItemApiService
         $apiItemTags = $apiItem['tags'];
         $dbTags = [];
         foreach ($dbItemTags as $dbItemTag) {
-            if (!in_array($dbItemTag['tag_id'], $apiItemTags)) {
+            if (!in_array($dbItemTag['tag_id'], $apiItemTags, false)) {
                 $this->itamTageRemove[] = $dbItemTag['id'];
             }
             $dbTags[] = $dbItemTag['tag_id'];
         }
 
         foreach ($apiItemTags as $apiItemTag) {
-            if (!in_array($apiItemTag, $dbTags)) {
+            if (!in_array($apiItemTag, $dbTags, false)) {
                 $this->itamTageAdd[] = [
                     'tag_id' => $apiItemTag,
                     'ui_id' => $uiId
                 ];
             }
         }
+    }
+
+    /**
+     * @param array $userItems
+     *
+     * @return array
+     */
+    protected function getTagsItemsRelationByUIs(array $userItems)
+    {
+        return SavedItemTransformer::transformListRelation($this->laterItemRepository->getTagsByUserItemIds($userItems));
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace NPS\ApiBundle\DataTransformer;
 
+use NPS\CoreBundle\Helper\ArrayHelper;
+
 /**
  * Class SavedItemTransformer
  *
@@ -15,7 +17,7 @@ class SavedItemTransformer
      *
      * @return mixed
      */
-    protected function transform($savedItem, $relatedItemsTags)
+    protected static function transform($savedItem, $relatedItemsTags)
     {
         if (!$savedItem['language']) {
             $savedItem['language'] = $savedItem['item_language'];
@@ -37,8 +39,32 @@ class SavedItemTransformer
             return [];
         }
 
+        $result = [];
         foreach ($savedItems as $savedItem) {
             $result[] = self::transform($savedItem, $relatedItemsTags);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $relatedItemsTags
+     *
+     * @return array
+     */
+    public static function transformListRelation($relatedItemsTags)
+    {
+        if (!count($relatedItemsTags)) {
+            return [];
+        }
+
+        $result = [];
+        $relatedItemsTags = ArrayHelper::moveContendUnderRepetitiveKey($relatedItemsTags, 'ui_id');
+        foreach ($relatedItemsTags as $uiId => $itemData) {
+            $result[] = [
+                'ui_id' => $uiId,
+                'tags' => ArrayHelper::getIdsFromArray($itemData, 'tag_id')
+            ];
         }
 
         return $result;

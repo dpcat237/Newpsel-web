@@ -2,7 +2,6 @@
 
 namespace NPS\CoreBundle\Services\Entity;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Dpcat237\CrawlerBundle\Library\Crawler;
 use NPS\CoreBundle\Constant\EntityConstants;
@@ -27,22 +26,16 @@ class LaterItemService
 {
     /** @var Client */
     protected $cache;
-
     /** @var Crawler */
     protected $crawler;
-
     /** @var EntityManager */
     protected $entityManager;
-
     /** @var boolean */
     protected $import = false;
-
     /** @var UserItemService */
     protected $userItem;
-
     /** @var QueueLauncherService */
     protected $queue;
-
     /** @var LaterItemRepository */
     protected $laterItemRepository;
 
@@ -62,6 +55,7 @@ class LaterItemService
         $this->entityManager       = $entityManager;
         $this->userItem            = $userItem;
         $this->queue               = $queue;
+
         $this->laterItemRepository = $entityManager->getRepository(LaterItem::class);
     }
 
@@ -493,34 +487,5 @@ class LaterItemService
             $this->queue->executeImportItems($redisKey);
             $part++;
         }
-    }
-
-    /**
-     * Add later items for specific user
-     *
-     * @param array $items
-     */
-    public function syncLaterItems($items)
-    {
-        $userItemRepo = $this->entityManager->getRepository(UserItem::class);
-        foreach ($items as $itemData) {
-            $itemId   = $itemData['item_id'];
-            $labelId  = $itemData['tag_id'];
-            $userItem = $userItemRepo->hasItemById($itemId);
-            if (!$userItem instanceof UserItem) {
-                continue;
-            }
-
-            $laterItem = $this->laterItemRepository->laterExists($labelId, $userItem->getId());
-            if ($laterItem instanceof LaterItem) {
-                $laterItem->setUnread(true);
-                $this->entityManager->persist($laterItem);
-
-                continue;
-            }
-
-            $this->addLaterItem($userItem, $labelId);
-        }
-        $this->entityManager->flush();
     }
 }

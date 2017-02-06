@@ -5,7 +5,6 @@ namespace NPS\ApiBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Request\ParamFetcher;
 
 /**
  * Class LaterItemsController
@@ -20,17 +19,17 @@ class LaterItemsController extends ApiController
      * @Rest\Post("/add_saved")
      * @Rest\View
      *
-     * @param Request $request the current request
+     * @param Request $request
      *
-     * @return string
+     * @return array
      */
     public function syncLaterAction(Request $request)
     {
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncLaterItemsApi($this->getDeviceUser($request), $json['tagItems']);
+        $tagItems = (isset($json['tagItems'])) ? $json['tagItems'] : [];
 
-        return $responseData['result'];
+        return $labelService->syncLaterItemsApi($this->getDeviceUser($request), $tagItems);
     }
 
     /**
@@ -65,15 +64,13 @@ class LaterItemsController extends ApiController
     public function syncLaterItemsAction(Request $request)
     {
         $this->getDeviceUser($request);
-        $json         = json_decode($request->getContent(), true);
-        $itemService  = $this->get('api.later_item.service');
-        $items = (isset($json['tag_items'])) ? $json['tag_items'] : [];
-        $tags = (isset($json['return_tags'])) ? $json['return_tags'] : [];
-        $limit = (isset($json['limit'])) ? $json['limit'] : [];
+        $json = json_decode($request->getContent(), true);
+        $itemService = $this->get('api.later_item.service');
+        $items = isset($json['tagItems']) ? $json['tagItems'] : [];
+        $tags = isset($json['return_tags']) ? $json['return_tags'] : [];
+        $limit = isset($json['limit']) ? $json['limit'] : [];
 
-        $responseData = $itemService->syncLaterItems($items, $tags, $limit);
-
-        return $responseData['tag_items'];
+        return $itemService->syncLaterItems($items, $tags, $limit);
     }
 
     /**
