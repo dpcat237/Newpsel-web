@@ -129,7 +129,7 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('li');
         $query
-            ->select('i.id api_id, ui.id ui_id, f.id feed_id, li.unread AS is_unread, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
+            ->select('i.id api_id, ui.id ui_id, f.id feed_id, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
             ->join('li.userItem', 'ui')
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
@@ -221,7 +221,7 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('li');
         $query
-            ->select('li.id AS api_id')
+            ->select('li.id AS ui_id')
             ->add('where', $query->expr()->in('li.id', $itemsIds))
             ->andWhere('li.unread = :unread')
             ->orderBy('li.id', 'ASC')
@@ -241,6 +241,20 @@ class LaterItemRepository extends EntityRepository
             ->delete()
             ->where("ti.id IN(:ids)")
             ->setParameter('ids', $ids);
+        $query->getQuery()->execute();
+    }
+
+    /**
+     * @param array $tagsIds
+     */
+    public function removeTagItemByTags($tagsIds)
+    {
+        $query = $this->createQueryBuilder('ti');
+        $query
+            ->delete()
+            ->leftJoin('ti.later', 't')
+            ->where('t.id IN(:tagsIds)')
+            ->setParameter('tagsIds', $tagsIds);
         $query->getQuery()->execute();
     }
 

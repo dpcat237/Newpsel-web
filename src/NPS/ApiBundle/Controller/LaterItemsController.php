@@ -27,7 +27,7 @@ class LaterItemsController extends ApiController
     {
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $tagItems = (isset($json['tagItems'])) ? $json['tagItems'] : [];
+        $tagItems = (isset($json['savedArticles'])) ? $json['savedArticles'] : [];
 
         return $labelService->syncLaterItemsApi($this->getDeviceUser($request), $tagItems);
     }
@@ -46,9 +46,8 @@ class LaterItemsController extends ApiController
     {
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $responseData = $labelService->syncShared($this->getDeviceUser($request), $json['sharedItems']);
-
-        return $responseData['result'];
+        $sharedArticles = (isset($json['sharedArticles'])) ? $json['sharedArticles'] : [];
+        $labelService->syncShared($this->getDeviceUser($request), $sharedArticles);
     }
 
     /**
@@ -66,7 +65,7 @@ class LaterItemsController extends ApiController
         $this->getDeviceUser($request);
         $json = json_decode($request->getContent(), true);
         $itemService = $this->get('api.later_item.service');
-        $items = isset($json['tagItems']) ? $json['tagItems'] : [];
+        $items = isset($json['savedArticles']) ? $json['savedArticles'] : [];
         $tags = isset($json['return_tags']) ? $json['return_tags'] : [];
         $limit = isset($json['limit']) ? $json['limit'] : [];
 

@@ -91,20 +91,10 @@ class LaterItemApiService
         if ($limit < 1 || !count($tagsIds)) {
             return [];
         }
-
-        $readItems   = [];
         $totalUnread = $this->laterItemRepository->totalUnreadLabelsItems($tagsIds);
-        $items       = $this->getUnreadItemsIdsRecursive($tagsIds, $unreadItemsIds, 0, $limit + 5, $totalUnread); //"+5" extra to don't do many loops for few items
+        $items = $this->getUnreadItemsIdsRecursive($tagsIds, $unreadItemsIds, 0, $limit + 5, $totalUnread); //"+5" extra to don't do many loops for few items
 
-        if (count($unreadItemsIds)) {
-            $readItems = $this->laterItemRepository->getReadItems($unreadItemsIds);
-        }
-
-        if (count($readItems)) {
-            $items = $this->addReadItems($items, $readItems);
-        }
-
-        return $items;
+        return SavedItemTransformer::transformList($items);
     }
 
     /**
@@ -122,7 +112,7 @@ class LaterItemApiService
     {
         $unreadItems = $this->laterItemRepository->getUnreadForApiByLabels($labelsIds, $begin, $limit);
         $relatedItemsTags = $this->laterItemRepository->getTagsByUserItemIds(ArrayHelper::getIdsFromArray($unreadItems, 'ui_id'));
-        $unreadItems = SavedItemTransformer::transformList($unreadItems, ArrayHelper::joinValuesSameKey($relatedItemsTags, 'ui_id', 'tag_id'));
+        $unreadItems = SavedItemTransformer::addItemsTags($unreadItems, ArrayHelper::joinValuesSameKey($relatedItemsTags, 'ui_id', 'tag_id'));
         if (!count($unreadIds)) {
             return $unreadItems;
         }
@@ -157,8 +147,7 @@ class LaterItemApiService
     {
         foreach ($readItems as $readItem) {
             $item       = [
-                'api_id'    => $readItem['api_id'],
-                'item_id'   => 0,
+                'article_id'    => $readItem['article_id'],
                 'feed_id'   => 0,
                 'tags'    => [],
                 'is_unread' => false,
@@ -192,7 +181,7 @@ class LaterItemApiService
         //get complete content for partial articles
         $this->queueLauncher->executeCrawling($user->getId());
 
-        return $this->getTagsItemsRelationByUIs(ArrayHelper::getIdsFromArray($tagItems, 'ui_id'));
+        return $this->getTagsItemsRelationByUIs(ArrayHelper::getIdsFromArray($tagItems, 'article_id'));
     }
 
     /**
@@ -203,20 +192,13 @@ class LaterItemApiService
      *
      * @return array
      */
-    public function syncShared(User $user, $sharedItems)
+    public function syncShared(User $user, array $sharedItems)
     {
-        $error  = false;
-        $result = false;
-        if (empty($error) && is_array($sharedItems) && count($sharedItems)) {
-            $this->addSharedItems($user, $sharedItems);
-            $result = NotificationHelper::OK;
+        if (!count($sharedItems)) {
+            return;
         }
-        $responseData = array(
-            'error'  => $error,
-            'result' => $result,
-        );
 
-        return $responseData;
+        $this->addSharedItems($user, $sharedItems);
     }
 
     /**
@@ -228,7 +210,7 @@ class LaterItemApiService
     public function addSharedItems(User $user, $sharedItems)
     {
         foreach ($sharedItems as $sharedItem) {
-            $this->laterItem->addPageToLater($user, $sharedItem['tag_api_id'], $sharedItem['title'], $sharedItem['text'], true);
+            $this->laterItem->addPageToLater($user, $sharedItem['tag_id'], $sharedItem['title'], $sharedItem['text'], true);
         }
     }
 
@@ -263,6 +245,9 @@ class LaterItemApiService
     /**
      * @param array $apiItem
      * @param array $dbItemTags
+     *
+     * With this logic could be a problem if from two devices are selected different tags to same articles.
+     * We be added only from last sync device.
      */
     protected function checkItemTagsDifferences(array $apiItem, array $dbItemTags)
     {

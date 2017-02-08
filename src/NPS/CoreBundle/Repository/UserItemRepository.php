@@ -110,7 +110,7 @@ class UserItemRepository extends EntityRepository
 
         foreach ($userItems as $itemData) {
             $query .= "UPDATE " . $userItemTable . " SET stared='" . $itemData['is_stared'] . "',
-                unread='" . $itemData['is_unread'] . "', date_up='" . $currentTime . "' WHERE id='" . $itemData['api_id'] . "'; ";
+                unread='" . $itemData['is_unread'] . "', date_up='" . $currentTime . "' WHERE id='" . $itemData['article_id'] . "'; ";
 
 
         }
@@ -189,7 +189,7 @@ class UserItemRepository extends EntityRepository
         $itemTable     = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:Item')->getTableName();
         $userFeedTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserFeed')->getTableName();
         $userItemTable = $this->getEntityManager()->getClassMetadata('NPSCoreBundle:UserItem')->getTableName();
-        $query         = "SELECT ui.id AS api_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id
+        $query         = "SELECT ui.id AS article_id, ui.stared AS is_stared, ui.unread AS is_unread, ui.item_id
             FROM " . $userItemTable . " ui
             LEFT JOIN " . $itemTable . " i1_ ON ui.item_id = i1_.id
             LEFT JOIN " . $userFeedTable . " f2_ ON i1_.feed_id = f2_.feed_id AND ui.user_id = f2_.user_id
