@@ -26,15 +26,11 @@ class ItemController extends ApiController
      */
     public function syncItemsAction(Request $request)
     {
-        $json         = json_decode($request->getContent(), true);
-        $itemService  = $this->get('api.item.service');
-        $items = (isset($json['items'])) ? $json['items'] : [];
+        $json = json_decode($request->getContent(), true);
+        $itemService = $this->get('api.item.service');
+        $items = (isset($json['articles'])) ? $json['articles'] : [];
         $limit = (isset($json['limit'])) ? $json['limit'] : [];
-        $responseData = $itemService->syncItems($this->getDeviceUser($request), $items, $limit);
-        if ($responseData['error']) {
-            return $responseData['error'];
-        }
 
-        return $responseData['items'];
+        return $itemService->syncItems($this->getDeviceUser($request), $items, $limit);
     }
 }
