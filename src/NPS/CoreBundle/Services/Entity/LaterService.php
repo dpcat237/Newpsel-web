@@ -57,19 +57,6 @@ class LaterService extends AbstractEntityService
      */
     public function removeLabel(Later $label)
     {
-        //set to cache that label was deleted to notify API
-        $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED . "_" . $label->getUserId());
-        if (empty($deletedLabels)) {
-            $deletedLabels[] = $label->getId();
-        } else {
-            $deletedLabels = explode(',', $deletedLabels);
-            if (!in_array($label->getId(), $deletedLabels)) {
-                $deletedLabels[] = $label->getId();
-            }
-        }
-        $deletedLabels = implode(',', $deletedLabels);
-        $this->cache->set(RedisConstants::LABEL_DELETED . "_" . $label->getUserId(), $deletedLabels);
-
         $this->removeObject($label);
     }
 

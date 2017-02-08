@@ -1,4 +1,5 @@
 <?php
+
 namespace NPS\CoreBundle\Constant;
 
 /**
@@ -15,7 +16,6 @@ class RedisConstants {
     const ITEM_TITLE_HASH = "item_title_hash";
 
     /* Label */
-    const LABEL_DELETED = "user_labels_deleted";
     const IMPORT_LATER_ITEMS = 'import-later-items';
     const LABEL_TREE = "user_labels_tree";
     const LABEL_MENU_ALL = "labels_menu_all";

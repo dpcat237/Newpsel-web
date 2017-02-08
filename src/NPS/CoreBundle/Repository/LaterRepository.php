@@ -140,7 +140,7 @@ class LaterRepository extends EntityRepository
     public function getUserLabelsApi($userId)
     {
         $query = $this->createQueryBuilder('l')
-            ->select('l.id AS api_id, l.name, l.dateUp AS date_up')
+            ->select('l.id AS tag_id, l.name, l.dateUp AS date_up')
             ->where('l.user = :userId')
             ->setParameter('userId', $userId)
             ->getQuery();
@@ -178,6 +178,19 @@ class LaterRepository extends EntityRepository
         $collection = $query->getResult();
 
         return $collection;
+    }
+
+    /**
+     * @param array $tagsIds
+     */
+    public function removeTags($tagsIds)
+    {
+        $query = $this->createQueryBuilder('t')
+            ->delete()
+            ->where('t.id IN (:tagsTds)')
+            ->setParameter('tagsTds', $tagsIds)
+            ->getQuery();
+        $query->execute();
     }
 
     /**

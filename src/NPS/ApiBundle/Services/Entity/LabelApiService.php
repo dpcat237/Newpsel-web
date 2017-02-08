@@ -5,12 +5,14 @@ namespace NPS\ApiBundle\Services\Entity;
 use Doctrine\ORM\EntityManager;
 use NPS\CoreBundle\Constant\RedisConstants;
 use NPS\CoreBundle\Entity\Later;
+use NPS\CoreBundle\Entity\LaterItem;
 use NPS\CoreBundle\Event\LabelModifiedEvent;
+use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\NPSCoreEvents;
+use NPS\CoreBundle\Repository\LaterItemRepository;
 use NPS\CoreBundle\Repository\LaterRepository;
 use Predis\Client;
 use NPS\ApiBundle\Services\SecureService;
-use NPS\CoreBundle\Constant\EntityConstants;
 use NPS\CoreBundle\Services\Entity\LaterService;
 use NPS\CoreBundle\Entity\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,24 +26,24 @@ class LabelApiService
 {
     /** @var $entityManager EntityManager */
     protected $entityManager;
-
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
-
     /** @var LaterService */
     private $labelService;
-
     /** @var SecureService */
     private $secure;
-
     /** @var Client */
     private $cache;
-
-    /** @var Boolean */
-    private $modified = false;
-
     /** @var LaterRepository */
     protected $tagRepository;
+    /** @var LaterItemRepository */
+    protected $tagItemRepository;
+    /** @var array */
+    protected $tagsNew = [];
+    /** @var array */
+    protected $tagsRemove = [];
+    /** @var array */
+    protected $tagsUpdate = [];
 
     /**
      * LabelApiService constructor.
@@ -61,6 +63,7 @@ class LabelApiService
         $this->cache           = $cache;
 
         $this->tagRepository = $entityManager->getRepository(Later::class);
+        $this->tagItemRepository = $entityManager->getRepository(LaterItem::class);
     }
 
     /**
@@ -100,186 +103,87 @@ class LabelApiService
     }
 
     /**
-     * Sync labels
-     *
      * @param User  $user
-     * @param array $apiLabels
+     * @param array $apiTags
      *
      * @return array
      */
-    public function syncLabels(User $user, array $apiLabels)
+    public function syncTags(User $user, array $apiTags)
     {
-        $error  = false;
-        $labels = [];
-        if (empty($error)) {
-            $dbLabels = $this->tagRepository->getUserLabelsApi($user->getId());
-            $labels   = $this->processLabelsSync($dbLabels, $apiLabels, $user);
-        }
-        $responseData = [
-            'error'  => $error,
-            'tags' => $labels,
-        ];
+        $dbTags = $this->tagRepository->getUserLabelsApi($user->getId());
+        $this->checkTagsDifferences($dbTags, $apiTags);
+        $this->updateTagsDb($user);
 
-        return $responseData;
+        return $this->tagRepository->getUserLabelsApi($user->getId());
     }
 
     /**
-     * Process labels updating if necessary data in data base and get new data to return to API
-     *
-     * @param array $dbLabels
-     * @param array $apiLabels
-     * @param User  $user
-     *
-     * @return array
+     * @param array $dbTags
+     * @param array $apiTags
      */
-    private function processLabelsSync(array $dbLabels, array $apiLabels, $user)
+    protected function checkTagsDifferences(array $dbTags, array $apiTags)
     {
-        $labels         = [];
-        $this->modified = false;
-        //first sync to device
-        if (!count($apiLabels)) {
-            foreach ($dbLabels as $dbLabel) {
-                $dbLabel['status'] = EntityConstants::STATUS_NEW;
-                $labels[]          = $dbLabel;
+        if (!count($apiTags)) {
+            return;
+        }
+
+        $this->tagsNew = [];
+        $this->tagsRemove = [];
+        $this->tagsUpdate = [];
+        $dbTags = ArrayHelper::moveContendUnderKey($dbTags, 'tag_id');
+        foreach ($apiTags as $apiTag) {
+            $tagId = $apiTag['tag_id'];
+            if (!$tagId) {
+                $this->tagsNew[] = $apiTag;
+                continue;
             }
 
-            return $labels;
-        }
-
-        //check if in server were deleted labels
-        list($apiLabels, $deletedLabels) = $this->checkDeletedLabels($user, $apiLabels);
-        if (count($deletedLabels)) {
-            $labels = $deletedLabels;
-        }
-
-        //compare labels from API and server data base
-        list($apiLabels, $changedLabels) = $this->compareSyncApiDb($dbLabels, $apiLabels);
-        if (count($changedLabels)) {
-            $labels = array_merge($labels, $changedLabels);
-        }
-
-        //if are new labels from API
-        if (count($apiLabels)) {
-            foreach ($apiLabels as $apiLabel) {
-                $label              = $this->labelService->createLabel($user, $apiLabel['name'], $apiLabel['date_up']);
-                $apiLabel['api_id'] = $label->getId();
-                $apiLabel['status'] = EntityConstants::STATUS_CHANGED;
-                $labels[]           = $apiLabel;
+            if (!array_key_exists($tagId, $dbTags)) {
+                continue;
             }
-            $this->modified = true;
-        }
 
-        //if it's necessary notify about changes other devices
-        if ($this->modified) {
-            //notify about modification
-            $labelEvent = new LabelModifiedEvent($user->getId());
-            $this->eventDispatcher->dispatch(NPSCoreEvents::LABEL_MODIFIED, $labelEvent);
-        }
+            if (!$apiTag['date_up']) {
+                $this->tagsRemove[] = $apiTag;
+                continue;
+            }
 
-        return $labels;
+            if ($apiTag['date_up'] > $dbTags[$tagId]['date_up']) {
+                $this->tagsUpdate[] = $apiTag;
+            }
+        }
     }
 
     /**
-     * Compare last update dates and update label in proper place
-     *
-     * @param array           $dbLabel
-     * @param array           $apiLabel
-     *
-     * @return null
+     * @param User $user
      */
-    private function processChangedLabel($dbLabel, $apiLabel)
+    protected function updateTagsDb(User $user)
     {
-        if ($dbLabel['date_up'] > $apiLabel['date_up']) {
-            $dbLabel['status'] = EntityConstants::STATUS_CHANGED;
-            $dbLabel['id']     = $apiLabel['id'];
-
-            return $dbLabel;
-        }
-        if ($dbLabel['date_up'] < $apiLabel['date_up']) {
-            $this->tagRepository->updateLabel($apiLabel['api_id'], $apiLabel['name'], $apiLabel['date_up']);
-            $this->modified = true;
-            $dbLabel['name'] = $apiLabel['name'];
-            $dbLabel['date_up'] = $apiLabel['date_up'];
-
-            return $dbLabel;
-        }
-
-        return null;
-    }
-
-    /**
-     * Compare labels from API and data base to find difference
-     *
-     * @param array $dbLabels
-     * @param array $apiLabels
-     *
-     * @return array
-     */
-    private function compareSyncApiDb(array $dbLabels, array $apiLabels)
-    {
-        $labels = [];
-        foreach ($dbLabels as $dbLabel) {
-            $found = false;
-            foreach ($apiLabels as $keyApi => $apiLabel) {
-                if ($dbLabel['api_id'] != $apiLabel['api_id']) {
-                    continue;
-                }
-
-                //any change
-                if ($dbLabel['date_up'] == $apiLabel['date_up']) {
-                    unset($apiLabels[$keyApi]);
-                    $found = true;
-                    break;
-                }
-
-                //compare changes
-                $changedLabel = $this->processChangedLabel($dbLabel, $apiLabel);
-                if (!empty($changedLabel)) {
-                    $labels[] = $changedLabel;
-                }
-
-                unset($apiLabels[$keyApi]);
-                $found = true;
-                break;
+        $modified = false;
+        if (count($this->tagsNew)) {
+            foreach ($this->tagsNew as $tag) {
+                $this->labelService->createLabel($user, $tag['name'], $tag['date_up']);
             }
-            if (!$found) {
-                $dbLabel['status'] = EntityConstants::STATUS_NEW;
-                $labels[]          = $dbLabel;
+            $modified = true;
+        }
+
+        if (count($this->tagsRemove)) {
+            $tagsIds = ArrayHelper::getIdsFromArray($this->tagsRemove, 'tag_id');
+            $this->tagItemRepository->removeTagItemByTags($tagsIds);
+            $this->tagRepository->removeTags($tagsIds);
+            $modified = true;
+        }
+
+        if (count($this->tagsUpdate)) {
+            foreach ($this->tagsUpdate as $tag) {
+                $this->tagRepository->updateLabel($tag['tag_id'], $tag['name'], $tag['date_up']);
             }
+            $modified = true;
         }
 
-        return [$apiLabels, $labels];
-    }
-
-    /**
-     * Get deleted labels in server
-     *
-     * @param User  $user
-     * @param array $apiLabels
-     *
-     * @return array
-     */
-    private function checkDeletedLabels(User $user, array $apiLabels)
-    {
-        $labels        = [];
-        $deletedLabels = $this->cache->get(RedisConstants::LABEL_DELETED . "_" . $user->getId());
-        if (empty($deletedLabels)) {
-            return array($apiLabels, $labels);
+        if ($modified) {
+            $tagEvent = new LabelModifiedEvent($user->getId());
+            $this->eventDispatcher->dispatch(NPSCoreEvents::LABEL_MODIFIED, $tagEvent);
         }
-
-        $deletedLabels = explode(',', $deletedLabels);
-        foreach ($deletedLabels as $deletedLabel) {
-            foreach ($apiLabels as $key => $apiLabel) {
-                if ($apiLabel['api_id'] == $deletedLabel) {
-                    $apiLabel['status'] = EntityConstants::STATUS_DELETED;
-                    $labels[]           = $apiLabel;
-                    unset($apiLabels[$key]);
-                    break;
-                }
-            }
-        }
-
-        return array($apiLabels, $labels);
     }
 
     /**
