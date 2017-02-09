@@ -58,6 +58,7 @@ class SavedItemTransformer
             'link' => $savedItem['link'],
             'title' => $savedItem['title'],
             'content' => $savedItem['content'],
+            'date_add' => $savedItem['date_add'],
             'tags' => $savedItem['tags'],
         ];
     }

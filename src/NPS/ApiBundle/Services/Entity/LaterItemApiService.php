@@ -251,7 +251,7 @@ class LaterItemApiService
      */
     protected function checkItemTagsDifferences(array $apiItem, array $dbItemTags)
     {
-        $uiId = $apiItem['ui_id'];
+        $uiId = $apiItem['article_id'];
         $apiItemTags = $apiItem['tags'];
         $dbTags = [];
         foreach ($dbItemTags as $dbItemTag) {
@@ -292,9 +292,10 @@ class LaterItemApiService
 
         $this->itamTageRemove = [];
         $this->itamTageAdd = [];
-        $apiItems = ArrayHelper::moveContendUnderKey($items, 'ui_id');
-        $dbItems = $this->laterItemRepository->getTagsByUserItemIds(ArrayHelper::getIdsFromArray($items, 'ui_id'));
+        $apiItems = ArrayHelper::moveContendUnderKey($items, 'article_id');
+        $dbItems = $this->laterItemRepository->getTagsByUserItemIds(ArrayHelper::getIdsFromArray($items, 'article_id'));
         $dbItems = ArrayHelper::moveContendUnderRepetitiveKey($dbItems, 'ui_id');
+
 
         foreach ($dbItems as $uiId => $dbItem) {
             $apiItemTags = $apiItems[$uiId]['tags'];
@@ -304,11 +305,30 @@ class LaterItemApiService
         }
 
         if (count($this->itamTageRemove)) {
-            $this->laterItemRepository->removeTagItem($this->itamTageRemove);
+            $this->laterItemRepository->markAsRead($this->itamTageRemove);
+            $this->itamTageRemove = [];
         }
 
         if (count($this->itamTageAdd)) {
-            $this->laterItemRepository->insertTagItems($this->itamTageAdd);
+            $this->addItemsTagsRelation();
         }
+    }
+
+    protected function addItemsTagsRelation()
+    {
+        $savedArticles = $this->laterItemRepository->getTagsByUserItemIds(array_unique(ArrayHelper::getIdsFromArray($this->itamTageAdd, 'ui_id')), false);
+        $markAsRead = [];
+        foreach ($savedArticles as $savedArticle) {
+            foreach ($this->itamTageAdd as $itemKey => $itemTag) {
+                if ($savedArticle['ui_id'] == $itemTag['ui_id'] && $savedArticle['tag_id'] == $itemTag['tag_id']) {
+                    $markAsRead[] = $savedArticle;
+                    unset($this->itamTageAdd[$itemKey]);
+                }
+            }
+        }
+
+        $this->laterItemRepository->markAsRead(ArrayHelper::getIdsFromArray($markAsRead), true);
+        $this->laterItemRepository->insertTagItems($this->itamTageAdd);
+        $this->itamTageRemove = [];
     }
 }

@@ -68,10 +68,11 @@ class LaterItemRepository extends EntityRepository
 
     /**
      * @param array $itemIds
+     * @param bool  $unread
      *
      * @return array
      */
-    public function getTagsByUserItemIds($itemIds)
+    public function getTagsByUserItemIds($itemIds, $unread = true)
     {
         $query = $this->createQueryBuilder('ti');
         $query
@@ -81,7 +82,7 @@ class LaterItemRepository extends EntityRepository
             ->where("ti.userItem IN(:userItemsIds)")
             ->andWhere('ti.unread = :unread')
             ->setParameter('userItemsIds', $itemIds)
-            ->setParameter('unread', true);
+            ->setParameter('unread', $unread);
         $query = $query->getQuery();
 
         return $query->getArrayResult();
@@ -191,6 +192,22 @@ class LaterItemRepository extends EntityRepository
     }
 
     /**
+     * @param array $savedArticlesIds
+     * @param bool  $unread
+     */
+    public function markAsRead($savedArticlesIds, $unread = false)
+    {
+        $query = $this->createQueryBuilder('ti');
+        $query
+            ->update()
+            ->where('ti.id IN (:savedArticlesIds)')
+            ->set('ti.unread', ':unread')
+            ->setParameter('savedArticlesIds', $savedArticlesIds)
+            ->setParameter('unread', $unread);
+        $query->getQuery()->execute();
+    }
+
+    /**
      * Update later items status
      *
      * @param $laterItems
@@ -229,19 +246,6 @@ class LaterItemRepository extends EntityRepository
         $query = $query->getQuery();
 
         return $query->getArrayResult();
-    }
-
-    /**
-     * @param array $ids
-     */
-    public function removeTagItem($ids)
-    {
-        $query = $this->createQueryBuilder('ti');
-        $query
-            ->delete()
-            ->where("ti.id IN(:ids)")
-            ->setParameter('ids', $ids);
-        $query->getQuery()->execute();
     }
 
     /**

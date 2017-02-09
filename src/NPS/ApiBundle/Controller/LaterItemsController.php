@@ -14,25 +14,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 class LaterItemsController extends ApiController
 {
     /**
-     * Add saved articles
-     *
-     * @Rest\Post("/add_saved")
-     * @Rest\View
-     *
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function syncLaterAction(Request $request)
-    {
-        $json         = json_decode($request->getContent(), true);
-        $labelService = $this->get('api.later_item.service');
-        $tagItems = (isset($json['savedArticles'])) ? $json['savedArticles'] : [];
-
-        return $labelService->syncLaterItemsApi($this->getDeviceUser($request), $tagItems);
-    }
-
-    /**
      * Add shared articles
      *
      * @Rest\Post("/add_shared")
@@ -46,30 +27,49 @@ class LaterItemsController extends ApiController
     {
         $json         = json_decode($request->getContent(), true);
         $labelService = $this->get('api.later_item.service');
-        $sharedArticles = (isset($json['sharedArticles'])) ? $json['sharedArticles'] : [];
+        $sharedArticles = (isset($json['shared_articles'])) ? $json['shared_articles'] : [];
         $labelService->syncShared($this->getDeviceUser($request), $sharedArticles);
     }
 
     /**
-     * Sync saved articles
+     * Get saved articles
      *
-     * @Rest\Post("/sync")
+     * @Rest\Post("/list")
      * @Rest\View
      *
      * @param Request $request the current request
      *
      * @return JsonResponse
      */
-    public function syncLaterItemsAction(Request $request)
+    public function listAction(Request $request)
     {
         $this->getDeviceUser($request);
         $json = json_decode($request->getContent(), true);
         $itemService = $this->get('api.later_item.service');
-        $items = isset($json['savedArticles']) ? $json['savedArticles'] : [];
+        $items = isset($json['saved_articles']) ? $json['saved_articles'] : [];
         $tags = isset($json['return_tags']) ? $json['return_tags'] : [];
         $limit = isset($json['limit']) ? $json['limit'] : [];
 
         return $itemService->syncLaterItems($items, $tags, $limit);
+    }
+
+    /**
+     * Sync saved articles changes
+     *
+     * @Rest\Post("/sync")
+     * @Rest\View
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function syncAction(Request $request)
+    {
+        $json         = json_decode($request->getContent(), true);
+        $labelService = $this->get('api.later_item.service');
+        $tagItems = (isset($json['saved_articles'])) ? $json['saved_articles'] : [];
+
+        return $labelService->syncLaterItemsApi($this->getDeviceUser($request), $tagItems);
     }
 
     /**
