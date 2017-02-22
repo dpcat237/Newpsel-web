@@ -55,6 +55,7 @@ class SavedItemTransformer
             'article_id' => $savedItem['ui_id'],
             'feed_id' => $savedItem['feed_id'],
             'language' => $savedItem['language'] ?: $savedItem['item_language'],
+            'is_stared' => $savedItem['stared'],
             'link' => $savedItem['link'],
             'title' => $savedItem['title'],
             'content' => $savedItem['content'],
@@ -98,6 +99,7 @@ class SavedItemTransformer
         foreach ($relatedItemsTags as $uiId => $itemData) {
             $result[] = [
                 'article_id' => $uiId,
+                'is_stared' => $itemData[0]['stared'],
                 'tags' => ArrayHelper::getIdsFromArray($itemData, 'tag_id')
             ];
         }

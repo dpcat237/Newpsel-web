@@ -7,9 +7,11 @@ use NPS\ApiBundle\DataTransformer\SavedItemTransformer;
 use NPS\ApiBundle\Services\SecureService;
 use NPS\CoreBundle\Entity\LaterItem;
 use NPS\CoreBundle\Entity\User;
+use NPS\CoreBundle\Entity\UserItem;
 use NPS\CoreBundle\Helper\ArrayHelper;
 use NPS\CoreBundle\Helper\NotificationHelper;
 use NPS\CoreBundle\Repository\LaterItemRepository;
+use NPS\CoreBundle\Repository\UserItemRepository;
 use NPS\CoreBundle\Services\Entity\LaterItemService;
 use NPS\CoreBundle\Services\QueueLauncherService;
 
@@ -28,6 +30,8 @@ class LaterItemApiService
     private $secure;
     /** @var QueueLauncherService */
     private $queueLauncher;
+    /** @var UserItemRepository */
+    private $userItemRepository;
 
     private $itamTageAdd = [];
     private $itamTageRemove = [];
@@ -48,6 +52,7 @@ class LaterItemApiService
         $this->queueLauncher = $queueLauncher;
 
         $this->laterItemRepository = $entityManager->getRepository(LaterItem::class);
+        $this->userItemRepository = $entityManager->getRepository(UserItem::class);
     }
 
     /**
@@ -229,7 +234,7 @@ class LaterItemApiService
         $result = array();
         list($unreadItems, $readItems) = ArrayHelper::separateBooleanArray($dictateItems, 'is_unread');
         if (empty($error) && is_array($readItems) && count($readItems)) {
-            $this->laterItemRepository->syncViewedLaterItems($readItems);
+            //$this->laterItemRepository->syncViewedLaterItems($readItems); @deprecated
         }
         if (empty($error)) {
             $result = $this->laterItem->getUnreadItemsApi($user->getPreference()->getDictationTagId(), $unreadItems, $limit);
@@ -292,6 +297,7 @@ class LaterItemApiService
 
         $this->itamTageRemove = [];
         $this->itamTageAdd = [];
+        $this->userItemRepository->syncStaredState($items);
         $apiItems = ArrayHelper::moveContendUnderKey($items, 'article_id');
         $dbItems = $this->laterItemRepository->getTagsByUserItemIds(ArrayHelper::getIdsFromArray($items, 'article_id'));
         $dbItems = ArrayHelper::moveContendUnderRepetitiveKey($dbItems, 'ui_id');

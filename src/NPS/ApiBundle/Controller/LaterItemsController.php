@@ -81,6 +81,7 @@ class LaterItemsController extends ApiController
      * @param Request $request the current request
      *
      * @return string
+     * @deprecated
      */
     public function syncDictateItemsAction(Request $request)
     {

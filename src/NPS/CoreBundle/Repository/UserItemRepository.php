@@ -98,6 +98,26 @@ class UserItemRepository extends EntityRepository
     }
 
     /**
+     * Update user items stared state
+     *
+     * @param array $userItems
+     */
+    public function syncStaredState($userItems)
+    {
+        $query         = "START TRANSACTION; ";
+        $userItemTable = $this->getClassMetadata()->getTableName();
+        $currentTime   = time();
+
+        foreach ($userItems as $itemData) {
+            $query .= "UPDATE " . $userItemTable . " SET stared='" . $itemData['is_stared'] . "',
+                date_up='" . $currentTime . "' WHERE id='" . $itemData['article_id'] . "'; ";
+        }
+        $query .= "COMMIT;";
+
+        $this->getEntityManager()->getConnection()->exec($query);
+    }
+
+    /**
      * Update user items status
      *
      * @param array $userItems

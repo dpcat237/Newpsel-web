@@ -76,7 +76,7 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('ti');
         $query
-            ->select('ti.id, t.id tag_id, ui.id ui_id')
+            ->select('ti.id, t.id tag_id, ui.id ui_id, ui.stared')
             ->leftJoin('ti.later', 't')
             ->leftJoin('ti.userItem', 'ui')
             ->where("ti.userItem IN(:userItemsIds)")
@@ -130,7 +130,7 @@ class LaterItemRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('li');
         $query
-            ->select('i.id api_id, ui.id ui_id, f.id feed_id, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
+            ->select('i.id api_id, ui.id ui_id, ui.stared, f.id feed_id, i.dateAdd AS date_add, f.language, i.language item_language, i.link, i.title, i.content')
             ->join('li.userItem', 'ui')
             ->join('ui.item', 'i')
             ->leftJoin('i.feed', 'f')
