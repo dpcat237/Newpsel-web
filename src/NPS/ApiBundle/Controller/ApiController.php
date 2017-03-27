@@ -73,7 +73,8 @@ class ApiController extends Controller
         $user     = $this->get('api.secure.service')->getUserByDevice($deviceId);
 
         if (!$user instanceof User) {
-            throw new UnauthorizedException();
+            $append = "Request from IP: ".$request->getClientIp(). " for ". $request->getUri();
+            throw new UnauthorizedException($append);
         }
 
         return $user;
