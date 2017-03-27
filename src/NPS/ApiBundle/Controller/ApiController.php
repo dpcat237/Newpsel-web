@@ -53,7 +53,8 @@ class ApiController extends Controller
         }
 
         if (!$deviceId) {
-            throw new UnauthorizedException();
+            $append = 'Request from IP: '.$request->getClientIp(). ' for '. $request->getUri();
+            throw new UnauthorizedException($append);
         }
 
         return $deviceId;
@@ -73,7 +74,7 @@ class ApiController extends Controller
         $user     = $this->get('api.secure.service')->getUserByDevice($deviceId);
 
         if (!$user instanceof User) {
-            $append = "Request from IP: ".$request->getClientIp(). " for ". $request->getUri();
+            $append = 'Request from IP: '.$request->getClientIp(). ' for '. $request->getUri();
             throw new UnauthorizedException($append);
         }
 
